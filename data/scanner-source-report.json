@@ -1,0 +1,135 @@
+{
+  "generatedAt": "2026-05-05T16:59:28.890Z",
+  "total": 8,
+  "enabled": 1,
+  "countries": [
+    "AU",
+    "CA",
+    "GB",
+    "GLOBAL",
+    "IE",
+    "NZ",
+    "US"
+  ],
+  "sources": [
+    {
+      "name": "Police Scotland Jan Hussain official appeal",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "enabled": true,
+      "sourceType": "html",
+      "parser": "html",
+      "trustLevel": "official-public",
+      "rateLimit": "single official appeal URL, safe for scheduled re-check",
+      "maxCasesPerRun": 1,
+      "pagination": false,
+      "disabledReason": ""
+    },
+    {
+      "name": "Missing People UK public appeals",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "enabled": false,
+      "sourceType": "html",
+      "parser": "html",
+      "trustLevel": "trusted-public-charity",
+      "rateLimit": "manual approval required before scheduled crawling",
+      "maxCasesPerRun": 100,
+      "pagination": true,
+      "disabledReason": "Disabled until an approved feed/API or crawling permission is configured."
+    },
+    {
+      "name": "Garda missing-person appeals",
+      "countryCode": "IE",
+      "countryName": "Ireland",
+      "enabled": false,
+      "sourceType": "html",
+      "parser": "html",
+      "trustLevel": "official-public",
+      "rateLimit": "manual approval required before scheduled crawling",
+      "maxCasesPerRun": 100,
+      "pagination": true,
+      "disabledReason": "Disabled until a stable official feed or approved crawl target is configured."
+    },
+    {
+      "name": "Australian National Missing Persons register",
+      "countryCode": "AU",
+      "countryName": "Australia",
+      "enabled": false,
+      "sourceType": "html",
+      "parser": "html",
+      "trustLevel": "official-public",
+      "rateLimit": "manual approval required before scheduled crawling",
+      "maxCasesPerRun": 100,
+      "pagination": true,
+      "disabledReason": "Disabled until a reliable public endpoint or approved access method is configured."
+    },
+    {
+      "name": "New Zealand Police missing-person releases",
+      "countryCode": "NZ",
+      "countryName": "New Zealand",
+      "enabled": false,
+      "sourceType": "rss-or-html",
+      "parser": "html",
+      "trustLevel": "official-public",
+      "rateLimit": "manual approval required before scheduled crawling",
+      "maxCasesPerRun": 100,
+      "pagination": true,
+      "disabledReason": "Disabled until missing-person filtering is configured safely."
+    },
+    {
+      "name": "NamUs public cases",
+      "countryCode": "US",
+      "countryName": "United States",
+      "enabled": false,
+      "sourceType": "api",
+      "parser": "json",
+      "trustLevel": "official-public",
+      "rateLimit": "requires approved access",
+      "maxCasesPerRun": 500,
+      "pagination": true,
+      "disabledReason": "Disabled because public API credentials/approved access are not configured."
+    },
+    {
+      "name": "RCMP missing-person notices",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "enabled": false,
+      "sourceType": "html",
+      "parser": "html",
+      "trustLevel": "official-public",
+      "rateLimit": "manual approval required before scheduled crawling",
+      "maxCasesPerRun": 100,
+      "pagination": true,
+      "disabledReason": "Disabled until an approved feed/API or safe crawler target is configured."
+    },
+    {
+      "name": "INTERPOL Yellow Notices",
+      "countryCode": "GLOBAL",
+      "countryName": "Global",
+      "enabled": false,
+      "sourceType": "api",
+      "parser": "json",
+      "trustLevel": "official-public",
+      "rateLimit": "requires endpoint review",
+      "maxCasesPerRun": 500,
+      "pagination": true,
+      "disabledReason": "Disabled until a reliable approved public endpoint is configured."
+    }
+  ],
+  "scale": {
+    "concurrencyDefault": 3,
+    "sourceIsolation": true,
+    "idempotentPublishing": true,
+    "duplicateChecks": [
+      "sourceUrl",
+      "externalId",
+      "name+missingSince+countryCode"
+    ],
+    "batching": true,
+    "retryBackoff": true,
+    "checkpoints": true,
+    "enabledSourceCount": 1,
+    "disabledSourceCount": 7
+  }
+}

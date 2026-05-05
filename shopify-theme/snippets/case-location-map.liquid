@@ -3,8 +3,10 @@
 {% assign last_seen_place = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | strip %}
 {% assign last_seen_at = article.metafields.custom.last_seen_at.value | default: article.metafields.custom.last_seen_at | strip %}
 {% assign last_seen_precision = article.metafields.custom.last_seen_precision.value | default: article.metafields.custom.last_seen_precision | strip %}
-{% assign last_seen_lat = article.metafields.custom.last_seen_lat.value | default: article.metafields.custom.last_seen_lat | strip %}
-{% assign last_seen_lng = article.metafields.custom.last_seen_lng.value | default: article.metafields.custom.last_seen_lng | strip %}
+{% assign last_seen_lat_value = article.metafields.custom.location_lat.value | default: article.metafields.custom.public_latitude.value | default: article.metafields.custom.last_seen_lat.value | default: article.metafields.custom.location_lat | default: article.metafields.custom.public_latitude | default: article.metafields.custom.last_seen_lat %}
+{% assign last_seen_lng_value = article.metafields.custom.location_lng.value | default: article.metafields.custom.public_longitude.value | default: article.metafields.custom.last_seen_lng.value | default: article.metafields.custom.location_lng | default: article.metafields.custom.public_longitude | default: article.metafields.custom.last_seen_lng %}
+{% assign last_seen_lat = last_seen_lat_value | append: '' | strip %}
+{% assign last_seen_lng = last_seen_lng_value | append: '' | strip %}
 {% assign country_name = article.metafields.custom.country.value | default: article.metafields.custom.country | strip %}
 {% assign region_name = article.metafields.custom.region.value | default: article.metafields.custom.region | strip %}
 {% assign city_name = article.metafields.custom.city.value | default: article.metafields.custom.city | strip %}
@@ -166,10 +168,14 @@
 {% unless is_found_safe %}
   <section class="case-location-map-card case-location-map-card--standalone sidebar-card sidebar-card--map" data-case-location-card data-map-query="{{ map_query | escape }}" data-map-lat="{{ last_seen_lat }}" data-map-lng="{{ last_seen_lng }}">
     <div class="case-location-map-card__eyebrow">Last Seen Location</div>
-    <div class="case-location-map-card__frame">
+    <div class="case-location-map-card__frame{% unless has_coordinates %} case-location-map-card__frame--fallback{% endunless %}">
       {% if location_text != blank or has_coordinates %}
         <div class="case-location-map-card__placeholder" data-case-location-map-placeholder>
-          Loading location map…
+          {% if has_coordinates %}
+            Loading approximate public last-seen map…
+          {% else %}
+            Approximate map unavailable — public last-seen area shown below.
+          {% endif %}
         </div>
         <div class="case-location-map-card__pin" aria-hidden="true"></div>
         <iframe
@@ -180,7 +186,7 @@
         ></iframe>
       {% else %}
         <div class="case-location-map-card__placeholder">
-          Last seen location is not available for this case yet.
+          Public last-seen location is not available for this case yet.
         </div>
       {% endif %}
     </div>
@@ -416,8 +422,14 @@
           if (!iframe) return;
 
           function renderFallback(message) {
+            card.classList.add('case-location-map-card--fallback-active');
+            if (iframe) {
+              iframe.removeAttribute('src');
+              iframe.setAttribute('hidden', 'hidden');
+            }
             if (placeholder) {
-              placeholder.textContent = message || 'Map unavailable for this location right now.';
+              placeholder.textContent = message || 'Approximate map unavailable — public last-seen area shown below.';
+              placeholder.style.display = 'grid';
             }
           }
 
@@ -426,7 +438,7 @@
             var longitude = parseFloat(lng);
 
             if (isNaN(latitude) || isNaN(longitude)) {
-              renderFallback();
+              renderFallback('Approximate map unavailable — public last-seen area shown below.');
               return;
             }
 
@@ -439,6 +451,7 @@
               latitude + latDelta
             ].join('%2C');
 
+            iframe.removeAttribute('hidden');
             iframe.src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + bbox + '&layer=mapnik&marker=' + latitude + '%2C' + longitude;
             iframe.addEventListener('load', function() {
               if (placeholder) {
@@ -453,7 +466,7 @@
           }
 
           if (!query) {
-            renderFallback('Last seen location is not available for this case yet.');
+            renderFallback('Public last-seen location is not available for this case yet.');
             return;
           }
 
@@ -467,7 +480,7 @@
             })
             .then(function(results) {
               if (!Array.isArray(results) || !results.length) {
-                renderFallback();
+                renderFallback('Approximate map unavailable — public last-seen area shown below.');
                 return;
               }
 
@@ -475,7 +488,7 @@
               renderMap(result.lat, result.lon);
             })
             .catch(function() {
-              renderFallback();
+              renderFallback('Approximate map unavailable — public last-seen area shown below.');
             });
         });
       })();

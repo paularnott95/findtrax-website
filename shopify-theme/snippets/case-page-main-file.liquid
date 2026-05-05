@@ -188,29 +188,29 @@
         </div>
       {% endif %}
 
-      <section class="case-page-main-details">
-        <div class="case-page-card__eyebrow">Key Case Details</div>
-        <h2 class="case-page-card__title">Main case file</h2>
-        <div class="case-page-stat-list">
+      <section class="case-page-main-details case-page-overview" aria-label="Case overview">
+        <div class="case-page-card__eyebrow">Key points</div>
+        <h2 class="case-page-card__title">Case Overview</h2>
+        <div class="case-page-overview__grid">
           {% if case_status != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item">
               <span class="case-page-stat__label">Status</span>
               <span class="case-page-stat__value">{{ case_status | upcase }}</span>
             </div>
           {% endif %}
           {% if last_seen_place != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item case-page-overview__item--wide">
               <span class="case-page-stat__label">Last Seen</span>
               <span class="case-page-stat__value">{{ last_seen_place }}</span>
             </div>
           {% elsif page_location != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item case-page-overview__item--wide">
               <span class="case-page-stat__label">Location</span>
               <span class="case-page-stat__value">{{ page_location }}</span>
             </div>
           {% endif %}
           {% if last_seen_at != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item">
               <span class="case-page-stat__label">Last Seen Time</span>
               <span class="case-page-stat__value">
                 {{ last_seen_at }}
@@ -221,49 +221,55 @@
             </div>
           {% endif %}
           {% if reported_missing_at != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item">
               <span class="case-page-stat__label">Reported Missing</span>
               <span class="case-page-stat__value">{{ reported_missing_at }}</span>
             </div>
           {% endif %}
           {% if age_text != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item">
               <span class="case-page-stat__label">Age</span>
               <span class="case-page-stat__value">{{ age_text }}</span>
             </div>
           {% endif %}
+          {% if case_country != blank %}
+            <div class="case-page-stat case-page-overview__item">
+              <span class="case-page-stat__label">Country</span>
+              <span class="case-page-stat__value">{{ case_country }}</span>
+            </div>
+          {% endif %}
           {% if case_reference != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item">
               <span class="case-page-stat__label">Reference</span>
               <span class="case-page-stat__value">{{ case_reference }}</span>
             </div>
           {% endif %}
           {% if physical_description != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item case-page-overview__item--wide">
               <span class="case-page-stat__label">Description</span>
               <span class="case-page-stat__value">{{ physical_description }}</span>
             </div>
           {% endif %}
           {% if clothing != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item case-page-overview__item--wide">
               <span class="case-page-stat__label">Clothing</span>
               <span class="case-page-stat__value">{{ clothing }}</span>
             </div>
           {% endif %}
           {% if travel_context != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item case-page-overview__item--wide">
               <span class="case-page-stat__label">Travel Context</span>
               <span class="case-page-stat__value">{{ travel_context }}</span>
             </div>
           {% endif %}
           {% if contact_instruction != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item case-page-overview__item--wide">
               <span class="case-page-stat__label">Official Contact</span>
               <span class="case-page-stat__value">{{ contact_instruction }}</span>
             </div>
           {% endif %}
           {% if source_name != blank %}
-            <div class="case-page-stat">
+            <div class="case-page-stat case-page-overview__item">
               <span class="case-page-stat__label">Source</span>
               <span class="case-page-stat__value">
                 {% if source_url != blank %}

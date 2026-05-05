@@ -5,7 +5,7 @@ import { getBoostedCases } from '../lib/missing-alerts-boosts.mjs'
 import { countrySlugFromCode } from '../lib/missing-alerts-country-map.mjs'
 import { getPublicCaseImage } from '../lib/missing-alerts-photo-policy.mjs'
 import { canListAsActive, toPublicCase } from '../lib/missing-alerts-public-case-mapper.mjs'
-import { scanFixtureCases, scannerHealthcheck } from '../lib/missing-alerts-scanner.mjs'
+import { scanFixtureCases, scannerHealthcheck, scannerSourceReport } from '../lib/missing-alerts-scanner.mjs'
 import { assignLocation } from '../lib/scanner/assign-location.mjs'
 import { classifyStatus } from '../lib/scanner/classify-status.mjs'
 import { dedupeCases } from '../lib/scanner/dedupe-cases.mjs'
@@ -56,6 +56,8 @@ for (const countryCode of ['GB', 'IE', 'AU', 'NZ', 'US', 'CA']) {
 assert(sources.some((source) => source.countryCode === countryCode), `source configured for ${countryCode}`)
 }
 assert(sources.some((source) => source.enabled === true && source.sourceName === 'Police Scotland'), 'one verified official source is enabled')
+assert(sources.every((source) => source.maxCasesPerRun), 'each source declares a per-run cap for scalable scanning')
+assert(sources.some((source) => source.pagination === true), 'registry supports paginated/cursor-style sources')
 
 const htmlParsed = parseHtmlCase('<html><head><title>Missing Person Appeal - Test Person</title><meta name="description" content="Police are appealing for help to trace Test Person, last seen in Test City."></head><body></body></html>', {
   sourceUrl: 'https://police.example.test/case-1',
@@ -119,7 +121,13 @@ for (const [key, value] of Object.entries(originalTokenEnv)) {
 const health = await scannerHealthcheck()
 assert.equal(health.sources.total >= 6, true)
 assert.equal(typeof health.shopify.tokenMode, 'string')
+assert.equal(health.scale.idempotentPublishing, true)
+assert.equal(health.scale.batching, true)
 assert(!JSON.stringify(health).includes('test-static-token'))
+const sourceReport = await scannerSourceReport()
+assert.equal(sourceReport.enabled, 1)
+assert(sourceReport.sources.some((source) => source.countryCode === 'GLOBAL'))
+assert(sourceReport.scale.checkpoints, true)
 
 const workflow = await readFile('.github/workflows/missing-alerts-scanner.yml', 'utf8')
 assert(workflow.includes('scanner:run-and-publish'))

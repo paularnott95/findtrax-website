@@ -380,7 +380,9 @@ body.spotlight-open {
   border-color: rgba(255, 72, 72, 0.26);
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.26);
   aspect-ratio: auto !important;
-  min-height: 320px;
+  min-height: 260px;
+  position: relative;
+  overflow: hidden;
 }
 
 .sidebar-card--map .case-location-map-card__eyebrow {
@@ -391,7 +393,31 @@ body.spotlight-open {
 
 .sidebar-card--map .case-location-map-card__frame iframe,
 .sidebar-card--map .case-location-map-card__placeholder {
-  min-height: 320px;
+  min-height: 260px;
+}
+
+.case-location-map-card__frame--fallback,
+.case-location-map-card--fallback-active .case-location-map-card__frame {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 34% 38%, rgba(255, 67, 67, 0.22), transparent 22%),
+    linear-gradient(145deg, rgba(38, 8, 10, 0.98), rgba(9, 9, 11, 0.98));
+  background-size: 28px 28px, 28px 28px, auto, auto;
+}
+
+.case-location-map-card--fallback-active .case-location-map-card__pin {
+  display: none;
+}
+
+.case-location-map-card__placeholder {
+  place-items: center;
+  padding: 18px;
+  color: rgba(255, 236, 228, 0.88);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .case-location-map-card__section {
@@ -1413,19 +1439,23 @@ body.spotlight-open {
 }
 
 .case-page-main-details {
-  margin-top: 4px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
+  margin-top: 8px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(18, 9, 10, 0.96), rgba(9, 9, 10, 0.98));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
 }
 
 .case-page-main-details .case-page-card__title {
-  margin-top: 8px;
+  margin: 4px 0 10px;
+  font-size: clamp(19px, 2vw, 24px);
 }
 
-.case-page-main-details .case-page-stat-list {
-  margin-top: 14px;
+.case-page-overview__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
 /* Remove top boost button above image */
@@ -1679,25 +1709,49 @@ body.spotlight-open {
 .case-page-stat {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.case-page-overview__item--wide {
+  grid-column: 1 / -1;
 }
 
 .case-page-stat__label {
   color: rgba(255, 255, 255, 0.62);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
+  flex: 0 0 auto;
 }
 
 .case-page-stat__value {
   color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
+  line-height: 1.35;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+@media screen and (max-width: 640px) {
+  .case-page-overview__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .case-page-stat {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .case-page-stat__value {
+    text-align: left;
+  }
 }
 
 .case-page-plan-box {

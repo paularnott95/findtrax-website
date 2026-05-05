@@ -12,6 +12,8 @@
     "scanner:publish": "node scripts/publish-scanned-cases-to-shopify.mjs",
     "scanner:run-and-publish": "node scripts/scanner-run-and-publish.mjs",
     "scanner:import-url": "node scripts/import-official-url.mjs",
+    "scanner:import-batch": "node scripts/import-official-url-batch.mjs",
+    "scanner:source-report": "node scripts/scanner-source-report.mjs",
     "validate-content": "node scripts/validate-content.mjs",
     "route-check": "node scripts/route-check.mjs",
     "lint": "node scripts/validate-content.mjs",

@@ -143,3 +143,15 @@ Using the adjacent dashboard env values without printing secrets, the direct off
 - `https://missingalerts.com/blogs/missing-persons/jan-hussain`
 
 This proves Shopify publishing is possible today when token credentials are supplied to the scanner runtime. It does not make scheduled automation live until the workflow is present on the default branch and the required GitHub secrets are configured.
+
+## 2026-05-05 live Shopify route cache finding
+
+The scanner publisher can create and update verified Shopify blog articles, including Jan Hussain. During this pass the original stale Jan Hussain article was moved to `jan-hussain-legacy-20260505164449`, a fresh scanner-published article was created at `jan-hussain`, and a second verified article route was tested at `jan-hussain-live`.
+
+Findings:
+- `/blogs/missing-persons/jan-hussain-live` renders the updated live theme and enriched article data: official image, alert bell, no old `LOCATION CONTEXT` box, and the case map/last-seen panel.
+- `/blogs/missing-persons/jan-hussain` continues to return an older cached HTML document that references an old `case-notifications.js` asset version and still contains the old `LOCATION CONTEXT` block, even after the article object behind that handle was moved, recreated, republished, and assigned `template_suffix=default`.
+- Cloudflare API purge was attempted through the available Cloudflare connector, but the connector returned `Auth required`, so the stale edge/page cache could not be purged from this environment.
+
+Required remaining production action:
+- Purge Cloudflare/edge cache for `https://missingalerts.com/blogs/missing-persons/jan-hussain`, `https://missingalerts.com/`, and the stale `case-notifications.js?v=59227700369652924891777541746` asset URL, or provide Cloudflare credentials/API access so the purge can be executed.

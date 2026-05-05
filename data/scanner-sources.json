@@ -12,6 +12,10 @@
     "parser": "html",
     "trustLevel": "official-public",
     "rateLimit": "single official appeal URL, safe for scheduled re-check",
+    "maxCasesPerRun": 1,
+    "concurrencyGroup": "police-scotland",
+    "pagination": false,
+    "checkpointKey": "police-scotland-jan-hussain",
     "notes": "Enabled as a verified official Police Scotland appeal URL. Used to prove scheduled scanner import/update into Shopify while broader source feeds remain disabled."
   },
   {
@@ -27,6 +31,9 @@
     "parser": "html",
     "trustLevel": "trusted-public-charity",
     "rateLimit": "manual approval required before scheduled crawling",
+    "maxCasesPerRun": 100,
+    "concurrencyGroup": "missing-people-uk",
+    "pagination": true,
     "notes": "Disabled until an approved feed/API or crawling permission is configured."
   },
   {
@@ -42,6 +49,9 @@
     "parser": "html",
     "trustLevel": "official-public",
     "rateLimit": "manual approval required before scheduled crawling",
+    "maxCasesPerRun": 100,
+    "concurrencyGroup": "garda",
+    "pagination": true,
     "notes": "Disabled until a stable official feed or approved crawl target is configured."
   },
   {
@@ -57,6 +67,9 @@
     "parser": "html",
     "trustLevel": "official-public",
     "rateLimit": "manual approval required before scheduled crawling",
+    "maxCasesPerRun": 100,
+    "concurrencyGroup": "australia-nmpcc",
+    "pagination": true,
     "notes": "Disabled until a reliable public endpoint or approved access method is configured."
   },
   {
@@ -72,6 +85,9 @@
     "parser": "html",
     "trustLevel": "official-public",
     "rateLimit": "manual approval required before scheduled crawling",
+    "maxCasesPerRun": 100,
+    "concurrencyGroup": "nz-police",
+    "pagination": true,
     "notes": "Disabled until missing-person filtering is configured safely."
   },
   {
@@ -88,6 +104,9 @@
     "parser": "json",
     "trustLevel": "official-public",
     "rateLimit": "requires approved access",
+    "maxCasesPerRun": 500,
+    "concurrencyGroup": "namus",
+    "pagination": true,
     "notes": "Disabled because public API credentials/approved access are not configured."
   },
   {
@@ -103,6 +122,9 @@
     "parser": "html",
     "trustLevel": "official-public",
     "rateLimit": "manual approval required before scheduled crawling",
+    "maxCasesPerRun": 100,
+    "concurrencyGroup": "rcmp",
+    "pagination": true,
     "notes": "Disabled until an approved feed/API or safe crawler target is configured."
   },
   {
@@ -118,6 +140,9 @@
     "parser": "json",
     "trustLevel": "official-public",
     "rateLimit": "requires endpoint review",
+    "maxCasesPerRun": 500,
+    "concurrencyGroup": "interpol",
+    "pagination": true,
     "notes": "Disabled until a reliable approved public endpoint is configured."
   }
 ]

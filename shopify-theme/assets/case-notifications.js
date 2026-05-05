@@ -992,6 +992,87 @@
   loadBackendFollows();
 
   function applyCasePageFinalPolish() {
+    var handle = normalizeHandle('', window.location.pathname);
+    var verifiedCaseFixes = {
+      'jan-hussain': {
+        name: 'Jan Hussain',
+        status: 'ACTIVE',
+        age: '30',
+        country: 'United Kingdom',
+        cityRegion: 'Glasgow, Scotland',
+        lastSeen: 'Croftfoot Road area, south-east Glasgow, Scotland, United Kingdom',
+        lastSeenAt: 'Wednesday, 25 March, 2026',
+        description: 'Around 5ft 7in, with shoulder-length brown hair, and of medium build.',
+        clothing: 'Brown trousers and a grey t-shirt.',
+        travel: 'Believed to have travelled from Birmingham to south-east Glasgow.',
+        contact: 'Contact Police Scotland on 101 quoting reference 2424 of 30 March, 2026.',
+        sourceName: 'Police Scotland',
+        sourceUrl: 'https://www.scotland.police.uk/what-s-happening/news/2026/april/appeal-to-help-trace-jan-hussain-believed-to-have-travelled-to-glasgow/',
+        image: 'https://cdn.shopify.com/s/files/1/1036/9502/4288/articles/jan-hussain_3695dc81-c697-49f5-84a2-ae0c12fc3d8d.png?v=1777999497',
+        lat: '55.816',
+        lng: '-4.229'
+      }
+    };
+    var fix = verifiedCaseFixes[handle];
+
+    if (fix) {
+      var heroImage = document.querySelector('.case-page-main-image-shell img.case-page-main-image, .case-page-main-image-shell img');
+      if (heroImage) {
+        heroImage.src = fix.image;
+        heroImage.alt = fix.name + ' official public appeal image';
+        heroImage.loading = 'eager';
+        heroImage.fetchPriority = 'high';
+      }
+
+      var details = document.querySelector('.case-page-main-details');
+      if (details) {
+        details.className = 'case-page-main-details case-page-overview';
+        details.setAttribute('aria-label', 'Case overview');
+        details.innerHTML =
+          '<div class="case-page-card__eyebrow">Key points</div>' +
+          '<h2 class="case-page-card__title">Case Overview</h2>' +
+          '<div class="case-page-overview__grid">' +
+          caseOverviewItem('Status', fix.status) +
+          caseOverviewItem('Last Seen', fix.lastSeen, true) +
+          caseOverviewItem('Last Seen Time', fix.lastSeenAt) +
+          caseOverviewItem('Age', fix.age) +
+          caseOverviewItem('Country', fix.country) +
+          caseOverviewItem('Location', fix.cityRegion) +
+          caseOverviewItem('Description', fix.description, true) +
+          caseOverviewItem('Clothing', fix.clothing, true) +
+          caseOverviewItem('Travel Context', fix.travel, true) +
+          caseOverviewItem('Official Contact', fix.contact, true) +
+          '<div class="case-page-stat case-page-overview__item"><span class="case-page-stat__label">Source</span><span class="case-page-stat__value"><a href="' + fix.sourceUrl + '" target="_blank" rel="noopener noreferrer">' + escapeCaseHtml(fix.sourceName) + '</a></span></div>' +
+          '</div>';
+      }
+
+      var mapCard = document.querySelector('.case-location-map-card--standalone');
+      if (!mapCard && details) {
+        mapCard = document.createElement('section');
+        mapCard.className = 'case-location-map-card case-location-map-card--standalone sidebar-card sidebar-card--map';
+        details.insertAdjacentElement('afterend', mapCard);
+      }
+      if (mapCard) {
+        var lat = Number(fix.lat);
+        var lng = Number(fix.lng);
+        var mapSrc = 'https://www.openstreetmap.org/export/embed.html?bbox=' +
+          encodeURIComponent((lng - 0.02) + ',' + (lat - 0.015) + ',' + (lng + 0.02) + ',' + (lat + 0.015)) +
+          '&layer=mapnik&marker=' + encodeURIComponent(fix.lat + ',' + fix.lng);
+        mapCard.setAttribute('data-map-lat', fix.lat);
+        mapCard.setAttribute('data-map-lng', fix.lng);
+        mapCard.setAttribute('data-map-query', fix.lastSeen);
+        mapCard.classList.remove('case-location-map-card--fallback-active');
+        mapCard.innerHTML =
+          '<div class="case-location-map-card__eyebrow">Last Seen Location</div>' +
+          '<div class="case-location-map-card__frame">' +
+          '<iframe title="Approximate public last seen area map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="' + mapSrc + '"></iframe>' +
+          '<div class="case-location-map-card__pin" aria-hidden="true"></div>' +
+          '</div>' +
+          '<div class="case-location-map-card__location"><strong>Approximate public last-seen area</strong><span>' + escapeCaseHtml(fix.lastSeen) + '</span></div>' +
+          '<div class="case-location-map-card__meta">Coordinates are approximate and based only on public source information.</div>';
+      }
+    }
+
     var imageShell = document.querySelector('.case-page-main-image-shell');
     if (imageShell && !imageShell.querySelector('.case-image-alert-bell')) {
       var existingHeroButton = document.querySelector('.case-notify-button--hero, .js-case-notify-button');
@@ -1029,7 +1110,20 @@
     }
   }
 
+  function caseOverviewItem(label, value, wide) {
+    if (!value) return '';
+    return '<div class="case-page-stat case-page-overview__item' + (wide ? ' case-page-overview__item--wide' : '') + '"><span class="case-page-stat__label">' + escapeCaseHtml(label) + '</span><span class="case-page-stat__value">' + escapeCaseHtml(value) + '</span></div>';
+  }
+
+  function escapeCaseHtml(value) {
+    return String(value || '').replace(/[&<>"']/g, function(char) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
+    });
+  }
+
   applyCasePageFinalPolish();
+  window.setTimeout(applyCasePageFinalPolish, 300);
+  window.setTimeout(applyCasePageFinalPolish, 1200);
 
   // Backend hook: POST /api/notifications/follow-case
   // Future backend hook: POST /api/notifications/mobile-case-alert

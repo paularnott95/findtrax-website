@@ -1,5 +1,5 @@
 {
-  "lastScanAt": "2026-05-05T16:06:08.144Z",
+  "lastScanAt": "2026-05-05T16:59:46.189Z",
   "importedCount": 0,
   "publishableCount": 1,
   "reviewCount": 0,
@@ -7,5 +7,162 @@
   "duplicateCount": 1,
   "errorCount": 0,
   "enabledSourceCount": 1,
+  "queueDepth": 1,
+  "concurrency": 3,
+  "sourceCount": 8,
+  "sourceRunCount": 1,
+  "perSource": {
+    "Police Scotland|GB": {
+      "sourceName": "Police Scotland",
+      "countryCode": "GB",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 1,
+      "errors": 0
+    },
+    "Missing People|GB": {
+      "sourceName": "Missing People",
+      "countryCode": "GB",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "An Garda Siochana|IE": {
+      "sourceName": "An Garda Siochana",
+      "countryCode": "IE",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "National Missing Persons Coordination Centre|AU": {
+      "sourceName": "National Missing Persons Coordination Centre",
+      "countryCode": "AU",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "New Zealand Police|NZ": {
+      "sourceName": "New Zealand Police",
+      "countryCode": "NZ",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "NamUs|US": {
+      "sourceName": "NamUs",
+      "countryCode": "US",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "Royal Canadian Mounted Police|CA": {
+      "sourceName": "Royal Canadian Mounted Police",
+      "countryCode": "CA",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "INTERPOL|GLOBAL": {
+      "sourceName": "INTERPOL",
+      "countryCode": "GLOBAL",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "Police Scotland Jan Hussain official appeal|GB": {
+      "sourceName": "Police Scotland Jan Hussain official appeal",
+      "countryCode": "GB",
+      "fetched": 1,
+      "parsed": 1,
+      "skipped": 0,
+      "errors": 0
+    },
+    "Missing People UK public appeals|GB": {
+      "sourceName": "Missing People UK public appeals",
+      "countryCode": "GB",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 1,
+      "errors": 0
+    },
+    "Garda missing-person appeals|IE": {
+      "sourceName": "Garda missing-person appeals",
+      "countryCode": "IE",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 1,
+      "errors": 0
+    },
+    "Australian National Missing Persons register|AU": {
+      "sourceName": "Australian National Missing Persons register",
+      "countryCode": "AU",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 1,
+      "errors": 0
+    },
+    "New Zealand Police missing-person releases|NZ": {
+      "sourceName": "New Zealand Police missing-person releases",
+      "countryCode": "NZ",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 1,
+      "errors": 0
+    },
+    "NamUs public cases|US": {
+      "sourceName": "NamUs public cases",
+      "countryCode": "US",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 1,
+      "errors": 0
+    },
+    "RCMP missing-person notices|CA": {
+      "sourceName": "RCMP missing-person notices",
+      "countryCode": "CA",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 1,
+      "errors": 0
+    },
+    "INTERPOL Yellow Notices|GLOBAL": {
+      "sourceName": "INTERPOL Yellow Notices",
+      "countryCode": "GLOBAL",
+      "fetched": 0,
+      "parsed": 0,
+      "skipped": 1,
+      "errors": 0
+    }
+  },
+  "perCountry": {
+    "GB": {
+      "seen": 1,
+      "publishable": 1,
+      "review": 0,
+      "skipped": 0
+    }
+  },
+  "scale": {
+    "concurrencyDefault": 3,
+    "sourceIsolation": true,
+    "idempotentPublishing": true,
+    "duplicateChecks": [
+      "sourceUrl",
+      "externalId",
+      "name+missingSince+countryCode"
+    ],
+    "batching": true,
+    "retryBackoff": true,
+    "checkpoints": true,
+    "enabledSourceCount": 1,
+    "disabledSourceCount": 7
+  },
   "notes": []
 }
