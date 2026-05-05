@@ -23,6 +23,7 @@
 {% assign country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | default: country_scope | upcase %}
 {% assign country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | default: '' %}
 {% assign placeholder_image = 'missing-person-silhouette.svg' | asset_url %}
+{% assign public_photo_url = article.metafields.custom.public_photo_url.value | default: article.metafields.custom.public_photo_url | default: article.metafields.custom.source_image_url.value | default: article.metafields.custom.source_image_url | default: article.metafields.custom.photo_url.value | default: article.metafields.custom.photo_url | strip %}
 {% assign case_handle_prefix = article.blog.handle | default: 'missing-persons' %}
 {% assign notify_case_handle = case_handle_prefix | append: '/' | append: article.handle %}
 {% assign public_case_handle = article.handle | downcase %}
@@ -133,6 +134,15 @@
         height="700"
         class="bp-card__image{% if is_found_safe_case %} bp-card__image--found-safe{% endif %}"
       >
+    {% elsif public_photo_url != blank %}
+      <img
+        src="{{ public_photo_url | escape }}"
+        alt="{{ article.title | escape }}"
+        loading="lazy"
+        width="700"
+        height="700"
+        class="bp-card__image{% if is_found_safe_case %} bp-card__image--found-safe{% endif %}"
+      >
     {% else %}
       <img
         src="{{ placeholder_image }}"
@@ -220,7 +230,7 @@
         data-case-handle="{{ notify_case_handle | escape }}"
         data-case-url="{{ article.url }}"
         data-case-id="{{ article.id }}"
-        data-case-image="{% if article.image %}{{ article.image | image_url: width: 600 }}{% endif %}"
+        data-case-image="{% if article.image %}{{ article.image | image_url: width: 600 }}{% elsif public_photo_url != blank %}{{ public_photo_url | escape }}{% endif %}"
       >
         <span class="case-card__follow-icon" aria-hidden="true">🔔</span>
         <span class="case-card__follow-label case-notify-button__text">Follow</span>

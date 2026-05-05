@@ -45,5 +45,11 @@ assert(!countrySearchSection.includes('FindTrax'), 'Country Search does not leak
 const seoAudit = JSON.parse(await readFile('data/seo-page-audit.json', 'utf8'))
 assert(seoAudit.summary.generatedSitemapAssetUrlCount > 1000, 'SEO audit records mass generated sitemap URL inventory')
 assert(Array.isArray(seoAudit.pages), 'SEO audit contains page records')
+const patternAudit = JSON.parse(await readFile('data/url-pattern-audit.json', 'utf8'))
+assert(patternAudit.summary.estimatedUrlCountAffected >= seoAudit.summary.generatedSitemapAssetUrlCount, 'pattern audit covers generated URL inventory')
+const canonicalMap = JSON.parse(await readFile('data/canonical-map.json', 'utf8'))
+assert(canonicalMap.entries.some((entry) => entry.url.includes('/pages/country-search') && entry.canonicalTarget.endsWith('/pages/country-intelligence')), 'Country Search canonical points to Country Intelligence')
+const noindexPatterns = JSON.parse(await readFile('data/noindex-patterns.json', 'utf8'))
+assert(noindexPatterns.patterns.some((pattern) => pattern.patternName.includes('generated-location')), 'generated location pages are noindex/disallow classified')
 
 console.log('SEO validation passed')

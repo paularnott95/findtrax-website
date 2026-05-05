@@ -129,8 +129,32 @@
         assign display_page_title = 'Country Intelligence'
       elsif request.page_type == 'page' and page.handle == 'country-intelligence'
         assign display_page_title = 'Country Intelligence'
+      elsif request.page_type == 'blog' and blog.handle == 'missing-persons'
+        assign display_page_title = 'Latest Missing Person Appeals'
+      elsif request.page_type == 'blog' and blog.handle == 'found-safe'
+        assign display_page_title = 'Found Safe Updates'
+      elsif request.page_type == 'blog' and blog.handle == 'missing-person-advice'
+        assign display_page_title = 'Missing Person Advice Articles'
       elsif is_location_seo_request
         assign display_page_title = location_seo_title
+      endif
+      assign ma_meta_description = page_description
+      if request.path == '/'
+        assign ma_meta_description = 'Missing Alerts publishes source-backed missing-person appeals, found-safe updates, country intelligence, and practical advice to help people share urgent public information safely.'
+      elsif request.page_type == 'page' and page.handle == 'missing-person-advice'
+        assign ma_meta_description = 'Practical Missing Alerts guidance for reporting a missing person, sharing appeals safely, preserving CCTV or sightings, supporting families, and finding official country links.'
+      elsif request.page_type == 'page' and page.handle == 'country-search'
+        assign ma_meta_description = 'Search Missing Alerts country intelligence for official reporting links, active case guidance, country-specific advice, and safe sharing information.'
+      elsif request.page_type == 'page' and page.handle == 'country-intelligence'
+        assign ma_meta_description = 'Missing Alerts Country Intelligence brings together country-specific missing-person guidance, official reporting links, active case context, and safe sharing advice.'
+      elsif request.page_type == 'blog' and blog.handle == 'missing-persons'
+        assign ma_meta_description = 'Browse active public missing-person appeals listed by Missing Alerts with source attribution, country information, location context, and safe sharing guidance.'
+      elsif request.page_type == 'blog' and blog.handle == 'found-safe'
+        assign ma_meta_description = 'View Missing Alerts found-safe updates with privacy-protected presentation, source attribution, and guidance on closing or updating public appeals.'
+      elsif request.page_type == 'blog' and blog.handle == 'missing-person-advice'
+        assign ma_meta_description = 'Read Missing Alerts advice articles covering first steps, reporting, safe sharing, sightings, CCTV, family support, and country-specific guidance.'
+      elsif request.page_type == 'blog'
+        assign ma_meta_description = 'Read Missing Alerts updates, public safety guidance, and source-backed information about missing-person appeals and response workflows.'
       endif
     -%}
 
@@ -143,8 +167,8 @@
 
     {% if is_location_seo_request %}
       <meta name="description" content="{{ location_seo_description | escape }}">
-    {% elsif page_description %}
-      <meta name="description" content="{{ page_description | escape }}">
+    {% elsif ma_meta_description %}
+      <meta name="description" content="{{ ma_meta_description | escape }}">
     {% endif %}
 
     {% render 'meta-tags' %}

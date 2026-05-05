@@ -1,0 +1,606 @@
+{
+  "generatedAt": "2026-05-05T21:38:54.401Z",
+  "summary": {
+    "patternCount": 17,
+    "estimatedUrlCountAffected": 730855,
+    "highSeoRiskPatterns": 12,
+    "highAdsenseRiskPatterns": 11
+  },
+  "patterns": [
+    {
+      "patternName": "homepage",
+      "exampleUrls": [
+        "https://missingalerts.com"
+      ],
+      "sampledCount": 1,
+      "estimatedAffectedUrlCount": 1,
+      "routeSource": "templates/index.json",
+      "dataSource": "Shopify theme/page output",
+      "statusCodes": {
+        "200": 1
+      },
+      "indexDecisions": {
+        "index": 1
+      },
+      "titlePatterns": [
+        "Missing people"
+      ],
+      "metaDescriptionPatterns": [
+        ""
+      ],
+      "wordCountSamples": [
+        2640
+      ],
+      "issues": [
+        "missing-meta-description"
+      ],
+      "recommendedAction": "keep/enrich/index",
+      "seoRisk": "low",
+      "adsenseRisk": "low",
+      "averageWordCount": 2640
+    },
+    {
+      "patternName": "advice-hub",
+      "exampleUrls": [
+        "https://missingalerts.com/pages/missing-person-advice"
+      ],
+      "sampledCount": 1,
+      "estimatedAffectedUrlCount": 1,
+      "routeSource": "templates/page.missing-person-advice.json",
+      "dataSource": "Shopify advice pages/blog articles",
+      "statusCodes": {
+        "200": 1
+      },
+      "indexDecisions": {
+        "index": 1
+      },
+      "titlePatterns": [
+        "Missing Person Advice Hub &ndash; Missing people"
+      ],
+      "metaDescriptionPatterns": [
+        ""
+      ],
+      "wordCountSamples": [
+        1186
+      ],
+      "issues": [
+        "missing-meta-description"
+      ],
+      "recommendedAction": "keep/enrich/index",
+      "seoRisk": "low",
+      "adsenseRisk": "low",
+      "averageWordCount": 1186
+    },
+    {
+      "patternName": "country-intelligence",
+      "exampleUrls": [
+        "https://missingalerts.com/pages/country-intelligence"
+      ],
+      "sampledCount": 1,
+      "estimatedAffectedUrlCount": 1,
+      "routeSource": "templates/page.country-intelligence.json",
+      "dataSource": "data/country-profiles.json and Shopify page templates",
+      "statusCodes": {
+        "200": 1
+      },
+      "indexDecisions": {
+        "index": 1
+      },
+      "titlePatterns": [
+        "Country Intelligence | Missing Alerts &ndash; Missing people"
+      ],
+      "metaDescriptionPatterns": [
+        "Search country-specific missing-person reporting links, active source-backed cases, safe sharing guidance, and Missing Alerts country pages."
+      ],
+      "wordCountSamples": [
+        374
+      ],
+      "issues": [],
+      "recommendedAction": "keep/enrich/index",
+      "seoRisk": "low",
+      "adsenseRisk": "low",
+      "averageWordCount": 374
+    },
+    {
+      "patternName": "legacy-country-search",
+      "exampleUrls": [
+        "https://missingalerts.com/pages/country-search"
+      ],
+      "sampledCount": 1,
+      "estimatedAffectedUrlCount": 1,
+      "routeSource": "templates/page.country-search.json",
+      "dataSource": "data/country-profiles.json and Shopify page templates",
+      "statusCodes": {
+        "200": 1
+      },
+      "indexDecisions": {
+        "index": 1
+      },
+      "titlePatterns": [
+        "Country Search &ndash; Missing people"
+      ],
+      "metaDescriptionPatterns": [
+        "Use the country search controls below to find Missing Alerts country guidance, official reporting links, and public case pages."
+      ],
+      "wordCountSamples": [
+        757
+      ],
+      "issues": [],
+      "recommendedAction": "canonicalize-to-country-intelligence",
+      "seoRisk": "low",
+      "adsenseRisk": "low",
+      "averageWordCount": 757
+    },
+    {
+      "patternName": "unknown",
+      "exampleUrls": [
+        "https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584",
+        "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952",
+        "https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288"
+      ],
+      "sampledCount": 3,
+      "estimatedAffectedUrlCount": 3,
+      "routeSource": "unknown",
+      "dataSource": "Shopify theme/page output",
+      "statusCodes": {
+        "200": 3
+      },
+      "indexDecisions": {
+        "noindex": 3
+      },
+      "titlePatterns": [
+        ""
+      ],
+      "metaDescriptionPatterns": [
+        ""
+      ],
+      "wordCountSamples": [
+        53,
+        168,
+        3
+      ],
+      "issues": [
+        "missing-title",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "recommendedAction": "manual-review",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 75
+    },
+    {
+      "patternName": "blog-archive",
+      "exampleUrls": [
+        "https://missingalerts.com/blogs/news",
+        "https://missingalerts.com/blogs/missing-persons",
+        "https://missingalerts.com/blogs/case-updates",
+        "https://missingalerts.com/blogs/missing-person-advice",
+        "https://missingalerts.com/blogs/case-updates/donna-keogh-17-middlesbrough",
+        "https://missingalerts.com/blogs/case-updates/joshua-kershaw-21-thailand",
+        "https://missingalerts.com/blogs/case-updates/jay-slater-tenerife",
+        "https://missingalerts.com/blogs/case-updates/nicola-bulley-45-st-michael-s-on-wyre"
+      ],
+      "sampledCount": 8,
+      "estimatedAffectedUrlCount": 8,
+      "routeSource": "Shopify blog",
+      "dataSource": "Shopify theme/page output",
+      "statusCodes": {
+        "200": 7,
+        "429": 1
+      },
+      "indexDecisions": {
+        "redirect-or-remove": 1,
+        "index": 7
+      },
+      "titlePatterns": [
+        "Verifying your connection...",
+        "Missing Persons &ndash; Missing people",
+        "CASE UPDATES &ndash; Missing people",
+        "Missing Person Advice &ndash; Missing people",
+        "DONNA KEOGH, :number – MIDDLESBROUGH &ndash; Missing people"
+      ],
+      "metaDescriptionPatterns": [
+        "",
+        "(CASE UPDATE) Police have made a significant development in the long-running investigation into the disappearance and suspected murder of Donna Keogh, who was just :number years ol",
+        "(DEATH INVESTIGATION UPDATE) Joshua Kershaw, a :number-year-old British man, tragically died in Thailand on :number January :number — just hours after arriving in the country. What",
+        "(CASE UPDATE &amp; “JAY’S LAW” CAMPAIGN) The case of Jay Slater, the British teenager who went missing in Tenerife in June :number, continues to have lasting impact — both through ",
+        "(CASE UPDATE &amp; LEGACY) The disappearance and death of Nicola Bulley became one of the most widely followed missing person cases in the UK in recent years. What began as a routi"
+      ],
+      "wordCountSamples": [
+        19,
+        1495,
+        597,
+        451,
+        1957,
+        2447,
+        2399,
+        2314
+      ],
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "recommendedAction": "quality-gate",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 1460
+    },
+    {
+      "patternName": "found-safe",
+      "exampleUrls": [
+        "https://missingalerts.com/blogs/found-safe",
+        "https://missingalerts.com/blogs/found-safe/shera-lea-wenman-two-children",
+        "https://missingalerts.com/blogs/found-safe/joshua-hope-29-leicestershire",
+        "https://missingalerts.com/blogs/found-safe/missing-girl-12-enfield",
+        "https://missingalerts.com/blogs/found-safe/isabella-12-salford"
+      ],
+      "sampledCount": 5,
+      "estimatedAffectedUrlCount": 5,
+      "routeSource": "Shopify blog/article",
+      "dataSource": "Shopify theme/page output",
+      "statusCodes": {
+        "200": 5
+      },
+      "indexDecisions": {
+        "index": 5
+      },
+      "titlePatterns": [
+        "Found Safe &ndash; Missing people",
+        "SHERA-LEA WENMAN & TWO CHILDREN - CORNWALL &ndash; Missing people",
+        "JOSHUA HOPE, :number- LEICESTERSHIRE &ndash; Missing people",
+        "MISSING GIRL, :number – ENFIELD &ndash; Missing people",
+        "ISABELLA, :number - SALFORD &ndash; Missing people"
+      ],
+      "metaDescriptionPatterns": [
+        "",
+        "A serious missing persons investigation is underway in Newquay, Cornwall, as police urgently appeal for information to locate :number-year-old Shera-Lea Wenman and two seven-year-o",
+        "Police and family are appealing for urgent public assistance to help locate Joshua Hope, aged :number, who has been reported missing from the Hinckley area. Joshua, who is from Wen",
+        "Police are appealing for help to find a :number-year-old girl who is missing from Enfield. She was last seen at around 4am and there is growing concern for her welfare. LAST SEEN D",
+        "Police are urgently appealing for information to help locate Isabella, aged :number, who has been reported missing from the Salford area. Isabella was last seen at approximately :n"
+      ],
+      "wordCountSamples": [
+        447,
+        1108,
+        1112,
+        1110,
+        1099
+      ],
+      "issues": [
+        "missing-meta-description"
+      ],
+      "recommendedAction": "keep/index-if-privacy-safe",
+      "seoRisk": "low",
+      "adsenseRisk": "low",
+      "averageWordCount": 975
+    },
+    {
+      "patternName": "case-article",
+      "exampleUrls": [
+        "https://missingalerts.com/blogs/missing-persons/rachel-reilly-age-unknown-fleetwood",
+        "https://missingalerts.com/blogs/missing-persons/codie-21-bournemouth-weymouth",
+        "https://missingalerts.com/blogs/missing-persons/ethan-macleod-15-aberdeen",
+        "https://missingalerts.com/blogs/missing-persons/amelia-radford",
+        "https://missingalerts.com/blogs/missing-persons/alvin-diaz-72-devon",
+        "https://missingalerts.com/blogs/missing-persons/michael-frison-26-sardinia",
+        "https://missingalerts.com/blogs/missing-persons/isabelle-martinez-15-arlington-texas",
+        "https://missingalerts.com/blogs/missing-persons/candelaria-moreno-34-indiana"
+      ],
+      "sampledCount": 45,
+      "estimatedAffectedUrlCount": 45,
+      "routeSource": "Shopify blog article",
+      "dataSource": "Shopify blog articles and scanner metafields",
+      "statusCodes": {
+        "200": 28,
+        "429": 17
+      },
+      "indexDecisions": {
+        "index": 28,
+        "redirect-or-remove": 17
+      },
+      "titlePatterns": [
+        "RACHEL REILLY– FLEETWOOD &ndash; Missing people",
+        "CODIE (:number) – BOURNEMOUTH &ndash; Missing people",
+        "ETHAN MACLEOD, :number - ABERDEEN &ndash; Missing people",
+        "AMELIA - RADFORD &ndash; Missing people",
+        "ALVIN DIAZ, :number - DEVON &ndash; Missing people"
+      ],
+      "metaDescriptionPatterns": [
+        "Rachel Reilly is currently missing from home, and there are growing concerns for her welfare. Rachel was last seen on Chatsworth Avenue in Fleetwood at approximately :number:30am o",
+        "CODIE (:number) – MISSING FROM BOURNEMOUTH / WEYMOUTH Codie, aged :number, has been reported missing, and officers are carrying out ongoing enquiries to locate her and ensure she i",
+        "Police in Aberdeen are appealing for urgent public assistance to help locate missing :number-year-old Ethan Macleod. Ethan was last seen in the Kittybrewster area of Aberdeen on th",
+        "Police are appealing for urgent public assistance to help locate a missing girl, Amelia, who has been reported missing from the Radford area. Amelia was last seen at approximately ",
+        "Today marks the second anniversary of the disappearance of Alvin Diaz, who went missing from Tavistock, Devon, on :number March :number. Alvin was :number years old at the time he "
+      ],
+      "wordCountSamples": [
+        2629,
+        2669,
+        2677,
+        2694,
+        2656,
+        2644,
+        2659,
+        2676,
+        2698,
+        2586,
+        2705,
+        2653
+      ],
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical"
+      ],
+      "recommendedAction": "keep/index-if-public-active",
+      "seoRisk": "high",
+      "adsenseRisk": "low",
+      "averageWordCount": 1674
+    },
+    {
+      "patternName": "advice-article",
+      "exampleUrls": [
+        "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-goes-missing-in-united-kingdom",
+        "https://missingalerts.com/blogs/missing-person-advice/how-to-prepare-a-missing-person-poster",
+        "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-goes-missing-in-united-states",
+        "https://missingalerts.com/blogs/missing-person-advice/support-steps-for-families-of-missing-people-in-canada",
+        "https://missingalerts.com/blogs/missing-person-advice/how-to-share-a-missing-person-appeal-safely-online-in-australia",
+        "https://missingalerts.com/blogs/missing-person-advice/how-to-report-a-possible-missing-person-sighting-safely-in-ireland",
+        "https://missingalerts.com/blogs/missing-person-advice/how-to-share-a-missing-person-appeal-safely-online-in-france-en",
+        "https://missingalerts.com/blogs/missing-person-advice/missing-person-with-dementia-help-in-france-en"
+      ],
+      "sampledCount": 115,
+      "estimatedAffectedUrlCount": 115,
+      "routeSource": "Shopify advice blog article",
+      "dataSource": "Shopify advice pages/blog articles",
+      "statusCodes": {
+        "200": 60,
+        "429": 55
+      },
+      "indexDecisions": {
+        "index": 60,
+        "redirect-or-remove": 55
+      },
+      "titlePatterns": [
+        "What to do if someone goes missing in United Kingdom &ndash; Missing people",
+        "How to prepare a missing-person poster &ndash; Missing people",
+        "What to do if someone goes missing in United States &ndash; Missing people",
+        "Support steps for families of missing people in Canada &ndash; Missing people",
+        "How to share a missing-person appeal safely online in Australia &ndash; Missing people"
+      ],
+      "metaDescriptionPatterns": [
+        "What to do if someone goes missing in United Kingdom What to do if someone goes missing in United Kingdom is a difficult search to make when time, stress and uncertainty are all pr",
+        "How to prepare a missing-person poster How to prepare a missing-person poster is a difficult search to make when time, stress and uncertainty are all pressing at once. The safest s",
+        "What to do if someone goes missing in United States What to do if someone goes missing in United States is a difficult search to make when time, stress and uncertainty are all pres",
+        "Support steps for families of missing people in Canada Support steps for families of missing people in Canada is a difficult search to make when time, stress and uncertainty are al",
+        "How to share a missing-person appeal safely online in Australia How to share a missing-person appeal safely online in Australia is a difficult search to make when time, stress and "
+      ],
+      "wordCountSamples": [
+        1685,
+        1671,
+        1685,
+        1680,
+        1684,
+        1684,
+        1914,
+        1910,
+        1969,
+        1955,
+        1926,
+        1963
+      ],
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "recommendedAction": "rewrite-or-canonicalize",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 1079
+    },
+    {
+      "patternName": "generated-alert-sitemap-assets",
+      "exampleUrls": [
+        "theme asset: alert-sitemap-001.xml"
+      ],
+      "sampledCount": 0,
+      "estimatedAffectedUrlCount": 73847,
+      "routeSource": "Shopify theme asset sitemap XML",
+      "dataSource": "generated sitemap asset",
+      "statusCodes": {},
+      "indexDecisions": {
+        "noindex": 45000
+      },
+      "titlePatterns": [],
+      "metaDescriptionPatterns": [],
+      "wordCountSamples": [],
+      "issues": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "recommendedAction": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 0
+    },
+    {
+      "patternName": "generated-cluster-sitemap-assets",
+      "exampleUrls": [
+        "theme asset: cluster-sitemap-001.xml"
+      ],
+      "sampledCount": 0,
+      "estimatedAffectedUrlCount": 73847,
+      "routeSource": "Shopify theme asset sitemap XML",
+      "dataSource": "generated sitemap asset",
+      "statusCodes": {},
+      "indexDecisions": {
+        "noindex": 45000
+      },
+      "titlePatterns": [],
+      "metaDescriptionPatterns": [],
+      "wordCountSamples": [],
+      "issues": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "recommendedAction": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 0
+    },
+    {
+      "patternName": "generated-other-sitemap-assets",
+      "exampleUrls": [
+        "theme asset: country-sitemap-001.xml"
+      ],
+      "sampledCount": 0,
+      "estimatedAffectedUrlCount": 37555,
+      "routeSource": "Shopify theme asset sitemap XML",
+      "dataSource": "generated sitemap asset",
+      "statusCodes": {},
+      "indexDecisions": {
+        "noindex": 31
+      },
+      "titlePatterns": [],
+      "metaDescriptionPatterns": [],
+      "wordCountSamples": [],
+      "issues": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "recommendedAction": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 0
+    },
+    {
+      "patternName": "generated-guide-sitemap-assets",
+      "exampleUrls": [
+        "theme asset: guide-sitemap-001.xml"
+      ],
+      "sampledCount": 0,
+      "estimatedAffectedUrlCount": 73847,
+      "routeSource": "Shopify theme asset sitemap XML",
+      "dataSource": "generated sitemap asset",
+      "statusCodes": {},
+      "indexDecisions": {
+        "noindex": 45000
+      },
+      "titlePatterns": [],
+      "metaDescriptionPatterns": [],
+      "wordCountSamples": [],
+      "issues": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "recommendedAction": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 0
+    },
+    {
+      "patternName": "generated-location-sitemap-assets",
+      "exampleUrls": [
+        "theme asset: location-sitemap-001.xml"
+      ],
+      "sampledCount": 0,
+      "estimatedAffectedUrlCount": 73885,
+      "routeSource": "Shopify theme asset sitemap XML",
+      "dataSource": "generated sitemap asset",
+      "statusCodes": {},
+      "indexDecisions": {
+        "noindex": 45000
+      },
+      "titlePatterns": [],
+      "metaDescriptionPatterns": [],
+      "wordCountSamples": [],
+      "issues": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "recommendedAction": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 0
+    },
+    {
+      "patternName": "generated-nearby-sitemap-assets",
+      "exampleUrls": [
+        "theme asset: nearby-sitemap-001.xml"
+      ],
+      "sampledCount": 0,
+      "estimatedAffectedUrlCount": 73847,
+      "routeSource": "Shopify theme asset sitemap XML",
+      "dataSource": "generated sitemap asset",
+      "statusCodes": {},
+      "indexDecisions": {
+        "noindex": 45000
+      },
+      "titlePatterns": [],
+      "metaDescriptionPatterns": [],
+      "wordCountSamples": [],
+      "issues": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "recommendedAction": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 0
+    },
+    {
+      "patternName": "generated-no-case-sitemap-assets",
+      "exampleUrls": [
+        "theme asset: no-case-sitemap-001.xml"
+      ],
+      "sampledCount": 0,
+      "estimatedAffectedUrlCount": 73847,
+      "routeSource": "Shopify theme asset sitemap XML",
+      "dataSource": "generated sitemap asset",
+      "statusCodes": {},
+      "indexDecisions": {
+        "noindex": 45000
+      },
+      "titlePatterns": [],
+      "metaDescriptionPatterns": [],
+      "wordCountSamples": [],
+      "issues": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "recommendedAction": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 0
+    },
+    {
+      "patternName": "generated-translation-sitemap-assets",
+      "exampleUrls": [
+        "theme asset: translation-sitemap-001.xml"
+      ],
+      "sampledCount": 0,
+      "estimatedAffectedUrlCount": 250000,
+      "routeSource": "Shopify theme asset sitemap XML",
+      "dataSource": "generated sitemap asset",
+      "statusCodes": {},
+      "indexDecisions": {
+        "noindex": 45000
+      },
+      "titlePatterns": [],
+      "metaDescriptionPatterns": [],
+      "wordCountSamples": [],
+      "issues": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "recommendedAction": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 0
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { classifyUrlPattern } from '../lib/seo/page-classifier.mjs'
+import { evaluatePageQuality } from '../lib/seo/page-quality.mjs'
+import { buildEnrichmentQueue } from '../lib/seo/enrichment-engine.mjs'
 
 const SITE = process.env.SEO_AUDIT_BASE_URL || 'https://missingalerts.com'
 const MAX_URLS = Number(process.env.SEO_AUDIT_MAX_URLS || 200)
@@ -8,6 +11,11 @@ const OUT_DOC = 'docs/seo-content-audit.md'
 const OUT_INVENTORY = 'data/site-content-inventory.json'
 const OUT_DUPLICATES = 'data/duplicate-page-groups.json'
 const OUT_ACTIONS = 'data/seo-cleanup-actions.json'
+const OUT_PATTERNS = 'data/url-pattern-audit.json'
+const OUT_ENRICHMENT = 'data/enrichment-queue.json'
+const OUT_NOINDEX = 'data/noindex-patterns.json'
+const OUT_CANONICAL = 'data/canonical-map.json'
+const OUT_REDIRECTS = 'data/redirect-recommendations.json'
 
 const sitemapUrls = await collectSitemapUrls(`${SITE}/sitemap.xml`, MAX_URLS)
 const urls = Array.from(new Set([SITE, `${SITE}/pages/missing-person-advice`, `${SITE}/pages/country-intelligence`, `${SITE}/pages/country-search`, ...sitemapUrls])).slice(0, MAX_URLS)
@@ -22,20 +30,24 @@ const duplicateMetaMap = groupDuplicates(pages, 'metaDescription')
 for (const page of pages) {
   page.duplicateGroup = duplicateTitleMap.get(page.title) || null
   if (!page.duplicateGroup && duplicateMetaMap.has(page.metaDescription)) page.duplicateGroup = duplicateMetaMap.get(page.metaDescription)
-  page.indexDecision = decideIndex(page)
+  const quality = evaluatePageQuality(page)
+  Object.assign(page, quality)
 }
 
 const localSitemapInventory = await countLocalGeneratedSitemaps('/Users/paularnott/Desktop/missing-alerts-workspace/shopify-theme/assets')
+const patternAudit = renderPatternAudit(pages, localSitemapInventory)
 const summary = {
   auditedAt: new Date().toISOString(),
   baseUrl: SITE,
   sampledUrlCount: pages.length,
   thinPagesFound: pages.filter((page) => page.issues.includes('thin-content')).length,
   duplicateGroupsFound: new Set(pages.map((page) => page.duplicateGroup).filter(Boolean)).size,
-  noindexRecommended: pages.filter((page) => page.indexDecision === 'noindex').length,
+  noindexRecommended: pages.filter((page) => String(page.indexDecision).startsWith('noindex')).length,
   canonicalRecommended: pages.filter((page) => page.indexDecision === 'canonicalize').length,
   generatedSitemapAssetCount: localSitemapInventory.fileCount,
-  generatedSitemapAssetUrlCount: localSitemapInventory.urlCount
+  generatedSitemapAssetUrlCount: localSitemapInventory.urlCount,
+  estimatedUrlCountAffected: patternAudit.summary.estimatedUrlCountAffected,
+  adsenseRiskPatterns: patternAudit.patterns.filter((item) => item.adsenseRisk !== 'low').length,
 }
 
 await mkdir('data', { recursive: true })
@@ -44,8 +56,13 @@ await writeFile(OUT_JSON, JSON.stringify({ summary, pages }, null, 2))
 await writeFile(OUT_INVENTORY, JSON.stringify(renderInventory(summary, pages, localSitemapInventory), null, 2))
 await writeFile(OUT_DUPLICATES, JSON.stringify(renderDuplicateGroups(pages), null, 2))
 await writeFile(OUT_ACTIONS, JSON.stringify(renderCleanupActions(summary, pages, localSitemapInventory), null, 2))
+await writeFile(OUT_PATTERNS, JSON.stringify(patternAudit, null, 2))
+await writeFile(OUT_ENRICHMENT, JSON.stringify({ generatedAt: summary.auditedAt, queue: buildEnrichmentQueue(pages) }, null, 2))
+await writeFile(OUT_NOINDEX, JSON.stringify(renderNoindexPatterns(patternAudit), null, 2))
+await writeFile(OUT_CANONICAL, JSON.stringify(renderCanonicalMap(pages), null, 2))
+await writeFile(OUT_REDIRECTS, JSON.stringify(renderRedirectRecommendations(pages), null, 2))
 await writeFile(OUT_DOC, renderAuditDoc(summary, pages, localSitemapInventory))
-console.log(`SEO audit wrote ${OUT_JSON}, ${OUT_INVENTORY}, ${OUT_DUPLICATES}, ${OUT_ACTIONS}, and ${OUT_DOC}`)
+console.log(`SEO audit wrote ${OUT_JSON}, pattern reports, cleanup maps, and ${OUT_DOC}`)
 
 async function collectSitemapUrls(url, max, seen = new Set()) {
   if (seen.has(url) || seen.size > max * 2) return []
@@ -78,10 +95,28 @@ async function auditUrl(url) {
     robots: '',
     wordCount: 0,
     template: inferTemplate(url),
+    patternName: '',
+    routeSource: '',
+    dataSource: '',
     indexDecision: 'unknown',
     issues: [],
-    recommendedAction: ''
+    recommendedAction: '',
+    sourceLinksCount: 0,
+    internalLinksCount: 0,
+    brokenLinksCount: 0,
+    imageStatus: 'unknown',
+    officialLinksPresent: false,
+    caseDataPresent: false,
+    countrySpecificBlocksPresent: false,
+    topicSpecificBlocksPresent: false,
+    faqPresent: false,
+    schemaPresent: false,
+    uniqueLocalDataCount: 0,
   }
+  const classified = classifyUrlPattern(url)
+  page.patternName = classified.patternName
+  page.routeSource = classified.template
+  page.recommendedPatternAction = classified.patternAction
   try {
     const res = await fetch(url, { redirect: 'follow' })
     page.status = res.status
@@ -91,6 +126,27 @@ async function auditUrl(url) {
     page.canonical = attrMatch(html, /<link[^>]+rel=["']canonical["'][^>]*>/i, 'href')
     page.robots = attrMatch(html, /<meta[^>]+name=["']robots["'][^>]*>/i, 'content')
     page.wordCount = visibleWordCount(html)
+    const linkStats = inspectLinks(html, url)
+    page.sourceLinksCount = linkStats.sourceLinksCount
+    page.internalLinksCount = linkStats.internalLinksCount
+    page.brokenLinksCount = linkStats.brokenLinksCount
+    page.imageStatus = inspectImages(html)
+    page.officialLinksPresent = /police|gov\.|garda|rcmp|namus|ncmec|missingpersons|official/i.test(html)
+    page.caseDataPresent = /last seen|missing since|source verified|police|appeal/i.test(html)
+    page.countrySpecificBlocksPresent = /country intelligence|emergency|official reporting|safe sharing/i.test(html)
+    page.topicSpecificBlocksPresent = /what not to do|practical steps|sightings|cctv|dashcam|doorbell|family support/i.test(html)
+    page.faqPresent = /faq|frequently asked|application\/ld\+json[\s\S]*FAQPage/i.test(html)
+    page.schemaPresent = /application\/ld\+json/i.test(html)
+    page.uniqueLocalDataCount = [
+      page.officialLinksPresent,
+      page.countrySpecificBlocksPresent,
+      page.topicSpecificBlocksPresent,
+      page.caseDataPresent,
+      page.faqPresent,
+      page.schemaPresent,
+      page.sourceLinksCount > 0,
+      page.internalLinksCount > 2,
+    ].filter(Boolean).length
     if (page.status >= 400) page.issues.push('bad-status')
     if (!page.title) page.issues.push('missing-title')
     if (!page.metaDescription) page.issues.push('missing-meta-description')
@@ -98,6 +154,7 @@ async function auditUrl(url) {
     if (page.wordCount < 180 && !url.includes('/blogs/missing-persons/')) page.issues.push('thin-content')
     if (page.robots.toLowerCase().includes('noindex')) page.issues.push('already-noindex')
     if (html.includes('href="#"') || html.includes('href=""')) page.issues.push('empty-links')
+    if (page.imageStatus === 'broken') page.issues.push('broken-image')
   } catch (error) {
     page.issues.push(`fetch-error:${error.message}`)
   }
@@ -110,6 +167,36 @@ function decideIndex(page) {
   if (page.status >= 400 || page.issues.includes('thin-content')) return 'noindex'
   if (page.duplicateGroup) return 'canonicalize'
   return 'index'
+}
+
+function inspectLinks(html, pageUrl) {
+  const links = [...String(html || '').matchAll(/<a\b[^>]*href=["']([^"']*)["'][^>]*>/gi)].map((match) => match[1])
+  const base = new URL(pageUrl)
+  let internalLinksCount = 0
+  let sourceLinksCount = 0
+  let brokenLinksCount = 0
+  for (const href of links) {
+    if (!href || href === '#') {
+      brokenLinksCount += 1
+      continue
+    }
+    try {
+      const parsed = new URL(href, base)
+      if (parsed.hostname === base.hostname) internalLinksCount += 1
+      else sourceLinksCount += 1
+    } catch {
+      brokenLinksCount += 1
+    }
+  }
+  return { internalLinksCount, sourceLinksCount, brokenLinksCount }
+}
+
+function inspectImages(html) {
+  const tags = [...String(html || '').matchAll(/<img\b[^>]*>/gi)].map((match) => match[0])
+  if (!tags.length) return 'missing'
+  if (tags.some((tag) => /src=["'](?:\s*|#)["']/i.test(tag))) return 'broken'
+  if (tags.some((tag) => /alt=["'][^"']{3,}["']/i.test(tag))) return 'present'
+  return 'present-missing-alt'
 }
 
 function recommendedAction(page) {
@@ -176,6 +263,8 @@ Generated: ${summary.auditedAt}
 - Canonicalization recommended in sample: ${summary.canonicalRecommended}
 - Generated sitemap asset files in theme: ${summary.generatedSitemapAssetCount}
 - Generated sitemap asset URLs in theme: ${summary.generatedSitemapAssetUrlCount}
+- Estimated URL count affected by pattern-level cleanup: ${summary.estimatedUrlCountAffected}
+- AdSense-risk patterns identified: ${summary.adsenseRiskPatterns}
 
 ## Public Page Types
 
@@ -196,7 +285,7 @@ Generated: ${summary.auditedAt}
 
 ## Current Thin-Page Source
 
-The theme contains ${sitemapInventory.fileCount} generated sitemap XML assets with ${sitemapInventory.urlCount} total URL entries. These were the largest thin-page risk because they exposed mass-generated location, translation, alert, guide, and no-case pages outside Shopify's core sitemap quality controls. The live robots template now stops advertising those CDN sitemap assets and disallows the generated asset sitemap patterns.
+The theme contains ${sitemapInventory.fileCount} generated sitemap XML assets with ${sitemapInventory.urlCount} total URL entries. These were the largest thin-page risk because they exposed mass-generated location, translation, alert, guide, and no-case pages outside Shopify's core sitemap quality controls. The robots template now stops advertising those CDN sitemap assets and disallows the generated asset sitemap patterns; the files remain inventoried so they can be deleted from the live theme only through a deliberate non-nodelete Shopify deletion pass.
 
 ## Thin Pages Sample
 
@@ -218,6 +307,157 @@ ${duplicates.map((page) => `- ${page.duplicateGroup}: ${page.url}`).join('\n') |
 
 The six priority countries now have structured profiles. Additional countries should be added only when verified reporting links, emergency guidance, safe sharing notes, and enough local context are available. Until then, generated pages should stay noindexed or absent from sitemap output.
 `
+}
+
+function renderPatternAudit(pages, sitemapInventory) {
+  const byPattern = new Map()
+  for (const page of pages) {
+    const key = page.patternName || page.template || 'unknown'
+    if (!byPattern.has(key)) {
+      byPattern.set(key, {
+        patternName: key,
+        exampleUrls: [],
+        sampledCount: 0,
+        estimatedAffectedUrlCount: 0,
+        routeSource: page.routeSource || page.template || '',
+        dataSource: inferDataSource(key),
+        statusCodes: {},
+        indexDecisions: {},
+        titlePatterns: new Set(),
+        metaDescriptionPatterns: new Set(),
+        wordCountSamples: [],
+        issues: new Set(),
+        recommendedAction: page.recommendedPatternAction || 'quality-gate',
+        seoRisk: 'low',
+        adsenseRisk: 'low',
+      })
+    }
+    const item = byPattern.get(key)
+    item.sampledCount += 1
+    item.estimatedAffectedUrlCount += 1
+    if (item.exampleUrls.length < 8) item.exampleUrls.push(page.url)
+    item.statusCodes[page.status] = (item.statusCodes[page.status] || 0) + 1
+    item.indexDecisions[page.indexDecision] = (item.indexDecisions[page.indexDecision] || 0) + 1
+    item.titlePatterns.add(normalizePattern(page.title))
+    item.metaDescriptionPatterns.add(normalizePattern(page.metaDescription))
+    item.wordCountSamples.push(page.wordCount)
+    for (const issue of page.issues || []) item.issues.add(issue)
+    if (page.adsenseRisk) item.adsenseRisk = 'high'
+    if (page.thinRisk || page.duplicateGroup) item.seoRisk = 'high'
+  }
+
+  for (const file of sitemapInventory.files || []) {
+    const key = generatedSitemapPattern(file.file)
+    if (!byPattern.has(key)) {
+      byPattern.set(key, {
+        patternName: key,
+        exampleUrls: [`theme asset: ${file.file}`],
+        sampledCount: 0,
+        estimatedAffectedUrlCount: file.urls,
+        routeSource: 'Shopify theme asset sitemap XML',
+        dataSource: 'generated sitemap asset',
+        statusCodes: {},
+        indexDecisions: { noindex: file.urls },
+        titlePatterns: [],
+        metaDescriptionPatterns: [],
+        wordCountSamples: [],
+        issues: ['mass-generated-sitemap-asset', 'thin-url-risk'],
+        recommendedAction: 'remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe',
+        seoRisk: 'high',
+        adsenseRisk: 'high',
+      })
+    } else {
+      byPattern.get(key).estimatedAffectedUrlCount += file.urls
+    }
+  }
+
+  const patterns = [...byPattern.values()].map((item) => ({
+    ...item,
+    titlePatterns: [...item.titlePatterns || []].slice(0, 5),
+    metaDescriptionPatterns: [...item.metaDescriptionPatterns || []].slice(0, 5),
+    issues: [...item.issues || []],
+    averageWordCount: item.wordCountSamples?.length ? Math.round(item.wordCountSamples.reduce((sum, value) => sum + value, 0) / item.wordCountSamples.length) : 0,
+    wordCountSamples: item.wordCountSamples?.slice(0, 12) || [],
+  }))
+
+  return {
+    generatedAt: new Date().toISOString(),
+    summary: {
+      patternCount: patterns.length,
+      estimatedUrlCountAffected: patterns.reduce((sum, item) => sum + Number(item.estimatedAffectedUrlCount || 0), 0),
+      highSeoRiskPatterns: patterns.filter((item) => item.seoRisk === 'high').length,
+      highAdsenseRiskPatterns: patterns.filter((item) => item.adsenseRisk === 'high').length,
+    },
+    patterns,
+  }
+}
+
+function renderNoindexPatterns(patternAudit) {
+  return {
+    generatedAt: new Date().toISOString(),
+    patterns: patternAudit.patterns
+      .filter((pattern) => /noindex|remove|disallow|canonical/i.test(pattern.recommendedAction) || pattern.seoRisk === 'high')
+      .map((pattern) => ({
+        patternName: pattern.patternName,
+        estimatedAffectedUrlCount: pattern.estimatedAffectedUrlCount,
+        action: pattern.recommendedAction,
+        reason: pattern.issues,
+        verification: 'Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion.',
+      })),
+  }
+}
+
+function renderCanonicalMap(pages) {
+  return {
+    generatedAt: new Date().toISOString(),
+    entries: pages
+      .filter((page) => page.indexDecision === 'canonicalize' || page.url.includes('/pages/country-search'))
+      .map((page) => ({
+        url: page.url,
+        canonicalTarget: page.url.includes('/pages/country-search') ? 'https://missingalerts.com/pages/country-intelligence' : page.canonical,
+        reason: page.duplicateGroup ? `Duplicate group ${page.duplicateGroup}` : 'Legacy route canonicalized to primary country system',
+      })),
+  }
+}
+
+function renderRedirectRecommendations(pages) {
+  return {
+    generatedAt: new Date().toISOString(),
+    entries: pages
+      .filter((page) => page.indexDecision === 'redirect-or-remove' || page.status >= 400)
+      .map((page) => ({
+        url: page.url,
+        recommendedTarget: 'https://missingalerts.com/pages/missing-person-advice',
+        reason: page.issues.join(', ') || 'Broken or obsolete URL',
+      })),
+  }
+}
+
+function inferDataSource(patternName) {
+  if (patternName.includes('country')) return 'data/country-profiles.json and Shopify page templates'
+  if (patternName.includes('case')) return 'Shopify blog articles and scanner metafields'
+  if (patternName.includes('advice')) return 'Shopify advice pages/blog articles'
+  if (patternName.includes('sitemap')) return 'theme asset XML'
+  return 'Shopify theme/page output'
+}
+
+function generatedSitemapPattern(fileName) {
+  if (fileName.startsWith('translation-sitemap')) return 'generated-translation-sitemap-assets'
+  if (fileName.startsWith('location-sitemap')) return 'generated-location-sitemap-assets'
+  if (fileName.startsWith('nearby-sitemap')) return 'generated-nearby-sitemap-assets'
+  if (fileName.startsWith('alert-sitemap')) return 'generated-alert-sitemap-assets'
+  if (fileName.startsWith('no-case-sitemap')) return 'generated-no-case-sitemap-assets'
+  if (fileName.startsWith('guide-sitemap')) return 'generated-guide-sitemap-assets'
+  if (fileName.startsWith('cluster-sitemap')) return 'generated-cluster-sitemap-assets'
+  return 'generated-other-sitemap-assets'
+}
+
+function normalizePattern(value) {
+  return String(value || '')
+    .replace(/\b\d{1,4}\b/g, ':number')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 180)
 }
 
 function renderInventory(summary, pages, sitemapInventory) {

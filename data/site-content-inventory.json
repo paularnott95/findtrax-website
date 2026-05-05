@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-05T20:07:07.305Z",
+  "generatedAt": "2026-05-05T21:38:54.402Z",
   "totalSampledUrls": 180,
   "generatedSitemapAssetCount": 31,
   "generatedSitemapAssetUrlCount": 730675,
@@ -73,10 +73,13 @@
     {
       "pageType": "blog",
       "sampledCount": 8,
-      "indexableSampleCount": 8,
+      "indexableSampleCount": 7,
       "noindexSampleCount": 0,
       "issues": [
-        "missing-meta-description"
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
       ],
       "exampleUrls": [
         "https://missingalerts.com/blogs/news",
@@ -108,7 +111,7 @@
       "pageType": "case-article",
       "sampledCount": 45,
       "indexableSampleCount": 28,
-      "noindexSampleCount": 17,
+      "noindexSampleCount": 0,
       "issues": [
         "bad-status",
         "missing-meta-description",
@@ -121,13 +124,13 @@
         "https://missingalerts.com/blogs/missing-persons/amelia-radford",
         "https://missingalerts.com/blogs/missing-persons/alvin-diaz-72-devon"
       ],
-      "action": "review/noindex/enrich by pattern"
+      "action": "keep/enrich"
     },
     {
       "pageType": "advice-article",
       "sampledCount": 115,
-      "indexableSampleCount": 59,
-      "noindexSampleCount": 56,
+      "indexableSampleCount": 60,
+      "noindexSampleCount": 0,
       "issues": [
         "bad-status",
         "missing-meta-description",
@@ -141,7 +144,7 @@
         "https://missingalerts.com/blogs/missing-person-advice/support-steps-for-families-of-missing-people-in-canada",
         "https://missingalerts.com/blogs/missing-person-advice/how-to-share-a-missing-person-appeal-safely-online-in-australia"
       ],
-      "action": "review/noindex/enrich by pattern"
+      "action": "keep/enrich"
     }
   ]
 }

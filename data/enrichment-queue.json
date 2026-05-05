@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-05-05T21:38:54.402Z",
+  "queue": [
+    {
+      "url": "https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584",
+      "patternName": "unknown",
+      "currentScore": 26,
+      "indexDecision": "noindex",
+      "priority": "normal",
+      "neededModules": [
+        "unique-local-context",
+        "unique-meta-description",
+        "canonical",
+        "relevant-image-or-safe-fallback"
+      ],
+      "action": "Noindex/remove from sitemap; do not use as ad inventory."
+    },
+    {
+      "url": "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952",
+      "patternName": "unknown",
+      "currentScore": 36,
+      "indexDecision": "noindex",
+      "priority": "normal",
+      "neededModules": [
+        "unique-local-context",
+        "unique-meta-description",
+        "canonical",
+        "relevant-image-or-safe-fallback"
+      ],
+      "action": "Noindex/remove from sitemap; do not use as ad inventory."
+    },
+    {
+      "url": "https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288",
+      "patternName": "unknown",
+      "currentScore": 26,
+      "indexDecision": "noindex",
+      "priority": "normal",
+      "neededModules": [
+        "unique-local-context",
+        "unique-meta-description",
+        "canonical",
+        "relevant-image-or-safe-fallback"
+      ],
+      "action": "Noindex/remove from sitemap; do not use as ad inventory."
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-05T20:07:09.073Z",
+  "generatedAt": "2026-05-05T21:38:54.593Z",
   "totalAdvicePagesSampled": 117,
   "duplicateGroups": [],
   "pages": [
@@ -131,7 +131,7 @@
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-use-cctv-and-doorbell-footage-in-a-missing-person-appeal-in-france-en",
       "title": "How to use CCTV and doorbell footage in a missing-person appeal in Fra &ndash; Missing people",
-      "wordCount": 1938,
+      "wordCount": 1955,
       "duplicateGroup": null,
       "action": "keep-and-monitor",
       "issues": [],
@@ -186,7 +186,7 @@
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-use-cctv-and-doorbell-footage-in-a-missing-person-appeal-in-thailand-en",
       "title": "How to use CCTV and doorbell footage in a missing-person appeal in Tha &ndash; Missing people",
-      "wordCount": 1948,
+      "wordCount": 1965,
       "duplicateGroup": null,
       "action": "keep-and-monitor",
       "issues": [],
@@ -450,7 +450,7 @@
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-south-africa-en",
       "title": "How to gather CCTV and doorbell information for a missing person in So &ndash; Missing people",
-      "wordCount": 2139,
+      "wordCount": 2156,
       "duplicateGroup": null,
       "action": "keep-and-monitor",
       "issues": [],
@@ -615,7 +615,7 @@
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-iran-en",
       "title": "How to gather CCTV and doorbell information for a missing person in Ir &ndash; Missing people",
-      "wordCount": 2129,
+      "wordCount": 2146,
       "duplicateGroup": null,
       "action": "keep-and-monitor",
       "issues": [],
@@ -670,7 +670,7 @@
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-morocco-en",
       "title": "How to gather CCTV and doorbell information for a missing person in Mo &ndash; Missing people",
-      "wordCount": 2129,
+      "wordCount": 2146,
       "duplicateGroup": null,
       "action": "keep-and-monitor",
       "issues": [],
@@ -680,18 +680,13 @@
     },
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uzbekistan-en",
-      "title": "Verifying your connection...",
-      "wordCount": 19,
+      "title": "How to gather CCTV and doorbell information for a missing person in Uz &ndash; Missing people",
+      "wordCount": 2146,
       "duplicateGroup": null,
-      "action": "rewrite-or-noindex",
-      "issues": [
-        "bad-status",
-        "missing-meta-description",
-        "missing-canonical",
-        "thin-content"
-      ],
-      "canonicalTarget": "",
-      "missingImages": true,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uzbekistan-en",
+      "missingImages": false,
       "brokenLinks": false
     },
     {

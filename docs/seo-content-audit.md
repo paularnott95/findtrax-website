@@ -1,6 +1,6 @@
 # Missing Alerts SEO Content Audit
 
-Generated: 2026-05-05T20:07:07.305Z
+Generated: 2026-05-05T21:38:54.402Z
 
 ## Summary
 
@@ -8,10 +8,12 @@ Generated: 2026-05-05T20:07:07.305Z
 - Sampled live URLs: 180
 - Thin pages found in sample: 59
 - Duplicate title/meta groups found in sample: 0
-- Noindex recommended in sample: 76
+- Noindex recommended in sample: 3
 - Canonicalization recommended in sample: 0
 - Generated sitemap asset files in theme: 31
 - Generated sitemap asset URLs in theme: 730675
+- Estimated URL count affected by pattern-level cleanup: 730855
+- AdSense-risk patterns identified: 11
 
 ## Public Page Types
 
@@ -32,14 +34,14 @@ Generated: 2026-05-05T20:07:07.305Z
 
 ## Current Thin-Page Source
 
-The theme contains 31 generated sitemap XML assets with 730675 total URL entries. These were the largest thin-page risk because they exposed mass-generated location, translation, alert, guide, and no-case pages outside Shopify's core sitemap quality controls. The live robots template now stops advertising those CDN sitemap assets and disallows the generated asset sitemap patterns.
+The theme contains 31 generated sitemap XML assets with 730675 total URL entries. These were the largest thin-page risk because they exposed mass-generated location, translation, alert, guide, and no-case pages outside Shopify's core sitemap quality controls. The robots template now stops advertising those CDN sitemap assets and disallows the generated asset sitemap patterns; the files remain inventoried so they can be deleted from the live theme only through a deliberate non-nodelete Shopify deletion pass.
 
 ## Thin Pages Sample
 
-- https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584 (53 words): Noindex until enriched with useful country/topic/case content.
-- https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952 (171 words): Noindex until enriched with useful country/topic/case content.
-- https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288 (3 words): Noindex until enriched with useful country/topic/case content.
-- https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uzbekistan-en (19 words): Redirect to the closest useful page or remove from sitemap.
+- https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584 (53 words): Noindex/remove from sitemap; do not use as ad inventory.
+- https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952 (168 words): Noindex/remove from sitemap; do not use as ad inventory.
+- https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288 (3 words): Noindex/remove from sitemap; do not use as ad inventory.
+- https://missingalerts.com/blogs/news (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-peru-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-angola-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-yemen-en (19 words): Redirect to the closest useful page or remove from sitemap.

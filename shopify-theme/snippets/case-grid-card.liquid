@@ -112,8 +112,11 @@
   assign case_lat = lat | default: article.metafields.custom.location_lat.value | default: article.metafields.custom.location_lat | default: article.metafields.custom.last_seen_lat.value | default: article.metafields.custom.last_seen_lat | default: article.metafields.custom.latitude.value | default: article.metafields.custom.latitude | strip
   assign case_lng = lng | default: article.metafields.custom.location_lng.value | default: article.metafields.custom.location_lng | default: article.metafields.custom.last_seen_lng.value | default: article.metafields.custom.last_seen_lng | default: article.metafields.custom.longitude.value | default: article.metafields.custom.longitude | strip
   assign case_image_url = ''
+  assign case_public_photo_url = article.metafields.custom.public_photo_url.value | default: article.metafields.custom.public_photo_url | default: article.metafields.custom.source_image_url.value | default: article.metafields.custom.source_image_url | default: article.metafields.custom.photo_url.value | default: article.metafields.custom.photo_url | strip
   if article.image
     assign case_image_url = article.image | image_url: width: 360
+  elsif case_public_photo_url != blank
+    assign case_image_url = case_public_photo_url
   endif
   assign case_age = age | default: ''
   assign case_age_numeric = case_age | plus: 0
@@ -128,7 +131,7 @@
   assign case_content = article.content | strip_html | default: ''
   assign case_date_keywords = date_keywords | default: article.published_at | date: '%Y-%m-%d'
   assign has_case_photo = false
-  if article.image
+  if article.image or case_public_photo_url != blank
     assign has_case_photo = true
   endif
   assign blog_handle = blog.handle | default: article.blog.handle | default: 'missing-persons'
@@ -207,6 +210,14 @@
       <img
         src="{{ article.image | image_url: width: 720 }}"
         alt="{{ article.image.alt | default: case_title | escape }}"
+        loading="lazy"
+        width="720"
+        height="540"
+      >
+    {% elsif case_public_photo_url != blank %}
+      <img
+        src="{{ case_public_photo_url | escape }}"
+        alt="{{ case_title | escape }}"
         loading="lazy"
         width="720"
         height="540"

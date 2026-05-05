@@ -1,0 +1,139 @@
+{
+  "generatedAt": "2026-05-05T21:38:54.406Z",
+  "patterns": [
+    {
+      "patternName": "legacy-country-search",
+      "estimatedAffectedUrlCount": 1,
+      "action": "canonicalize-to-country-intelligence",
+      "reason": [],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "unknown",
+      "estimatedAffectedUrlCount": 3,
+      "action": "manual-review",
+      "reason": [
+        "missing-title",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "blog-archive",
+      "estimatedAffectedUrlCount": 8,
+      "action": "quality-gate",
+      "reason": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "case-article",
+      "estimatedAffectedUrlCount": 45,
+      "action": "keep/index-if-public-active",
+      "reason": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "advice-article",
+      "estimatedAffectedUrlCount": 115,
+      "action": "rewrite-or-canonicalize",
+      "reason": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "generated-alert-sitemap-assets",
+      "estimatedAffectedUrlCount": 73847,
+      "action": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "reason": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "generated-cluster-sitemap-assets",
+      "estimatedAffectedUrlCount": 73847,
+      "action": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "reason": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "generated-other-sitemap-assets",
+      "estimatedAffectedUrlCount": 37555,
+      "action": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "reason": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "generated-guide-sitemap-assets",
+      "estimatedAffectedUrlCount": 73847,
+      "action": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "reason": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "generated-location-sitemap-assets",
+      "estimatedAffectedUrlCount": 73885,
+      "action": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "reason": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "generated-nearby-sitemap-assets",
+      "estimatedAffectedUrlCount": 73847,
+      "action": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "reason": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "generated-no-case-sitemap-assets",
+      "estimatedAffectedUrlCount": 73847,
+      "action": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "reason": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
+      "patternName": "generated-translation-sitemap-assets",
+      "estimatedAffectedUrlCount": 250000,
+      "action": "remove from robots/sitemap, disallow, delete in controlled theme cleanup if safe",
+      "reason": [
+        "mass-generated-sitemap-asset",
+        "thin-url-risk"
+      ],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    }
+  ]
+}

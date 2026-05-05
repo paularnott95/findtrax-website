@@ -1,53 +1,72 @@
 {
-  "generatedAt": "2026-05-05T20:05:28.084Z",
+  "generatedAt": "2026-05-05T21:38:15.369Z",
+  "shopifyImageUpdateReady": false,
+  "shopifyImageUpdateBlockedReason": "Shopify Admin credentials or blog target missing in local environment; report generated without mutating live articles.",
   "results": [
+    {
+      "name": "Jan Hussain",
+      "sourceUrl": "https://www.scotland.police.uk/what-s-happening/news/2026/april/appeal-to-help-trace-jan-hussain-believed-to-have-travelled-to-glasgow/",
+      "sourceStatus": 200,
+      "imageFound": true,
+      "extractionMethod": "police-scotland:main-image",
+      "imageUrl": "https://www.scotland.police.uk/spa-media/w51lcjaw/jan-hussain.png?width=247&height=281&mode=max",
+      "candidateCount": 1,
+      "attachedToShopify": false,
+      "fallbackUsed": false,
+      "liveUrl": "",
+      "reason": ""
+    },
     {
       "name": "Vitoria Barreto",
       "sourceUrl": "https://www.missingpeople.org.uk/help-us-find/vitoria-barreto-26-002106",
       "sourceStatus": 200,
-      "imageFound": true,
-      "extractionMethod": "og:image",
-      "imageUrl": "https://www.missingpeople.org.uk/wp-content/uploads/2022/10/appeals_og_img1.jpeg",
-      "candidateCount": 5,
-      "attachedToShopify": true,
-      "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/vitoria-barreto"
+      "imageFound": false,
+      "extractionMethod": "fallback",
+      "imageUrl": "",
+      "candidateCount": 0,
+      "attachedToShopify": false,
+      "fallbackUsed": true,
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/vitoria-barreto",
+      "reason": "no usable public case image found; rejected logos/placeholders/generic site images"
     },
     {
       "name": "Jack Smith",
       "sourceUrl": "https://www.missingpeople.org.uk/help-us-find/jack-smith-25-005166",
       "sourceStatus": 200,
-      "imageFound": true,
-      "extractionMethod": "og:image",
-      "imageUrl": "https://www.missingpeople.org.uk/wp-content/uploads/2022/10/appeals_og_img1.jpeg",
-      "candidateCount": 5,
-      "attachedToShopify": true,
-      "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/jack-smith"
+      "imageFound": false,
+      "extractionMethod": "fallback",
+      "imageUrl": "",
+      "candidateCount": 0,
+      "attachedToShopify": false,
+      "fallbackUsed": true,
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/jack-smith",
+      "reason": "no usable public case image found; rejected logos/placeholders/generic site images"
     },
     {
       "name": "Kian Gillespie",
       "sourceUrl": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/missing-person-appeal-kian-gillespie-22-years-ballinode-sligo-22nd-april-2026.html",
       "sourceStatus": 200,
-      "imageFound": true,
-      "extractionMethod": "img:src",
-      "imageUrl": "https://www.garda.ie/images_upload/garda/fcn/blue_light_square_X.png",
-      "candidateCount": 2,
-      "attachedToShopify": true,
-      "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/kian-gillespie"
+      "imageFound": false,
+      "extractionMethod": "fallback",
+      "imageUrl": "",
+      "candidateCount": 1,
+      "attachedToShopify": false,
+      "fallbackUsed": true,
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/kian-gillespie",
+      "reason": "no usable public case image found; rejected logos/placeholders/generic site images"
     },
     {
       "name": "John Morgan",
       "sourceUrl": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/missing-person-appeal-john-morgan-65-years-rathfarnham-dublin-16-26th-april-2026.html",
       "sourceStatus": 200,
-      "imageFound": true,
-      "extractionMethod": "img:src",
-      "imageUrl": "https://www.garda.ie/images_upload/garda/fcn/blue_light_square_X.png",
-      "candidateCount": 2,
-      "attachedToShopify": true,
-      "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/john-morgan"
+      "imageFound": false,
+      "extractionMethod": "fallback",
+      "imageUrl": "",
+      "candidateCount": 1,
+      "attachedToShopify": false,
+      "fallbackUsed": true,
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/john-morgan",
+      "reason": "no usable public case image found; rejected logos/placeholders/generic site images"
     },
     {
       "name": "Trisha Anne Graf",
@@ -56,10 +75,11 @@
       "imageFound": true,
       "extractionMethod": "og:image",
       "imageUrl": "https://www.missingpersons.gov.au/sites/default/files/styles/og/public/2026-03/Photo_Trisha%20GRAF_NMPCC.jpg?itok=X-XvZ56t",
-      "candidateCount": 5,
-      "attachedToShopify": true,
+      "candidateCount": 2,
+      "attachedToShopify": false,
       "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/trisha-anne-graf"
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/trisha-anne-graf",
+      "reason": ""
     },
     {
       "name": "Joel Anderson",
@@ -68,10 +88,11 @@
       "imageFound": true,
       "extractionMethod": "og:image",
       "imageUrl": "https://www.missingpersons.gov.au/sites/default/files/styles/og/public/2026-02/Joel%20ANDERSON%20%28Recent%20Photo%29.png?itok=GJMDZZ76",
-      "candidateCount": 5,
-      "attachedToShopify": true,
+      "candidateCount": 2,
+      "attachedToShopify": false,
       "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/joel-anderson"
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/joel-anderson",
+      "reason": ""
     },
     {
       "name": "Rowena Walker",
@@ -80,34 +101,37 @@
       "imageFound": true,
       "extractionMethod": "og:image",
       "imageUrl": "https://www.police.govt.nz/sites/default/files/styles/news_main/public/news/%272026-04%27/rowena_1_1.png",
-      "candidateCount": 5,
-      "attachedToShopify": true,
+      "candidateCount": 7,
+      "attachedToShopify": false,
       "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/rowena-walker"
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/rowena-walker",
+      "reason": ""
     },
     {
       "name": "Antoine Richard",
       "sourceUrl": "https://www.police.govt.nz/news/release/update-search-antoine-richard",
       "sourceStatus": 404,
-      "imageFound": true,
-      "extractionMethod": "og:image",
-      "imageUrl": "https://www.police.govt.nz/sites/all/themes/twbs_police_refresh/images/refresh/social/police-emblem.jpg",
-      "candidateCount": 1,
-      "attachedToShopify": true,
-      "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/antoine-richard"
+      "imageFound": false,
+      "extractionMethod": "fallback",
+      "imageUrl": "",
+      "candidateCount": 0,
+      "attachedToShopify": false,
+      "fallbackUsed": true,
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/antoine-richard",
+      "reason": "no usable public case image found; rejected logos/placeholders/generic site images"
     },
     {
       "name": "Sarah Guillen",
       "sourceUrl": "https://www.missingkids.org/poster/NCMC/2046861/1",
       "sourceStatus": 404,
-      "imageFound": true,
-      "extractionMethod": "img:src",
-      "imageUrl": "https://missingkids-p65.adobecqms.net/content/dam/missingkids/homepage/pop-up-family-hugging.jpg",
-      "candidateCount": 4,
-      "attachedToShopify": true,
-      "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/sarah-guillen"
+      "imageFound": false,
+      "extractionMethod": "fallback",
+      "imageUrl": "",
+      "candidateCount": 1,
+      "attachedToShopify": false,
+      "fallbackUsed": true,
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/sarah-guillen",
+      "reason": "no usable public case image found; rejected logos/placeholders/generic site images"
     },
     {
       "name": "Martha Wes Dunn",
@@ -115,35 +139,38 @@
       "sourceStatus": 200,
       "imageFound": true,
       "extractionMethod": "img:src",
-      "imageUrl": "https://missingkids-p65.adobecqms.net/content/dam/missingkids/homepage/pop-up-family-hugging.jpg",
-      "candidateCount": 5,
-      "attachedToShopify": true,
+      "imageUrl": "https://www.missingkids.org/bin/ncmec/poster/image?org=NCMC&caseId=745077&type=participant&md5=5dae1064a795a3d41b8bb25775294f86",
+      "candidateCount": 1,
+      "attachedToShopify": false,
       "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/martha-wes-dunn"
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/martha-wes-dunn",
+      "reason": ""
     },
     {
       "name": "Cody Fieldhouse",
       "sourceUrl": "https://rcmp.ca/en/bc/west-shore/news/2026/05/4352763",
       "sourceStatus": 200,
       "imageFound": true,
-      "extractionMethod": "og:image",
-      "imageUrl": "https://rcmp.ca/themes/custom/poweb/assets/og-default.png",
-      "candidateCount": 4,
-      "attachedToShopify": true,
+      "extractionMethod": "img:src",
+      "imageUrl": "https://rcmp.ca/sites/default/files/styles/large_480x480/public/images/fieldhouse-cody.jpg?itok=5TlWBfue",
+      "candidateCount": 3,
+      "attachedToShopify": false,
       "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/cody-fieldhouse"
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/cody-fieldhouse",
+      "reason": ""
     },
     {
       "name": "Amanda Batchelar",
       "sourceUrl": "https://rcmp.ca/en/bc/kelowna/news/2026/05/4352783",
       "sourceStatus": 200,
       "imageFound": true,
-      "extractionMethod": "og:image",
-      "imageUrl": "https://rcmp.ca/themes/custom/poweb/assets/og-default.png",
-      "candidateCount": 4,
-      "attachedToShopify": true,
+      "extractionMethod": "img:src",
+      "imageUrl": "https://rcmp.ca/sites/default/files/styles/large_480x480/public/images/1000021467.jpg?itok=Ne3h0vQB",
+      "candidateCount": 3,
+      "attachedToShopify": false,
       "fallbackUsed": false,
-      "liveUrl": "https://missingalerts.com/blogs/missing-persons/amanda-batchelar"
+      "liveUrl": "https://missingalerts.com/blogs/missing-persons/amanda-batchelar",
+      "reason": ""
     }
   ]
 }
