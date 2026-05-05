@@ -1,0 +1,46 @@
+name: Missing Alerts scanner
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan-and-publish:
+    runs-on: ubuntu-latest
+    env:
+      SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
+      SHOPIFY_ADMIN_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ADMIN_ACCESS_TOKEN }}
+      SHOPIFY_API_VERSION: ${{ secrets.SHOPIFY_API_VERSION }}
+      SHOPIFY_CASE_BLOG_HANDLE: ${{ secrets.SHOPIFY_CASE_BLOG_HANDLE }}
+      SHOPIFY_CASE_BLOG_ID: ${{ secrets.SHOPIFY_CASE_BLOG_ID }}
+      SCANNER_ADMIN_SECRET: ${{ secrets.SCANNER_ADMIN_SECRET }}
+      GEOCODING_API_KEY: ${{ secrets.GEOCODING_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install
+      - run: npm run scanner:health
+      - run: npm run scanner:run-and-publish
+      - run: npm test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: missing-alerts-scanner-report
+          path: |
+            data/scanner-status.json
+            data/scanner-import-report.json
+            data/scanner-publish-report.json
+            data/scanned-cases-*.json
+      - name: Commit scanner reports
+        run: |
+          git config user.name "Missing Alerts Scanner"
+          git config user.email "scanner@missingalerts.com"
+          git add data/scanner-status.json data/scanner-import-report.json data/scanner-publish-report.json data/scanned-cases-*.json || true
+          git diff --cached --quiet || git commit -m "Update Missing Alerts scanner reports"
+          git push || true
