@@ -96,10 +96,32 @@
       {% assign last_seen_precision = article.metafields.custom.last_seen_precision.value | default: article.metafields.custom.last_seen_precision %}
       {% assign reported_missing_at = article.metafields.custom.reported_missing_at.value | default: article.metafields.custom.reported_missing_at %}
       {% assign age_text = article.metafields.custom.age.value | default: article.metafields.custom.age %}
+      {% assign source_name = article.metafields.custom.source_name.value | default: article.metafields.custom.source_name %}
+      {% assign source_url = article.metafields.custom.source_url.value | default: article.metafields.custom.source_url %}
+      {% assign physical_description = article.metafields.custom.physical_description.value | default: article.metafields.custom.physical_description %}
+      {% assign clothing = article.metafields.custom.clothing.value | default: article.metafields.custom.clothing %}
+      {% assign travel_context = article.metafields.custom.travel_context.value | default: article.metafields.custom.travel_context %}
+      {% assign contact_instruction = article.metafields.custom.contact_instruction.value | default: article.metafields.custom.contact_instruction %}
       {% assign case_reference = article.metafields.custom.police_reference.value | default: article.metafields.custom.police_reference | default: article.metafields.custom.case_reference.value | default: article.metafields.custom.case_reference %}
       {% assign placeholder_image = 'missing-person-silhouette.svg' | asset_url %}
 
       <div class="case-page-main-image-shell case-main-photo-frame">
+        <button
+          type="button"
+          class="case-image-alert-bell case-notify-button js-case-notify-button"
+          data-case-title="{{ article.title | escape }}"
+          data-case-handle="{{ article.handle | escape }}"
+          data-case-url="{{ article.url | escape }}"
+          data-case-id="{{ article.id }}"
+          data-case-image="{% if article.image %}{{ article.image | image_url: width: 600 }}{% endif %}"
+          data-case-location="{{ page_location | escape }}"
+          aria-label="Get alerts on {{ article.title | escape }}"
+          aria-haspopup="dialog"
+          aria-controls="case-notification-modal"
+        >
+          <span class="case-image-alert-bell__icon" aria-hidden="true">🔔</span>
+          <span class="case-image-alert-bell__text">Alerts</span>
+        </button>
         {% if article.image %}
           <img
             srcset="
@@ -151,36 +173,6 @@
           {% endunless %}
         </div>
       </div>
-
-      <section class="case-page-card case-page-card--padded case-page-location-links">
-        <div class="case-page-card__eyebrow">LOCAL CONTEXT</div>
-        <h2 class="case-page-card__title">LOCATION CONTEXT</h2>
-        <p class="case-page-card__copy">
-          {% if case_location_exact_url != blank %}
-            Browse verified Missing Alerts pages connected to {{ page_location | escape }}.
-          {% else %}
-            Use these guidance pages and alert tools to support this case safely.
-          {% endif %}
-        </p>
-        <div class="case-page-location-links__list">
-          {% if case_location_exact_url != blank %}
-            <a href="{{ case_location_exact_url }}">missing people in {{ case_city | default: page_location | escape }}</a>
-          {% endif %}
-          {% if case_location_region_url != blank %}
-            <a href="{{ case_location_region_url }}">missing people in {{ case_region | default: 'this region' | escape }}</a>
-          {% endif %}
-          {% if case_location_country_url != blank %}
-            <a href="{{ case_location_country_url }}">missing people in {{ case_country | default: 'this country' | escape }}</a>
-          {% endif %}
-          {% if case_location_loc != blank %}
-            <a href="/pages/missing-cases-near?loc={{ case_location_loc | escape }}">nearby missing cases around {{ page_location | escape }}</a>
-            <a href="/pages/missing-person-search-guide?loc={{ case_location_loc | escape }}">search guidance for {{ page_location | escape }}</a>
-          {% endif %}
-          <a href="/blogs/missing-person-advice/tagged/cctv-dashcam-doorbell-guidance">CCTV and dashcam advice</a>
-          <a href="/blogs/missing-person-advice/tagged/safe-social-sharing">safe sharing advice</a>
-          <a href="/pages/member-area">sign up for local alerts</a>
-        </div>
-      </section>
 
       {% if extra_images != blank and found_safe == false %}
         <div class="missing-images">
@@ -244,6 +236,42 @@
             <div class="case-page-stat">
               <span class="case-page-stat__label">Reference</span>
               <span class="case-page-stat__value">{{ case_reference }}</span>
+            </div>
+          {% endif %}
+          {% if physical_description != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Description</span>
+              <span class="case-page-stat__value">{{ physical_description }}</span>
+            </div>
+          {% endif %}
+          {% if clothing != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Clothing</span>
+              <span class="case-page-stat__value">{{ clothing }}</span>
+            </div>
+          {% endif %}
+          {% if travel_context != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Travel Context</span>
+              <span class="case-page-stat__value">{{ travel_context }}</span>
+            </div>
+          {% endif %}
+          {% if contact_instruction != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Official Contact</span>
+              <span class="case-page-stat__value">{{ contact_instruction }}</span>
+            </div>
+          {% endif %}
+          {% if source_name != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Source</span>
+              <span class="case-page-stat__value">
+                {% if source_url != blank %}
+                  <a href="{{ source_url }}" target="_blank" rel="nofollow noopener">{{ source_name }}</a>
+                {% else %}
+                  {{ source_name }}
+                {% endif %}
+              </span>
             </div>
           {% endif %}
         </div>

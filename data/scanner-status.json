@@ -1,13 +1,11 @@
 {
-  "lastScanAt": "2026-05-05T15:27:28.699Z",
+  "lastScanAt": "2026-05-05T16:06:08.144Z",
   "importedCount": 0,
-  "publishableCount": 0,
+  "publishableCount": 1,
   "reviewCount": 0,
-  "skippedCount": 7,
-  "duplicateCount": 0,
+  "skippedCount": 8,
+  "duplicateCount": 1,
   "errorCount": 0,
-  "enabledSourceCount": 0,
-  "notes": [
-    "No live trusted scanner source is enabled. Direct official URL import is available; scheduled live source publishing needs approved source URLs and Shopify Admin credentials."
-  ]
+  "enabledSourceCount": 1,
+  "notes": []
 }

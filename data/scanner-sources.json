@@ -1,5 +1,20 @@
 [
   {
+    "name": "Police Scotland Jan Hussain official appeal",
+    "countryCode": "GB",
+    "countryName": "United Kingdom",
+    "countrySlug": "united-kingdom",
+    "sourceName": "Police Scotland",
+    "sourceType": "html",
+    "url": "https://www.scotland.police.uk/what-s-happening/news/2026/april/appeal-to-help-trace-jan-hussain-believed-to-have-travelled-to-glasgow/",
+    "enabled": true,
+    "requiresApiKey": false,
+    "parser": "html",
+    "trustLevel": "official-public",
+    "rateLimit": "single official appeal URL, safe for scheduled re-check",
+    "notes": "Enabled as a verified official Police Scotland appeal URL. Used to prove scheduled scanner import/update into Shopify while broader source feeds remain disabled."
+  },
+  {
     "name": "Missing People UK public appeals",
     "countryCode": "GB",
     "countryName": "United Kingdom",

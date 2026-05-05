@@ -289,10 +289,10 @@
 }
 
 .ma-case-grid-card__status,
-.ma-case-grid-card__demo-badge {
+.ma-case-grid-card__demo-badge,
+.ma-case-grid-card__country-badge,
+.ma-case-grid-card__source-badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
   border-radius: 999px;
   padding: 6px 10px;
   color: #fff;
@@ -300,6 +300,11 @@
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.08em;
+}
+
+.ma-case-grid-card__status {
+  top: 12px;
+  left: 12px;
 }
 
 .ma-case-grid-card__status--found-safe {
@@ -316,6 +321,22 @@
   right: 12px;
   left: auto;
   background: rgba(37, 99, 235, 0.94);
+}
+
+.ma-case-grid-card__country-badge {
+  top: 12px;
+  right: 12px;
+  max-width: calc(100% - 120px);
+  background: rgba(10, 16, 30, 0.86);
+  color: #fff;
+  backdrop-filter: blur(10px);
+}
+
+.ma-case-grid-card__source-badge {
+  left: 12px;
+  bottom: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #8a0715;
 }
 
 .ma-case-grid-card__help-badge {

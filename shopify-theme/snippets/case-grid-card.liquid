@@ -45,11 +45,11 @@
   assign case_excerpt = article.excerpt | strip_html | default: article.content | strip_html | truncatewords: 22
   assign case_url = article.url | default: '#'
   assign placeholder_image = 'missing-person-silhouette.svg' | asset_url
-  assign case_country = country_code | default: 'all' | downcase | strip
+  assign case_country = country_code | default: article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | default: 'all' | downcase | strip
   if case_country == 'uk'
     assign case_country = 'gb'
   endif
-  assign case_country_label = country_label | default: case_country | upcase
+  assign case_country_label = country_label | default: article.metafields.custom.country.value | default: article.metafields.custom.country_name.value | default: article.metafields.custom.country | default: article.metafields.custom.country_name | default: case_country | upcase
   assign case_location = location | default: ''
   assign case_location_slug_path = location_slug_path | default: article.metafields.custom.location_slug_path.value | default: article.metafields.custom.location_slug_path | default: ''
   if case_location == blank or case_location == 'Location pending' or case_location == 'location pending' or case_location == 'Unknown' or case_location == 'unknown'
@@ -116,6 +116,13 @@
   assign contact_allowed_value = contact_allowed | default: 'false' | downcase
   assign verification_status_value = verification_status | default: 'unknown' | downcase
   assign help_keyword_value = help_keyword_text | default: help_type_value
+  assign scanner_imported_case = false
+  for article_tag in article.tags
+    assign scanner_tag_downcase = article_tag | downcase | strip
+    if scanner_tag_downcase == 'scanner-imported'
+      assign scanner_imported_case = true
+    endif
+  endfor
 -%}
 
 {% if should_render_card %}
@@ -181,6 +188,10 @@
       >
     {% endif %}
     <span class="ma-case-grid-card__status ma-case-grid-card__status--{{ status_label | handleize }}">{{ status_label }}</span>
+    <span class="ma-case-grid-card__country-badge">{{ case_country_label | escape }}</span>
+    {% if scanner_imported_case %}
+      <span class="ma-case-grid-card__source-badge">SOURCE VERIFIED</span>
+    {% endif %}
     {% if is_pro_customer and wants_help_value == 'true' %}
       <span class="ma-case-grid-card__help-badge">HELP REQUESTED</span>
     {% endif %}

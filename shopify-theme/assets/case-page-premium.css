@@ -1956,6 +1956,57 @@ body.spotlight-open {
     0 18px 44px rgba(0, 0, 0, 0.32);
 }
 
+.case-image-alert-bell {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(14, 7, 9, 0.82);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(12px);
+}
+
+.case-image-alert-bell:hover,
+.case-image-alert-bell:focus-visible {
+  background: #d71920;
+  border-color: rgba(255, 255, 255, 0.48);
+  transform: translateY(-1px);
+}
+
+.case-image-alert-bell__icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.case-image-alert-bell__text {
+  line-height: 1;
+}
+
+@media screen and (max-width: 640px) {
+  .case-image-alert-bell {
+    top: 14px;
+    right: 14px;
+    min-height: 38px;
+    padding: 9px 11px;
+  }
+}
+
 .case-main-photo-frame::before {
   content: "";
   position: absolute;

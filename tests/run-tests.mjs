@@ -53,9 +53,9 @@ assert(scan.skipped.some((item) => item.reason.includes('found-safe')))
 
 const sources = JSON.parse(await readFile('data/scanner-sources.json', 'utf8'))
 for (const countryCode of ['GB', 'IE', 'AU', 'NZ', 'US', 'CA']) {
-  assert(sources.some((source) => source.countryCode === countryCode), `source configured for ${countryCode}`)
+assert(sources.some((source) => source.countryCode === countryCode), `source configured for ${countryCode}`)
 }
-assert(sources.every((source) => source.enabled === false), 'live sources remain disabled until approved')
+assert(sources.some((source) => source.enabled === true && source.sourceName === 'Police Scotland'), 'one verified official source is enabled')
 
 const htmlParsed = parseHtmlCase('<html><head><title>Missing Person Appeal - Test Person</title><meta name="description" content="Police are appealing for help to trace Test Person, last seen in Test City."></head><body></body></html>', {
   sourceUrl: 'https://police.example.test/case-1',
@@ -67,6 +67,16 @@ assert.equal(normalised.countrySlug, 'united-kingdom')
 assert.equal(normalised.status, 'active')
 assert.equal(assignLocation({ countryCode: 'GB', city: 'Nottingham', region: 'Nottinghamshire' }).locationSlug, 'nottingham-nottinghamshire-gb')
 assert.equal(classifyStatus({ title: 'Missing appeal', bodyText: 'The person has been safely located.' }), 'found-safe')
+
+const policeParsed = parseHtmlCase('<html><head><title>Appeal to help trace Jan Hussain, believed to have travelled to Glasgow</title></head><body><h1>Appeal to help trace Jan Hussain, believed to have travelled to Glasgow</h1><p>We are appealing for the public’s help to trace 30-year-old Jan Hussain who has been reported missing. He was reported missing from Birmingham and is believed to have travelled to south-east Glasgow on Wednesday, 25 March, 2026. It is thought he may have been in the Croftfoot Road area. He is described as around 5ft 7in, with shoulder-length brown hair, and of medium build. When last seen, Jan was wearing brown trousers and a grey t-shirt. Anyone with information on where he may be is asked to contact Police Scotland on 101 quoting reference 2424 of 30 March, 2026.</p><img src="/spa-media/w51lcjaw/jan-hussain.png?width=247&amp;height=281&amp;mode=max" alt="Jan Hussain"></body></html>', {
+  sourceUrl: 'https://www.scotland.police.uk/what-s-happening/news/2026/april/appeal-to-help-trace-jan-hussain-believed-to-have-travelled-to-glasgow/',
+  sourceName: 'Police Scotland',
+  countryCode: 'GB',
+})
+assert.equal(policeParsed.name, 'Jan Hussain')
+assert.equal(policeParsed.age, 30)
+assert.equal(policeParsed.city, 'Glasgow')
+assert(policeParsed.imageUrl.includes('/spa-media/w51lcjaw/jan-hussain.png'))
 
 const duplicateScan = dedupeCases([normalised, { ...normalised, id: 'copy' }], [])
 assert.equal(duplicateScan.accepted.length, 1)

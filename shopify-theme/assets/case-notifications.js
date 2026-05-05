@@ -991,6 +991,46 @@
 
   loadBackendFollows();
 
+  function applyCasePageFinalPolish() {
+    var imageShell = document.querySelector('.case-page-main-image-shell');
+    if (imageShell && !imageShell.querySelector('.case-image-alert-bell')) {
+      var existingHeroButton = document.querySelector('.case-notify-button--hero, .js-case-notify-button');
+      var bell = document.createElement('button');
+      bell.type = 'button';
+      bell.className = 'case-image-alert-bell case-notify-button js-case-notify-button';
+      bell.setAttribute('aria-haspopup', 'dialog');
+      bell.setAttribute('aria-controls', 'case-notification-modal');
+      bell.setAttribute('aria-label', 'Get alerts on this case');
+      if (existingHeroButton) {
+        ['data-case-title', 'data-case-handle', 'data-case-url', 'data-case-id', 'data-case-image', 'data-case-location'].forEach(function(name) {
+          var value = existingHeroButton.getAttribute(name);
+          if (value) bell.setAttribute(name, value);
+        });
+      }
+      bell.innerHTML = '<span class="case-image-alert-bell__icon" aria-hidden="true">🔔</span><span class="case-image-alert-bell__text">Alerts</span>';
+      imageShell.insertBefore(bell, imageShell.firstChild);
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('.case-page-location-links'), function(node) {
+      node.parentNode && node.parentNode.removeChild(node);
+    });
+
+    if (modal) {
+      var eyebrow = modal.querySelector('.case-notification-modal__eyebrow');
+      var title = modal.querySelector('.case-notification-modal__title');
+      var optionTitles = modal.querySelectorAll('.case-notification-option__title');
+      var optionButtons = modal.querySelectorAll('.case-notification-option__button');
+      if (eyebrow) eyebrow.textContent = 'Case alerts';
+      if (title) title.textContent = 'GET ALERTS ON THIS CASE';
+      if (optionTitles[0]) optionTitles[0].textContent = 'FREE ALERTS IN DASHBOARD';
+      if (optionTitles[1]) optionTitles[1].textContent = 'WHATSAPP ALERTS ON THIS CASE';
+      if (optionButtons[0]) optionButtons[0].textContent = 'Set up free dashboard alerts';
+      if (optionButtons[1]) optionButtons[1].textContent = 'WhatsApp alerts coming soon';
+    }
+  }
+
+  applyCasePageFinalPolish();
+
   // Backend hook: POST /api/notifications/follow-case
   // Future backend hook: POST /api/notifications/mobile-case-alert
   // Future backend hook: POST /api/notifications/local-area-alerts
