@@ -24,8 +24,9 @@ for (const item of items) {
     continue
   }
   try {
-    const result = await importOfficialUrl({ url: item.url, countryCode: item.countryCode, publish })
-    results.push({ ok: true, url: item.url, countryCode: item.countryCode, publishable: result.publishable, published: Boolean(result.published?.published?.length), case: result.case })
+    const { url, countryCode, ...overrides } = item
+    const result = await importOfficialUrl({ url, countryCode, publish, overrides })
+    results.push({ ok: true, url: item.url, countryCode: item.countryCode, publishable: result.publishable, published: Boolean(result.published?.published?.length), publishResult: result.published, case: result.case })
   } catch (error) {
     results.push({ ok: false, url: item.url, countryCode: item.countryCode, reason: error.message })
   }

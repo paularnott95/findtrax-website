@@ -1,14 +1,14 @@
 # Missing Alerts SEO Content Audit
 
-Generated: 2026-05-05T18:06:02.295Z
+Generated: 2026-05-05T19:33:59.278Z
 
 ## Summary
 
 - Base URL: https://missingalerts.com
-- Sampled live URLs: 164
-- Thin pages found in sample: 59
+- Sampled live URLs: 179
+- Thin pages found in sample: 60
 - Duplicate title/meta groups found in sample: 0
-- Noindex recommended in sample: 62
+- Noindex recommended in sample: 77
 - Canonicalization recommended in sample: 0
 - Generated sitemap asset files in theme: 31
 - Generated sitemap asset URLs in theme: 730675
@@ -36,8 +36,9 @@ The theme contains 31 generated sitemap XML assets with 730675 total URL entries
 ## Thin Pages Sample
 
 - https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584 (53 words): Noindex until enriched with useful country/topic/case content.
-- https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708158947488 (102 words): Noindex until enriched with useful country/topic/case content.
+- https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708329472160 (126 words): Noindex until enriched with useful country/topic/case content.
 - https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288 (3 words): Noindex until enriched with useful country/topic/case content.
+- https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-morocco-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uzbekistan-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-peru-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-angola-en (19 words): Redirect to the closest useful page or remove from sitemap.
@@ -59,7 +60,6 @@ The theme contains 31 generated sitemap XML assets with 730675 total URL entries
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-spain-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-germany-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/search-volunteer-safety-for-missing-person-appeals-in-new-zealand-en (19 words): Redirect to the closest useful page or remove from sitemap.
-- https://missingalerts.com/blogs/missing-person-advice/search-volunteer-safety-for-missing-person-appeals-in-australia-en (19 words): Redirect to the closest useful page or remove from sitemap.
 
 ## Duplicate Groups Sample
 
@@ -76,9 +76,3 @@ The theme contains 31 generated sitemap XML assets with 730675 total URL entries
 ## Next Content Queue
 
 The six priority countries now have structured profiles. Additional countries should be added only when verified reporting links, emergency guidance, safe sharing notes, and enough local context are available. Until then, generated pages should stay noindexed or absent from sitemap output.
-
-## Live Platform Notes
-
-- The Shopify theme now includes a reusable `page.country-search` template and `country-search-page` section, but the live `/pages/country-search` Shopify Page object cannot be created from this environment because no Shopify Admin token or stored `shopify store execute` authentication is available.
-- To avoid shipping a public 404, the live Tools menu points Country Search to `/pages/missing-person-advice#browse-by-country`, which is an existing Shopify page and can be used immediately.
-- Normal Shopify page-cache responses for some public pages can lag behind the pushed theme. The remote theme source was verified after push; Cloudflare purge could not be executed from this session because the Cloudflare API connector returned `Auth required`.

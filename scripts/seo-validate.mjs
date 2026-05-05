@@ -18,7 +18,7 @@ assert(!robots.includes('Sitemap: https://missingalerts.com/cdn/shop/t/5/assets/
 assert(robots.includes('Disallow: /cdn/shop/t/*/assets/location-sitemap'), 'robots blocks generated location sitemap assets')
 
 const header = await readFile('shopify-theme/sections/header.liquid', 'utf8')
-assert(header.includes('/pages/missing-person-advice#browse-by-country'), 'Tools menu links to live Country Search area')
+assert(header.includes('/pages/country-search'), 'Tools menu links to live Country Search page')
 assert(header.includes('FindTrax'), 'Tools menu still contains FindTrax product link')
 assert(header.includes('IntelPro'), 'Tools menu still contains IntelPro product link')
 assert(header.includes('MediaReach'), 'Tools menu still contains MediaReach product link')
@@ -35,8 +35,9 @@ assert(countrySearchTemplate.includes('country-search-page'), 'Country Search te
 
 const countrySearchSection = await readFile('shopify-theme/sections/country-search-page.liquid', 'utf8')
 for (const slug of requiredSlugs) {
-  assert(countrySearchSection.includes(`country=${slug}`), `Country Search links ${slug}`)
+  assert(countrySearchSection.includes(`/pages/missing-people-${slug}`), `Country Search links ${slug}`)
 }
+assert(countrySearchSection.includes('/pages/missing-people-england'), 'Country Search links England page')
 assert(!countrySearchSection.includes('FindTrax'), 'Country Search does not leak FindTrax branding')
 
 const seoAudit = JSON.parse(await readFile('data/seo-page-audit.json', 'utf8'))
