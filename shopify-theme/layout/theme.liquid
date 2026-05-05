@@ -10,7 +10,8 @@
     <meta name="theme-color" content="">
     {%- liquid
       assign ma_canonical_url = canonical_url
-      assign ma_location_seo_handles = '|missing-people-location|missing-people-location-live|missing-alerts-near-me|missing-person-search-guide|missing-cases-near|no-active-missing-cases|missing-people-near-me|recent-missing-cases|help-find-missing|missing-people-region|missing-people-country|'
+      assign ma_location_seo_handles = '|missing-people-location|missing-people-location-live|missing-alerts-near-me|missing-person-search-guide|missing-cases-near|no-active-missing-cases|missing-people-near-me|recent-missing-cases|help-find-missing|missing-people-region|'
+      assign ma_indexable_country_slugs = '|united-kingdom|ireland|australia|new-zealand|united-states|canada|'
       assign ma_request_page_handle = request.path | split: '/pages/' | last | split: '/' | first
       assign ma_location_page_lookup = '|' | append: ma_request_page_handle | append: '|'
       assign ma_location_query_key = ''
@@ -24,6 +25,13 @@
           break
         endif
       endfor
+      assign ma_tagged_archive = false
+      if current_tags != blank
+        assign ma_tagged_archive = true
+      endif
+      if ma_tagged_archive and blog.url != blank
+        assign ma_canonical_url = request.origin | append: blog.url
+      endif
       if request.path contains '/pages/' and ma_location_seo_handles contains ma_location_page_lookup and ma_location_query_value != blank
         assign ma_canonical_url = request.origin | append: request.path | append: '?' | append: ma_location_query_key | append: '=' | append: ma_location_query_value
       endif
@@ -31,6 +39,11 @@
         assign ma_canonical_url = canonical_url | replace: '/pages/missing-people-location', '/pages/missing-people-location-live'
       endif
       assign ma_location_request_has_real_content = true
+      assign ma_location_request_should_index = false
+      assign ma_location_country_lookup = '|' | append: ma_location_query_value | append: '|'
+      if ma_request_page_handle == 'missing-people-country' and ma_location_query_key == 'country' and ma_indexable_country_slugs contains ma_location_country_lookup
+        assign ma_location_request_should_index = true
+      endif
       if request.path contains '/pages/' and ma_location_seo_handles contains ma_location_page_lookup and ma_location_query_value == blank
         assign ma_location_request_has_real_content = false
       endif
@@ -54,7 +67,11 @@
       <meta name="robots" content="noindex,nofollow">
     {%- elsif request.page_type == '404' or template.name == '404' -%}
       <meta name="robots" content="noindex,follow">
+    {%- elsif ma_tagged_archive -%}
+      <meta name="robots" content="noindex,follow">
     {%- elsif ma_location_request_has_real_content == false -%}
+      <meta name="robots" content="noindex,follow">
+    {%- elsif request.path contains '/pages/' and ma_location_seo_handles contains ma_location_page_lookup and ma_location_request_should_index == false -%}
       <meta name="robots" content="noindex,follow">
     {%- endif -%}
 

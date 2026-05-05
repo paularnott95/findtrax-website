@@ -3,7 +3,19 @@
 {% for rule in group.rules %}
 {{ rule }}
 {% endfor %}
+Disallow: /admin
+Disallow: /account
+Disallow: /cart
+Disallow: /checkout
+Disallow: /search
+Disallow: /*?view=
+Disallow: /*?lang=
+Disallow: /*?filter
+Disallow: /cdn/shop/t/*/assets/location-sitemap
+Disallow: /cdn/shop/t/*/assets/translation-sitemap
+Disallow: /cdn/shop/t/*/assets/no-case-sitemap
+Disallow: /cdn/shop/t/*/assets/nearby-sitemap
+Disallow: /cdn/shop/t/*/assets/alert-sitemap
+Disallow: /cdn/shop/t/*/assets/guide-sitemap
 {% endfor %}
 Sitemap: https://missingalerts.com/sitemaps/page-sitemap-index.xml
-Sitemap: https://missingalerts.com/cdn/shop/t/5/assets/location-sitemap.xml
-Sitemap: https://seo.missingalerts.com/sitemaps/page-sitemap-index.xml

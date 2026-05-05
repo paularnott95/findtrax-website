@@ -1,0 +1,206 @@
+[
+  {
+    "countryCode": "GB",
+    "countryName": "United Kingdom",
+    "countrySlug": "united-kingdom",
+    "region": "Europe",
+    "languages": ["English"],
+    "emergencyNumbers": ["999", "112"],
+    "nonEmergencyNumbers": ["101"],
+    "officialPoliceUrl": "https://www.police.uk/",
+    "officialMissingPersonsUrl": "https://www.gov.uk/report-missing-person",
+    "nationalAgencyUrl": "https://missingpersons.police.uk/",
+    "trustedCharityUrls": ["https://www.missingpeople.org.uk/"],
+    "reportingGuidance": "If someone may be in immediate danger in the United Kingdom, call 999. For non-emergency missing-person information, use the relevant police force route or 101 where appropriate. The GOV.UK reporting guidance and UK Missing Persons Unit pages should be used as official starting points.",
+    "sharingGuidance": "Share only the official appeal link or Missing Alerts source-backed case page. Avoid naming private addresses, unverified relationships, family contact details, or speculation.",
+    "safetyNotes": "Do not organise searches on private land, confront possible witnesses, or publish unverified claims. Send urgent sightings to police first.",
+    "missingAlertsHelpText": "Missing Alerts helps United Kingdom users find source-backed public appeals, country-specific advice, safe sharing guidance, and active case pages that preserve official attribution.",
+    "imageAlt": "United Kingdom missing-person advice and public appeal support",
+    "seoTitle": "Missing Person Help in the United Kingdom | Missing Alerts",
+    "seoDescription": "United Kingdom missing-person reporting guidance, official links, safe sharing advice, active Missing Alerts cases, and source-backed public appeal support.",
+    "faq": [
+      {
+        "question": "Who should I contact first in a UK emergency?",
+        "answer": "Call 999 if there is an immediate risk to life or safety. For non-emergency information, use the relevant police force route or 101 where appropriate."
+      },
+      {
+        "question": "Can Missing Alerts replace a police report?",
+        "answer": "No. Missing Alerts supports visibility and organisation around source-backed public information; urgent information and missing-person reports must go to police."
+      }
+    ],
+    "relatedTopics": ["first-24-hours", "safe-sharing", "cctv-dashcam-doorbell", "found-safe"],
+    "relatedCountries": ["ireland", "united-states", "canada"],
+    "indexableQualityScore": 92,
+    "shouldIndex": true
+  },
+  {
+    "countryCode": "IE",
+    "countryName": "Ireland",
+    "countrySlug": "ireland",
+    "region": "Europe",
+    "languages": ["English", "Irish"],
+    "emergencyNumbers": ["999", "112"],
+    "nonEmergencyNumbers": ["Garda Confidential 1800 666 111"],
+    "officialPoliceUrl": "https://www.garda.ie/",
+    "officialMissingPersonsUrl": "https://www.garda.ie/en/missing-persons/",
+    "nationalAgencyUrl": "https://www.garda.ie/en/missing-persons/",
+    "trustedCharityUrls": ["https://www.missingpersons.ie/"],
+    "reportingGuidance": "In an emergency in Ireland, call 999 or 112. An Garda Síochána maintains official missing-person listings and asks the public to contact Garda stations or official contact routes with information.",
+    "sharingGuidance": "Use Garda appeals or source-backed Missing Alerts pages. Keep comments factual, avoid private family contact details, and update shares if an appeal is stood down.",
+    "safetyNotes": "Do not rely on social-only claims. Check the official Garda appeal status before resharing older appeals.",
+    "missingAlertsHelpText": "Missing Alerts helps Ireland users browse source-backed active appeals, Garda-linked information, safe sharing steps, and country-specific guidance.",
+    "imageAlt": "Ireland missing-person advice and Garda source-backed public appeal support",
+    "seoTitle": "Missing Person Help in Ireland | Missing Alerts",
+    "seoDescription": "Ireland missing-person advice with Garda reporting links, emergency numbers, safe sharing guidance, active public cases, and Missing Alerts support.",
+    "faq": [
+      {
+        "question": "What numbers are used for emergencies in Ireland?",
+        "answer": "Use 999 or 112 for emergencies. For non-emergency missing-person information, use the relevant Garda station or official Garda contact details."
+      },
+      {
+        "question": "Should older Garda appeals be reshared?",
+        "answer": "Only reshare if the appeal remains active or the official source has not stood it down. Missing Alerts keeps source attribution visible to reduce outdated sharing."
+      }
+    ],
+    "relatedTopics": ["reporting", "safe-sharing", "family-support"],
+    "relatedCountries": ["united-kingdom", "canada"],
+    "indexableQualityScore": 90,
+    "shouldIndex": true
+  },
+  {
+    "countryCode": "AU",
+    "countryName": "Australia",
+    "countrySlug": "australia",
+    "region": "Oceania",
+    "languages": ["English"],
+    "emergencyNumbers": ["000"],
+    "nonEmergencyNumbers": ["Police Assistance Line 131 444"],
+    "officialPoliceUrl": "https://www.police.gov.au/",
+    "officialMissingPersonsUrl": "https://www.missingpersons.gov.au/",
+    "nationalAgencyUrl": "https://www.missingpersons.gov.au/",
+    "trustedCharityUrls": [],
+    "reportingGuidance": "In Australia, call 000 for immediate danger. The National Missing Persons Coordination Centre provides national public information, while state and territory police handle reports and local investigations.",
+    "sharingGuidance": "Share official police or National Missing Persons Coordination Centre links where possible. Keep information factual and do not publish private addresses or unsupported claims.",
+    "safetyNotes": "Search and awareness activity should not interfere with police or emergency services. State and territory police instructions should take priority.",
+    "missingAlertsHelpText": "Missing Alerts helps Australian users connect active source-backed cases to country pages, public sharing guidance, and safe update workflows.",
+    "imageAlt": "Australia missing-person advice and official public appeal support",
+    "seoTitle": "Missing Person Help in Australia | Missing Alerts",
+    "seoDescription": "Australia missing-person reporting guidance, official national links, safe public appeal sharing, active Missing Alerts cases, and country-specific support.",
+    "faq": [
+      {
+        "question": "Who investigates missing-person reports in Australia?",
+        "answer": "State and territory police handle missing-person investigations. National public information is supported by the National Missing Persons Coordination Centre."
+      },
+      {
+        "question": "What number is used for immediate danger?",
+        "answer": "Call 000 if there is immediate danger or urgent emergency risk."
+      }
+    ],
+    "relatedTopics": ["first-24-hours", "search-coordination", "media-appeals"],
+    "relatedCountries": ["new-zealand"],
+    "indexableQualityScore": 88,
+    "shouldIndex": true
+  },
+  {
+    "countryCode": "NZ",
+    "countryName": "New Zealand",
+    "countrySlug": "new-zealand",
+    "region": "Oceania",
+    "languages": ["English", "Māori"],
+    "emergencyNumbers": ["111"],
+    "nonEmergencyNumbers": ["105"],
+    "officialPoliceUrl": "https://www.police.govt.nz/",
+    "officialMissingPersonsUrl": "https://www.police.govt.nz/missing-persons",
+    "nationalAgencyUrl": "https://www.police.govt.nz/missing-persons/missing-persons-list",
+    "trustedCharityUrls": [],
+    "reportingGuidance": "In New Zealand, call 111 for emergencies. New Zealand Police provides missing-person reporting guidance, advice, and a public list of cases police have permission to display.",
+    "sharingGuidance": "Share New Zealand Police appeals or Missing Alerts source-backed pages. Respect privacy when a case is resolved or when police have not made details public.",
+    "safetyNotes": "New Zealand Police guidance should be followed for reporting and sightings. Do not publish exact private addresses or organise risky searches.",
+    "missingAlertsHelpText": "Missing Alerts helps New Zealand users find public appeal information, country guidance, and safe sharing resources connected to official sources.",
+    "imageAlt": "New Zealand missing-person advice and police public appeal support",
+    "seoTitle": "Missing Person Help in New Zealand | Missing Alerts",
+    "seoDescription": "New Zealand missing-person reporting guidance, police links, emergency contacts, safe sharing advice, active cases, and Missing Alerts support.",
+    "faq": [
+      {
+        "question": "What is the emergency number in New Zealand?",
+        "answer": "Call 111 for emergencies. Use New Zealand Police guidance for non-emergency missing-person reporting and advice."
+      },
+      {
+        "question": "Does the public list show every missing person?",
+        "answer": "New Zealand Police states that its public missing-person list only includes cases police have permission to display."
+      }
+    ],
+    "relatedTopics": ["reporting", "safe-sharing", "international"],
+    "relatedCountries": ["australia"],
+    "indexableQualityScore": 88,
+    "shouldIndex": true
+  },
+  {
+    "countryCode": "US",
+    "countryName": "United States",
+    "countrySlug": "united-states",
+    "region": "North America",
+    "languages": ["English", "Spanish"],
+    "emergencyNumbers": ["911"],
+    "nonEmergencyNumbers": ["Local law enforcement non-emergency line"],
+    "officialPoliceUrl": "https://www.usa.gov/local-governments",
+    "officialMissingPersonsUrl": "https://namus.nij.ojp.gov/",
+    "nationalAgencyUrl": "https://www.missingkids.org/",
+    "trustedCharityUrls": ["https://www.missingkids.org/"],
+    "reportingGuidance": "In the United States, call 911 if there is immediate danger. Missing-person reports are generally handled by local law enforcement. NamUs and NCMEC are key national resources for public missing-person and missing-child information.",
+    "sharingGuidance": "Share official law-enforcement, NamUs, NCMEC, or source-backed Missing Alerts pages. Avoid publishing private phone numbers, unverified allegations, or exact private addresses.",
+    "safetyNotes": "Do not confront people, trespass, or interfere with law enforcement. Children and vulnerable people require extra care around privacy and reposting.",
+    "missingAlertsHelpText": "Missing Alerts helps United States users organise public case visibility around source-backed records and connect cases to state/country pages.",
+    "imageAlt": "United States missing-person advice and source-backed public appeal support",
+    "seoTitle": "Missing Person Help in the United States | Missing Alerts",
+    "seoDescription": "United States missing-person guidance with 911 emergency advice, NamUs and NCMEC links, safe sharing steps, and Missing Alerts public case support.",
+    "faq": [
+      {
+        "question": "Who takes missing-person reports in the United States?",
+        "answer": "Local law enforcement is the usual reporting route. Call 911 for immediate danger and use official local channels for non-emergency reports."
+      },
+      {
+        "question": "What national sources are useful?",
+        "answer": "NamUs is a national missing and unidentified persons system. NCMEC is a national resource for missing and exploited children."
+      }
+    ],
+    "relatedTopics": ["children-vulnerable", "safe-sharing", "media-appeals"],
+    "relatedCountries": ["canada", "united-kingdom"],
+    "indexableQualityScore": 90,
+    "shouldIndex": true
+  },
+  {
+    "countryCode": "CA",
+    "countryName": "Canada",
+    "countrySlug": "canada",
+    "region": "North America",
+    "languages": ["English", "French"],
+    "emergencyNumbers": ["911"],
+    "nonEmergencyNumbers": ["Local police or RCMP detachment"],
+    "officialPoliceUrl": "https://rcmp.ca/",
+    "officialMissingPersonsUrl": "https://rcmp.ca/en/missing-persons",
+    "nationalAgencyUrl": "https://www.services.rcmp-grc.gc.ca/missing-disparus/",
+    "trustedCharityUrls": ["https://missingkids.ca/"],
+    "reportingGuidance": "In Canada, call 911 if someone is at immediate risk. Missing-person reports should be made to local police or the RCMP detachment serving the area. RCMP guidance notes that there is no waiting period in many Canadian reporting contexts.",
+    "sharingGuidance": "Share RCMP, local police, Canada's Missing, or source-backed Missing Alerts pages. Check whether a case has been resolved before resharing older appeals.",
+    "safetyNotes": "Do not publish private family information or speculate about causes. If a case involves a child, vulnerable person, or immediate danger, use emergency reporting first.",
+    "missingAlertsHelpText": "Missing Alerts helps Canadian users browse source-backed public case pages, country guidance, and safe sharing resources with official attribution.",
+    "imageAlt": "Canada missing-person advice and RCMP source-backed public appeal support",
+    "seoTitle": "Missing Person Help in Canada | Missing Alerts",
+    "seoDescription": "Canada missing-person reporting guidance with RCMP links, emergency advice, safe sharing guidance, active cases, and Missing Alerts support.",
+    "faq": [
+      {
+        "question": "Is there a waiting period to report a missing person in Canada?",
+        "answer": "RCMP guidance states there is no waiting period in many missing-person reporting contexts. Contact local police or RCMP if someone is missing."
+      },
+      {
+        "question": "Where are public Canadian cases shown?",
+        "answer": "Canada's Missing is managed by the RCMP and displays public profiles from participating investigations."
+      }
+    ],
+    "relatedTopics": ["reporting", "family-support", "safe-sharing"],
+    "relatedCountries": ["united-states", "united-kingdom"],
+    "indexableQualityScore": 90,
+    "shouldIndex": true
+  }
+]

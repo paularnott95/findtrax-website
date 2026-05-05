@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "country_search": {
+      "type": "country-search-page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "country_search"
+  ]
+}

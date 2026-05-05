@@ -1,0 +1,1578 @@
+{
+  "generatedAt": "2026-05-05T18:06:08.999Z",
+  "totalAdvicePagesSampled": 117,
+  "duplicateGroups": [],
+  "pages": [
+    {
+      "url": "https://missingalerts.com/pages/missing-person-advice",
+      "title": "Missing Person Advice Hub &ndash; Missing people",
+      "wordCount": 1186,
+      "duplicateGroup": null,
+      "action": "enrich-metadata",
+      "issues": [
+        "missing-meta-description"
+      ],
+      "canonicalTarget": "https://missingalerts.com/pages/missing-person-advice",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice",
+      "title": "Missing Person Advice &ndash; Missing people",
+      "wordCount": 447,
+      "duplicateGroup": null,
+      "action": "enrich-metadata",
+      "issues": [
+        "missing-meta-description"
+      ],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-goes-missing-in-united-kingdom",
+      "title": "What to do if someone goes missing in United Kingdom &ndash; Missing people",
+      "wordCount": 1696,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-goes-missing-in-united-kingdom",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-prepare-a-missing-person-poster",
+      "title": "How to prepare a missing-person poster &ndash; Missing people",
+      "wordCount": 1682,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-prepare-a-missing-person-poster",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-goes-missing-in-united-states",
+      "title": "What to do if someone goes missing in United States &ndash; Missing people",
+      "wordCount": 1696,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-goes-missing-in-united-states",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/support-steps-for-families-of-missing-people-in-canada",
+      "title": "Support steps for families of missing people in Canada &ndash; Missing people",
+      "wordCount": 1691,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/support-steps-for-families-of-missing-people-in-canada",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-share-a-missing-person-appeal-safely-online-in-australia",
+      "title": "How to share a missing-person appeal safely online in Australia &ndash; Missing people",
+      "wordCount": 1695,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-share-a-missing-person-appeal-safely-online-in-australia",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-report-a-possible-missing-person-sighting-safely-in-ireland",
+      "title": "How to report a possible missing-person sighting safely in Ireland &ndash; Missing people",
+      "wordCount": 1695,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-report-a-possible-missing-person-sighting-safely-in-ireland",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-share-a-missing-person-appeal-safely-online-in-france-en",
+      "title": "How to share a missing-person appeal safely online in France &ndash; Missing people",
+      "wordCount": 1925,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-share-a-missing-person-appeal-safely-online-in-france-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/missing-person-with-dementia-help-in-france-en",
+      "title": "Missing person with dementia help in France &ndash; Missing people",
+      "wordCount": 1921,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/missing-person-with-dementia-help-in-france-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-a-child-is-missing-in-france-en",
+      "title": "What to do if a child is missing in France &ndash; Missing people",
+      "wordCount": 1980,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-a-child-is-missing-in-france-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-use-cctv-and-doorbell-footage-in-a-missing-person-appeal-in-france-en",
+      "title": "How to use CCTV and doorbell footage in a missing-person appeal in Fra &ndash; Missing people",
+      "wordCount": 1949,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-use-cctv-and-doorbell-footage-in-a-missing-person-appeal-in-france-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-create-a-missing-person-poster-in-france-en",
+      "title": "How to create a missing-person poster in France &ndash; Missing people",
+      "wordCount": 1937,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-create-a-missing-person-poster-in-france-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-organise-a-search-for-a-missing-person-in-france-en",
+      "title": "How to organise a search for a missing person in France &ndash; Missing people",
+      "wordCount": 1974,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-organise-a-search-for-a-missing-person-in-france-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-from-france-goes-missing-overseas-en",
+      "title": "What to do if someone from France goes missing overseas &ndash; Missing people",
+      "wordCount": 1953,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-from-france-goes-missing-overseas-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-organise-a-search-for-a-missing-person-in-thailand-en",
+      "title": "How to organise a search for a missing person in Thailand &ndash; Missing people",
+      "wordCount": 1955,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-organise-a-search-for-a-missing-person-in-thailand-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-use-cctv-and-doorbell-footage-in-a-missing-person-appeal-in-thailand-en",
+      "title": "How to use CCTV and doorbell footage in a missing-person appeal in Tha &ndash; Missing people",
+      "wordCount": 1959,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-use-cctv-and-doorbell-footage-in-a-missing-person-appeal-in-thailand-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-create-a-missing-person-poster-in-thailand-en",
+      "title": "How to create a missing-person poster in Thailand &ndash; Missing people",
+      "wordCount": 1952,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-create-a-missing-person-poster-in-thailand-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/missing-person-with-dementia-help-in-thailand-en",
+      "title": "Missing person with dementia help in Thailand &ndash; Missing people",
+      "wordCount": 1851,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/missing-person-with-dementia-help-in-thailand-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-organise-a-search-for-a-missing-person-in-tanzania-en",
+      "title": "How to organise a search for a missing person in Tanzania &ndash; Missing people",
+      "wordCount": 1871,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-organise-a-search-for-a-missing-person-in-tanzania-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/dementia-missing-person-antigua-and-barbuda-fr",
+      "title": "Comment réagir quand une personne atteinte de démence disparaît en Ant &ndash; Missing people",
+      "wordCount": 2206,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/dementia-missing-person-antigua-and-barbuda-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/dementia-missing-person-andorra-fr",
+      "title": "Comment réagir quand une personne atteinte de démence disparaît en And &ndash; Missing people",
+      "wordCount": 2184,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/dementia-missing-person-andorra-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/missing-child-anguilla-fr",
+      "title": "Que faire si un enfant disparaît en Anguilla &ndash; Missing people",
+      "wordCount": 2171,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/missing-child-anguilla-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-a-child-goes-missing-in-india-en",
+      "title": "What to do if a child goes missing in India &ndash; Missing people",
+      "wordCount": 2091,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-a-child-goes-missing-in-india-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-shelters-and-safe-places-when-someone-is-missing-no-brazil-pt",
+      "title": "How to contact shelters and safe places when someone is missing no Bra &ndash; Missing people",
+      "wordCount": 2128,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-shelters-and-safe-places-when-someone-is-missing-no-brazil-pt",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-en-mexico-es",
+      "title": "What to do if someone was last seen near public transport en Mexico &ndash; Missing people",
+      "wordCount": 2128,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-en-mexico-es",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-shelters-and-safe-places-when-someone-is-missing-sa-philippines-tl",
+      "title": "How to contact shelters and safe places when someone is missing sa Phi &ndash; Missing people",
+      "wordCount": 2128,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-shelters-and-safe-places-when-someone-is-missing-sa-philippines-tl",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-en-spain-es",
+      "title": "What to do if someone was last seen near public transport en Spain &ndash; Missing people",
+      "wordCount": 2128,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-en-spain-es",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-shelters-and-safe-places-when-someone-is-missing-en-united-states-es",
+      "title": "How to contact shelters and safe places when someone is missing en Uni &ndash; Missing people",
+      "wordCount": 2138,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-shelters-and-safe-places-when-someone-is-missing-en-united-states-es",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-shelters-and-safe-places-when-someone-is-missing-en-canada-fr",
+      "title": "How to contact shelters and safe places when someone is missing en Can &ndash; Missing people",
+      "wordCount": 2128,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-shelters-and-safe-places-when-someone-is-missing-en-canada-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/police-first-antigua-and-barbuda-fr",
+      "title": "Pourquoi le signalement à la police doit passer en premier en Antigua &ndash; Missing people",
+      "wordCount": 2201,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/police-first-antigua-and-barbuda-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/police-first-andorra-fr",
+      "title": "Pourquoi le signalement à la police doit passer en premier en Andorra &ndash; Missing people",
+      "wordCount": 2181,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/police-first-andorra-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/missing-person-first-steps-anguilla-fr",
+      "title": "Que faire si une personne disparaît en Anguilla &ndash; Missing people",
+      "wordCount": 2169,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/missing-person-first-steps-anguilla-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-en-france-fr",
+      "title": "What to do if someone was last seen near public transport en France &ndash; Missing people",
+      "wordCount": 2128,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-en-france-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-germany-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Ge &ndash; Missing people",
+      "wordCount": 2136,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-germany-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-new-zealand-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Ne &ndash; Missing people",
+      "wordCount": 2150,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-new-zealand-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-australia-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Au &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-australia-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-ireland-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Ir &ndash; Missing people",
+      "wordCount": 2136,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-ireland-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-india-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in In &ndash; Missing people",
+      "wordCount": 2136,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-india-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-thailand-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Th &ndash; Missing people",
+      "wordCount": 2136,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-thailand-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-south-africa-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in So &ndash; Missing people",
+      "wordCount": 2150,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-south-africa-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-united-kingdom-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Un &ndash; Missing people",
+      "wordCount": 2150,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-united-kingdom-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-italy-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in It &ndash; Missing people",
+      "wordCount": 2136,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-italy-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/dementia-missing-person-united-arab-emirates-fr",
+      "title": "Comment réagir quand une personne atteinte de démence disparaît en Uni &ndash; Missing people",
+      "wordCount": 2206,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/dementia-missing-person-united-arab-emirates-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/dementia-missing-person-afghanistan-fr",
+      "title": "Comment réagir quand une personne atteinte de démence disparaît en Afg &ndash; Missing people",
+      "wordCount": 2184,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/dementia-missing-person-afghanistan-fr",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-egypt-ar",
+      "title": "What to do if someone was last seen near public transport in Egypt &ndash; Missing people",
+      "wordCount": 2128,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-egypt-ar",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-democratic-republic-of-democratic-republic-of-the-congo-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in De &ndash; Missing people",
+      "wordCount": 2180,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-democratic-republic-of-democratic-republic-of-the-congo-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-south-korea-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in So &ndash; Missing people",
+      "wordCount": 2150,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-south-korea-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-north-korea-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in No &ndash; Missing people",
+      "wordCount": 2150,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-north-korea-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-ivory-coast-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Iv &ndash; Missing people",
+      "wordCount": 2150,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-ivory-coast-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-saudi-arabia-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Sa &ndash; Missing people",
+      "wordCount": 2146,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-saudi-arabia-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-indonesia-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in In &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-indonesia-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-japan-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Ja &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-japan-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-vietnam-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Vi &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-vietnam-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-turkey-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Tu &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-turkey-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-iran-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Ir &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-iran-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-kenya-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Ke &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-kenya-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-colombia-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Co &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-colombia-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uganda-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Ug &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uganda-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-poland-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Po &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-poland-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-morocco-en",
+      "title": "How to gather CCTV and doorbell information for a missing person in Mo &ndash; Missing people",
+      "wordCount": 2140,
+      "duplicateGroup": null,
+      "action": "keep-and-monitor",
+      "issues": [],
+      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-morocco-en",
+      "missingImages": false,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uzbekistan-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-peru-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-angola-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-yemen-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-nepal-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-madagascar-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-cameroon-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-taiwan-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-china-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-pakistan-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-friends-classmates-and-workplaces-when-someone-is-missing-no-brazil-pt",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-friends-classmates-and-workplaces-when-someone-is-missing-sa-philippines-tl",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-friends-classmates-and-workplaces-when-someone-is-missing-en-united-states-es",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-contact-friends-classmates-and-workplaces-when-someone-is-missing-en-canada-fr",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/international-travel-antigua-and-barbuda-fr",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/social-media-safety-andorra-fr",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/missing-child-anguilla-es",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-mexico-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-spain-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-germany-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/search-volunteer-safety-for-missing-person-appeals-in-new-zealand-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/search-volunteer-safety-for-missing-person-appeals-in-australia-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-ireland-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-india-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-thailand-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/search-volunteer-safety-for-missing-person-appeals-in-south-africa-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-united-kingdom-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-france-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-italy-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/police-first-united-arab-emirates-fr",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/police-first-afghanistan-fr",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-sri-lanka-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-burkina-faso-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-kazakhstan-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-zambia-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-bangladesh-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-russia-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-ethiopia-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-myanmar-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-ukraine-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-argentina-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-algeria-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-sudan-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-iraq-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-malaysia-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-ghana-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-venezuela-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-niger-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-romania-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-mali-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-chile-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-malawi-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-nigeria-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-democratic-republic-of-the-co-democratic-republic-of-the-congo-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-tanzania-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    },
+    {
+      "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-mozambique-en",
+      "title": "Verifying your connection...",
+      "wordCount": 19,
+      "duplicateGroup": null,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
+      "brokenLinks": false
+    }
+  ]
+}

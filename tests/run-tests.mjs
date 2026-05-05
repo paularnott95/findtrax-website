@@ -17,6 +17,7 @@ import { getShopifyAuthStatus } from '../lib/scanner/shopify-token-manager.mjs'
 import toolAlertSignupHandler from '../api/tool-alert-signups.js'
 
 const cases = JSON.parse(await readFile('data/missing-alerts-public-cases.json', 'utf8'))
+const countryProfiles = JSON.parse(await readFile('data/country-profiles.json', 'utf8'))
 
 assert.equal(countrySlugFromCode('GB'), 'united-kingdom')
 assert.equal(countrySlugFromCode('UK'), 'united-kingdom')
@@ -159,6 +160,15 @@ assert.equal(validSignup.payload.ok, true)
 
 for (const country of ['United Kingdom', 'Ireland', 'Australia', 'New Zealand', 'United States', 'Canada']) {
   assert(cases.some((item) => item.countryName === country && ['active', 'urgent', 'long-term'].includes(item.status)), `${country} missing active case`)
+}
+
+for (const countrySlug of ['united-kingdom', 'ireland', 'australia', 'new-zealand', 'united-states', 'canada']) {
+  const profile = countryProfiles.find((item) => item.countrySlug === countrySlug)
+  assert(profile, `${countrySlug} country profile exists`)
+  assert.equal(profile.shouldIndex, true)
+  assert(profile.officialPoliceUrl || profile.officialMissingPersonsUrl, `${countrySlug} has official reporting source`)
+  assert(profile.reportingGuidance.length > 80, `${countrySlug} has useful reporting guidance`)
+  assert(profile.seoTitle.includes('Missing Alerts'), `${countrySlug} title uses Missing Alerts brand`)
 }
 
 console.log('unit tests passed')
