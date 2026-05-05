@@ -5,7 +5,7 @@
   <div class="seo-advice-hub__hero country-search-page__hero">
     <div class="seo-advice-hub__eyebrow">Missing Alerts country intelligence</div>
     <h1 class="seo-advice-hub__title">COUNTRY INTELLIGENCE</h1>
-    <p class="seo-advice-hub__copy">Search country-specific missing-person guidance, official reporting links, safe sharing advice, active Missing Alerts cases, and country pages that are complete enough to be indexed.</p>
+    <p class="seo-advice-hub__copy">Search country-specific missing-person guidance, official reporting links, safe sharing advice, active Missing Alerts cases, and the Global Location Checker for high-value local guidance.</p>
     <div class="seo-advice-hub__actions">
       <a class="seo-advice-button" href="/pages/missing-person-advice">Open Advice Hub</a>
       <a class="seo-advice-button seo-advice-button--secondary" href="/blogs/missing-persons">View public cases</a>
@@ -31,6 +31,53 @@
     <strong>Urgent safety note:</strong>
     If someone may be in immediate danger, contact local emergency services or police first. Missing Alerts supports public visibility and source-backed guidance; it does not replace an official report.
   </div>
+
+  <section class="seo-advice-section country-search-page__location-checker" id="global-location-checker" data-global-location-checker>
+    <div class="seo-advice-section__eyebrow">Global Location Checker</div>
+    <h2>Check country and location guidance before sharing an appeal</h2>
+    <p>Choose a country, then search for a city, county, region, state, province, or town. Missing Alerts will show the country profile, official reporting route, source coverage status, and whether the location has enough verified case or local context to support an indexable page.</p>
+    <div class="seo-advice-hub__filters">
+      <select class="seo-advice-hub__select" data-location-country>
+        <option value="">Choose country</option>
+        <option value="England">England</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="Ireland">Ireland</option>
+        <option value="United States">United States</option>
+        <option value="Canada">Canada</option>
+        <option value="Australia">Australia</option>
+        <option value="New Zealand">New Zealand</option>
+        <option value="Singapore">Singapore</option>
+      </select>
+      <input class="seo-advice-hub__input" type="search" placeholder="Search London, Glasgow, Dublin, Sydney, Toronto..." data-location-query>
+    </div>
+    <div class="country-search-page__grid" data-location-results>
+      <article class="country-search-card" data-location-card data-location-country="England United Kingdom" data-location-keywords="london greater london england uk united kingdom">
+        <div class="country-search-card__top"><span>GB</span><strong>Indexable with case/local context</strong></div>
+        <h3>London, England</h3>
+        <p>Use the United Kingdom profile for official reporting guidance. London location pages should only be indexable when active cases or verified local context are present.</p>
+        <div class="country-search-card__actions"><a href="/pages/country-intelligence#united-kingdom">United Kingdom intelligence</a><a href="/pages/missing-people-location-live?loc=united-kingdom/england/london">Check location</a></div>
+      </article>
+      <article class="country-search-card" data-location-card data-location-country="United Kingdom" data-location-keywords="glasgow scotland united kingdom uk croftfoot">
+        <div class="country-search-card__top"><span>GB</span><strong>Active case signal</strong></div>
+        <h3>Glasgow, Scotland</h3>
+        <p>Connected to active public case context where source-backed data exists. Use map or polished fallback panels and link to Police Scotland/source guidance.</p>
+        <div class="country-search-card__actions"><a href="/pages/country-intelligence#united-kingdom">United Kingdom intelligence</a><a href="/blogs/missing-persons/jan-hussain">Related case</a></div>
+      </article>
+      <article class="country-search-card" data-location-card data-location-country="Ireland" data-location-keywords="dublin sligo ireland garda">
+        <div class="country-search-card__top"><span>IE</span><strong>Source coverage building</strong></div>
+        <h3>Dublin and Sligo, Ireland</h3>
+        <p>Use Garda reporting routes and Missing Alerts review status. Local pages stay noindex unless verified case data or official local context is available.</p>
+        <div class="country-search-card__actions"><a href="/pages/country-intelligence#ireland">Ireland intelligence</a><a href="/pages/missing-people-ireland">Country page</a></div>
+      </article>
+      <article class="country-search-card" data-location-card data-location-country="United States Canada Australia New Zealand Singapore" data-location-keywords="new york los angeles toronto vancouver sydney melbourne auckland wellington singapore">
+        <div class="country-search-card__top"><span>GLOBAL</span><strong>Quality-gated location directory</strong></div>
+        <h3>International locations</h3>
+        <p>Country and location results are available as search suggestions first. Missing Alerts indexes only locations with useful official guidance, active cases, or substantial local context.</p>
+        <div class="country-search-card__actions"><a href="/blogs/missing-persons">View public cases</a><a href="/pages/missing-person-advice">Advice Hub</a></div>
+      </article>
+    </div>
+    <p class="seo-advice-empty" data-location-empty hidden>No high-quality location result matches that search yet. Use the country profile while Missing Alerts enriches this location.</p>
+  </section>
 
   <div class="country-search-page__grid" data-country-search-results>
     <article class="country-search-card" data-country-card data-country-name="England" data-region="Europe" data-index-state="complete">
@@ -170,6 +217,10 @@
     var indexState = document.querySelector('[data-country-index-filter]');
     var cards = Array.prototype.slice.call(document.querySelectorAll('[data-country-card]'));
     var empty = document.querySelector('[data-country-search-empty]');
+    var locationCountry = document.querySelector('[data-location-country]');
+    var locationQuery = document.querySelector('[data-location-query]');
+    var locationCards = Array.prototype.slice.call(document.querySelectorAll('[data-location-card]'));
+    var locationEmpty = document.querySelector('[data-location-empty]');
 
     function applyCountrySearch() {
       var q = (search && search.value || '').toLowerCase();
@@ -196,6 +247,32 @@
       input.addEventListener('change', applyCountrySearch);
     });
     applyCountrySearch();
+
+    function applyLocationSearch() {
+      var countryValue = (locationCountry && locationCountry.value || '').toLowerCase();
+      var queryValue = (locationQuery && locationQuery.value || '').toLowerCase();
+      var count = 0;
+
+      locationCards.forEach(function(card) {
+        var countries = (card.getAttribute('data-location-country') || '').toLowerCase();
+        var keywords = (card.getAttribute('data-location-keywords') || '').toLowerCase();
+        var text = (card.textContent || '').toLowerCase();
+        var matchesCountry = !countryValue || countries.indexOf(countryValue) !== -1 || text.indexOf(countryValue) !== -1;
+        var matchesQuery = !queryValue || keywords.indexOf(queryValue) !== -1 || text.indexOf(queryValue) !== -1;
+        var visible = matchesCountry && matchesQuery;
+        card.hidden = !visible;
+        if (visible) count += 1;
+      });
+
+      if (locationEmpty) locationEmpty.hidden = count !== 0;
+    }
+
+    [locationCountry, locationQuery].forEach(function(input) {
+      if (!input) return;
+      input.addEventListener('input', applyLocationSearch);
+      input.addEventListener('change', applyLocationSearch);
+    });
+    applyLocationSearch();
   });
 </script>
 

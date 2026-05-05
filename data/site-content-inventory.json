@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-05T21:38:54.402Z",
-  "totalSampledUrls": 180,
+  "generatedAt": "2026-05-05T23:31:36.200Z",
+  "totalSampledUrls": 181,
   "generatedSitemapAssetCount": 31,
   "generatedSitemapAssetUrlCount": 730675,
   "patterns": [
@@ -9,9 +9,7 @@
       "sampledCount": 1,
       "indexableSampleCount": 1,
       "noindexSampleCount": 0,
-      "issues": [
-        "missing-meta-description"
-      ],
+      "issues": [],
       "exampleUrls": [
         "https://missingalerts.com"
       ],
@@ -32,14 +30,15 @@
     },
     {
       "pageType": "page",
-      "sampledCount": 1,
+      "sampledCount": 2,
       "indexableSampleCount": 1,
-      "noindexSampleCount": 0,
+      "noindexSampleCount": 1,
       "issues": [],
       "exampleUrls": [
-        "https://missingalerts.com/pages/country-intelligence"
+        "https://missingalerts.com/pages/country-intelligence",
+        "https://missingalerts.com/pages/top-missing-locations"
       ],
-      "action": "keep/enrich"
+      "action": "review/noindex/enrich by pattern"
     },
     {
       "pageType": "country-search",
@@ -65,7 +64,7 @@
       ],
       "exampleUrls": [
         "https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584",
-        "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952",
+        "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708333404320",
         "https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288"
       ],
       "action": "review/noindex/enrich by pattern"
@@ -73,13 +72,10 @@
     {
       "pageType": "blog",
       "sampledCount": 8,
-      "indexableSampleCount": 7,
+      "indexableSampleCount": 8,
       "noindexSampleCount": 0,
       "issues": [
-        "bad-status",
-        "missing-meta-description",
-        "missing-canonical",
-        "thin-content"
+        "missing-meta-description"
       ],
       "exampleUrls": [
         "https://missingalerts.com/blogs/news",
@@ -129,7 +125,7 @@
     {
       "pageType": "advice-article",
       "sampledCount": 115,
-      "indexableSampleCount": 60,
+      "indexableSampleCount": 59,
       "noindexSampleCount": 0,
       "issues": [
         "bad-status",

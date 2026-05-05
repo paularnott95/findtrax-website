@@ -18,7 +18,7 @@ const OUT_CANONICAL = 'data/canonical-map.json'
 const OUT_REDIRECTS = 'data/redirect-recommendations.json'
 
 const sitemapUrls = await collectSitemapUrls(`${SITE}/sitemap.xml`, MAX_URLS)
-const urls = Array.from(new Set([SITE, `${SITE}/pages/missing-person-advice`, `${SITE}/pages/country-intelligence`, `${SITE}/pages/country-search`, ...sitemapUrls])).slice(0, MAX_URLS)
+const urls = Array.from(new Set([SITE, `${SITE}/pages/missing-person-advice`, `${SITE}/pages/country-intelligence`, `${SITE}/pages/country-search`, `${SITE}/pages/top-missing-locations`, ...sitemapUrls])).slice(0, MAX_URLS)
 const pages = []
 
 for (const url of urls) {
@@ -108,6 +108,7 @@ async function auditUrl(url) {
     officialLinksPresent: false,
     caseDataPresent: false,
     countrySpecificBlocksPresent: false,
+    locationSpecificBlocksPresent: false,
     topicSpecificBlocksPresent: false,
     faqPresent: false,
     schemaPresent: false,
@@ -134,12 +135,14 @@ async function auditUrl(url) {
     page.officialLinksPresent = /police|gov\.|garda|rcmp|namus|ncmec|missingpersons|official/i.test(html)
     page.caseDataPresent = /last seen|missing since|source verified|police|appeal/i.test(html)
     page.countrySpecificBlocksPresent = /country intelligence|emergency|official reporting|safe sharing/i.test(html)
+    page.locationSpecificBlocksPresent = /global location checker|location guidance|nearby areas|map|location-specific/i.test(html)
     page.topicSpecificBlocksPresent = /what not to do|practical steps|sightings|cctv|dashcam|doorbell|family support/i.test(html)
     page.faqPresent = /faq|frequently asked|application\/ld\+json[\s\S]*FAQPage/i.test(html)
     page.schemaPresent = /application\/ld\+json/i.test(html)
     page.uniqueLocalDataCount = [
       page.officialLinksPresent,
       page.countrySpecificBlocksPresent,
+      page.locationSpecificBlocksPresent,
       page.topicSpecificBlocksPresent,
       page.caseDataPresent,
       page.faqPresent,
@@ -274,6 +277,7 @@ Generated: ${summary.auditedAt}
 | Advice Hub | /pages/missing-person-advice | page.missing-person-advice.json / seo-advice-blog-grid | Keep and enrich |
 | Country Intelligence | /pages/country-intelligence | page.country-intelligence.json / country-search-page | Keep and index |
 | Country Search legacy | /pages/country-search | page.country-search.json / country-search-page | Canonical to Country Intelligence |
+| Top Missing Locations legacy | /pages/top-missing-locations | page.top-missing-locations.json | Redirect/canonicalize to Country Intelligence / Global Location Checker |
 | Country pages | /pages/missing-people-country?country=:slug | page.missing-people-country.json + country profiles | Index only complete profiles |
 | Missing cases blog | /blogs/missing-persons | Shopify blog articles | Keep public active cases |
 | Found-safe blog | /blogs/found-safe | Shopify blog articles | Keep privacy-protected updates |
@@ -297,7 +301,7 @@ ${duplicates.map((page) => `- ${page.duplicateGroup}: ${page.url}`).join('\n') |
 
 ## Content Decisions
 
-- Keep and enrich: homepage, Advice Hub, Country Search, complete country pages, public active case pages, found-safe updates with privacy-safe imagery, and product pages.
+- Keep and enrich: homepage, Advice Hub, Country Intelligence / Global Location Checker, complete country pages, public active case pages, found-safe updates with privacy-safe imagery, and product pages.
 - Rewrite: generic advice pages and country/language pages that do not contain official links, local reporting context, or useful Missing Alerts guidance.
 - Merge/canonicalize: repeated CCTV/dashcam/doorbell and language/category variants where only a country name changes.
 - Noindex temporarily: generated location/search/filter/tag pages, incomplete country profiles, placeholders, and pages with insufficient body content.
@@ -411,10 +415,10 @@ function renderCanonicalMap(pages) {
   return {
     generatedAt: new Date().toISOString(),
     entries: pages
-      .filter((page) => page.indexDecision === 'canonicalize' || page.url.includes('/pages/country-search'))
+      .filter((page) => page.indexDecision === 'canonicalize' || page.url.includes('/pages/country-search') || page.url.includes('/pages/top-missing-locations'))
       .map((page) => ({
         url: page.url,
-        canonicalTarget: page.url.includes('/pages/country-search') ? 'https://missingalerts.com/pages/country-intelligence' : page.canonical,
+        canonicalTarget: (page.url.includes('/pages/country-search') || page.url.includes('/pages/top-missing-locations')) ? 'https://missingalerts.com/pages/country-intelligence' : page.canonical,
         reason: page.duplicateGroup ? `Duplicate group ${page.duplicateGroup}` : 'Legacy route canonicalized to primary country system',
       })),
   }

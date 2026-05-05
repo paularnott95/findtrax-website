@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-05T21:38:54.406Z",
+  "generatedAt": "2026-05-05T23:31:36.203Z",
   "patterns": [
     {
       "patternName": "legacy-country-search",
@@ -9,23 +9,18 @@
       "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
     },
     {
+      "patternName": "legacy-top-missing-locations",
+      "estimatedAffectedUrlCount": 1,
+      "action": "redirect-or-canonicalize-to-country-intelligence",
+      "reason": [],
+      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
+    },
+    {
       "patternName": "unknown",
       "estimatedAffectedUrlCount": 3,
       "action": "manual-review",
       "reason": [
         "missing-title",
-        "missing-meta-description",
-        "missing-canonical",
-        "thin-content"
-      ],
-      "verification": "Covered by theme robots/noindex/canonical quality gate where route renders through Shopify; generated asset XML inventoried for controlled deletion."
-    },
-    {
-      "patternName": "blog-archive",
-      "estimatedAffectedUrlCount": 8,
-      "action": "quality-gate",
-      "reason": [
-        "bad-status",
         "missing-meta-description",
         "missing-canonical",
         "thin-content"

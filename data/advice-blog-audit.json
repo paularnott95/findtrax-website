@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-05T21:38:54.593Z",
+  "generatedAt": "2026-05-05T23:31:36.336Z",
   "totalAdvicePagesSampled": 117,
   "duplicateGroups": [],
   "pages": [
@@ -164,7 +164,7 @@
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-from-france-goes-missing-overseas-en",
       "title": "What to do if someone from France goes missing overseas &ndash; Missing people",
-      "wordCount": 1942,
+      "wordCount": 1955,
       "duplicateGroup": null,
       "action": "keep-and-monitor",
       "issues": [],
@@ -494,7 +494,7 @@
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/dementia-missing-person-afghanistan-fr",
       "title": "Comment réagir quand une personne atteinte de démence disparaît en Afg &ndash; Missing people",
-      "wordCount": 2173,
+      "wordCount": 2186,
       "duplicateGroup": null,
       "action": "keep-and-monitor",
       "issues": [],
@@ -549,7 +549,7 @@
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-ivory-coast-en",
       "title": "How to gather CCTV and doorbell information for a missing person in Iv &ndash; Missing people",
-      "wordCount": 2139,
+      "wordCount": 2152,
       "duplicateGroup": null,
       "action": "keep-and-monitor",
       "issues": [],
@@ -680,13 +680,18 @@
     },
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uzbekistan-en",
-      "title": "How to gather CCTV and doorbell information for a missing person in Uz &ndash; Missing people",
-      "wordCount": 2146,
+      "title": "Verifying your connection...",
+      "wordCount": 19,
       "duplicateGroup": null,
-      "action": "keep-and-monitor",
-      "issues": [],
-      "canonicalTarget": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uzbekistan-en",
-      "missingImages": false,
+      "action": "rewrite-or-noindex",
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "canonicalTarget": "",
+      "missingImages": true,
       "brokenLinks": false
     },
     {

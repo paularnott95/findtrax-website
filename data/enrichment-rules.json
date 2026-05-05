@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "pageType": "country-intelligence",
+      "requiredModules": ["urgent-reporting-note", "global-location-checker", "official-reporting-guidance", "active-cases", "safe-sharing", "faq"],
+      "indexDecision": "index"
+    },
+    {
+      "pageType": "legacy-country-search",
+      "requiredAction": "canonicalize-to-country-intelligence",
+      "indexDecision": "noindex-follow"
+    },
+    {
+      "pageType": "legacy-top-missing-locations",
+      "requiredAction": "redirect-or-canonicalize-to-country-intelligence-global-location-checker",
+      "indexDecision": "noindex-follow"
+    },
+    {
+      "pageType": "location",
+      "indexableWhen": ["activeCaseCount > 0", "qualityScore >= 85", "officialLocalGuidancePresent == true"],
+      "fallbackAction": "noindex-follow-and-omit-from-sitemap"
+    },
+    {
+      "pageType": "generated-low-value",
+      "fallbackAction": "noindex-canonicalize-remove-from-sitemap"
+    }
+  ]
+}

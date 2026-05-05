@@ -40,7 +40,10 @@ for (const slug of requiredSlugs) {
   assert(countrySearchSection.includes(`/pages/missing-people-${slug}`), `Country Search links ${slug}`)
 }
 assert(countrySearchSection.includes('/pages/missing-people-england'), 'Country Search links England page')
+assert(countrySearchSection.includes('Global Location Checker'), 'Country Intelligence includes Global Location Checker')
 assert(!countrySearchSection.includes('FindTrax'), 'Country Search does not leak FindTrax branding')
+const topLocations = await readFile('shopify-theme/sections/top-missing-locations.liquid', 'utf8')
+assert(topLocations.includes('/pages/country-intelligence#global-location-checker'), 'Top Missing Locations is merged into Global Location Checker')
 
 const seoAudit = JSON.parse(await readFile('data/seo-page-audit.json', 'utf8'))
 assert(seoAudit.summary.generatedSitemapAssetUrlCount > 1000, 'SEO audit records mass generated sitemap URL inventory')
@@ -49,7 +52,10 @@ const patternAudit = JSON.parse(await readFile('data/url-pattern-audit.json', 'u
 assert(patternAudit.summary.estimatedUrlCountAffected >= seoAudit.summary.generatedSitemapAssetUrlCount, 'pattern audit covers generated URL inventory')
 const canonicalMap = JSON.parse(await readFile('data/canonical-map.json', 'utf8'))
 assert(canonicalMap.entries.some((entry) => entry.url.includes('/pages/country-search') && entry.canonicalTarget.endsWith('/pages/country-intelligence')), 'Country Search canonical points to Country Intelligence')
+assert(canonicalMap.entries.some((entry) => entry.url.includes('/pages/top-missing-locations') && entry.canonicalTarget.endsWith('/pages/country-intelligence')), 'Top Missing Locations canonical points to Country Intelligence')
 const noindexPatterns = JSON.parse(await readFile('data/noindex-patterns.json', 'utf8'))
 assert(noindexPatterns.patterns.some((pattern) => pattern.patternName.includes('generated-location')), 'generated location pages are noindex/disallow classified')
+const locationDirectory = JSON.parse(await readFile('data/location-directory.json', 'utf8'))
+assert(locationDirectory.locations.some((item) => item.locationSlug === 'united-kingdom/scotland/glasgow' && item.shouldIndex === true), 'location directory has a quality-gated indexable Glasgow record')
 
 console.log('SEO validation passed')

@@ -1,0 +1,70 @@
+{
+  "auditedAt": "2026-05-05T21:46:00.000Z",
+  "host": "seo.missingalerts.com",
+  "owner": {
+    "platform": "Vercel",
+    "teamId": "team_wsY7KR8XaRJjJB3AQvcMGSRs",
+    "projectId": "prj_UJ7LfgEqrDpZsziHOu6Ff5C1WXMQ",
+    "projectName": "dashboard-ui",
+    "deploymentId": "dpl_ABAGuKfW13d5DX6Givyv5CPPx6Pd"
+  },
+  "before": [
+    {
+      "url": "https://seo.missingalerts.com/",
+      "status": 200,
+      "title": "Missing Alerts SEO Hub | Police-first public awareness",
+      "robots": "index, follow",
+      "canonical": "https://seo.missingalerts.com/",
+      "publicFacingIssue": "Exposed internal SEO Hub branding as a public indexable page."
+    },
+    {
+      "url": "https://seo.missingalerts.com/seo/location?loc=united-kingdom/england/london",
+      "status": 200,
+      "title": "Missing People in London | Missing Alerts",
+      "robots": "index,follow",
+      "canonical": "https://seo.missingalerts.com/seo/location?loc=united-kingdom/england/london",
+      "publicFacingIssue": "Standalone generated location page overlapped Shopify location/Country Intelligence authority."
+    },
+    {
+      "url": "https://seo.missingalerts.com/seo/advice?topic=cctv",
+      "status": 200,
+      "title": "Cctv | Missing Alerts",
+      "robots": "index, follow",
+      "canonical": "https://seo.missingalerts.com/seo/advice?topic=cctv",
+      "publicFacingIssue": "Thin generated advice route should be consolidated into Advice Hub/Country Intelligence."
+    }
+  ],
+  "after": [
+    {
+      "url": "https://seo.missingalerts.com/",
+      "status": 308,
+      "location": "https://missingalerts.com/pages/country-intelligence",
+      "result": "Public SEO Hub retired and redirected to Country Intelligence."
+    },
+    {
+      "url": "https://seo.missingalerts.com/robots.txt",
+      "status": 200,
+      "body": "User-Agent: *\\nDisallow: /",
+      "result": "Subdomain crawler access disallowed."
+    },
+    {
+      "url": "https://seo.missingalerts.com/sitemaps/page-sitemap-index.xml",
+      "status": 308,
+      "location": "https://missingalerts.com/pages/country-intelligence",
+      "result": "Public generated sitemap endpoint retired."
+    },
+    {
+      "url": "https://seo.missingalerts.com/seo/location?loc=united-kingdom/england/london",
+      "status": 308,
+      "location": "https://missingalerts.com/pages/country-intelligence",
+      "result": "Generated location route redirected to Country Intelligence / Global Location Checker."
+    },
+    {
+      "url": "https://seo.missingalerts.com/seo/advice?topic=cctv",
+      "status": 308,
+      "location": "https://missingalerts.com/pages/country-intelligence",
+      "result": "Generated advice route redirected to main public hub."
+    }
+  ],
+  "decision": "The SEO subdomain is not a public content authority. It is now retired from public indexing and redirects users to the Missing Alerts Country Intelligence page on the primary domain."
+}

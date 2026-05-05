@@ -79,7 +79,7 @@
       links.push({ label: 'Nearby missing cases', url: '/pages/missing-cases-near?loc=' + encodeURIComponent(parts.join('/')) });
       links.push({ label: 'Search guide', url: '/pages/missing-person-search-guide?loc=' + encodeURIComponent(parts.join('/')) });
     }
-    links.push({ label: 'Top locations', url: '/pages/top-missing-locations' });
+    links.push({ label: 'Top locations', url: '/pages/country-intelligence' });
     return links.slice(0, 5);
   }
 

@@ -1,0 +1,40 @@
+{
+  "modules": [
+    {
+      "id": "urgent-reporting-note",
+      "label": "Emergency reporting note",
+      "useWhen": ["country", "location", "case", "advice"],
+      "contentRule": "Tell users to contact police or emergency services first for urgent sightings or risk."
+    },
+    {
+      "id": "official-reporting-guidance",
+      "label": "Official reporting guidance",
+      "useWhen": ["country", "location"],
+      "contentRule": "Use verified official links when known; otherwise use safe fallback text and keep page noindex if still thin."
+    },
+    {
+      "id": "global-location-checker",
+      "label": "Global Location Checker",
+      "useWhen": ["country-intelligence", "location"],
+      "contentRule": "Expose locations as searchable suggestions before making standalone pages indexable."
+    },
+    {
+      "id": "active-cases",
+      "label": "Active case block",
+      "useWhen": ["country", "location", "homepage"],
+      "contentRule": "Show only source-backed active public cases matching the selected country/location."
+    },
+    {
+      "id": "safe-sharing",
+      "label": "Safe sharing guidance",
+      "useWhen": ["country", "location", "case", "advice"],
+      "contentRule": "Avoid private details, speculation, harassment, trespass, or interference with investigations."
+    },
+    {
+      "id": "faq",
+      "label": "FAQ block",
+      "useWhen": ["country", "location", "advice"],
+      "contentRule": "Answer practical questions with source-backed or safe general guidance."
+    }
+  ]
+}

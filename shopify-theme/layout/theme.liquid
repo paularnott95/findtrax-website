@@ -32,7 +32,7 @@
       if ma_tagged_archive and blog.url != blank
         assign ma_canonical_url = request.origin | append: blog.url
       endif
-      if request.path == '/pages/country-search'
+      if request.path == '/pages/country-search' or request.path == '/pages/country-intelligence' or request.path == '/pages/top-missing-locations'
         assign ma_canonical_url = request.origin | append: '/pages/country-intelligence'
       endif
       if request.path contains '/pages/' and ma_location_seo_handles contains ma_location_page_lookup and ma_location_query_value != blank
@@ -69,6 +69,8 @@
     {%- if template.suffix == 'staff' -%}
       <meta name="robots" content="noindex,nofollow">
     {%- elsif request.page_type == '404' or template.name == '404' -%}
+      <meta name="robots" content="noindex,follow">
+    {%- elsif request.path == '/pages/country-search' or request.path == '/pages/top-missing-locations' -%}
       <meta name="robots" content="noindex,follow">
     {%- elsif ma_tagged_archive -%}
       <meta name="robots" content="noindex,follow">
@@ -129,6 +131,8 @@
         assign display_page_title = 'Country Intelligence'
       elsif request.page_type == 'page' and page.handle == 'country-intelligence'
         assign display_page_title = 'Country Intelligence'
+      elsif request.page_type == 'page' and page.handle == 'top-missing-locations'
+        assign display_page_title = 'Country Intelligence'
       elsif request.page_type == 'blog' and blog.handle == 'missing-persons'
         assign display_page_title = 'Latest Missing Person Appeals'
       elsif request.page_type == 'blog' and blog.handle == 'found-safe'
@@ -147,6 +151,8 @@
         assign ma_meta_description = 'Search Missing Alerts country intelligence for official reporting links, active case guidance, country-specific advice, and safe sharing information.'
       elsif request.page_type == 'page' and page.handle == 'country-intelligence'
         assign ma_meta_description = 'Missing Alerts Country Intelligence brings together country-specific missing-person guidance, official reporting links, active case context, and safe sharing advice.'
+      elsif request.page_type == 'page' and page.handle == 'top-missing-locations'
+        assign ma_meta_description = 'Use Missing Alerts Country Intelligence and the Global Location Checker for country and location guidance, active cases, official reporting links, and safe sharing advice.'
       elsif request.page_type == 'blog' and blog.handle == 'missing-persons'
         assign ma_meta_description = 'Browse active public missing-person appeals listed by Missing Alerts with source attribution, country information, location context, and safe sharing guidance.'
       elsif request.page_type == 'blog' and blog.handle == 'found-safe'
@@ -596,7 +602,7 @@
     </main>
 
     <nav class="ma-location-crawl-link" aria-label="Location browsing">
-      <a href="/pages/top-missing-locations">Explore locations across the world</a>
+      <a href="/pages/country-intelligence">Open Country Intelligence</a>
     </nav>
 
     {% sections 'footer-group' %}

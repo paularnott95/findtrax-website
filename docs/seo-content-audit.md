@@ -1,18 +1,18 @@
 # Missing Alerts SEO Content Audit
 
-Generated: 2026-05-05T21:38:54.402Z
+Generated: 2026-05-05T23:31:36.200Z
 
 ## Summary
 
 - Base URL: https://missingalerts.com
-- Sampled live URLs: 180
+- Sampled live URLs: 181
 - Thin pages found in sample: 59
 - Duplicate title/meta groups found in sample: 0
-- Noindex recommended in sample: 3
+- Noindex recommended in sample: 4
 - Canonicalization recommended in sample: 0
 - Generated sitemap asset files in theme: 31
 - Generated sitemap asset URLs in theme: 730675
-- Estimated URL count affected by pattern-level cleanup: 730855
+- Estimated URL count affected by pattern-level cleanup: 730856
 - AdSense-risk patterns identified: 11
 
 ## Public Page Types
@@ -23,6 +23,7 @@ Generated: 2026-05-05T21:38:54.402Z
 | Advice Hub | /pages/missing-person-advice | page.missing-person-advice.json / seo-advice-blog-grid | Keep and enrich |
 | Country Intelligence | /pages/country-intelligence | page.country-intelligence.json / country-search-page | Keep and index |
 | Country Search legacy | /pages/country-search | page.country-search.json / country-search-page | Canonical to Country Intelligence |
+| Top Missing Locations legacy | /pages/top-missing-locations | page.top-missing-locations.json | Redirect/canonicalize to Country Intelligence / Global Location Checker |
 | Country pages | /pages/missing-people-country?country=:slug | page.missing-people-country.json + country profiles | Index only complete profiles |
 | Missing cases blog | /blogs/missing-persons | Shopify blog articles | Keep public active cases |
 | Found-safe blog | /blogs/found-safe | Shopify blog articles | Keep privacy-protected updates |
@@ -39,9 +40,9 @@ The theme contains 31 generated sitemap XML assets with 730675 total URL entries
 ## Thin Pages Sample
 
 - https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584 (53 words): Noindex/remove from sitemap; do not use as ad inventory.
-- https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952 (168 words): Noindex/remove from sitemap; do not use as ad inventory.
+- https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708333404320 (171 words): Noindex/remove from sitemap; do not use as ad inventory.
 - https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288 (3 words): Noindex/remove from sitemap; do not use as ad inventory.
-- https://missingalerts.com/blogs/news (19 words): Redirect to the closest useful page or remove from sitemap.
+- https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uzbekistan-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-peru-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-angola-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-yemen-en (19 words): Redirect to the closest useful page or remove from sitemap.
@@ -70,7 +71,7 @@ The theme contains 31 generated sitemap XML assets with 730675 total URL entries
 
 ## Content Decisions
 
-- Keep and enrich: homepage, Advice Hub, Country Search, complete country pages, public active case pages, found-safe updates with privacy-safe imagery, and product pages.
+- Keep and enrich: homepage, Advice Hub, Country Intelligence / Global Location Checker, complete country pages, public active case pages, found-safe updates with privacy-safe imagery, and product pages.
 - Rewrite: generic advice pages and country/language pages that do not contain official links, local reporting context, or useful Missing Alerts guidance.
 - Merge/canonicalize: repeated CCTV/dashcam/doorbell and language/category variants where only a country name changes.
 - Noindex temporarily: generated location/search/filter/tag pages, incomplete country profiles, placeholders, and pages with insufficient body content.

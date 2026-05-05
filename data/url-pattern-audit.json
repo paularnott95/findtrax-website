@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-05-05T21:38:54.401Z",
+  "generatedAt": "2026-05-05T23:31:36.199Z",
   "summary": {
-    "patternCount": 17,
-    "estimatedUrlCountAffected": 730855,
+    "patternCount": 18,
+    "estimatedUrlCountAffected": 730856,
     "highSeoRiskPatterns": 12,
     "highAdsenseRiskPatterns": 11
   },
@@ -26,18 +26,16 @@
         "Missing people"
       ],
       "metaDescriptionPatterns": [
-        ""
+        "Missing Alerts publishes source-backed missing-person appeals, found-safe updates, country intelligence, and practical advice to help people share urgent public information safely."
       ],
       "wordCountSamples": [
-        2640
+        2406
       ],
-      "issues": [
-        "missing-meta-description"
-      ],
+      "issues": [],
       "recommendedAction": "keep/enrich/index",
       "seoRisk": "low",
       "adsenseRisk": "low",
-      "averageWordCount": 2640
+      "averageWordCount": 2406
     },
     {
       "patternName": "advice-hub",
@@ -132,10 +130,40 @@
       "averageWordCount": 757
     },
     {
+      "patternName": "legacy-top-missing-locations",
+      "exampleUrls": [
+        "https://missingalerts.com/pages/top-missing-locations"
+      ],
+      "sampledCount": 1,
+      "estimatedAffectedUrlCount": 1,
+      "routeSource": "templates/page.top-missing-locations.json",
+      "dataSource": "Shopify theme/page output",
+      "statusCodes": {
+        "200": 1
+      },
+      "indexDecisions": {
+        "noindex": 1
+      },
+      "titlePatterns": [
+        "Country Intelligence &ndash; Missing people"
+      ],
+      "metaDescriptionPatterns": [
+        "Use Missing Alerts Country Intelligence and the Global Location Checker for country and location guidance, active cases, official reporting links, and safe sharing advice."
+      ],
+      "wordCountSamples": [
+        405
+      ],
+      "issues": [],
+      "recommendedAction": "redirect-or-canonicalize-to-country-intelligence",
+      "seoRisk": "high",
+      "adsenseRisk": "high",
+      "averageWordCount": 405
+    },
+    {
       "patternName": "unknown",
       "exampleUrls": [
         "https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584",
-        "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952",
+        "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708333404320",
         "https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288"
       ],
       "sampledCount": 3,
@@ -156,7 +184,7 @@
       ],
       "wordCountSamples": [
         53,
-        168,
+        171,
         3
       ],
       "issues": [
@@ -168,7 +196,7 @@
       "recommendedAction": "manual-review",
       "seoRisk": "high",
       "adsenseRisk": "high",
-      "averageWordCount": 75
+      "averageWordCount": 76
     },
     {
       "patternName": "blog-archive",
@@ -187,31 +215,29 @@
       "routeSource": "Shopify blog",
       "dataSource": "Shopify theme/page output",
       "statusCodes": {
-        "200": 7,
-        "429": 1
+        "200": 8
       },
       "indexDecisions": {
-        "redirect-or-remove": 1,
-        "index": 7
+        "index": 8
       },
       "titlePatterns": [
-        "Verifying your connection...",
-        "Missing Persons &ndash; Missing people",
+        "News &ndash; Missing people",
+        "Latest Missing Person Appeals &ndash; Missing people",
         "CASE UPDATES &ndash; Missing people",
         "Missing Person Advice &ndash; Missing people",
         "DONNA KEOGH, :number – MIDDLESBROUGH &ndash; Missing people"
       ],
       "metaDescriptionPatterns": [
         "",
+        "Browse active public missing-person appeals listed by Missing Alerts with source attribution, country information, location context, and safe sharing guidance.",
+        "Read Missing Alerts updates, public safety guidance, and source-backed information about missing-person appeals and response workflows.",
         "(CASE UPDATE) Police have made a significant development in the long-running investigation into the disappearance and suspected murder of Donna Keogh, who was just :number years ol",
-        "(DEATH INVESTIGATION UPDATE) Joshua Kershaw, a :number-year-old British man, tragically died in Thailand on :number January :number — just hours after arriving in the country. What",
-        "(CASE UPDATE &amp; “JAY’S LAW” CAMPAIGN) The case of Jay Slater, the British teenager who went missing in Tenerife in June :number, continues to have lasting impact — both through ",
-        "(CASE UPDATE &amp; LEGACY) The disappearance and death of Nicola Bulley became one of the most widely followed missing person cases in the UK in recent years. What began as a routi"
+        "(DEATH INVESTIGATION UPDATE) Joshua Kershaw, a :number-year-old British man, tragically died in Thailand on :number January :number — just hours after arriving in the country. What"
       ],
       "wordCountSamples": [
-        19,
-        1495,
-        597,
+        446,
+        2248,
+        610,
         451,
         1957,
         2447,
@@ -219,15 +245,12 @@
         2314
       ],
       "issues": [
-        "bad-status",
-        "missing-meta-description",
-        "missing-canonical",
-        "thin-content"
+        "missing-meta-description"
       ],
       "recommendedAction": "quality-gate",
-      "seoRisk": "high",
-      "adsenseRisk": "high",
-      "averageWordCount": 1460
+      "seoRisk": "low",
+      "adsenseRisk": "low",
+      "averageWordCount": 1609
     },
     {
       "patternName": "found-safe",
@@ -356,12 +379,12 @@
       "routeSource": "Shopify advice blog article",
       "dataSource": "Shopify advice pages/blog articles",
       "statusCodes": {
-        "200": 60,
-        "429": 55
+        "200": 59,
+        "429": 56
       },
       "indexDecisions": {
-        "index": 60,
-        "redirect-or-remove": 55
+        "index": 59,
+        "redirect-or-remove": 56
       },
       "titlePatterns": [
         "What to do if someone goes missing in United Kingdom &ndash; Missing people",
@@ -400,7 +423,7 @@
       "recommendedAction": "rewrite-or-canonicalize",
       "seoRisk": "high",
       "adsenseRisk": "high",
-      "averageWordCount": 1079
+      "averageWordCount": 1061
     },
     {
       "patternName": "generated-alert-sitemap-assets",

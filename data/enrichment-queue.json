@@ -1,6 +1,15 @@
 {
-  "generatedAt": "2026-05-05T21:38:54.402Z",
+  "generatedAt": "2026-05-05T23:31:36.200Z",
   "queue": [
+    {
+      "url": "https://missingalerts.com/pages/top-missing-locations",
+      "patternName": "legacy-top-missing-locations",
+      "currentScore": 60,
+      "indexDecision": "noindex",
+      "priority": "normal",
+      "neededModules": [],
+      "action": "Noindex/remove from sitemap; do not use as ad inventory."
+    },
     {
       "url": "https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584",
       "patternName": "unknown",
@@ -16,7 +25,7 @@
       "action": "Noindex/remove from sitemap; do not use as ad inventory."
     },
     {
-      "url": "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952",
+      "url": "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708333404320",
       "patternName": "unknown",
       "currentScore": 36,
       "indexDecision": "noindex",

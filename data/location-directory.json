@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-05-05T21:46:00.000Z",
+  "strategy": "Searchable location directory with quality-gated indexability. Locations can appear in Country Intelligence suggestions before they become standalone indexable pages.",
+  "supportedRegions": [
+    "England",
+    "Scotland",
+    "Wales",
+    "Northern Ireland",
+    "Ireland",
+    "United States",
+    "Canada",
+    "Australia",
+    "New Zealand",
+    "Singapore",
+    "South Africa"
+  ],
+  "indexingRules": {
+    "indexableWhen": [
+      "active public cases exist",
+      "verified official/local reporting guidance exists",
+      "meaningful local context and internal links exist"
+    ],
+    "defaultForNoCaseLocations": "noindex, follow and omit from sitemap",
+    "canonicalFallback": "/pages/country-intelligence"
+  },
+  "locations": [
+    {
+      "country": "United Kingdom",
+      "countryCode": "GB",
+      "countrySlug": "united-kingdom",
+      "subdivision": "England",
+      "city": "London",
+      "locationSlug": "united-kingdom/england/london",
+      "officialReportingFallback": "Use 999 or 112 for emergencies and 101/non-emergency police reporting where appropriate.",
+      "relatedCountryPage": "/pages/missing-people-united-kingdom",
+      "activeCaseCount": 0,
+      "foundSafeCount": 0,
+      "nearbyAreas": ["Birmingham", "Manchester", "Reading"],
+      "adviceLinks": ["/pages/missing-person-advice", "/blogs/missing-person-advice"],
+      "shouldIndex": false,
+      "qualityScore": 68,
+      "sourceCoverageStatus": "partial"
+    },
+    {
+      "country": "United Kingdom",
+      "countryCode": "GB",
+      "countrySlug": "united-kingdom",
+      "subdivision": "Scotland",
+      "city": "Glasgow",
+      "locationSlug": "united-kingdom/scotland/glasgow",
+      "officialReportingFallback": "Use Police Scotland official reporting routes for non-emergency information and 999 in an emergency.",
+      "relatedCountryPage": "/pages/missing-people-united-kingdom",
+      "activeCaseCount": 1,
+      "foundSafeCount": 0,
+      "nearbyAreas": ["Croftfoot", "Edinburgh", "Aberdeen"],
+      "adviceLinks": ["/pages/missing-person-advice", "/blogs/missing-persons/jan-hussain"],
+      "shouldIndex": true,
+      "qualityScore": 86,
+      "sourceCoverageStatus": "ready"
+    },
+    {
+      "country": "Ireland",
+      "countryCode": "IE",
+      "countrySlug": "ireland",
+      "subdivision": "Dublin",
+      "city": "Dublin",
+      "locationSlug": "ireland/dublin/dublin",
+      "officialReportingFallback": "Use An Garda Siochana reporting routes and emergency services where immediate danger is possible.",
+      "relatedCountryPage": "/pages/missing-people-ireland",
+      "activeCaseCount": 0,
+      "foundSafeCount": 0,
+      "nearbyAreas": ["Rathfarnham", "Sligo"],
+      "adviceLinks": ["/pages/missing-person-advice"],
+      "shouldIndex": false,
+      "qualityScore": 64,
+      "sourceCoverageStatus": "partial"
+    }
+  ]
+}

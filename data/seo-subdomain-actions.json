@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-05-05T21:46:00.000Z",
+  "actions": [
+    {
+      "surface": "seo.missingalerts.com",
+      "action": "redirect",
+      "implementation": "Vercel dashboard-ui middleware redirects all public subdomain routes except robots.txt to https://missingalerts.com/pages/country-intelligence",
+      "status": "deployed"
+    },
+    {
+      "surface": "seo.missingalerts.com/robots.txt",
+      "action": "disallow-all",
+      "implementation": "Next.js robots route returns User-Agent: * and Disallow: /",
+      "status": "deployed"
+    },
+    {
+      "surface": "seo.missingalerts.com/sitemaps/page-sitemap-index.xml",
+      "action": "retire-public-sitemap",
+      "implementation": "Middleware redirects sitemap endpoint to Country Intelligence",
+      "status": "deployed"
+    },
+    {
+      "surface": "Shopify /pages/top-missing-locations",
+      "action": "merge",
+      "implementation": "Legacy top locations page now redirects/canonicalizes to /pages/country-intelligence#global-location-checker and is noindex,follow",
+      "status": "theme-ready"
+    },
+    {
+      "surface": "Shopify /pages/country-search",
+      "action": "canonicalize",
+      "implementation": "Legacy route canonicalizes/noindexes to /pages/country-intelligence",
+      "status": "theme-ready"
+    }
+  ]
+}
