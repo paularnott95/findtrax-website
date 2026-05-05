@@ -1,0 +1,14 @@
+{
+  "name": "missing-alerts-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "scan": "node scripts/scan-missing-cases.mjs",
+    "validate-content": "node scripts/validate-content.mjs",
+    "route-check": "node scripts/route-check.mjs",
+    "lint": "node scripts/validate-content.mjs",
+    "test": "node tests/run-tests.mjs && npm run build && npm run validate-content"
+  }
+}

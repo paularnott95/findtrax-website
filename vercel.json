@@ -1,0 +1,10 @@
+{
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/api/tool-alert-signups", "destination": "/api/tool-alert-signups.js" },
+    { "source": "/api/scanner/status", "destination": "/api/scanner/status.js" },
+    { "source": "/api/scanner/run", "destination": "/api/scanner/run.js" }
+  ]
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "sourceName": "Fixture Official Police Feed",
+    "sourceUrl": "https://official.example.test/cases/active-uk",
+    "externalId": "fixture-active-uk",
+    "name": "Fixture Active Person",
+    "countryCode": "GB",
+    "missingSince": "2026-05-01",
+    "status": "active",
+    "isPublic": true,
+    "summary": "Official fixture active missing-person case for scanner validation only."
+  },
+  {
+    "sourceName": "Fixture Official Police Feed",
+    "sourceUrl": "https://official.example.test/cases/active-uk",
+    "externalId": "fixture-active-uk-duplicate",
+    "name": "Fixture Active Person",
+    "countryCode": "GB",
+    "missingSince": "2026-05-01",
+    "status": "active",
+    "isPublic": true,
+    "summary": "Duplicate fixture by source URL."
+  },
+  {
+    "sourceName": "Fixture Official Police Feed",
+    "sourceUrl": "https://official.example.test/cases/found-safe",
+    "externalId": "fixture-found-safe",
+    "name": "Fixture Found Safe Person",
+    "countryCode": "IE",
+    "missingSince": "2026-05-01",
+    "status": "found-safe",
+    "isPublic": true,
+    "summary": "Found-safe fixture that must not publish as active."
+  }
+]

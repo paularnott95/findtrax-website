@@ -1,0 +1,12 @@
+{
+  "lastScanAt": "2026-05-05T09:35:06.518Z",
+  "importedCount": 0,
+  "skippedCount": 0,
+  "errorCount": 0,
+  "skipped": [],
+  "errors": [],
+  "notes": [
+    "No live trusted scanner source is enabled. Configure approved public source feeds before production auto-import."
+  ],
+  "publishedPreview": []
+}
