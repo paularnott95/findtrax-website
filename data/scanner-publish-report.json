@@ -1,13 +1,22 @@
 {
-  "at": "2026-05-05T20:06:45.382Z",
-  "ok": true,
-  "published": [
+  "at": "2026-05-05T21:40:49.190Z",
+  "ok": false,
+  "published": [],
+  "errors": [
     {
-      "sourceUrl": "https://www.scotland.police.uk/what-s-happening/news/2026/april/appeal-to-help-trace-jan-hussain-believed-to-have-travelled-to-glasgow/",
-      "articleId": 565981118624,
-      "handle": "jan-hussain",
-      "action": "updated"
+      "reason": "missing-shopify-credentials-or-blog-target",
+      "health": {
+        "ready": false,
+        "storeConfigured": false,
+        "tokenConfigured": false,
+        "tokenMode": "missing",
+        "tokenRefreshable": false,
+        "tokenExpiredOrExpiring": false,
+        "tokenBlockedReason": "missing-shopify-store-domain",
+        "blogTargetConfigured": true,
+        "apiVersion": "2026-04",
+        "target": "blog-handle"
+      }
     }
-  ],
-  "errors": []
+  ]
 }
