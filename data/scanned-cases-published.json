@@ -19,8 +19,8 @@
     "sourceName": "Police Scotland",
     "sourceUrl": "https://www.scotland.police.uk/what-s-happening/news/2026/april/appeal-to-help-trace-jan-hussain-believed-to-have-travelled-to-glasgow/",
     "sourcePublishedAt": "",
-    "importedAt": "2026-05-05T19:18:56.749Z",
-    "lastCheckedAt": "2026-05-05T19:18:56.749Z",
+    "importedAt": "2026-05-05T20:06:39.304Z",
+    "lastCheckedAt": "2026-05-05T20:06:39.304Z",
     "status": "active",
     "isPublic": true,
     "caseType": "missing-person",
@@ -31,6 +31,7 @@
     "clothing": "brown trousers and a grey t-shirt",
     "travelContext": "Believed to have travelled from Birmingham to south-east Glasgow.",
     "photoUrl": "https://www.scotland.police.uk/spa-media/w51lcjaw/jan-hussain.png?width=247&height=281&mode=max",
+    "photoExtractionMethod": "img:src",
     "photoVisibility": "public-active",
     "tags": [
       "scanner-imported",

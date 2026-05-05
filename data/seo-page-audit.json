@@ -1,11 +1,11 @@
 {
   "summary": {
-    "auditedAt": "2026-05-05T19:33:59.278Z",
+    "auditedAt": "2026-05-05T20:07:07.305Z",
     "baseUrl": "https://missingalerts.com",
-    "sampledUrlCount": 179,
-    "thinPagesFound": 60,
+    "sampledUrlCount": 180,
+    "thinPagesFound": 59,
     "duplicateGroupsFound": 0,
-    "noindexRecommended": 77,
+    "noindexRecommended": 76,
     "canonicalRecommended": 0,
     "generatedSitemapAssetCount": 31,
     "generatedSitemapAssetUrlCount": 730675
@@ -44,6 +44,20 @@
       "duplicateGroup": null
     },
     {
+      "url": "https://missingalerts.com/pages/country-intelligence",
+      "status": 200,
+      "title": "Country Intelligence | Missing Alerts &ndash; Missing people",
+      "metaDescription": "Search country-specific missing-person reporting links, active source-backed cases, safe sharing guidance, and Missing Alerts country pages.",
+      "canonical": "https://missingalerts.com/pages/country-intelligence",
+      "robots": "",
+      "wordCount": 374,
+      "template": "page",
+      "indexDecision": "index",
+      "issues": [],
+      "recommendedAction": "Keep and monitor.",
+      "duplicateGroup": null
+    },
+    {
       "url": "https://missingalerts.com/pages/country-search",
       "status": 200,
       "title": "Country Search &ndash; Missing people",
@@ -77,13 +91,13 @@
       "duplicateGroup": null
     },
     {
-      "url": "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708329472160",
+      "url": "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952",
       "status": 200,
       "title": "",
       "metaDescription": "",
       "canonical": "",
       "robots": "",
-      "wordCount": 126,
+      "wordCount": 171,
       "template": "unknown",
       "indexDecision": "noindex",
       "issues": [
@@ -1512,21 +1526,16 @@
     },
     {
       "url": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-morocco-en",
-      "status": 429,
-      "title": "Verifying your connection...",
-      "metaDescription": "",
-      "canonical": "",
+      "status": 200,
+      "title": "How to gather CCTV and doorbell information for a missing person in Mo &ndash; Missing people",
+      "metaDescription": "How to gather CCTV and doorbell information for a missing person in Morocco How to gather CCTV and doorbell information for a missing person in Morocco needs a careful response because speed, accuracy and privacy all matter. This guide is written for Morocco and focuses on practical steps that families, friends, workpl",
+      "canonical": "https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-morocco-en",
       "robots": "",
-      "wordCount": 19,
+      "wordCount": 2129,
       "template": "advice-article",
-      "indexDecision": "noindex",
-      "issues": [
-        "bad-status",
-        "missing-meta-description",
-        "missing-canonical",
-        "thin-content"
-      ],
-      "recommendedAction": "Redirect to the closest useful page or remove from sitemap.",
+      "indexDecision": "index",
+      "issues": [],
+      "recommendedAction": "Keep and monitor.",
       "duplicateGroup": null
     },
     {

@@ -1,5 +1,5 @@
 {
-  "at": "2026-05-05T19:16:21.102Z",
+  "at": "2026-05-05T20:05:03.599Z",
   "publish": true,
   "results": [
     {
@@ -40,8 +40,8 @@
         "sourceName": "Missing People UK",
         "sourceUrl": "https://www.missingpeople.org.uk/help-us-find/vitoria-barreto-26-002106",
         "sourcePublishedAt": "2026-03-03",
-        "importedAt": "2026-05-05T19:15:26.966Z",
-        "lastCheckedAt": "2026-05-05T19:15:26.969Z",
+        "importedAt": "2026-05-05T20:04:06.226Z",
+        "lastCheckedAt": "2026-05-05T20:04:06.233Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -52,6 +52,7 @@
         "clothing": "",
         "travelContext": "",
         "photoUrl": "https://www.missingpeople.org.uk/wp-content/uploads/2022/10/appeals_og_img1.jpeg",
+        "photoExtractionMethod": "og:image",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -107,8 +108,8 @@
         "sourceName": "Missing People UK",
         "sourceUrl": "https://www.missingpeople.org.uk/help-us-find/jack-smith-25-005166",
         "sourcePublishedAt": "2025-06-15",
-        "importedAt": "2026-05-05T19:15:30.654Z",
-        "lastCheckedAt": "2026-05-05T19:15:30.654Z",
+        "importedAt": "2026-05-05T20:04:09.910Z",
+        "lastCheckedAt": "2026-05-05T20:04:09.911Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -119,6 +120,7 @@
         "clothing": "",
         "travelContext": "",
         "photoUrl": "https://www.missingpeople.org.uk/wp-content/uploads/2022/10/appeals_og_img1.jpeg",
+        "photoExtractionMethod": "og:image",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -149,7 +151,7 @@
             "sourceUrl": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/missing-person-appeal-kian-gillespie-22-years-ballinode-sligo-22nd-april-2026.html",
             "articleId": 565982232736,
             "handle": "kian-gillespie",
-            "action": "created"
+            "action": "updated"
           }
         ],
         "errors": []
@@ -174,8 +176,8 @@
         "sourceName": "An Garda Siochana",
         "sourceUrl": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/missing-person-appeal-kian-gillespie-22-years-ballinode-sligo-22nd-april-2026.html",
         "sourcePublishedAt": "2026-04-23",
-        "importedAt": "2026-05-05T19:15:35.232Z",
-        "lastCheckedAt": "2026-05-05T19:15:35.234Z",
+        "importedAt": "2026-05-05T20:04:14.672Z",
+        "lastCheckedAt": "2026-05-05T20:04:14.674Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -185,7 +187,8 @@
         "physicalDescription": "5 foot 9 inches, slim build, brown hair.",
         "clothing": "Black hoodie with emojis and black bottoms.",
         "travelContext": "",
-        "photoUrl": "https://www.garda.ie/images/social_logo.png",
+        "photoUrl": "https://www.garda.ie/images_upload/garda/fcn/blue_light_square_X.png",
+        "photoExtractionMethod": "img:src",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -216,7 +219,7 @@
             "sourceUrl": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/missing-person-appeal-john-morgan-65-years-rathfarnham-dublin-16-26th-april-2026.html",
             "articleId": 565982265504,
             "handle": "john-morgan",
-            "action": "created"
+            "action": "updated"
           }
         ],
         "errors": []
@@ -241,8 +244,8 @@
         "sourceName": "An Garda Siochana",
         "sourceUrl": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/missing-person-appeal-john-morgan-65-years-rathfarnham-dublin-16-26th-april-2026.html",
         "sourcePublishedAt": "2026-04-28",
-        "importedAt": "2026-05-05T19:15:40.968Z",
-        "lastCheckedAt": "2026-05-05T19:15:40.969Z",
+        "importedAt": "2026-05-05T20:04:20.288Z",
+        "lastCheckedAt": "2026-05-05T20:04:20.289Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -252,7 +255,8 @@
         "physicalDescription": "6 foot, slim build, brown hair, blue eyes.",
         "clothing": "Blue jeans and a blue hoodie.",
         "travelContext": "",
-        "photoUrl": "https://www.garda.ie/images/social_logo.png",
+        "photoUrl": "https://www.garda.ie/images_upload/garda/fcn/blue_light_square_X.png",
+        "photoExtractionMethod": "img:src",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -308,8 +312,8 @@
         "sourceName": "National Missing Persons Coordination Centre Australia",
         "sourceUrl": "https://www.missingpersons.gov.au/search/sa/trisha-anne-graf",
         "sourcePublishedAt": "2025-12-12",
-        "importedAt": "2026-05-05T19:15:45.543Z",
-        "lastCheckedAt": "2026-05-05T19:15:45.543Z",
+        "importedAt": "2026-05-05T20:04:24.768Z",
+        "lastCheckedAt": "2026-05-05T20:04:24.769Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -320,6 +324,7 @@
         "clothing": "",
         "travelContext": "",
         "photoUrl": "https://www.missingpersons.gov.au/sites/default/files/styles/og/public/2026-03/Photo_Trisha%20GRAF_NMPCC.jpg?itok=X-XvZ56t",
+        "photoExtractionMethod": "og:image",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -375,8 +380,8 @@
         "sourceName": "National Missing Persons Coordination Centre Australia",
         "sourceUrl": "https://www.missingpersons.gov.au/search/nsw/joel-anderson",
         "sourcePublishedAt": "2025-09-15",
-        "importedAt": "2026-05-05T19:15:48.817Z",
-        "lastCheckedAt": "2026-05-05T19:15:48.817Z",
+        "importedAt": "2026-05-05T20:04:28.404Z",
+        "lastCheckedAt": "2026-05-05T20:04:28.404Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -387,6 +392,7 @@
         "clothing": "",
         "travelContext": "",
         "photoUrl": "https://www.missingpersons.gov.au/sites/default/files/styles/og/public/2026-02/Joel%20ANDERSON%20%28Recent%20Photo%29.png?itok=GJMDZZ76",
+        "photoExtractionMethod": "og:image",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -417,7 +423,7 @@
             "sourceUrl": "https://www.police.govt.nz/news/release/police-search-red-zone-area-rowena",
             "articleId": 565982298272,
             "handle": "rowena-walker",
-            "action": "created"
+            "action": "updated"
           }
         ],
         "errors": []
@@ -442,8 +448,8 @@
         "sourceName": "New Zealand Police",
         "sourceUrl": "https://www.police.govt.nz/news/release/police-search-red-zone-area-rowena",
         "sourcePublishedAt": "2026-04-20",
-        "importedAt": "2026-05-05T19:15:53.710Z",
-        "lastCheckedAt": "2026-05-05T19:15:53.711Z",
+        "importedAt": "2026-05-05T20:04:33.242Z",
+        "lastCheckedAt": "2026-05-05T20:04:33.243Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -454,6 +460,7 @@
         "clothing": "",
         "travelContext": "",
         "photoUrl": "https://www.police.govt.nz/sites/default/files/styles/news_main/public/news/%272026-04%27/rowena_1_1.png",
+        "photoExtractionMethod": "og:image",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -484,7 +491,7 @@
             "sourceUrl": "https://www.police.govt.nz/news/release/update-search-antoine-richard",
             "articleId": 565982331040,
             "handle": "antoine-richard",
-            "action": "created"
+            "action": "updated"
           }
         ],
         "errors": []
@@ -509,8 +516,8 @@
         "sourceName": "New Zealand Police",
         "sourceUrl": "https://www.police.govt.nz/news/release/update-search-antoine-richard",
         "sourcePublishedAt": "2026-04-01",
-        "importedAt": "2026-05-05T19:15:59.512Z",
-        "lastCheckedAt": "2026-05-05T19:15:59.512Z",
+        "importedAt": "2026-05-05T20:04:38.909Z",
+        "lastCheckedAt": "2026-05-05T20:04:38.910Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -521,6 +528,7 @@
         "clothing": "Black T-shirt, light denim shorts, and Crocs.",
         "travelContext": "",
         "photoUrl": "https://www.police.govt.nz/sites/all/themes/twbs_police_refresh/images/refresh/social/police-emblem.jpg",
+        "photoExtractionMethod": "og:image",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -551,7 +559,7 @@
             "sourceUrl": "https://www.missingkids.org/poster/NCMC/2046861/1",
             "articleId": 565982363808,
             "handle": "sarah-guillen",
-            "action": "created"
+            "action": "updated"
           }
         ],
         "errors": []
@@ -576,8 +584,8 @@
         "sourceName": "National Center for Missing & Exploited Children",
         "sourceUrl": "https://www.missingkids.org/poster/NCMC/2046861/1",
         "sourcePublishedAt": "2024-10-17",
-        "importedAt": "2026-05-05T19:16:04.968Z",
-        "lastCheckedAt": "2026-05-05T19:16:04.968Z",
+        "importedAt": "2026-05-05T20:04:44.368Z",
+        "lastCheckedAt": "2026-05-05T20:04:44.368Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -587,7 +595,8 @@
         "physicalDescription": "",
         "clothing": "",
         "travelContext": "",
-        "photoUrl": "https://www.missingkids.org/etc.clientlibs/ncmec/clientlibs/clientlib-base/resources/social/facebook-default-post-image.jpg",
+        "photoUrl": "https://missingkids-p65.adobecqms.net/content/dam/missingkids/homepage/pop-up-family-hugging.jpg",
+        "photoExtractionMethod": "img:src",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -618,7 +627,7 @@
             "sourceUrl": "https://www.missingkids.org/poster/NCMC/745077/1",
             "articleId": 565982396576,
             "handle": "martha-wes-dunn",
-            "action": "created"
+            "action": "updated"
           }
         ],
         "errors": []
@@ -643,8 +652,8 @@
         "sourceName": "National Center for Missing & Exploited Children",
         "sourceUrl": "https://www.missingkids.org/poster/NCMC/745077/1",
         "sourcePublishedAt": "1990-09-05",
-        "importedAt": "2026-05-05T19:16:08.637Z",
-        "lastCheckedAt": "2026-05-05T19:16:08.637Z",
+        "importedAt": "2026-05-05T20:04:50.427Z",
+        "lastCheckedAt": "2026-05-05T20:04:50.427Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -654,7 +663,8 @@
         "physicalDescription": "Gaps in teeth and two small scars on the right side of her face, as listed by NCMEC.",
         "clothing": "",
         "travelContext": "",
-        "photoUrl": "https://api.missingkids.org/missingkids/servlet/DynamicImageLoadServlet?action=mediaImage&mediaName=Facebook&imageName=NCMC745077c1.jpg",
+        "photoUrl": "https://missingkids-p65.adobecqms.net/content/dam/missingkids/homepage/pop-up-family-hugging.jpg",
+        "photoExtractionMethod": "img:src",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -685,7 +695,7 @@
             "sourceUrl": "https://rcmp.ca/en/bc/west-shore/news/2026/05/4352763",
             "articleId": 565982429344,
             "handle": "cody-fieldhouse",
-            "action": "created"
+            "action": "updated"
           }
         ],
         "errors": []
@@ -710,8 +720,8 @@
         "sourceName": "Royal Canadian Mounted Police",
         "sourceUrl": "https://rcmp.ca/en/bc/west-shore/news/2026/05/4352763",
         "sourcePublishedAt": "2026-05-04",
-        "importedAt": "2026-05-05T19:16:13.476Z",
-        "lastCheckedAt": "2026-05-05T19:16:13.476Z",
+        "importedAt": "2026-05-05T20:04:55.508Z",
+        "lastCheckedAt": "2026-05-05T20:04:55.508Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -722,6 +732,7 @@
         "clothing": "",
         "travelContext": "",
         "photoUrl": "https://rcmp.ca/themes/custom/poweb/assets/og-default.png",
+        "photoExtractionMethod": "og:image",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",
@@ -752,7 +763,7 @@
             "sourceUrl": "https://rcmp.ca/en/bc/kelowna/news/2026/05/4352783",
             "articleId": 565982462112,
             "handle": "amanda-batchelar",
-            "action": "created"
+            "action": "updated"
           }
         ],
         "errors": []
@@ -777,8 +788,8 @@
         "sourceName": "Royal Canadian Mounted Police",
         "sourceUrl": "https://rcmp.ca/en/bc/kelowna/news/2026/05/4352783",
         "sourcePublishedAt": "2026-05-04",
-        "importedAt": "2026-05-05T19:16:17.677Z",
-        "lastCheckedAt": "2026-05-05T19:16:17.678Z",
+        "importedAt": "2026-05-05T20:05:00.058Z",
+        "lastCheckedAt": "2026-05-05T20:05:00.058Z",
         "status": "active",
         "isPublic": true,
         "caseType": "missing-person",
@@ -789,6 +800,7 @@
         "clothing": "",
         "travelContext": "",
         "photoUrl": "https://rcmp.ca/themes/custom/poweb/assets/og-default.png",
+        "photoExtractionMethod": "og:image",
         "photoVisibility": "public-active",
         "tags": [
           "scanner-imported",

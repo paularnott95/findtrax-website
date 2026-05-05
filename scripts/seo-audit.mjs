@@ -5,9 +5,12 @@ const SITE = process.env.SEO_AUDIT_BASE_URL || 'https://missingalerts.com'
 const MAX_URLS = Number(process.env.SEO_AUDIT_MAX_URLS || 200)
 const OUT_JSON = 'data/seo-page-audit.json'
 const OUT_DOC = 'docs/seo-content-audit.md'
+const OUT_INVENTORY = 'data/site-content-inventory.json'
+const OUT_DUPLICATES = 'data/duplicate-page-groups.json'
+const OUT_ACTIONS = 'data/seo-cleanup-actions.json'
 
 const sitemapUrls = await collectSitemapUrls(`${SITE}/sitemap.xml`, MAX_URLS)
-const urls = Array.from(new Set([SITE, `${SITE}/pages/missing-person-advice`, `${SITE}/pages/country-search`, ...sitemapUrls])).slice(0, MAX_URLS)
+const urls = Array.from(new Set([SITE, `${SITE}/pages/missing-person-advice`, `${SITE}/pages/country-intelligence`, `${SITE}/pages/country-search`, ...sitemapUrls])).slice(0, MAX_URLS)
 const pages = []
 
 for (const url of urls) {
@@ -38,8 +41,11 @@ const summary = {
 await mkdir('data', { recursive: true })
 await mkdir('docs', { recursive: true })
 await writeFile(OUT_JSON, JSON.stringify({ summary, pages }, null, 2))
+await writeFile(OUT_INVENTORY, JSON.stringify(renderInventory(summary, pages, localSitemapInventory), null, 2))
+await writeFile(OUT_DUPLICATES, JSON.stringify(renderDuplicateGroups(pages), null, 2))
+await writeFile(OUT_ACTIONS, JSON.stringify(renderCleanupActions(summary, pages, localSitemapInventory), null, 2))
 await writeFile(OUT_DOC, renderAuditDoc(summary, pages, localSitemapInventory))
-console.log(`SEO audit wrote ${OUT_JSON} and ${OUT_DOC}`)
+console.log(`SEO audit wrote ${OUT_JSON}, ${OUT_INVENTORY}, ${OUT_DUPLICATES}, ${OUT_ACTIONS}, and ${OUT_DOC}`)
 
 async function collectSitemapUrls(url, max, seen = new Set()) {
   if (seen.has(url) || seen.size > max * 2) return []
@@ -177,7 +183,8 @@ Generated: ${summary.auditedAt}
 | --- | --- | --- | --- |
 | Homepage | / | templates/index.json + homepage sections | Keep and enrich |
 | Advice Hub | /pages/missing-person-advice | page.missing-person-advice.json / seo-advice-blog-grid | Keep and enrich |
-| Country Search | /pages/country-search | page.country-search.json / country-search-page | Keep and index |
+| Country Intelligence | /pages/country-intelligence | page.country-intelligence.json / country-search-page | Keep and index |
+| Country Search legacy | /pages/country-search | page.country-search.json / country-search-page | Canonical to Country Intelligence |
 | Country pages | /pages/missing-people-country?country=:slug | page.missing-people-country.json + country profiles | Index only complete profiles |
 | Missing cases blog | /blogs/missing-persons | Shopify blog articles | Keep public active cases |
 | Found-safe blog | /blogs/found-safe | Shopify blog articles | Keep privacy-protected updates |
@@ -211,6 +218,72 @@ ${duplicates.map((page) => `- ${page.duplicateGroup}: ${page.url}`).join('\n') |
 
 The six priority countries now have structured profiles. Additional countries should be added only when verified reporting links, emergency guidance, safe sharing notes, and enough local context are available. Until then, generated pages should stay noindexed or absent from sitemap output.
 `
+}
+
+function renderInventory(summary, pages, sitemapInventory) {
+  const patterns = new Map()
+  for (const page of pages) {
+    const key = page.template || 'unknown'
+    if (!patterns.has(key)) patterns.set(key, { pageType: key, sampledCount: 0, indexableSampleCount: 0, noindexSampleCount: 0, issues: new Set(), exampleUrls: [] })
+    const item = patterns.get(key)
+    item.sampledCount += 1
+    if (page.indexDecision === 'index') item.indexableSampleCount += 1
+    if (page.indexDecision === 'noindex') item.noindexSampleCount += 1
+    for (const issue of page.issues || []) item.issues.add(issue)
+    if (item.exampleUrls.length < 5) item.exampleUrls.push(page.url)
+  }
+  return {
+    generatedAt: summary.auditedAt,
+    totalSampledUrls: summary.sampledUrlCount,
+    generatedSitemapAssetCount: sitemapInventory.fileCount,
+    generatedSitemapAssetUrlCount: sitemapInventory.urlCount,
+    patterns: [...patterns.values()].map((item) => ({
+      ...item,
+      issues: [...item.issues],
+      action: item.noindexSampleCount ? 'review/noindex/enrich by pattern' : 'keep/enrich',
+    })),
+  }
+}
+
+function renderDuplicateGroups(pages) {
+  const groups = {}
+  for (const page of pages) {
+    if (!page.duplicateGroup) continue
+    if (!groups[page.duplicateGroup]) groups[page.duplicateGroup] = []
+    groups[page.duplicateGroup].push(page.url)
+  }
+  return { generatedAt: new Date().toISOString(), groupCount: Object.keys(groups).length, groups }
+}
+
+function renderCleanupActions(summary, pages, sitemapInventory) {
+  const actions = [
+    {
+      pattern: 'generated CDN sitemap assets',
+      affectedUrlCount: sitemapInventory.urlCount,
+      action: 'remove from robots advertising, disallow asset sitemap patterns, keep out of primary sitemap',
+      verification: sitemapInventory.urlCount > 0 ? 'inventory counted; robots template blocks generated asset sitemap patterns' : 'no generated sitemap assets found',
+    },
+    {
+      pattern: 'tag/filter/search/archive variants',
+      affectedUrlCount: pages.filter((page) => page.template === 'unknown' || page.url.includes('/tagged/')).length,
+      action: 'noindex/canonicalize to primary archive or enrich before indexing',
+      verification: 'sampled pages classified in seo-page-audit.json',
+    },
+    {
+      pattern: 'legacy Country Search route',
+      affectedUrlCount: 1,
+      action: 'canonicalize to /pages/country-intelligence',
+      verification: 'layout theme canonical override added',
+    },
+  ]
+  return {
+    generatedAt: summary.auditedAt,
+    thinPagesFound: summary.thinPagesFound,
+    duplicateGroupsFound: summary.duplicateGroupsFound,
+    noindexRecommended: summary.noindexRecommended,
+    canonicalRecommended: summary.canonicalRecommended + 1,
+    actions,
+  }
 }
 
 function textMatch(html, regex) {

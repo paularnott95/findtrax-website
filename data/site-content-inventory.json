@@ -1,0 +1,147 @@
+{
+  "generatedAt": "2026-05-05T20:07:07.305Z",
+  "totalSampledUrls": 180,
+  "generatedSitemapAssetCount": 31,
+  "generatedSitemapAssetUrlCount": 730675,
+  "patterns": [
+    {
+      "pageType": "homepage",
+      "sampledCount": 1,
+      "indexableSampleCount": 1,
+      "noindexSampleCount": 0,
+      "issues": [
+        "missing-meta-description"
+      ],
+      "exampleUrls": [
+        "https://missingalerts.com"
+      ],
+      "action": "keep/enrich"
+    },
+    {
+      "pageType": "advice-hub",
+      "sampledCount": 1,
+      "indexableSampleCount": 1,
+      "noindexSampleCount": 0,
+      "issues": [
+        "missing-meta-description"
+      ],
+      "exampleUrls": [
+        "https://missingalerts.com/pages/missing-person-advice"
+      ],
+      "action": "keep/enrich"
+    },
+    {
+      "pageType": "page",
+      "sampledCount": 1,
+      "indexableSampleCount": 1,
+      "noindexSampleCount": 0,
+      "issues": [],
+      "exampleUrls": [
+        "https://missingalerts.com/pages/country-intelligence"
+      ],
+      "action": "keep/enrich"
+    },
+    {
+      "pageType": "country-search",
+      "sampledCount": 1,
+      "indexableSampleCount": 1,
+      "noindexSampleCount": 0,
+      "issues": [],
+      "exampleUrls": [
+        "https://missingalerts.com/pages/country-search"
+      ],
+      "action": "keep/enrich"
+    },
+    {
+      "pageType": "unknown",
+      "sampledCount": 3,
+      "indexableSampleCount": 0,
+      "noindexSampleCount": 3,
+      "issues": [
+        "missing-title",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "exampleUrls": [
+        "https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584",
+        "https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952",
+        "https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288"
+      ],
+      "action": "review/noindex/enrich by pattern"
+    },
+    {
+      "pageType": "blog",
+      "sampledCount": 8,
+      "indexableSampleCount": 8,
+      "noindexSampleCount": 0,
+      "issues": [
+        "missing-meta-description"
+      ],
+      "exampleUrls": [
+        "https://missingalerts.com/blogs/news",
+        "https://missingalerts.com/blogs/missing-persons",
+        "https://missingalerts.com/blogs/case-updates",
+        "https://missingalerts.com/blogs/missing-person-advice",
+        "https://missingalerts.com/blogs/case-updates/donna-keogh-17-middlesbrough"
+      ],
+      "action": "keep/enrich"
+    },
+    {
+      "pageType": "found-safe",
+      "sampledCount": 5,
+      "indexableSampleCount": 5,
+      "noindexSampleCount": 0,
+      "issues": [
+        "missing-meta-description"
+      ],
+      "exampleUrls": [
+        "https://missingalerts.com/blogs/found-safe",
+        "https://missingalerts.com/blogs/found-safe/shera-lea-wenman-two-children",
+        "https://missingalerts.com/blogs/found-safe/joshua-hope-29-leicestershire",
+        "https://missingalerts.com/blogs/found-safe/missing-girl-12-enfield",
+        "https://missingalerts.com/blogs/found-safe/isabella-12-salford"
+      ],
+      "action": "keep/enrich"
+    },
+    {
+      "pageType": "case-article",
+      "sampledCount": 45,
+      "indexableSampleCount": 28,
+      "noindexSampleCount": 17,
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical"
+      ],
+      "exampleUrls": [
+        "https://missingalerts.com/blogs/missing-persons/rachel-reilly-age-unknown-fleetwood",
+        "https://missingalerts.com/blogs/missing-persons/codie-21-bournemouth-weymouth",
+        "https://missingalerts.com/blogs/missing-persons/ethan-macleod-15-aberdeen",
+        "https://missingalerts.com/blogs/missing-persons/amelia-radford",
+        "https://missingalerts.com/blogs/missing-persons/alvin-diaz-72-devon"
+      ],
+      "action": "review/noindex/enrich by pattern"
+    },
+    {
+      "pageType": "advice-article",
+      "sampledCount": 115,
+      "indexableSampleCount": 59,
+      "noindexSampleCount": 56,
+      "issues": [
+        "bad-status",
+        "missing-meta-description",
+        "missing-canonical",
+        "thin-content"
+      ],
+      "exampleUrls": [
+        "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-goes-missing-in-united-kingdom",
+        "https://missingalerts.com/blogs/missing-person-advice/how-to-prepare-a-missing-person-poster",
+        "https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-goes-missing-in-united-states",
+        "https://missingalerts.com/blogs/missing-person-advice/support-steps-for-families-of-missing-people-in-canada",
+        "https://missingalerts.com/blogs/missing-person-advice/how-to-share-a-missing-person-appeal-safely-online-in-australia"
+      ],
+      "action": "review/noindex/enrich by pattern"
+    }
+  ]
+}

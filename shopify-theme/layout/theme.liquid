@@ -32,6 +32,9 @@
       if ma_tagged_archive and blog.url != blank
         assign ma_canonical_url = request.origin | append: blog.url
       endif
+      if request.path == '/pages/country-search'
+        assign ma_canonical_url = request.origin | append: '/pages/country-intelligence'
+      endif
       if request.path contains '/pages/' and ma_location_seo_handles contains ma_location_page_lookup and ma_location_query_value != blank
         assign ma_canonical_url = request.origin | append: request.path | append: '?' | append: ma_location_query_key | append: '=' | append: ma_location_query_value
       endif
@@ -122,6 +125,10 @@
         assign display_page_title = 'Support'
       elsif request.page_type == 'page' and page.handle == 'support'
         assign display_page_title = 'Support'
+      elsif request.page_type == 'page' and page.handle == 'country-search'
+        assign display_page_title = 'Country Intelligence'
+      elsif request.page_type == 'page' and page.handle == 'country-intelligence'
+        assign display_page_title = 'Country Intelligence'
       elsif is_location_seo_request
         assign display_page_title = location_seo_title
       endif

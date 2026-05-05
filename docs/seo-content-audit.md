@@ -1,14 +1,14 @@
 # Missing Alerts SEO Content Audit
 
-Generated: 2026-05-05T19:33:59.278Z
+Generated: 2026-05-05T20:07:07.305Z
 
 ## Summary
 
 - Base URL: https://missingalerts.com
-- Sampled live URLs: 179
-- Thin pages found in sample: 60
+- Sampled live URLs: 180
+- Thin pages found in sample: 59
 - Duplicate title/meta groups found in sample: 0
-- Noindex recommended in sample: 77
+- Noindex recommended in sample: 76
 - Canonicalization recommended in sample: 0
 - Generated sitemap asset files in theme: 31
 - Generated sitemap asset URLs in theme: 730675
@@ -19,7 +19,8 @@ Generated: 2026-05-05T19:33:59.278Z
 | --- | --- | --- | --- |
 | Homepage | / | templates/index.json + homepage sections | Keep and enrich |
 | Advice Hub | /pages/missing-person-advice | page.missing-person-advice.json / seo-advice-blog-grid | Keep and enrich |
-| Country Search | /pages/country-search | page.country-search.json / country-search-page | Keep and index |
+| Country Intelligence | /pages/country-intelligence | page.country-intelligence.json / country-search-page | Keep and index |
+| Country Search legacy | /pages/country-search | page.country-search.json / country-search-page | Canonical to Country Intelligence |
 | Country pages | /pages/missing-people-country?country=:slug | page.missing-people-country.json + country profiles | Index only complete profiles |
 | Missing cases blog | /blogs/missing-persons | Shopify blog articles | Keep public active cases |
 | Found-safe blog | /blogs/found-safe | Shopify blog articles | Keep privacy-protected updates |
@@ -36,9 +37,8 @@ The theme contains 31 generated sitemap XML assets with 730675 total URL entries
 ## Thin Pages Sample
 
 - https://missingalerts.com/sitemap_products_1.xml?from=15648716947616&to=15677811687584 (53 words): Noindex until enriched with useful country/topic/case content.
-- https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708329472160 (126 words): Noindex until enriched with useful country/topic/case content.
+- https://missingalerts.com/sitemap_pages_1.xml?from=706981167264&to=708330913952 (171 words): Noindex until enriched with useful country/topic/case content.
 - https://missingalerts.com/sitemap_collections_1.xml?from=683094704288&to=683094704288 (3 words): Noindex until enriched with useful country/topic/case content.
-- https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-morocco-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-uzbekistan-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-peru-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-angola-en (19 words): Redirect to the closest useful page or remove from sitemap.
@@ -60,6 +60,7 @@ The theme contains 31 generated sitemap XML assets with 730675 total URL entries
 - https://missingalerts.com/blogs/missing-person-advice/how-to-gather-cctv-and-doorbell-information-for-a-missing-person-in-spain-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/what-to-do-if-someone-was-last-seen-near-public-transport-in-germany-en (19 words): Redirect to the closest useful page or remove from sitemap.
 - https://missingalerts.com/blogs/missing-person-advice/search-volunteer-safety-for-missing-person-appeals-in-new-zealand-en (19 words): Redirect to the closest useful page or remove from sitemap.
+- https://missingalerts.com/blogs/missing-person-advice/search-volunteer-safety-for-missing-person-appeals-in-australia-en (19 words): Redirect to the closest useful page or remove from sitemap.
 
 ## Duplicate Groups Sample
 

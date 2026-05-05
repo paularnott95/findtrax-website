@@ -18,7 +18,7 @@ assert(!robots.includes('Sitemap: https://missingalerts.com/cdn/shop/t/5/assets/
 assert(robots.includes('Disallow: /cdn/shop/t/*/assets/location-sitemap'), 'robots blocks generated location sitemap assets')
 
 const header = await readFile('shopify-theme/sections/header.liquid', 'utf8')
-assert(header.includes('/pages/country-search'), 'Tools menu links to live Country Search page')
+assert(header.includes('/pages/country-intelligence'), 'Tools menu links to live Country Intelligence page')
 assert(header.includes('FindTrax'), 'Tools menu still contains FindTrax product link')
 assert(header.includes('IntelPro'), 'Tools menu still contains IntelPro product link')
 assert(header.includes('MediaReach'), 'Tools menu still contains MediaReach product link')
@@ -27,11 +27,13 @@ const advice = await readFile('shopify-theme/sections/seo-advice-blog-grid.liqui
 assert(!advice.includes('href="#"'), 'Advice Hub does not contain blank # links')
 assert(!advice.includes('href=""'), 'Advice Hub does not contain empty links')
 assert(advice.includes('Official reporting links'), 'Advice Hub includes official reporting links')
-assert(advice.includes('Country Search'), 'Advice Hub links Country Search')
+assert(advice.includes('Country Intelligence'), 'Advice Hub links Country Intelligence')
 assert(advice.includes('Urgent information goes to police first'), 'Advice Hub includes urgent safety note')
 
 const countrySearchTemplate = await readFile('shopify-theme/templates/page.country-search.json', 'utf8')
 assert(countrySearchTemplate.includes('country-search-page'), 'Country Search template uses country-search-page section')
+const countryIntelligenceTemplate = await readFile('shopify-theme/templates/page.country-intelligence.json', 'utf8')
+assert(countryIntelligenceTemplate.includes('country-search-page'), 'Country Intelligence template uses country-search-page section')
 
 const countrySearchSection = await readFile('shopify-theme/sections/country-search-page.liquid', 'utf8')
 for (const slug of requiredSlugs) {

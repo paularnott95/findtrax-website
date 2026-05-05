@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "country_intelligence": {
+      "type": "country-search-page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "country_intelligence"
+  ]
+}

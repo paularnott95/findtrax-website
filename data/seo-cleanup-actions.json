@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-05-05T20:07:07.305Z",
+  "thinPagesFound": 59,
+  "duplicateGroupsFound": 0,
+  "noindexRecommended": 76,
+  "canonicalRecommended": 1,
+  "actions": [
+    {
+      "pattern": "generated CDN sitemap assets",
+      "affectedUrlCount": 730675,
+      "action": "remove from robots advertising, disallow asset sitemap patterns, keep out of primary sitemap",
+      "verification": "inventory counted; robots template blocks generated asset sitemap patterns"
+    },
+    {
+      "pattern": "tag/filter/search/archive variants",
+      "affectedUrlCount": 3,
+      "action": "noindex/canonicalize to primary archive or enrich before indexing",
+      "verification": "sampled pages classified in seo-page-audit.json"
+    },
+    {
+      "pattern": "legacy Country Search route",
+      "affectedUrlCount": 1,
+      "action": "canonicalize to /pages/country-intelligence",
+      "verification": "layout theme canonical override added"
+    }
+  ]
+}
