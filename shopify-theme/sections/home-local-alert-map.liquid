@@ -1,0 +1,157 @@
+{{ 'home-local-alert-map.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer="defer"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" defer="defer"></script>
+<script src="{{ 'home-local-alert-map.js' | asset_url }}" defer="defer"></script>
+
+{% assign alert_country = '' %}
+{% assign alert_region = '' %}
+{% assign alert_city = '' %}
+{% assign alert_postcode = '' %}
+{% assign alert_lat = '' %}
+{% assign alert_lng = '' %}
+{% if customer %}
+  {% assign alert_country = customer.metafields.custom.alert_country.value | default: customer.metafields.custom.alert_country | strip %}
+  {% assign alert_region = customer.metafields.custom.alert_region.value | default: customer.metafields.custom.alert_region | strip %}
+  {% assign alert_city = customer.metafields.custom.alert_city.value | default: customer.metafields.custom.alert_city | strip %}
+  {% assign alert_postcode = customer.metafields.custom.alert_postcode.value | default: customer.metafields.custom.alert_postcode | strip %}
+  {% assign alert_lat = customer.metafields.custom.alert_lat.value | default: customer.metafields.custom.alert_lat | strip %}
+  {% assign alert_lng = customer.metafields.custom.alert_lng.value | default: customer.metafields.custom.alert_lng | strip %}
+{% endif %}
+
+<section
+  class="ma-local-alert-map"
+  data-local-alert-map
+  data-logged-in="{% if customer %}true{% else %}false{% endif %}"
+  data-customer-id="{% if customer %}{{ customer.id | append: '' | escape }}{% endif %}"
+  data-customer-email="{% if customer %}{{ customer.email | escape }}{% endif %}"
+>
+  <div class="ma-local-alert-map__shell">
+    <div class="ma-local-alert-map__header">
+      <div>
+        <p class="ma-local-alert-map__eyebrow">PERSONALISED ALERTS</p>
+        <h2>LOCAL ALERT MAP</h2>
+        <p class="ma-local-alert-map__subtitle">Active missing-person appeals for your selected country or saved alert area.</p>
+      </div>
+      <div class="ma-local-alert-map__legend" aria-label="Map legend">
+        <span><i class="ma-local-alert-map__dot ma-local-alert-map__dot--user"></i> Your alert area</span>
+        <span><i class="ma-local-alert-map__dot ma-local-alert-map__dot--case"></i> Active case</span>
+      </div>
+    </div>
+
+    <div class="ma-local-alert-map__body">
+      <div
+        class="ma-local-alert-map__canvas"
+        data-local-alert-map-canvas
+        aria-label="Local alert map"
+      ></div>
+
+      <div class="ma-local-alert-map__panel" data-local-alert-map-panel>
+        <div class="ma-local-alert-map__state" data-map-state="loading">
+          Loading local alert map...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" data-local-alert-member>
+    {
+      "loggedIn": {% if customer %}true{% else %}false{% endif %},
+      "country": {{ alert_country | json }},
+      "region": {{ alert_region | json }},
+      "city": {{ alert_city | json }},
+      "postcode": {{ alert_postcode | json }},
+      "lat": {{ alert_lat | json }},
+      "lng": {{ alert_lng | json }}
+    }
+  </script>
+
+  <script type="application/json" data-local-alert-cases>
+    [
+      {% assign rendered_case_count = 0 %}
+      {% assign missing_blog = blogs['missing-persons'] %}
+      {% if missing_blog != blank %}
+        {% for article in missing_blog.articles limit: 80 %}
+          {% liquid
+            assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase | strip
+            assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase | strip
+            assign tags_downcase = article.tags | join: ',' | downcase
+            assign article_text = article.title | append: ' ' | append: article.excerpt_or_content | strip_html | downcase
+            assign status_scope = case_status | append: ' ' | append: owner_status | append: ' ' | append: tags_downcase | append: ' ' | append: article_text
+            assign is_resolved = false
+            if status_scope contains 'found safe' or status_scope contains 'found-safe' or status_scope contains 'resolved' or status_scope contains 'located' or status_scope contains 'returned' or status_scope contains 'safe' or status_scope contains 'closed'
+              assign is_resolved = true
+            endif
+            assign case_country_code = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | strip | downcase
+            assign case_country_label = article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+            assign tag_country = ''
+            assign tag_location = ''
+            assign tag_last_seen = ''
+            for article_tag in article.tags
+              assign tag_downcase = article_tag | downcase | strip
+              if tag_country == blank and tag_downcase contains 'country:'
+                assign tag_country = tag_downcase | split: ':' | last | strip
+              endif
+              if tag_location == blank and tag_downcase contains 'location:'
+                assign tag_location = article_tag | split: ':' | last | strip
+              endif
+              if tag_last_seen == blank and tag_downcase contains 'lastseen:'
+                assign tag_last_seen = article_tag | split: ':' | last | strip
+              endif
+            endfor
+            if case_country_code == blank
+              assign case_country_code = tag_country
+            endif
+            if case_country_label == blank
+              assign case_country_label = tag_country
+            endif
+            assign case_city = article.metafields.custom.city_town.value | default: article.metafields.custom.city_town | default: article.metafields.custom.city.value | default: article.metafields.custom.city | strip
+            assign case_region = article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | default: article.metafields.custom.region.value | default: article.metafields.custom.region | strip
+            assign last_seen_place = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | default: article.metafields.custom.last_seen_area.value | default: article.metafields.custom.last_seen_area | default: article.metafields.custom.last_seen_location.value | default: article.metafields.custom.last_seen_location | default: tag_last_seen | default: tag_location | strip
+            assign display_location = article.metafields.custom.display_location.value | default: article.metafields.custom.display_location | default: last_seen_place | strip
+            assign case_lat = article.metafields.custom.last_seen_lat.value | default: article.metafields.custom.last_seen_lat | strip
+            assign case_lng = article.metafields.custom.last_seen_lng.value | default: article.metafields.custom.last_seen_lng | strip
+            if case_lat == blank
+              assign case_lat = article.metafields.custom.location_lat.value | default: article.metafields.custom.location_lat | default: article.metafields.custom.latitude.value | default: article.metafields.custom.latitude | strip
+            endif
+            if case_lng == blank
+              assign case_lng = article.metafields.custom.location_lng.value | default: article.metafields.custom.location_lng | default: article.metafields.custom.longitude.value | default: article.metafields.custom.longitude | strip
+            endif
+          %}
+          {% unless is_resolved %}
+            {% if rendered_case_count > 0 %},{% endif %}
+            {
+              "title": {{ article.title | json }},
+              "url": {{ article.url | json }},
+              "image": {% if article.image %}{{ article.image | image_url: width: 360 | json }}{% else %}""{% endif %},
+              "country": {{ case_country_label | json }},
+              "countryCode": {{ case_country_code | json }},
+              "region": {{ case_region | json }},
+              "city": {{ case_city | json }},
+              "location": {{ display_location | json }},
+              "lat": {{ case_lat | json }},
+              "lng": {{ case_lng | json }},
+              "tags": {{ article.tags | json }},
+              "excerpt": {{ article.excerpt_or_content | strip_html | truncate: 180 | json }}
+            }
+            {% assign rendered_case_count = rendered_case_count | plus: 1 %}
+          {% endunless %}
+        {% endfor %}
+      {% endif %}
+    ]
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Local alert map",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Local alert map"
+    }
+  ]
+}
+{% endschema %}

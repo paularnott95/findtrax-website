@@ -1,0 +1,25 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "case-listing-grid",
+      "settings": {
+        "listing_type": "missing",
+        "heading": "Missing cases",
+        "subheading": "Search active Missing Alerts cases by selected country, location, name, and case detail.",
+        "show_advanced_search": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

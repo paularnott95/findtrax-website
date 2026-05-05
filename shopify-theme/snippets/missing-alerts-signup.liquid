@@ -1,0 +1,96 @@
+{{ 'missing-alerts-signup.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'missing-alerts-signup.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign ma_signup_location_slug = location_slug | default: ''
+  assign ma_signup_page_type = page_type | default: request.page_type | default: 'page'
+  assign ma_signup_location_label = location_label | default: page.title | default: article.title | default: 'this area'
+  assign ma_signup_query_parts = request.query_string | default: '' | split: '&'
+  if ma_signup_location_slug == blank
+    for ma_signup_query_part in ma_signup_query_parts
+      assign ma_signup_query_key = ma_signup_query_part | split: '=' | first
+      if ma_signup_query_key == 'loc' or ma_signup_query_key == 'region' or ma_signup_query_key == 'country'
+        assign ma_signup_location_slug = ma_signup_query_part | remove_first: ma_signup_query_key | remove_first: '='
+        break
+      endif
+    endfor
+  endif
+-%}
+
+<section
+  class="ma-signup"
+  data-missing-alerts-signup
+  data-location-slug="{{ ma_signup_location_slug | escape }}"
+  data-location-label="{{ ma_signup_location_label | escape }}"
+  data-page-type="{{ ma_signup_page_type | escape }}"
+  data-customer-id="{% if customer %}{{ customer.id | append: '' | escape }}{% endif %}"
+  data-customer-email="{% if customer %}{{ customer.email | escape }}{% endif %}"
+>
+  <div class="ma-signup__head">
+    <p class="ma-signup__eyebrow">Missing Alerts updates</p>
+    <h2 class="ma-signup__title">Get alerts for <span data-ma-signup-location-label>{{ ma_signup_location_label | escape }}</span></h2>
+    <p class="ma-signup__copy">No spam. Manage your alert settings anytime. If someone is missing or in danger, contact police first.</p>
+  </div>
+
+  <form class="ma-signup__form" data-ma-signup-form novalidate>
+    <input type="hidden" name="current_location_slug" value="{{ ma_signup_location_slug | escape }}" data-ma-signup-location-slug>
+    <input type="hidden" name="page_type" value="{{ ma_signup_page_type | escape }}">
+    <input type="hidden" name="customer_id" value="{% if customer %}{{ customer.id | append: '' | escape }}{% endif %}">
+
+    <div class="ma-signup__grid">
+      <label class="ma-signup__field">
+        <span>Email</span>
+        <input type="email" name="email" autocomplete="email" required placeholder="you@example.com" value="{% if customer %}{{ customer.email | escape }}{% endif %}">
+      </label>
+
+      <label class="ma-signup__field">
+        <span>Country</span>
+        <input type="text" name="country" autocomplete="country-name" required placeholder="Country" data-ma-signup-country>
+      </label>
+
+      <label class="ma-signup__field">
+        <span>Region/state</span>
+        <input type="text" name="region" autocomplete="address-level1" placeholder="Optional" data-ma-signup-region>
+      </label>
+
+      <label class="ma-signup__field">
+        <span>City/town</span>
+        <input type="text" name="city" autocomplete="address-level2" placeholder="Optional" data-ma-signup-city>
+      </label>
+    </div>
+
+    <label class="ma-signup__check">
+      <input type="checkbox" name="professional_help_requested" value="true" data-ma-pro-help-toggle>
+      <span>Yes, I may need professional help</span>
+    </label>
+
+    <div class="ma-signup__pro" data-ma-pro-help-fields hidden>
+      <label class="ma-signup__field">
+        <span>Type of help</span>
+        <select name="professional_help_type">
+          <option value="">Select one</option>
+          <option value="search_support">Search support</option>
+          <option value="private_investigator">Private investigator</option>
+          <option value="legal_guidance">Legal guidance</option>
+          <option value="media_help">Media help</option>
+          <option value="family_support">Family support</option>
+          <option value="not_sure">Not sure</option>
+        </select>
+      </label>
+      <label class="ma-signup__field">
+        <span>Brief explanation</span>
+        <textarea name="professional_help_note" rows="3" maxlength="700" placeholder="Optional. Do not include sensitive private details."></textarea>
+      </label>
+    </div>
+
+    <div class="ma-signup__actions">
+      <button type="submit" class="ma-signup__button">Get Alerts</button>
+      <p class="ma-signup__status" data-ma-signup-status role="status"></p>
+    </div>
+  </form>
+
+  <div class="ma-signup__nearby" data-ma-signup-nearby hidden>
+    <h3>Follow nearby areas</h3>
+    <div class="ma-signup__nearby-list" data-ma-signup-nearby-list></div>
+  </div>
+</section>

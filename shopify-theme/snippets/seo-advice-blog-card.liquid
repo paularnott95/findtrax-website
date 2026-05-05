@@ -1,0 +1,29 @@
+{% liquid
+  assign article_type = ''
+  assign country_code = ''
+  for article_tag in article.tags
+    assign tag_downcase = article_tag | downcase | strip
+    if tag_downcase contains 'article-type:'
+      assign article_type = tag_downcase | split: ':' | last | replace: '-', ' '
+    endif
+    if tag_downcase contains 'country:'
+      assign country_code = tag_downcase | split: ':' | last | upcase
+    endif
+  endfor
+%}
+
+<article class="seo-advice-card">
+  <a class="seo-advice-card__link" href="{{ article.url }}">
+    <div class="seo-advice-card__meta">
+      {% if country_code != blank %}<span>{{ country_code }}</span>{% endif %}
+      {% if article_type != blank %}<span>{{ article_type }}</span>{% endif %}
+    </div>
+    <h3 class="seo-advice-card__title">{{ article.title | escape }}</h3>
+    {% if article.excerpt != blank %}
+      <p class="seo-advice-card__excerpt">{{ article.excerpt | strip_html | truncate: 150 }}</p>
+    {% else %}
+      <p class="seo-advice-card__excerpt">{{ article.content | strip_html | truncate: 150 }}</p>
+    {% endif %}
+    <span class="seo-advice-card__cta">Read guide</span>
+  </a>
+</article>

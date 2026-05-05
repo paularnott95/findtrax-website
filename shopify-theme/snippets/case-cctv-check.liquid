@@ -1,0 +1,178 @@
+{% liquid
+  assign cctv_case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | append: '' | downcase
+  assign cctv_case_owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | append: '' | downcase
+  assign cctv_found_safe = found_safe | default: false
+  if blog.handle == 'found-safe' or cctv_case_status == 'found' or cctv_case_status == 'resolved' or cctv_case_owner_status == 'resolved'
+    assign cctv_found_safe = true
+  endif
+
+  assign cctv_last_seen_place = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | strip
+  assign cctv_city = article.metafields.custom.city.value | default: article.metafields.custom.city | strip
+  assign cctv_region = article.metafields.custom.region.value | default: article.metafields.custom.region | strip
+  assign cctv_country = article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+  assign cctv_tag_country = ''
+  assign cctv_tag_last_seen = ''
+
+  for article_tag in article.tags
+    assign cctv_article_tag_downcase = article_tag | downcase | strip
+    if cctv_tag_country == blank and cctv_article_tag_downcase contains 'country:'
+      assign cctv_tag_country = article_tag | split: ':' | last | strip
+    endif
+    if cctv_tag_last_seen == blank and cctv_article_tag_downcase contains 'lastseen:'
+      assign cctv_tag_last_seen = article_tag | split: ':' | last | strip
+    endif
+  endfor
+
+  if cctv_last_seen_place == blank and cctv_tag_last_seen != blank
+    assign cctv_last_seen_place = cctv_tag_last_seen
+  endif
+  if cctv_country == blank and cctv_tag_country != blank
+    assign cctv_country = cctv_tag_country
+  endif
+
+  assign cctv_location_query = ''
+  if cctv_last_seen_place != blank
+    assign cctv_location_query = cctv_last_seen_place
+  endif
+  if cctv_city != blank and cctv_city != cctv_last_seen_place
+    if cctv_location_query != blank
+      assign cctv_location_query = cctv_location_query | append: ', '
+    endif
+    assign cctv_location_query = cctv_location_query | append: cctv_city
+  endif
+  if cctv_region != blank and cctv_region != cctv_city
+    if cctv_location_query != blank
+      assign cctv_location_query = cctv_location_query | append: ', '
+    endif
+    assign cctv_location_query = cctv_location_query | append: cctv_region
+  endif
+  if cctv_country != blank
+    if cctv_location_query != blank
+      assign cctv_location_query = cctv_location_query | append: ', '
+    endif
+    assign cctv_location_query = cctv_location_query | append: cctv_country
+  endif
+
+  assign cctv_has_reliable_location = false
+  if cctv_location_query != blank
+    assign cctv_has_reliable_location = true
+  endif
+
+  assign cctv_fallback_query = article.title | strip
+  if cctv_fallback_query == blank
+    assign cctv_fallback_query = article.excerpt_or_content | strip_html | strip | truncatewords: 12, ''
+  endif
+  if cctv_location_query == blank
+    assign cctv_location_query = cctv_fallback_query
+  endif
+
+  assign cctv_membership_tier = ''
+  assign cctv_has_member_access = false
+  assign cctv_has_professional_access = false
+  assign cctv_access_label = ''
+
+  if customer
+    assign cctv_membership_tier = customer.metafields.custom.membership_tier.value | default: customer.metafields.custom.membership_tier | default: customer.metafields.custom.membership_type.value | default: customer.metafields.custom.membership_type | default: customer.metafields.missingalerts.membership_tier.value | default: customer.metafields.missingalerts.membership_tier | default: customer.metafields.missingalerts.membership_type.value | default: customer.metafields.missingalerts.membership_type | append: '' | downcase
+
+    for cctv_customer_tag in customer.tags
+      assign cctv_normalized_tag = cctv_customer_tag | downcase | strip
+      if cctv_normalized_tag == 'community_plus' or cctv_normalized_tag == 'community_pro' or cctv_normalized_tag == 'member_plus' or cctv_normalized_tag == 'member_pro' or cctv_normalized_tag == 'premium_member' or cctv_normalized_tag == 'paid_member'
+        assign cctv_has_member_access = true
+      endif
+      if cctv_normalized_tag == 'professional_access' or cctv_normalized_tag == 'professional_plus' or cctv_normalized_tag == 'professional_elite' or cctv_normalized_tag == 'professional_verified' or cctv_normalized_tag == 'professional_premium' or cctv_normalized_tag == 'professional_enterprise' or cctv_normalized_tag == 'professional_medium'
+        assign cctv_has_professional_access = true
+      endif
+    endfor
+
+    if cctv_membership_tier contains 'community_plus' or cctv_membership_tier contains 'community_pro' or cctv_membership_tier contains 'member_plus' or cctv_membership_tier contains 'member_pro' or cctv_membership_tier contains 'premium_member' or cctv_membership_tier contains 'paid_member'
+      assign cctv_has_member_access = true
+    endif
+    if cctv_membership_tier contains 'professional_access' or cctv_membership_tier contains 'professional_plus' or cctv_membership_tier contains 'professional_elite' or cctv_membership_tier contains 'professional_verified' or cctv_membership_tier contains 'professional_premium' or cctv_membership_tier contains 'professional_enterprise' or cctv_membership_tier contains 'professional_medium'
+      assign cctv_has_professional_access = true
+    endif
+  endif
+
+  if cctv_has_professional_access
+    assign cctv_access_label = 'PRO'
+  elsif cctv_has_member_access
+    assign cctv_access_label = 'MEMBER'
+  endif
+
+  assign cctv_google_public = 'public CCTV near ' | append: cctv_location_query | url_encode
+  assign cctv_google_traffic = 'traffic cameras near ' | append: cctv_location_query | url_encode
+  assign cctv_google_council = 'council CCTV ' | append: cctv_location_query | url_encode
+  assign cctv_google_transport = 'transport cameras ' | append: cctv_location_query | url_encode
+  assign cctv_google_dashcam = 'dashcam appeal ' | append: cctv_location_query | url_encode
+  assign cctv_bing_public = 'public CCTV traffic cameras ' | append: cctv_location_query | url_encode
+  assign cctv_osm_query = cctv_location_query | url_encode
+
+  assign cctv_login_separator = '?'
+  assign cctv_register_separator = '?'
+  if routes.account_login_url contains '?'
+    assign cctv_login_separator = '&'
+  endif
+  if routes.account_register_url contains '?'
+    assign cctv_register_separator = '&'
+  endif
+  assign cctv_login_url = routes.account_login_url | append: cctv_login_separator | append: 'return_url=' | append: article.url
+  assign cctv_register_url = routes.account_register_url | append: cctv_register_separator | append: 'return_url=' | append: article.url
+%}
+
+{% if blog.handle == 'missing-persons' and cctv_found_safe == false %}
+  <section
+    class="case-cctv-check sidebar-card{% unless customer %} case-cctv-check--locked{% elsif cctv_has_member_access == false and cctv_has_professional_access == false %} case-cctv-check--locked{% else %} case-cctv-check--unlocked{% endunless %}"
+    data-cctv-check
+    data-cctv-location="{{ cctv_location_query | escape }}"
+    data-cctv-country="{{ cctv_country | escape }}"
+    data-cctv-case-title="{{ article.title | escape }}"
+    aria-labelledby="case-cctv-check-title-{{ article.id }}"
+  >
+    <div class="case-cctv-check__topline">
+      <div class="case-cctv-check__eyebrow">Public camera research</div>
+      {% if cctv_access_label != blank %}
+        <span class="case-cctv-check__badge">{{ cctv_access_label }}</span>
+      {% else %}
+        <span class="case-cctv-check__badge case-cctv-check__badge--locked">LOCKED</span>
+      {% endif %}
+    </div>
+
+    <h3 id="case-cctv-check-title-{{ article.id }}" class="case-cctv-check__title">CCTV &amp; LOCAL CAMERA CHECK</h3>
+
+    {% if customer == blank %}
+      <div class="case-cctv-check__lock" aria-hidden="true">LOCKED</div>
+      <p class="case-cctv-check__copy">Members and verified professionals can access public CCTV, traffic camera and local camera search tools for this case.</p>
+      <div class="case-cctv-check__actions">
+        <a href="{{ cctv_login_url }}" class="case-cctv-check__button">SIGN IN</a>
+        <a href="{{ cctv_register_url }}" class="case-cctv-check__button case-cctv-check__button--secondary">CREATE FREE ACCOUNT</a>
+      </div>
+    {% elsif cctv_has_member_access == false and cctv_has_professional_access == false %}
+      <div class="case-cctv-check__lock" aria-hidden="true">LOCKED</div>
+      <p class="case-cctv-check__copy">Upgrade to unlock public camera search tools, local authority CCTV checks and transport camera links.</p>
+      <div class="case-cctv-check__actions">
+        <a href="/pages/community-membership" class="case-cctv-check__button">UPGRADE MEMBER ACCESS</a>
+        <a href="/pages/professional-membership" class="case-cctv-check__button case-cctv-check__button--secondary">PROFESSIONAL ACCESS</a>
+      </div>
+    {% else %}
+      <p class="case-cctv-check__copy">
+        Public internet searches only. These links do not access private, restricted, or live security systems.
+      </p>
+      {% unless cctv_has_reliable_location %}
+        <p class="case-cctv-check__limited">Location details are limited for this case. Use the case title and article details to search public CCTV sources manually.</p>
+      {% endunless %}
+      <div class="case-cctv-check__location">
+        <span>Search basis</span>
+        <strong>{{ cctv_location_query }}</strong>
+      </div>
+      <div class="case-cctv-check__links" aria-label="Public camera search links">
+        <a href="https://www.google.com/search?q={{ cctv_google_public }}" target="_blank" rel="noopener noreferrer">Google: public CCTV near {{ cctv_location_query }}</a>
+        <a href="https://www.google.com/search?q={{ cctv_google_traffic }}" target="_blank" rel="noopener noreferrer">Google: traffic cameras near {{ cctv_location_query }}</a>
+        <a href="https://www.google.com/search?q={{ cctv_google_council }}" target="_blank" rel="noopener noreferrer">Google: council CCTV {{ cctv_location_query }}</a>
+        <a href="https://www.google.com/search?q={{ cctv_google_transport }}" target="_blank" rel="noopener noreferrer">Google: transport cameras {{ cctv_location_query }}</a>
+        <a href="https://www.google.com/search?q={{ cctv_google_dashcam }}" target="_blank" rel="noopener noreferrer">Google: dashcam appeal {{ cctv_location_query }}</a>
+        <a href="https://www.bing.com/search?q={{ cctv_bing_public }}" target="_blank" rel="noopener noreferrer">Bing: public CCTV and traffic camera search</a>
+        <a href="https://www.openstreetmap.org/search?query={{ cctv_osm_query }}" target="_blank" rel="noopener noreferrer">OpenStreetMap: nearby location search</a>
+      </div>
+      <p class="case-cctv-check__warning">Do not contact private camera owners aggressively. If footage may relate to this case, preserve details and contact police using the case reference.</p>
+    {% endif %}
+  </section>
+{% endif %}

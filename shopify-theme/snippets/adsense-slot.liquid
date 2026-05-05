@@ -1,0 +1,62 @@
+{%- comment -%}
+  Missing Alerts AdSense-ready slot.
+
+  Usage:
+    {% render 'adsense-slot', slot_type: 'homepage' %}
+    {% render 'adsense-slot', slot_type: 'article', position: 'after-intro' %}
+
+  AdSense code goes inside the .ma-adsense-slot element after approval.
+  Keep case pages disabled by default and never place ads inside urgent appeal copy,
+  photos, police blocks, sighting instructions, checkout CTAs, member areas, or pro areas.
+{%- endcomment -%}
+
+{%- liquid
+  assign ad_slot_type = slot_type | default: 'article' | downcase | strip
+  assign ad_position = position | default: ad_slot_type | downcase | strip
+  assign publisher_id = settings.adsense_publisher_id | default: '' | strip
+  assign can_render_ads = false
+  assign blocked_context = false
+  assign path_downcase = request.path | downcase
+
+  if request.page_type contains 'customers'
+    assign blocked_context = true
+  endif
+
+  if path_downcase contains '/account' or path_downcase contains '/pages/member' or path_downcase contains '/pages/professional' or path_downcase contains '/pages/pro-' or path_downcase contains '/pages/pros' or path_downcase contains '/pages/submit-case' or path_downcase contains '/cart' or path_downcase contains '/checkout'
+    assign blocked_context = true
+  endif
+
+  if ad_slot_type == 'homepage'
+    assign can_render_ads = settings.show_ads_on_homepage
+  elsif ad_slot_type == 'article' or ad_slot_type == 'advice'
+    assign can_render_ads = settings.show_ads_on_advice_articles
+  elsif ad_slot_type == 'location'
+    assign can_render_ads = settings.show_ads_on_location_pages
+  elsif ad_slot_type == 'case'
+    assign can_render_ads = settings.show_ads_on_case_pages
+  elsif ad_slot_type == 'sidebar' or ad_slot_type == 'footer'
+    assign can_render_ads = false
+  endif
+
+  if settings.enable_adsense != true or publisher_id == blank or blocked_context
+    assign can_render_ads = false
+  endif
+-%}
+
+{%- if can_render_ads -%}
+  <div
+    class="ma-adsense-slot ma-adsense-slot--{{ ad_slot_type | handleize }}"
+    data-adsense-slot="{{ ad_slot_type | escape }}"
+    data-adsense-position="{{ ad_position | escape }}"
+    data-adsense-publisher="{{ publisher_id | escape }}"
+  >
+    {%- comment -%}
+      Insert approved Google AdSense code here later.
+      Example location for publisher {{ publisher_id }}. Do not add live code before approval.
+    {%- endcomment -%}
+  </div>
+{%- elsif request.design_mode and settings.enable_adsense == true -%}
+  <div class="ma-adsense-slot ma-adsense-slot--editor-only" hidden>
+    AdSense slot prepared: {{ ad_slot_type }} / {{ ad_position }}
+  </div>
+{%- endif -%}

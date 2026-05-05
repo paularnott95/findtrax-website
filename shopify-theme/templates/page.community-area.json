@@ -1,0 +1,28 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "public-case-intelligence",
+      "settings": {
+        "heading": "COMMUNITY AREA",
+        "intro": "<p>General discussions only. No naming unverified people, no accusations, and no speculation. Case-specific information belongs in comments on that case page. Urgent sightings should go to police or local emergency services first.</p>",
+        "discussions_link": "https://project-155fd.vercel.app/case-intelligence/threads",
+        "network_link": "https://project-155fd.vercel.app/case-intelligence",
+        "professionals_link": "/pages/professional-area",
+        "padding_top": 24,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

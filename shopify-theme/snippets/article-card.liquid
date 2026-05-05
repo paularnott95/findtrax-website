@@ -1,0 +1,317 @@
+{% comment %}
+  Renders an article card for a given blog with settings to either show the image or not.
+
+  Accepts:
+  - blog: {Object} Blog object
+  - article: {Object} Article object
+  - media_aspect_ratio: {String} The setting changes the aspect ratio of the article image, if shown
+  - media_height: {String} The setting changes the height of the article image. Overrides media_aspect_ratio.
+  - show_image: {String} The setting either show the article image or not. If it's not included it will show the image by default
+  - show_date: {String} The setting either show the article date or not. If it's not included it will not show the image by default
+  - show_author: {String} The setting either show the article author or not. If it's not included it will not show the author by default
+  - show_badge: {String} The setting either show the blog badge or not.
+  - lazy_load: {Boolean} Image should be lazy loaded. Default: true (optional)
+
+  Usage:
+  {% render 'article-card' blog: blog, article: article, show_image: section.settings.show_image %}
+{% endcomment %}
+
+{%- if article and article != empty -%}
+  {%- liquid
+    assign ratio = 1
+    if media_aspect_ratio != null
+      assign ratio = media_aspect_ratio
+    endif
+
+    assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase
+    assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase
+    assign blog_handle = ''
+    if blog and blog.handle != blank
+      assign blog_handle = blog.handle | downcase
+    endif
+    assign is_found_safe_case = false
+    if blog_handle == 'found-safe' or case_status == 'found' or case_status == 'resolved' or owner_status == 'resolved'
+      assign is_found_safe_case = true
+    endif
+
+    assign placeholder_image = 'missing-person-silhouette.svg' | asset_url
+    assign has_card_image = false
+    if show_image == true and article.image
+      assign has_card_image = true
+    elsif show_image == true
+      assign has_card_image = true
+    endif
+
+    assign article_card_title = article.title
+    if is_found_safe_case
+      assign title_parts = article.title | split: '-'
+      assign title_left = title_parts.first | strip
+      assign title_right = title_parts.last | strip
+      assign first_name = title_left | split: ' ' | first | strip
+      if title_parts.size > 1 and title_right != blank
+        assign article_card_title = first_name | append: ' - ' | append: title_right
+      else
+        assign article_card_title = first_name
+      endif
+    endif
+
+    assign country_scope = 'all'
+    assign case_handle_prefix = blog.handle | default: article.blog.handle | default: 'missing-persons'
+    assign notify_case_handle = case_handle_prefix | append: '/' | append: article.handle
+    assign public_case_handle = article.handle | downcase
+    assign public_case_title = article.title | downcase
+    assign hide_public_case = false
+    if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test'
+      assign hide_public_case = true
+    endif
+    if public_case_handle contains 'pablo' or public_case_handle contains 'esobar' or public_case_handle contains 'escobar' or public_case_handle contains 'miss-123' or public_case_handle contains 'automatic-fallback'
+      assign hide_public_case = true
+    endif
+    if public_case_title contains 'pablo' or public_case_title contains 'esobar' or public_case_title contains 'escobar' or public_case_title contains 'miss, 123' or public_case_title contains 'miss 123' or public_case_title contains 'automatic fallback'
+      assign hide_public_case = true
+    endif
+    if public_case_title contains 'automatic' and public_case_title contains 'fallback'
+      assign hide_public_case = true
+    endif
+    if public_case_title contains 'miss' and public_case_title contains '123'
+      assign hide_public_case = true
+    endif
+    for article_tag in article.tags
+      assign tag_downcase = article_tag | downcase | strip
+      if tag_downcase == 'test' or tag_downcase == 'demo' or tag_downcase == 'debug' or tag_downcase == 'fake' or tag_downcase == 'dummy' or tag_downcase == 'fallback' or tag_downcase == 'placeholder' or tag_downcase contains 'test:' or tag_downcase contains 'demo:' or tag_downcase contains 'debug:'
+        assign hide_public_case = true
+      endif
+      if tag_downcase contains 'country:'
+        assign country_scope = tag_downcase | split: ':' | last | strip
+        if country_scope == 'uk'
+          assign country_scope = 'gb'
+        endif
+        break
+      endif
+    endfor
+  -%}
+  {%- unless hide_public_case -%}
+  <style>
+    .article-card__image--found-safe,
+    .case-image--found-safe {
+      filter: blur(22px) saturate(0.88) brightness(0.78) contrast(0.9);
+      transform: scale(1.1);
+      opacity: 0.78;
+      transform-origin: center center;
+    }
+
+    .article-card__found-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.18);
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      color: #dcfce7;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .article-card__found-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, rgba(5, 12, 8, 0.28) 0%, rgba(5, 12, 8, 0.72) 100%);
+      color: #ffffff;
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+  </style>
+  {%- capture case_card_actions_markup -%}
+    <div class="case-card__footer-row case-card__footer-row--article case-card-footer-actions">
+      <div class="case-notify-count case-notify-count--card" data-notify-count data-case-handle="{{ notify_case_handle | escape }}">
+        0 people following updates
+      </div>
+      <div class="case-card__actions case-card-actions case-card-action-row case-card-action-buttons">
+        <button
+          type="button"
+          class="case-card__follow case-notify-button js-case-notify-button"
+          data-default-follow-label="Follow"
+          data-case-title="{{ article.title | escape }}"
+          data-case-handle="{{ notify_case_handle | escape }}"
+          data-case-url="{{ article.url }}"
+          data-case-id="{{ article.id }}"
+          data-case-image="{% if article.image %}{{ article.image | image_url: width: 600 }}{% endif %}"
+        >
+          <span class="case-card__follow-icon" aria-hidden="true">🔔</span>
+          <span class="case-card__follow-label case-notify-button__text">Follow</span>
+        </button>
+        <button
+          type="button"
+          class="case-card__share case-share-button js-case-share-button"
+          data-default-share-label="Share"
+          data-share-title="{{ article.title | escape }}"
+          data-share-url="{{ shop.url }}{{ article.url }}"
+        >
+          <span class="case-card__share-label">Share</span>
+        </button>
+      </div>
+    </div>
+  {%- endcapture -%}
+  <div class="article-card-wrapper card-wrapper underline-links-hover" data-country-scope="{{ country_scope }}">
+    {% comment %} <article aria-labelledby="Article-{{ article.id }}"> {% endcomment %}
+    <div
+      class="
+        card article-card
+        card--{{ settings.blog_card_style }}
+        {% if media_height and media_height != 'adapt' %} article-card__image--{{ media_height }}{% endif %}
+        {% if has_card_image %} card--media{% else %} card--text{% endif %}
+        {% if settings.blog_card_style == 'card' %} color-{{ settings.blog_card_color_scheme }} gradient{% endif %}
+        {% if settings.blog_card_style == 'card' and media_height == nil and article.image == empty or show_image == false %} ratio{% endif %}
+      "
+      style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+    >
+      <div
+        class="card__inner {% if settings.blog_card_style == 'standard' %} color-{{ settings.blog_card_color_scheme }} gradient{% endif %}{% if has_card_image or settings.blog_card_style == 'standard' %} ratio{% endif %}"
+        style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+      >
+        {%- if show_image == true -%}
+          <div class="article-card__image-wrapper card__media">
+            <div
+              class="article-card__image media media--hover-effect"
+              {% if article.image and section.settings.media_height == 'adapt' %}
+                style="padding-bottom: {{ 1 | divided_by: article.image.aspect_ratio | times: 100 }}%;"
+              {% endif %}
+            >
+              {% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
+              {% if article.image %}
+                <img
+                  srcset="
+                    {%- if article.image.src.width >= 165 -%}{{ article.image.src | image_url: width: 165 }} 165w,{%- endif -%}
+                    {%- if article.image.src.width >= 360 -%}{{ article.image.src | image_url: width: 360 }} 360w,{%- endif -%}
+                    {%- if article.image.src.width >= 533 -%}{{ article.image.src | image_url: width: 533 }} 533w,{%- endif -%}
+                    {%- if article.image.src.width >= 720 -%}{{ article.image.src | image_url: width: 720 }} 720w,{%- endif -%}
+                    {%- if article.image.src.width >= 1000 -%}{{ article.image.src | image_url: width: 1000 }} 1000w,{%- endif -%}
+                    {%- if article.image.src.width >= 1500 -%}{{ article.image.src | image_url: width: 1500 }} 1500w,{%- endif -%}
+                    {{ article.image.src | image_url }} {{ article.image.src.width }}w
+                  "
+                  src="{{ article.image.src | image_url: width: 533 }}"
+                  sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | divided_by: 2 }}px, (min-width: 750px) calc((100vw - 130px) / 2), calc((100vw - 50px) / 2)"
+                  alt="{{ article.image.src.alt | escape }}"
+                  class="motion-reduce{% if is_found_safe_case %} article-card__image--found-safe case-image--found-safe{% endif %}"
+                  {% unless lazy_load == false %}
+                    loading="lazy"
+                  {% endunless %}
+                  width="{{ article.image.width }}"
+                  height="{{ article.image.height }}"
+                >
+              {% else %}
+                <img
+                  src="{{ placeholder_image }}"
+                  alt="{{ article_card_title | escape }}"
+                  class="motion-reduce{% if is_found_safe_case %} article-card__image--found-safe case-image--found-safe{% endif %}"
+                  {% unless lazy_load == false %}
+                    loading="lazy"
+                  {% endunless %}
+                  width="1200"
+                  height="1200"
+                >
+              {% endif %}
+              {% if is_found_safe_case %}
+                <div class="article-card__found-overlay">FOUND SAFE</div>
+              {% endif %}
+              {% comment %}theme-check-enable ImgLazyLoading{% endcomment %}
+            </div>
+          </div>
+        {%- endif -%}
+        <div class="card__content">
+          <div class="card__information">
+            <h3 class="card__heading{% if show_excerpt %} h2{% endif %}">
+              <a href="{{ article.url }}" class="full-unstyled-link">
+                {{ article_card_title | truncate: 50 | escape }}
+              </a>
+            </h3>
+            {% if is_found_safe_case %}
+              <div class="article-card__found-badge">FOUND SAFE</div>
+            {% endif %}
+            <div class="article-card__info caption-with-letter-spacing h5">
+              {%- if show_date -%}
+                <span class="circle-divider">{{ article.published_at | time_tag: format: 'date' }}</span>
+              {%- endif -%}
+              {%- if show_author -%}
+ <span>By MissingAlerts Team</span>
+{%- endif -%}
+            </div>
+            {%- if show_excerpt and is_found_safe_case == false -%}
+              {%- if article.excerpt.size > 0 or article.content.size > 0 -%}
+                <p class="article-card__excerpt rte-width">
+                  {%- if article.excerpt.size > 0 -%}
+                    {{ article.excerpt | strip_html | truncatewords: 30 }}
+                  {%- else -%}
+                    {{ article.content | strip_html | truncatewords: 30 }}
+                  {%- endif -%}
+                </p>
+              {%- endif -%}
+              <div class="article-card__footer">
+                {%- if article.comments_count > 0 and blog.comments_enabled? -%}
+                  <span>{{ 'blogs.article.comments' | t: count: article.comments_count }}</span>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+          {%- if show_badge -%}
+            <div class="card__badge {{ settings.badge_position }}">
+              <span class="badge color-{{ settings.color_schemes | first }}">{{ 'blogs.article.blog' | t }}</span>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+      <div class="card__content">
+        <div class="card__information">
+          <h3 class="card__heading{% if show_excerpt %} h2{% endif %}">
+            <a href="{{ article.url }}" class="full-unstyled-link">
+              {{ article_card_title | truncate: 50 | escape }}
+            </a>
+          </h3>
+          {% if is_found_safe_case %}
+            <div class="article-card__found-badge">FOUND SAFE</div>
+          {% endif %}
+          <div class="article-card__info caption-with-letter-spacing h5">
+            {%- if show_date -%}
+              <span class="circle-divider">{{ article.published_at | time_tag: format: 'date' }}</span>
+            {%- endif -%}
+            {%- if show_author -%}
+  <span>By MissingAlerts Team</span>
+{%- endif -%}
+          </div>
+          {%- if show_excerpt and is_found_safe_case == false -%}
+            {%- if article.excerpt.size > 0 or article.content.size > 0 -%}
+              <p class="article-card__excerpt rte-width">
+                {%- if article.excerpt.size > 0 -%}
+                  {{ article.excerpt | strip_html | truncatewords: 30 }}
+                {%- else -%}
+                  {{ article.content | strip_html | truncatewords: 30 }}
+                {%- endif -%}
+              </p>
+            {%- endif -%}
+            <div class="article-card__footer">
+              {%- if article.comments_count > 0 and blog.comments_enabled? -%}
+                <span>{{ 'blogs.article.comments' | t: count: article.comments_count }}</span>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+        {%- if show_badge -%}
+          <div class="card__badge {{ settings.badge_position }}">
+            <span class="badge color-{{ settings.color_schemes | first }}">{{ 'blogs.article.blog' | t }}</span>
+          </div>
+        {%- endif -%}
+      </div>
+      {{ case_card_actions_markup }}
+    </div>
+  </div>
+  {%- endunless -%}
+{%- endif -%}

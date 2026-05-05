@@ -1,0 +1,2442 @@
+{% comment %}
+  Emergency restored homepage generated from theme #195412164768 templates/index.json.
+{% endcomment %}
+
+{% comment %} Restored homepage section: custom_liquid_6aYYkG (custom-liquid) {% endcomment %}
+<div class="mpa-hero-shell">
+  <style>
+    .mpa-hero-shell{
+      width:100vw;
+      margin-left:calc(50% - 50vw);
+      margin-top:-60px;
+      padding:0;
+      line-height:0;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .mpa-hero-shell img{
+      width:100%;
+      height:440px;
+      object-fit:cover;
+      object-position:center center;
+      display:block;
+      margin:0;
+    }
+
+    .mpa-wrap{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-top:-18px;
+      position:relative;
+      z-index:5;
+    }
+
+    .mpa-inline-btn{
+      display:inline-block;
+      min-width:190px;
+      padding:14px 22px;
+      border-radius:999px;
+      color:#fff !important;
+      text-decoration:none !important;
+      font-weight:700;
+      font-size:15px;
+      text-align:center;
+      border:1px solid rgba(255,255,255,0.14);
+      box-shadow:0 10px 24px rgba(0,0,0,0.32);
+      position:relative;
+      overflow:hidden;
+      transition:all .2s ease;
+    }
+
+    .mpa-inline-btn:hover{
+      transform:translateY(-3px) scale(1.04);
+      box-shadow:0 14px 30px rgba(0,0,0,.34);
+      filter:brightness(1.05);
+    }
+
+    .mpa-inline-btn:active{
+      transform:translateY(0) scale(.98);
+    }
+
+    .mpa-inline-btn span{
+      position:relative;
+      z-index:2;
+    }
+
+    .mpa-inline-btn::before{
+      content:"";
+      position:absolute;
+      top:-20%;
+      bottom:-20%;
+      left:-60px;
+      width:24px;
+      background:linear-gradient(
+        180deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.15) 20%,
+        rgba(255,255,255,1) 50%,
+        rgba(255,255,255,0.15) 80%,
+        rgba(255,255,255,0) 100%
+      );
+      transform:skewX(-18deg);
+      animation:mpaSilverLine 3s linear infinite;
+      pointer-events:none;
+      z-index:1;
+    }
+
+    .mpa-inline-btn:hover::before{
+      animation-duration:1s;
+    }
+
+    .mpa-inline-missing,
+    .mpa-inline-donate{
+      background:linear-gradient(180deg,#2e3136 0%,#0f1114 100%);
+    }
+
+    .mpa-inline-report{
+      background:linear-gradient(180deg,#c21c1c 0%,#6e0f0f 100%);
+    }
+
+    .mpa-inline-report::before{
+      animation-direction: reverse;
+    }
+
+    @keyframes mpaSilverLine{
+      0%{ left:-60px; }
+      100%{ left:calc(100% + 60px); }
+    }
+
+    .mpa-hero-shell::before,
+    .mpa-hero-shell::after{
+      content:"";
+      position:absolute;
+      top:0;
+      bottom:80px;
+      width:140px;
+      pointer-events:none;
+      z-index:2;
+      background:linear-gradient(
+        115deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.05) 35%,
+        rgba(255,255,255,0.25) 50%,
+        rgba(255,255,255,0.05) 65%,
+        rgba(255,255,255,0) 100%
+      );
+      transform:skewX(-18deg);
+    }
+
+    .mpa-hero-shell::before{
+      left:-160px;
+      animation:mpaHeroSweep 8s linear infinite;
+    }
+
+    .mpa-hero-shell::after{
+      left:-300px;
+      animation:mpaHeroSweep 12s linear infinite;
+      opacity:0.7;
+    }
+
+    @keyframes mpaHeroSweep{
+      0%{ left:-300px; }
+      100%{ left:calc(100% + 300px); }
+    }
+
+    /* MOBILE FIX */
+    @media (max-width: 768px){
+      .mpa-hero-shell img{
+        height:320px;
+      }
+    }
+  </style>
+
+  <img
+    src="https://cdn.shopify.com/s/files/1/1036/9502/4288/files/8B5161BD-7E7B-405F-A1FC-9F208D7D02AA.jpg?v=1774786812"
+    alt="Missing Alerts Banner"
+    width="2000"
+    height="600"
+  >
+
+  <div class="mpa-wrap">
+    <a href="/blogs/missing-persons" class="mpa-inline-btn mpa-inline-missing">
+      <span>🔍 View Missing</span>
+    </a>
+
+    <a href="/pages/report-update" class="mpa-inline-btn mpa-inline-report">
+      <span>⚠️ Report Sighting</span>
+    </a>
+
+    <a href="/pages/donate" class="mpa-inline-btn mpa-inline-donate">
+      <span>❤️ Support & Donate</span>
+    </a>
+  </div>
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_VjWcwq (custom-liquid) {% endcomment %}
+<style>
+  .mp-banner-deck{
+    position:relative;
+    margin:0 auto 18px;
+    padding:14px;
+    border-radius:26px;
+    overflow:hidden;
+    background:
+      linear-gradient(180deg, rgba(17,8,8,.97), rgba(8,8,8,.99));
+    border:1px solid rgba(255,255,255,.07);
+    box-shadow:
+      0 18px 44px rgba(0,0,0,.38),
+      inset 0 1px 0 rgba(255,255,255,.04);
+  }
+
+  .mp-banner-deck::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(circle at 12% 20%, rgba(255,70,70,.10), transparent 24%),
+      radial-gradient(circle at 85% 80%, rgba(255,130,90,.08), transparent 24%);
+    z-index:0;
+  }
+
+  .mp-banner-deck__inner{
+    position:relative;
+    z-index:2;
+  }
+
+  .mp-banner-deck__top{
+    display:flex;
+    justify-content:center;
+    margin-bottom:14px;
+  }
+
+  .mp-banner-deck__badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 16px;
+    border-radius:999px;
+    background:linear-gradient(180deg, rgba(68,18,18,.96), rgba(28,10,10,.98));
+    border:1px solid rgba(255,110,110,.18);
+    color:#ffe8d0;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.04),
+      0 10px 20px rgba(0,0,0,.22);
+  }
+
+  .mp-banner-deck__badge-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#ff4f4f;
+    box-shadow:0 0 12px rgba(255,79,79,.85);
+    animation:mpBannerPulse 1.8s ease-in-out infinite;
+  }
+
+  .mp-banner-deck__grid{
+    display:grid;
+    grid-template-columns:repeat(5, minmax(0,1fr));
+    gap:14px;
+  }
+
+  .mp-banner-card{
+    position:relative;
+    min-height:235px;
+    border-radius:22px;
+    overflow:hidden;
+    display:flex;
+    align-items:flex-end;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00) 20%, rgba(0,0,0,.68) 100%),
+      linear-gradient(135deg, rgba(78,18,18,.88), rgba(19,10,10,.96) 58%, rgba(7,7,7,.98));
+    border:1px solid rgba(255,120,120,.13);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.04),
+      0 10px 28px rgba(0,0,0,.28);
+    transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+    isolation:isolate;
+  }
+
+  .mp-banner-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(255,170,120,.28);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.06),
+      0 16px 34px rgba(0,0,0,.36),
+      0 0 18px rgba(255,70,70,.10);
+  }
+
+  .mp-banner-card::before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    border-radius:22px;
+    padding:1px;
+    background:linear-gradient(120deg,
+      rgba(255,60,60,.10),
+      rgba(255,180,120,.30),
+      rgba(255,60,60,.12),
+      rgba(255,180,120,.20),
+      rgba(255,60,60,.10)
+    );
+    background-size:220% 220%;
+    animation:mpBorderMove 6s linear infinite;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+            mask-composite:exclude;
+    pointer-events:none;
+    z-index:3;
+  }
+
+  .mp-banner-card::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-160%;
+    width:58%;
+    height:100%;
+    transform:skewX(-24deg);
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+    animation:mpBannerSweep 6.8s ease-in-out infinite;
+    pointer-events:none;
+    z-index:2;
+  }
+
+  .mp-banner-card__art{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    overflow:hidden;
+  }
+
+  .mp-banner-card__content{
+    position:relative;
+    z-index:4;
+    width:100%;
+    padding:18px 16px 16px;
+    background:linear-gradient(180deg, rgba(0,0,0,0), rgba(9,9,9,.08) 10%, rgba(8,8,8,.68) 100%);
+  }
+
+  .mp-banner-card__eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    margin-bottom:10px;
+    padding:6px 10px;
+    border-radius:999px;
+    background:rgba(255,70,70,.10);
+    border:1px solid rgba(255,120,120,.14);
+    color:#ffd8c7;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+
+  .mp-banner-card__eyebrow-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#ff5959;
+    box-shadow:0 0 10px rgba(255,89,89,.78);
+    flex:0 0 auto;
+  }
+
+  .mp-banner-card__title{
+    margin:0 0 8px;
+    color:#fff2df;
+    font-size:20px;
+    line-height:1.02;
+    font-weight:900;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    text-shadow:0 2px 10px rgba(0,0,0,.30);
+  }
+
+  .mp-banner-card__text{
+    margin:0 0 14px;
+    color:rgba(255,235,220,.84);
+    font-size:13px;
+    line-height:1.35;
+    font-weight:700;
+  }
+
+  .mp-banner-card__btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:42px;
+    padding:11px 16px;
+    border-radius:999px;
+    text-decoration:none;
+    background:linear-gradient(180deg, #ff4b4b, #b91515);
+    color:#fff;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.14),
+      0 8px 18px rgba(185,22,22,.32);
+    transition:transform .22s ease, box-shadow .22s ease, filter .22s ease;
+  }
+
+  .mp-banner-card__btn:hover{
+    transform:translateY(-1px);
+    filter:brightness(1.06);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.16),
+      0 10px 22px rgba(185,22,22,.40);
+  }
+
+  /* DRAWN BACKGROUNDS */
+
+  .mp-banner-card--one .mp-banner-card__art{
+    background:
+      radial-gradient(circle at 25% 30%, rgba(255,120,120,.16), transparent 20%),
+      linear-gradient(90deg, transparent 48%, rgba(255,180,120,.10) 50%, transparent 52%),
+      linear-gradient(0deg, transparent 48%, rgba(255,180,120,.07) 50%, transparent 52%);
+  }
+
+  .mp-banner-card--one .mp-banner-card__art::before,
+  .mp-banner-card--one .mp-banner-card__art::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    border:1px solid rgba(255,190,140,.14);
+    animation:mpRadar 5.5s linear infinite;
+  }
+
+  .mp-banner-card--one .mp-banner-card__art::before{
+    width:120px;
+    height:120px;
+    top:18px;
+    right:18px;
+  }
+
+  .mp-banner-card--one .mp-banner-card__art::after{
+    width:170px;
+    height:170px;
+    top:-7px;
+    right:-7px;
+    animation-delay:1.2s;
+  }
+
+  .mp-banner-card--two .mp-banner-card__art{
+    background:
+      linear-gradient(120deg, transparent 0 28%, rgba(255,120,120,.08) 29% 31%, transparent 32%),
+      linear-gradient(140deg, transparent 0 55%, rgba(255,190,140,.07) 56% 58%, transparent 59%),
+      radial-gradient(circle at 78% 24%, rgba(255,95,95,.18), transparent 22%);
+  }
+
+  .mp-banner-card--two .mp-banner-card__art::before{
+    content:"";
+    position:absolute;
+    width:160px;
+    height:2px;
+    background:linear-gradient(90deg, transparent, rgba(255,190,140,.26), transparent);
+    top:42px;
+    left:-30px;
+    transform:rotate(-25deg);
+    animation:mpSignalMove 4.8s ease-in-out infinite;
+  }
+
+  .mp-banner-card--three .mp-banner-card__art{
+    background:
+      radial-gradient(circle at 18% 22%, rgba(255,170,120,.15), transparent 16%),
+      radial-gradient(circle at 76% 28%, rgba(255,90,90,.16), transparent 18%),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(255,255,255,.02) 1px, transparent 1px);
+    background-size:auto, auto, 24px 24px, 24px 24px;
+  }
+
+  .mp-banner-card--three .mp-banner-card__art::before,
+  .mp-banner-card--three .mp-banner-card__art::after{
+    content:"";
+    position:absolute;
+    background:rgba(255,190,140,.18);
+    border-radius:999px;
+  }
+
+  .mp-banner-card--three .mp-banner-card__art::before{
+    width:90px;
+    height:1px;
+    top:44px;
+    left:28px;
+    box-shadow:
+      55px 26px 0 rgba(255,120,120,.16),
+      115px 8px 0 rgba(255,190,140,.14);
+  }
+
+  .mp-banner-card--three .mp-banner-card__art::after{
+    width:8px;
+    height:8px;
+    top:40px;
+    left:22px;
+    box-shadow:
+      56px 26px 0 0 rgba(255,120,120,.84),
+      114px 8px 0 0 rgba(255,190,140,.84);
+  }
+
+  .mp-banner-card--four .mp-banner-card__art{
+    background:
+      linear-gradient(135deg, transparent 0 62%, rgba(255,120,120,.06) 63% 65%, transparent 66%),
+      radial-gradient(circle at 24% 24%, rgba(255,180,120,.18), transparent 22%);
+  }
+
+  .mp-banner-card--four .mp-banner-card__art::before{
+    content:"";
+    position:absolute;
+    inset:16px;
+    border-radius:18px;
+    border:1px solid rgba(255,190,140,.08);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,120,120,.04);
+  }
+
+  .mp-banner-card--four .mp-banner-card__art::after{
+    content:"";
+    position:absolute;
+    width:170px;
+    height:170px;
+    border-radius:50%;
+    border:1px solid rgba(255,190,140,.10);
+    right:-40px;
+    top:-30px;
+    animation:mpRadarSlow 8s linear infinite;
+  }
+
+  .mp-banner-card--five .mp-banner-card__art{
+    background:
+      radial-gradient(circle at 22% 25%, rgba(255,120,120,.18), transparent 18%),
+      radial-gradient(circle at 70% 35%, rgba(255,180,120,.12), transparent 20%),
+      linear-gradient(90deg, transparent 20%, rgba(255,255,255,.03) 20.5%, transparent 21%, transparent 60%, rgba(255,255,255,.03) 60.5%, transparent 61%);
+  }
+
+  .mp-banner-card--five .mp-banner-card__art::before{
+    content:"";
+    position:absolute;
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    border:1px dashed rgba(255,190,140,.14);
+    bottom:-70px;
+    right:-25px;
+    animation:mpRotate 15s linear infinite;
+  }
+
+  .mp-banner-card--five .mp-banner-card__art::after{
+    content:"";
+    position:absolute;
+    width:88px;
+    height:2px;
+    background:linear-gradient(90deg, transparent, rgba(255,190,140,.30), transparent);
+    bottom:62px;
+    right:36px;
+    transform:rotate(-28deg);
+    animation:mpSignalMove 5.5s ease-in-out infinite;
+  }
+
+  @keyframes mpBannerSweep{
+    0%{ left:-160%; }
+    55%{ left:170%; }
+    100%{ left:170%; }
+  }
+
+  @keyframes mpBorderMove{
+    0%{ background-position:0% 50%; }
+    100%{ background-position:200% 50%; }
+  }
+
+  @keyframes mpBannerPulse{
+    0%,100%{ transform:scale(1); opacity:1; }
+    50%{ transform:scale(1.18); opacity:.74; }
+  }
+
+  @keyframes mpRadar{
+    0%{ transform:scale(.94); opacity:.55; }
+    50%{ transform:scale(1); opacity:.9; }
+    100%{ transform:scale(1.06); opacity:.55; }
+  }
+
+  @keyframes mpRadarSlow{
+    0%{ transform:rotate(0deg); opacity:.65; }
+    50%{ opacity:.9; }
+    100%{ transform:rotate(360deg); opacity:.65; }
+  }
+
+  @keyframes mpSignalMove{
+    0%,100%{ transform:translateX(0) rotate(-25deg); opacity:.45; }
+    50%{ transform:translateX(10px) rotate(-25deg); opacity:.95; }
+  }
+
+  @keyframes mpRotate{
+    0%{ transform:rotate(0deg); }
+    100%{ transform:rotate(360deg); }
+  }
+
+  @media screen and (max-width: 1200px){
+    .mp-banner-deck__grid{
+      grid-template-columns:repeat(3, minmax(0,1fr));
+    }
+  }
+
+  @media screen and (max-width: 989px){
+    .mp-banner-deck{
+      padding:12px 10px;
+      border-radius:22px;
+    }
+
+    .mp-banner-deck__grid{
+      display:flex;
+      gap:12px;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      padding-bottom:4px;
+    }
+
+    .mp-banner-deck__grid::-webkit-scrollbar{
+      height:6px;
+    }
+
+    .mp-banner-deck__grid::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,.15);
+      border-radius:999px;
+    }
+
+    .mp-banner-card{
+      min-width:280px;
+      min-height:220px;
+      scroll-snap-align:start;
+    }
+
+    .mp-banner-card__title{
+      font-size:18px;
+    }
+  }
+
+  @media screen and (max-width: 749px){
+    .mp-banner-card{
+      min-width:260px;
+      min-height:212px;
+    }
+
+    .mp-banner-card__content{
+      padding:16px 14px 14px;
+    }
+
+    .mp-banner-card__title{
+      font-size:17px;
+    }
+
+    .mp-banner-card__text{
+      font-size:12px;
+    }
+  }
+</style>
+
+<div class="mp-banner-deck">
+  <div class="mp-banner-deck__inner">
+    <div class="mp-banner-deck__top">
+      <div class="mp-banner-deck__badge">
+        <span class="mp-banner-deck__badge-dot"></span>
+        TRUSTED GLOBAL MISSING PERSON PLATFORM
+      </div>
+    </div>
+
+    <div class="mp-banner-deck__grid">
+      <div class="mp-banner-card mp-banner-card--one">
+        <div class="mp-banner-card__art"></div>
+        <div class="mp-banner-card__content">
+          <div class="mp-banner-card__eyebrow">
+            <span class="mp-banner-card__eyebrow-dot"></span>
+            GLOBAL TRUST
+          </div>
+          <h3 class="mp-banner-card__title">TRUSTED AROUND THE WORLD</h3>
+          <p class="mp-banner-card__text">A public-led platform built for fast visibility, wider reach and stronger missing person awareness.</p>
+          <a href="/blogs/missing-persons" class="mp-banner-card__btn">VIEW CASES</a>
+        </div>
+      </div>
+
+      <div class="mp-banner-card mp-banner-card--two">
+        <div class="mp-banner-card__art"></div>
+        <div class="mp-banner-card__content">
+          <div class="mp-banner-card__eyebrow">
+            <span class="mp-banner-card__eyebrow-dot"></span>
+            ALERT REACH
+          </div>
+          <h3 class="mp-banner-card__title">INSTANT GLOBAL ALERTS</h3>
+          <p class="mp-banner-card__text">Designed to push urgent missing person visibility faster and help important cases spread wider.</p>
+          <a href="/pages/alerts" class="mp-banner-card__btn">GET ALERTS</a>
+        </div>
+      </div>
+
+      <div class="mp-banner-card mp-banner-card--three">
+        <div class="mp-banner-card__art"></div>
+        <div class="mp-banner-card__content">
+          <div class="mp-banner-card__eyebrow">
+            <span class="mp-banner-card__eyebrow-dot"></span>
+            FREE SUBMISSION
+          </div>
+          <h3 class="mp-banner-card__title">FREE CASE UPLOADS</h3>
+          <p class="mp-banner-card__text">Simple submission tools designed to help missing person cases get seen and shared quickly.</p>
+          <a href="/pages/report-a-missing-person" class="mp-banner-card__btn">SUBMIT CASE</a>
+        </div>
+      </div>
+
+      <div class="mp-banner-card mp-banner-card--four">
+        <div class="mp-banner-card__art"></div>
+        <div class="mp-banner-card__content">
+          <div class="mp-banner-card__eyebrow">
+            <span class="mp-banner-card__eyebrow-dot"></span>
+            LIVE TRACKING
+          </div>
+          <h3 class="mp-banner-card__title">LIVE CASE UPDATES</h3>
+          <p class="mp-banner-card__text">Follow important developments, major changes and found safe updates in one central place.</p>
+          <a href="/blogs/found-safe" class="mp-banner-card__btn">VIEW UPDATES</a>
+        </div>
+      </div>
+
+      <div class="mp-banner-card mp-banner-card--five">
+        <div class="mp-banner-card__art"></div>
+        <div class="mp-banner-card__content">
+          <div class="mp-banner-card__eyebrow">
+            <span class="mp-banner-card__eyebrow-dot"></span>
+            TAKE ACTION
+          </div>
+          <h3 class="mp-banner-card__title">HELP BRING THEM HOME</h3>
+          <p class="mp-banner-card__text">Support visibility, share urgent alerts and help more missing people get seen faster.</p>
+          <a href="/pages/donate" class="mp-banner-card__btn">SUPPORT NOW</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %} Restored homepage section: spotlight_system_g6nycR (spotlight-system) {% endcomment %}
+{% section 'spotlight-system' %}
+
+{% comment %} Missing Alerts country-specific premium spotlight bar {% endcomment %}
+{% render 'ma-spotlight-bar' %}
+
+{% comment %} Restored homepage section: boosted_appeals_final_RptqUp (boosted-appeals-final) {% endcomment %}
+{% section 'boosted-appeals-final' %}
+
+{% comment %} Restored homepage section: submit_case_entry_EP4inY (submit-case-entry) {% endcomment %}
+{% section 'submit-case-entry' %}
+
+{% comment %} Restored homepage section: custom_liquid_JVJeaH (custom-liquid) {% endcomment %}
+<style>
+.mpa-status-bar{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:linear-gradient(180deg,#0c0c0e,#09090b);
+  padding:12px 16px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  font-size:13px;
+  overflow:hidden;
+}
+
+.mpa-status-title{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#ffffff;
+  font-weight:900;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+  white-space:nowrap;
+  line-height:1.1;
+}
+
+.mpa-status-title small{
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:1px;
+  opacity:0.8;
+  margin-top:2px;
+}
+
+.mpa-ticker{
+  flex:1;
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+.mpa-ticker-track{
+  display:inline-block;
+  animation:scrollTicker 40s linear infinite;
+  will-change:transform;
+}
+
+.mpa-ticker-track span{
+  margin-right:28px;
+  color:#ffffff;
+  font-weight:700;
+  opacity:0.95;
+}
+
+.mpa-ticker-track b{
+  color:#ff3b3b;
+  font-weight:900;
+}
+
+.mpa-status-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  white-space:nowrap;
+}
+
+.mpa-live-badge{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#ff2a2a,#a80000);
+  color:#fff;
+  font-weight:900;
+  font-size:12px;
+  box-shadow:
+    0 0 14px rgba(255,0,0,0.7),
+    0 6px 16px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  animation:livePulse 1.2s infinite;
+}
+
+.mpa-live-dot{
+  width:8px;
+  height:8px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow:0 0 10px #fff;
+}
+
+.mpa-status-stats{
+  color:#ffffff;
+  font-weight:900;
+  font-size:14px;
+  letter-spacing:0.3px;
+}
+
+@keyframes scrollTicker{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-50%); }
+}
+
+@keyframes livePulse{
+  0%{ transform:scale(1); box-shadow:0 0 10px rgba(255,0,0,0.6); }
+  50%{ transform:scale(1.08); box-shadow:0 0 18px rgba(255,0,0,1); }
+  100%{ transform:scale(1); box-shadow:0 0 10px rgba(255,0,0,0.6); }
+}
+
+@media screen and (max-width: 989px){
+  .mpa-status-bar{
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+  }
+
+  .mpa-status-title,
+  .mpa-status-right{
+    justify-content:center;
+    text-align:center;
+  }
+
+  .mpa-status-right{
+    flex-wrap:wrap;
+  }
+}
+</style>
+
+<div class="mpa-status-bar" role="note" aria-label="Missing Alerts mission">
+  <div class="mpa-status-title" style="align-items:flex-start;">
+    MISSING ALERTS
+    <small>POLICE-FIRST GUIDANCE</small>
+  </div>
+
+  <div style="flex:1;min-width:240px;color:rgba(255,255,255,0.82);font-weight:700;line-height:1.35;">
+    Missing Alerts is building a global public awareness network for missing person appeals.
+    If you have urgent information or a sighting, contact police or local emergency services first.
+  </div>
+</div>
+
+{% comment %} Restored homepage section: featured_collection (featured-collection) {% endcomment %}
+{% section 'featured-collection' %}
+
+{% comment %} Restored homepage section: custom_liquid_KCYKgp (custom-liquid) {% endcomment %}
+
+
+{% comment %} Restored homepage section: boosted_sidebar_dx9yDk (BOOSTED-SIDEBAR) {% endcomment %}
+{% section 'BOOSTED-SIDEBAR' %}
+
+{% comment %} Restored homepage section: custom_liquid_jGmxQ4 (custom-liquid) {% endcomment %}
+<style>
+.mpa-latest-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 250px;
+  gap:18px;
+  align-items:stretch;
+  max-width:1520px;
+  margin:40px auto 20px auto;
+  padding:0 8px;
+  box-sizing:border-box;
+}
+
+
+
+.mpa-latest-main{
+  min-width:0;
+  display:flex;
+}
+
+.mpa-latest-sidebar{
+  min-width:0;
+  width:100%;
+  display:flex;
+}
+
+.mpa-latest-main .mpa-cases-wrap{
+  max-width:none;
+  margin:0;
+  width:100%;
+  box-sizing:border-box;
+  height:100%;
+}
+
+.mpa-cases-wrap{
+  padding:16px;
+  background:#101214;
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:18px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+.mpa-cases-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+  flex:0 0 auto;
+}
+
+.mpa-cases-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  grid-auto-rows:1fr;
+  gap:16px;
+  align-items:stretch;
+  flex:1 1 auto;
+}
+
+.mpa-case-link{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+  height:100%;
+}
+
+.mpa-case-card{
+  background:#17191c;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 10px 24px rgba(0,0,0,0.22);
+  transition:transform .2s ease, box-shadow .2s ease;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+.mpa-case-card:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 20px 40px rgba(0,0,0,0.35);
+}
+
+.mpa-case-image-wrap{
+  position:relative;
+  overflow:hidden;
+  flex:0 0 auto;
+}
+
+.mpa-case-image{
+  width:100%;
+  height:185px;
+  object-fit:cover;
+  display:block;
+  transition:transform .3s ease;
+}
+
+.mpa-case-card:hover .mpa-case-image{
+  transform:scale(1.05);
+}
+
+.mpa-case-badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:linear-gradient(135deg,#ff4b4b,#b30000);
+  color:#fff;
+  padding:6px 10px;
+  font-size:10px;
+  font-weight:800;
+  border-radius:8px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.15);
+  letter-spacing:.4px;
+  z-index:2;
+}
+
+.mpa-case-share-top{
+  position:absolute;
+  top:10px;
+  right:10px;
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:8px;
+  background:rgba(15,17,20,0.82);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  color:#ffffff;
+  font-size:10px;
+  font-weight:800;
+  text-decoration:none;
+  letter-spacing:.35px;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 4px 10px rgba(0,0,0,0.28);
+  transition:transform .2s ease, background .2s ease, box-shadow .2s ease;
+  z-index:2;
+}
+
+.mpa-case-share-top:hover{
+  background:#d90429;
+  transform:scale(1.05);
+  box-shadow:0 8px 18px rgba(0,0,0,0.34);
+}
+
+.mpa-case-text{
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  flex:1 1 auto;
+  min-height:0;
+}
+
+.mpa-case-topline{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin:0 0 8px 0;
+  flex-wrap:wrap;
+}
+
+.mpa-case-meta{
+  margin:0;
+  color:#ffb3b3;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.45px;
+  text-transform:uppercase;
+}
+
+.mpa-case-location{
+  margin:0;
+  color:#8fd3ff;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.35px;
+  text-transform:uppercase;
+}
+
+.mpa-case-title{
+  margin:0 0 6px 0;
+  color:#fff;
+  font-size:15px;
+  line-height:1.2;
+  font-weight:700;
+}
+
+.mpa-case-excerpt{
+  margin:0;
+  color:rgba(255,255,255,0.78);
+  font-size:12px;
+  line-height:1.35;
+}
+
+@media (max-width:1350px){
+  .mpa-cases-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+@media (max-width:1100px){
+  .mpa-latest-layout{
+    grid-template-columns:minmax(0,1fr) 230px;
+    gap:14px;
+  }
+
+  .mpa-cases-grid{
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+  }
+
+  .mpa-case-image{
+    height:170px;
+  }
+
+  .mpa-case-text{
+    padding:11px;
+  }
+
+  .mpa-case-title{
+    font-size:14px;
+  }
+
+  .mpa-case-excerpt{
+    font-size:11px;
+  }
+}
+
+@media (max-width:900px){
+  .mpa-latest-layout{
+    grid-template-columns:1fr;
+  }
+
+  .mpa-cases-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media (max-width:700px){
+  .mpa-cases-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+
+<div class="mpa-latest-layout">
+
+  <div class="mpa-latest-main">
+    <div class="mpa-cases-wrap">
+
+      <div class="mpa-cases-head">
+        <h2 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">
+          LATEST MISSING CASES
+        </h2>
+        <a href="/blogs/missing-persons" style="color:#ffffff;text-decoration:none;font-weight:600;">
+          View all
+        </a>
+      </div>
+
+      <div class="mpa-cases-grid">
+        {% assign shown_featured_count = 0 %}
+
+        {% for article in blogs['missing-persons'].articles limit: 50 %}
+          {% assign public_case_handle = article.handle | downcase %}
+          {% assign public_case_title = article.title | downcase %}
+          {% assign hide_public_case = false %}
+
+          {% if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test' %}
+            {% assign hide_public_case = true %}
+          {% endif %}
+          {% if public_case_handle contains 'pablo' or public_case_handle contains 'esobar' or public_case_handle contains 'escobar' or public_case_handle contains 'miss-123' or public_case_handle contains 'automatic-fallback' %}
+            {% assign hide_public_case = true %}
+          {% endif %}
+          {% if public_case_title contains 'pablo' or public_case_title contains 'esobar' or public_case_title contains 'escobar' or public_case_title contains 'miss, 123' or public_case_title contains 'miss 123' or public_case_title contains 'automatic fallback' %}
+            {% assign hide_public_case = true %}
+          {% endif %}
+          {% if public_case_title contains 'automatic' and public_case_title contains 'fallback' %}
+            {% assign hide_public_case = true %}
+          {% endif %}
+          {% if public_case_title contains 'miss' and public_case_title contains '123' %}
+            {% assign hide_public_case = true %}
+          {% endif %}
+          {% for article_tag in article.tags %}
+            {% assign tag_downcase = article_tag | downcase | strip %}
+            {% if tag_downcase == 'test' or tag_downcase == 'demo' or tag_downcase == 'debug' or tag_downcase == 'fake' or tag_downcase == 'dummy' or tag_downcase == 'fallback' or tag_downcase == 'placeholder' or tag_downcase contains 'test:' or tag_downcase contains 'demo:' or tag_downcase contains 'debug:' %}
+              {% assign hide_public_case = true %}
+            {% endif %}
+          {% endfor %}
+          {% if hide_public_case %}
+            {% continue %}
+          {% endif %}
+
+          {% if shown_featured_count >= 8 %}
+            {% break %}
+          {% endif %}
+          {% assign shown_featured_count = shown_featured_count | plus: 1 %}
+
+          {% assign last_seen_location = '' %}
+          {% assign clean_title = article.title | strip %}
+
+          {% if clean_title contains 'Last Seen in ' %}
+            {% assign last_seen_location = clean_title | split: 'Last Seen in ' | last | strip %}
+          {% elsif clean_title contains ' – ' %}
+            {% assign last_seen_location = clean_title | split: ' – ' | last | strip %}
+          {% elsif clean_title contains ' — ' %}
+            {% assign last_seen_location = clean_title | split: ' — ' | last | strip %}
+          {% elsif clean_title contains ' - ' %}
+            {% assign last_seen_location = clean_title | split: ' - ' | last | strip %}
+          {% elsif clean_title contains '–' %}
+            {% assign last_seen_location = clean_title | split: '–' | last | strip %}
+          {% elsif clean_title contains '—' %}
+            {% assign last_seen_location = clean_title | split: '—' | last | strip %}
+          {% elsif clean_title contains '-' %}
+            {% assign last_seen_location = clean_title | split: '-' | last | strip %}
+          {% endif %}
+
+          <a href="{{ article.url }}" class="mpa-case-link">
+            <div class="mpa-case-card">
+
+              <div class="mpa-case-image-wrap">
+                {% if article.image %}
+                  <img
+                    src="{{ article.image | image_url: width: 700 }}"
+                    alt="{{ article.title | escape }}"
+                    class="mpa-case-image"
+                    width="700"
+                    height="700"
+                  >
+                {% endif %}
+
+                <div class="mpa-case-badge">⚠️ URGENT</div>
+                <span class="mpa-case-share-top">🔁 SHARE</span>
+              </div>
+
+              <div class="mpa-case-text">
+                <div class="mpa-case-topline">
+                  <div class="mpa-case-meta">RECENT CASE</div>
+
+                  {% if last_seen_location != '' %}
+                    <div class="mpa-case-location">📍 LAST SEEN: {{ last_seen_location }}</div>
+                  {% endif %}
+                </div>
+
+                <h3 class="mpa-case-title">{{ article.title }}</h3>
+
+                <p class="mpa-case-excerpt">
+                  {{ article.excerpt | strip_html | truncate: 50 }}
+                </p>
+              </div>
+
+            </div>
+          </a>
+        {% endfor %}
+
+        {% if shown_featured_count == 0 %}
+          <div style="grid-column:1 / -1;margin:4px 0;padding:14px 16px;border:1px solid rgba(255,255,255,0.08);border-radius:14px;background:rgba(0,0,0,0.20);color:rgba(255,255,255,0.82);font-weight:700;">
+            No featured appeals are currently available. Please check the latest missing person appeals.
+          </div>
+        {% endif %}
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mpa-latest-sidebar">
+    {% render 'boosted-sidebar', fill_mode: true, fill_limit: 3 %}
+  </div>
+
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_iKnGA4 (custom-liquid) {% endcomment %}
+<style>
+.mpa-cases-wrap{
+  max-width:1200px;
+  margin:-35px auto 20px auto;
+  padding:20px;
+  background:#101214;
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:18px;
+}
+
+.mpa-cases-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+
+.mpa-cases-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,360px));
+  gap:20px;
+  justify-content:start;
+}
+
+.mpa-case-link{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+}
+
+.mpa-case-card{
+  background:#17191c;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 10px 24px rgba(0,0,0,0.22);
+  transition:transform .2s ease, box-shadow .2s ease;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+.mpa-case-card:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 20px 40px rgba(0,0,0,0.35);
+}
+
+.mpa-case-image-wrap{
+  position:relative;
+  overflow:hidden;
+}
+
+.mpa-case-image{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  display:block;
+  transition:transform .3s ease;
+}
+
+.mpa-case-card:hover .mpa-case-image{
+  transform:scale(1.05);
+}
+
+.mpa-case-badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:linear-gradient(135deg,#ff4b4b,#b30000);
+  color:#fff;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:800;
+  border-radius:8px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.15);
+  letter-spacing:.5px;
+  z-index:2;
+}
+
+.mpa-case-share-top{
+  position:absolute;
+  top:10px;
+  right:10px;
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:8px;
+  background:rgba(15,17,20,0.82);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  color:#ffffff;
+  font-size:12px;
+  font-weight:800;
+  text-decoration:none;
+  letter-spacing:.4px;
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 4px 10px rgba(0,0,0,0.28);
+  transition:transform .2s ease, background .2s ease, box-shadow .2s ease;
+  z-index:2;
+}
+
+.mpa-case-share-top:hover{
+  background:#d90429;
+  transform:scale(1.05);
+  box-shadow:0 8px 18px rgba(0,0,0,0.34);
+}
+
+.mpa-case-text{
+  padding:16px;
+  min-height:150px;
+  display:flex;
+  flex-direction:column;
+}
+
+.mpa-case-topline{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin:0 0 10px 0;
+  flex-wrap:wrap;
+}
+
+.mpa-case-meta{
+  margin:0;
+  color:#ffb3b3;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+}
+
+.mpa-case-location{
+  margin:0;
+  color:#8fd3ff;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+}
+
+.mpa-case-title{
+  margin:0 0 8px 0;
+  color:#fff;
+  font-size:18px;
+  line-height:1.3;
+  font-weight:700;
+}
+
+.mpa-case-excerpt{
+  margin:0;
+  color:rgba(255,255,255,0.78);
+  font-size:14px;
+  line-height:1.5;
+}
+
+@media (max-width:700px){
+  .mpa-cases-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+
+<div class="mpa-cases-wrap">
+
+  <div class="mpa-cases-head">
+    <h2 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">
+      LATEST MISSING CASES
+    </h2>
+    <a href="/blogs/missing-persons" style="color:#ffffff;text-decoration:none;font-weight:600;">
+      View all
+    </a>
+  </div>
+
+  <div class="mpa-cases-grid">
+
+    {% for article in blogs['missing-persons'].articles limit:6 %}
+
+      {% assign last_seen_location = '' %}
+      {% assign clean_title = article.title | strip %}
+
+      {% if clean_title contains 'Last Seen in ' %}
+        {% assign last_seen_location = clean_title | split: 'Last Seen in ' | last | strip %}
+      {% elsif clean_title contains ' – ' %}
+        {% assign last_seen_location = clean_title | split: ' – ' | last | strip %}
+      {% elsif clean_title contains ' — ' %}
+        {% assign last_seen_location = clean_title | split: ' — ' | last | strip %}
+      {% elsif clean_title contains ' - ' %}
+        {% assign last_seen_location = clean_title | split: ' - ' | last | strip %}
+      {% elsif clean_title contains '–' %}
+        {% assign last_seen_location = clean_title | split: '–' | last | strip %}
+      {% elsif clean_title contains '—' %}
+        {% assign last_seen_location = clean_title | split: '—' | last | strip %}
+      {% elsif clean_title contains '-' %}
+        {% assign last_seen_location = clean_title | split: '-' | last | strip %}
+      {% endif %}
+
+      <div class="mpa-case-card">
+
+        <div class="mpa-case-image-wrap">
+          <a href="{{ article.url }}" class="mpa-case-link">
+            {% if article.image %}
+              <img
+                src="{{ article.image | image_url: width: 700 }}"
+                alt="{{ article.title | escape }}"
+                class="mpa-case-image"
+                width="700"
+                height="700"
+              >
+            {% endif %}
+          </a>
+
+          <div class="mpa-case-badge">⚠️ URGENT</div>
+
+          <a href="{{ article.url }}" class="mpa-case-share-top">
+            🔁 SHARE
+          </a>
+        </div>
+
+        <div class="mpa-case-text">
+          <div class="mpa-case-topline">
+            <div class="mpa-case-meta">RECENT CASE</div>
+
+            {% if last_seen_location != '' %}
+              <div class="mpa-case-location">📍 LAST SEEN: {{ last_seen_location }}</div>
+            {% endif %}
+          </div>
+
+          <a href="{{ article.url }}" class="mpa-case-link">
+            <h3 class="mpa-case-title">{{ article.title }}</h3>
+          </a>
+
+          <p class="mpa-case-excerpt">
+            {{ article.excerpt | strip_html | truncate: 95 }}
+          </p>
+        </div>
+
+      </div>
+
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_Grnzaj (custom-liquid) {% endcomment %}
+<style>
+.mpa-found-wrap{
+  max-width:1200px;
+  margin:20px auto 20px auto;
+  padding:20px;
+  background:#101214;
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:18px;
+}
+
+.mpa-found-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+
+.mpa-found-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+
+.mpa-found-link{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+  height:100%;
+}
+
+.mpa-found-card{
+  background:#17191c;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 10px 24px rgba(0,0,0,0.22);
+  transition:transform .2s ease, box-shadow .2s ease;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.mpa-found-card:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 20px 40px rgba(0,0,0,0.35);
+}
+
+.mpa-found-image-wrap{
+  position:relative;
+  overflow:hidden;
+}
+
+.mpa-found-image{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  display:block;
+  transition:transform .3s ease;
+}
+
+.mpa-found-image--protected{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg, rgba(17,24,39,.96), rgba(20,83,45,.94));
+  color:#dcfce7;
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  isolation:isolate;
+}
+
+.mpa-found-image__blur{
+  position:absolute;
+  inset:-34px;
+  background-size:cover;
+  background-position:center;
+  filter:blur(42px);
+  transform:scale(1.2);
+  opacity:.72;
+  z-index:-2;
+}
+
+.mpa-found-image__overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg, rgba(3,7,18,.76), rgba(20,83,45,.84));
+  z-index:-1;
+}
+
+.mpa-found-image__label{
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(15,23,42,.74);
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:0 12px 30px rgba(0,0,0,.34);
+}
+
+.mpa-found-card:hover .mpa-found-image{
+  transform:scale(1.05);
+}
+
+.mpa-found-badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:linear-gradient(135deg,#32c96b,#15803d);
+  color:#fff;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:800;
+  border-radius:8px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.15);
+  letter-spacing:.5px;
+}
+
+.mpa-found-text{
+  padding:16px;
+  min-height:120px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+
+.mpa-found-meta-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin:0 0 10px 0;
+  flex-wrap:wrap;
+}
+
+.mpa-found-meta{
+  margin:0;
+  color:#b8ffd2;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+}
+
+.mpa-found-date{
+  margin:0;
+  color:#9ad0ff;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+}
+
+.mpa-found-title{
+  margin:0 0 8px 0;
+  color:#fff;
+  font-size:18px;
+  line-height:1.3;
+  font-weight:700;
+}
+
+.mpa-found-excerpt{
+  margin:0;
+  color:rgba(255,255,255,0.78);
+  font-size:14px;
+  line-height:1.5;
+}
+
+@media (min-width:1100px){
+  .mpa-found-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+}
+</style>
+
+<div class="mpa-found-wrap">
+
+  <div class="mpa-found-head">
+    <h2 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">
+      FOUND SAFE UPDATES
+    </h2>
+    <a href="/blogs/found-safe" style="color:#ffffff;text-decoration:none;font-weight:600;">
+      View all
+    </a>
+  </div>
+
+  <div class="mpa-found-grid">
+
+   {% if blogs['found-safe'].articles_count > 0 %}
+  {% for article in blogs['found-safe'].articles limit:4 %}
+
+    <a href="{{ article.url }}" class="mpa-found-link">
+      <div class="mpa-found-card">
+
+        <div class="mpa-found-image-wrap">
+          <div class="mpa-found-image mpa-found-image--protected" aria-label="Found safe photo protected">
+            {% if article.image %}
+              <span class="mpa-found-image__blur" style="background-image:url('{{ article.image | image_url: width: 800 }}');"></span>
+            {% endif %}
+            <span class="mpa-found-image__overlay"></span>
+            <span class="mpa-found-image__label">FOUND SAFE</span>
+          </div>
+          <div class="mpa-found-badge">✅ FOUND SAFE</div>
+        </div>
+
+        <div class="mpa-found-text">
+          <div class="mpa-found-meta-row">
+            <div class="mpa-found-meta">GOOD NEWS</div>
+            <div class="mpa-found-date">{{ article.published_at | date: "%d %b %Y" }}</div>
+          </div>
+
+          <h3 class="mpa-found-title">{{ article.title }}</h3>
+
+          <p class="mpa-found-excerpt">
+            {{ article.excerpt | strip_html | truncate: 95 }}
+          </p>
+        </div>
+
+      </div>
+    </a>
+
+      {% endfor %}
+{% else %}
+  <div style="background:#17191c;border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;color:rgba(255,255,255,0.78);">
+    No found safe updates yet.
+  </div>
+{% endif %}
+
+  </div>
+
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_yhPyMe (custom-liquid) {% endcomment %}
+<div style="padding:28px 20px;background:linear-gradient(135deg,#05070b 0%,#0f1117 45%,#111827 100%);position:relative;overflow:hidden;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
+
+  <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;">
+    <div style="position:absolute;top:0;left:-35%;width:30%;height:100%;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0) 100%);transform:skewX(-20deg);animation:mpaShine 4.5s linear infinite;"></div>
+  </div>
+
+  <div style="max-width:980px;margin:0 auto;position:relative;z-index:2;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+
+      <div style="flex:1 1 320px;min-width:260px;text-align:left;">
+        <h2 style="margin:0 0 6px 0;font-size:24px;line-height:1.1;font-weight:800;color:#ffffff;letter-spacing:0.4px;">
+          GET MISSING PERSON ALERTS
+        </h2>
+
+        <p style="margin:0;color:rgba(255,255,255,0.72);font-size:14px;line-height:1.4;">
+          Be the first to see urgent cases and major updates.
+        </p>
+      </div>
+
+      <div style="flex:1 1 460px;min-width:280px;">
+        <form method="post" action="/contact#contact_form" accept-charset="UTF-8" style="margin:0;">
+          <input type="hidden" name="form_type" value="customer">
+          <input type="hidden" name="utf8" value="✓">
+
+          <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;">
+
+            <input
+              type="email"
+              name="contact[email]"
+              placeholder="Enter your email"
+              required
+              style="flex:1 1 280px;min-width:240px;height:48px;padding:0 16px;background:linear-gradient(135deg,rgba(255,255,255,0.96),rgba(240,240,240,0.98));color:#111827;border:1px solid rgba(255,255,255,0.5);border-radius:14px;outline:none;font-size:14px;font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),0 6px 18px rgba(0,0,0,0.18);transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;"
+              onfocus="this.style.borderColor='#9ca3af';this.style.boxShadow='0 0 0 3px rgba(255,255,255,0.10), 0 10px 24px rgba(0,0,0,0.25)';this.style.transform='translateY(-1px)'"
+              onblur="this.style.borderColor='rgba(255,255,255,0.5)';this.style.boxShadow='inset 0 1px 0 rgba(255,255,255,0.6),0 6px 18px rgba(0,0,0,0.18)';this.style.transform='none'"
+            >
+
+            <button
+              type="submit"
+              style="height:48px;padding:0 22px;background:linear-gradient(135deg,#ff1744 0%,#d90429 55%,#a3001e 100%);color:#ffffff;border:none;border-radius:14px;font-size:13px;font-weight:800;letter-spacing:0.6px;cursor:pointer;box-shadow:0 10px 24px rgba(217,4,41,0.35), inset 0 1px 0 rgba(255,255,255,0.16);transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;"
+              onmouseover="this.style.transform='translateY(-2px) scale(1.02)';this.style.boxShadow='0 14px 30px rgba(217,4,41,0.45), inset 0 1px 0 rgba(255,255,255,0.16)';this.style.filter='brightness(1.05)'"
+              onmouseout="this.style.transform='none';this.style.boxShadow='0 10px 24px rgba(217,4,41,0.35), inset 0 1px 0 rgba(255,255,255,0.16)';this.style.filter='none'">
+              SIGN UP
+            </button>
+
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <style>
+    @keyframes mpaShine {
+      0% { left: -35%; }
+      100% { left: 125%; }
+    }
+
+    @media (max-width: 749px) {
+      .mpa-alert-stack {
+        flex-direction: column;
+      }
+    }
+  </style>
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_4KVycd (custom-liquid) {% endcomment %}
+<div class="mpa-cases-wrap">
+
+  <div class="mpa-cases-head">
+    <h2 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">
+      🚨 URGENT CASES
+    </h2>
+  </div>
+
+  <div class="mpa-cases-grid">
+
+    {% assign blog = blogs['missing-persons'] %}
+
+    {% for article in blog.articles limit: 8 %}
+      {% assign tags_downcase = article.tags | join: ',' | downcase %}
+
+      {% if tags_downcase contains 'urgent' %}
+
+        {% assign last_seen = article.metafields.custom.last_seen_place %}
+
+        <div class="mpa-case-card">
+
+          <div class="mpa-case-image-wrap">
+            <a href="{{ article.url }}" class="mpa-case-link">
+              {% if article.image %}
+                <img
+                  src="{{ article.image | image_url: width: 700 }}"
+                  alt="{{ article.title | escape }}"
+                  class="mpa-case-image"
+                  width="700"
+                  height="700"
+                >
+              {% endif %}
+            </a>
+
+            <!-- URGENT BADGE (SAME STYLE) -->
+            <div class="mpa-case-badge">⚠️ URGENT</div>
+
+            <!-- SHARE BUTTON (SAME STYLE + HOVER) -->
+            <a href="{{ article.url }}" class="mpa-case-share-top">
+              🔁 SHARE
+            </a>
+          </div>
+
+          <div class="mpa-case-text">
+
+            <div class="mpa-case-topline">
+              <div class="mpa-case-meta">URGENT CASE</div>
+
+              {% if last_seen != blank %}
+                <div class="mpa-case-location">📍 {{ last_seen }}</div>
+              {% endif %}
+            </div>
+
+            <a href="{{ article.url }}" class="mpa-case-link">
+              <h3 class="mpa-case-title">{{ article.title }}</h3>
+            </a>
+
+            <p class="mpa-case-excerpt">
+              {{ article.excerpt | strip_html | truncate: 95 }}
+            </p>
+
+          </div>
+
+        </div>
+
+      {% endif %}
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_rXKdLf (custom-liquid) {% endcomment %}
+<div class="mpa-cases-wrap">
+
+  <div class="mpa-cases-head">
+    <h2 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">
+      🇬🇧 UK MISSING PERSONS
+    </h2>
+  </div>
+
+  <div class="mpa-cases-grid">
+
+    {% assign blog = blogs['missing-persons'] %}
+    {% assign count = 0 %}
+
+    {% for article in blog.articles %}
+      {% assign tags_downcase = article.tags | join: ',' | downcase %}
+
+      {% if tags_downcase contains 'uk' %}
+
+        {% assign last_seen = article.metafields.custom.last_seen_place %}
+
+        <div class="mpa-case-card">
+
+          <div class="mpa-case-image-wrap">
+            <a href="{{ article.url }}" class="mpa-case-link">
+              {% if article.image %}
+                <img
+                  src="{{ article.image | image_url: width: 700 }}"
+                  alt="{{ article.title | escape }}"
+                  class="mpa-case-image"
+                  width="700"
+                  height="700"
+                >
+              {% endif %}
+            </a>
+
+            {% if tags_downcase contains 'urgent' %}
+              <div class="mpa-case-badge">⚠️ URGENT</div>
+            {% else %}
+              <div class="mpa-case-share-top" style="left:10px;right:auto;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:1px solid rgba(255,255,255,0.15);pointer-events:none;">
+                🇬🇧 UK
+              </div>
+            {% endif %}
+
+            <a href="{{ article.url }}" class="mpa-case-share-top">
+              🔁 SHARE
+            </a>
+          </div>
+
+          <div class="mpa-case-text">
+
+            <div class="mpa-case-topline">
+              <div class="mpa-case-meta" style="color:#93c5fd;">🇬🇧 UK MISSING PERSON</div>
+
+              {% if last_seen != blank %}
+                <div class="mpa-case-location">📍 {{ last_seen }}</div>
+              {% endif %}
+            </div>
+
+            <a href="{{ article.url }}" class="mpa-case-link">
+              <h3 class="mpa-case-title">{{ article.title }}</h3>
+            </a>
+
+            <p class="mpa-case-excerpt">
+              {{ article.excerpt | strip_html | truncate: 95 }}
+            </p>
+
+          </div>
+
+        </div>
+
+        {% assign count = count | plus: 1 %}
+
+        {% if count == 6 %}
+          {% break %}
+        {% endif %}
+
+      {% endif %}
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_rAkVnR (custom-liquid) {% endcomment %}
+<div style="max-width:1200px;margin:20px auto;padding:0 20px;">
+  <div style="
+    background:linear-gradient(135deg,#1a1d21,#111315);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:18px;
+    padding:22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+  ">
+    <div>
+      <div style="color:#ffffff;font-size:22px;font-weight:800;margin-bottom:6px;">SUPPORT THE WEBSITE</div>
+      <div style="color:rgba(255,255,255,0.78);font-size:14px;">
+        Help keep urgent missing person alerts visible, updated, and shared.
+      </div>
+    </div>
+
+    <a href="/pages/donate" style="
+      display:inline-block;
+      padding:14px 22px;
+      border-radius:999px;
+      background:linear-gradient(180deg,#c21c1c 0%,#6e0f0f 100%);
+      color:#ffffff;
+      text-decoration:none;
+      font-weight:800;
+      box-shadow:0 10px 24px rgba(0,0,0,0.28);
+    ">
+      ❤️ DONATE NOW
+    </a>
+  </div>
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_x9J7wR (custom-liquid) {% endcomment %}
+<div class="mpa-cases-wrap">
+
+  <div class="mpa-cases-head">
+    <h2 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">
+      ✈️ UK PEOPLE MISSING ABROAD
+    </h2>
+  </div>
+
+  <div class="mpa-cases-grid">
+
+    {% assign blog = blogs['missing-persons'] %}
+
+    {% for article in blog.articles %}
+      {% if article.tags contains 'abroad' %}
+
+        {% assign last_seen = '' %}
+        {% for tag in article.tags %}
+          {% assign clean_tag = tag | strip %}
+          {% if clean_tag contains 'lastseen:' %}
+            {% assign last_seen = clean_tag | remove: 'lastseen:' %}
+          {% endif %}
+        {% endfor %}
+
+        <div class="mpa-case-card">
+
+          <div class="mpa-case-image-wrap">
+            <a href="{{ article.url }}" class="mpa-case-link">
+              {% if article.image %}
+                <img
+                  src="{{ article.image | image_url: width: 700 }}"
+                  alt="{{ article.title | escape }}"
+                  class="mpa-case-image"
+                  width="700"
+                  height="700"
+                  style="height:230px; object-position:center 38%;"
+                >
+              {% endif %}
+            </a>
+
+            <div class="mpa-case-share-top" style="left:10px;right:auto;background:linear-gradient(135deg,#ff5a3d,#d93412);border:1px solid rgba(255,255,255,0.16);pointer-events:none;">
+              ✈️ ABROAD
+            </div>
+
+            <a href="{{ article.url }}" class="mpa-case-share-top">
+              🔁 SHARE
+            </a>
+          </div>
+
+          <div class="mpa-case-text">
+
+            <div class="mpa-case-topline">
+              <div class="mpa-case-meta" style="color:#ff8a8a;">ABROAD CASE</div>
+
+              {% if last_seen != blank %}
+                <div class="mpa-case-location">📍 LAST SEEN: {{ last_seen }}</div>
+              {% endif %}
+            </div>
+
+            <a href="{{ article.url }}" class="mpa-case-link">
+              <h3 class="mpa-case-title">{{ article.title }}</h3>
+            </a>
+
+            <p class="mpa-case-excerpt">
+              {{ article.excerpt | strip_html | truncate: 120 }}
+            </p>
+
+          </div>
+
+        </div>
+
+      {% endif %}
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_WUrE4t (custom-liquid) {% endcomment %}
+<div class="mpa-cases-wrap">
+
+  <div class="mpa-cases-head">
+    <h2 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">
+      🌍 INTERNATIONAL CASES
+    </h2>
+  </div>
+
+  <div class="mpa-cases-grid">
+
+    {% assign blog = blogs['missing-persons'] %}
+
+    {% for article in blog.articles %}
+
+      {% assign tags_downcase = article.tags | join: ',' | downcase %}
+
+      {% if tags_downcase contains 'international' %}
+
+        {% assign country_name = 'International' %}
+        {% assign country_flag = '🌍' %}
+        {% assign last_seen = '' %}
+
+        {% for tag in article.tags %}
+          {% assign clean_tag = tag | strip %}
+          {% if clean_tag contains 'country:' %}
+            {% assign country_name = clean_tag | remove: 'country:' %}
+          {% endif %}
+          {% if clean_tag contains 'flag:' %}
+            {% assign country_flag = clean_tag | remove: 'flag:' %}
+          {% endif %}
+          {% if clean_tag contains 'lastseen:' %}
+            {% assign last_seen = clean_tag | remove: 'lastseen:' %}
+          {% endif %}
+        {% endfor %}
+
+        <div class="mpa-case-card">
+
+          <div class="mpa-case-image-wrap">
+            <a href="{{ article.url }}" class="mpa-case-link">
+              {% if article.image %}
+                <img
+                  src="{{ article.image | image_url: width: 700 }}"
+                  alt="{{ article.title | escape }}"
+                  class="mpa-case-image"
+                  width="700"
+                  height="700"
+                >
+              {% endif %}
+            </a>
+
+            <div class="mpa-case-share-top" style="left:10px;right:auto;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:1px solid rgba(255,255,255,0.16);pointer-events:none;">
+              {{ country_flag }} {{ country_name }}
+            </div>
+
+            <a href="{{ article.url }}" class="mpa-case-share-top">
+              🔁 SHARE
+            </a>
+
+            {% if tags_downcase contains 'urgent' %}
+              <div style="position:absolute;bottom:12px;left:12px;background:#ff3b30;color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;z-index:2;">
+                ⚠️ URGENT
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="mpa-case-text">
+
+            <div class="mpa-case-topline">
+              <div class="mpa-case-meta" style="color:#7dd3fc;">INTERNATIONAL CASE</div>
+
+              {% if last_seen != blank %}
+                <div class="mpa-case-location">📍 {{ last_seen }}</div>
+              {% endif %}
+            </div>
+
+            <a href="{{ article.url }}" class="mpa-case-link">
+              <h3 class="mpa-case-title">{{ article.title }}</h3>
+            </a>
+
+            <p class="mpa-case-excerpt">
+              {{ article.excerpt | strip_html | truncate: 95 }}
+            </p>
+
+          </div>
+
+        </div>
+
+      {% endif %}
+
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_yLVfmP (custom-liquid) {% endcomment %}
+<div style="padding:28px 20px;background:linear-gradient(135deg,#05070b 0%,#0f1117 45%,#111827 100%);position:relative;overflow:hidden;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
+
+  <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;">
+    <div style="position:absolute;top:0;left:-35%;width:30%;height:100%;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0) 100%);transform:skewX(-20deg);animation:mpaShine 4.5s linear infinite;"></div>
+  </div>
+
+  <div style="max-width:980px;margin:0 auto;position:relative;z-index:2;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+
+      <div style="flex:1 1 320px;min-width:260px;text-align:left;">
+        <h2 style="margin:0 0 6px 0;font-size:24px;line-height:1.1;font-weight:800;color:#ffffff;letter-spacing:0.4px;">
+          GET MISSING PERSON ALERTS
+        </h2>
+
+        <p style="margin:0;color:rgba(255,255,255,0.72);font-size:14px;line-height:1.4;">
+          Be the first to see urgent cases and major updates.
+        </p>
+      </div>
+
+      <div style="flex:1 1 460px;min-width:280px;">
+        <form method="post" action="/contact#contact_form" accept-charset="UTF-8" style="margin:0;">
+          <input type="hidden" name="form_type" value="customer">
+          <input type="hidden" name="utf8" value="✓">
+
+          <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;">
+
+            <input
+              type="email"
+              name="contact[email]"
+              placeholder="Enter your email"
+              required
+              style="flex:1 1 280px;min-width:240px;height:48px;padding:0 16px;background:linear-gradient(135deg,rgba(255,255,255,0.96),rgba(240,240,240,0.98));color:#111827;border:1px solid rgba(255,255,255,0.5);border-radius:14px;outline:none;font-size:14px;font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),0 6px 18px rgba(0,0,0,0.18);transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;"
+              onfocus="this.style.borderColor='#9ca3af';this.style.boxShadow='0 0 0 3px rgba(255,255,255,0.10), 0 10px 24px rgba(0,0,0,0.25)';this.style.transform='translateY(-1px)'"
+              onblur="this.style.borderColor='rgba(255,255,255,0.5)';this.style.boxShadow='inset 0 1px 0 rgba(255,255,255,0.6),0 6px 18px rgba(0,0,0,0.18)';this.style.transform='none'"
+            >
+
+            <button
+              type="submit"
+              style="height:48px;padding:0 22px;background:linear-gradient(135deg,#ff1744 0%,#d90429 55%,#a3001e 100%);color:#ffffff;border:none;border-radius:14px;font-size:13px;font-weight:800;letter-spacing:0.6px;cursor:pointer;box-shadow:0 10px 24px rgba(217,4,41,0.35), inset 0 1px 0 rgba(255,255,255,0.16);transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;"
+              onmouseover="this.style.transform='translateY(-2px) scale(1.02)';this.style.boxShadow='0 14px 30px rgba(217,4,41,0.45), inset 0 1px 0 rgba(255,255,255,0.16)';this.style.filter='brightness(1.05)'"
+              onmouseout="this.style.transform='none';this.style.boxShadow='0 10px 24px rgba(217,4,41,0.35), inset 0 1px 0 rgba(255,255,255,0.16)';this.style.filter='none'">
+              SIGN UP
+            </button>
+
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <style>
+    @keyframes mpaShine {
+      0% { left: -35%; }
+      100% { left: 125%; }
+    }
+
+    @media (max-width: 749px) {
+      .mpa-alert-stack {
+        flex-direction: column;
+      }
+    }
+  </style>
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_fbppYX (custom-liquid) {% endcomment %}
+<div style="padding:70px 20px;background:radial-gradient(circle at top,#111827 0%,#05070b 55%,#02040a 100%);position:relative;overflow:hidden;">
+
+  <div style="position:absolute;top:-120px;left:-120px;width:320px;height:320px;background:rgba(37,99,235,0.10);filter:blur(120px);border-radius:50%;pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-140px;right:-100px;width:340px;height:340px;background:rgba(217,4,41,0.12);filter:blur(130px);border-radius:50%;pointer-events:none;"></div>
+
+  <div style="max-width:980px;margin:0 auto;position:relative;z-index:2;">
+
+    <div style="background:linear-gradient(145deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.08);border-radius:26px;padding:48px 28px;box-shadow:0 30px 80px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);position:relative;overflow:hidden;">
+
+      <div style="position:absolute;top:0;left:-35%;width:28%;height:100%;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.10) 50%,rgba(255,255,255,0) 100%);transform:skewX(-20deg);animation:mpaDonateShine 5s linear infinite;pointer-events:none;"></div>
+
+      <div style="max-width:760px;margin:0 auto;text-align:center;position:relative;z-index:2;">
+
+        <div style="display:inline-block;margin-bottom:16px;padding:8px 14px;border-radius:999px;background:rgba(217,4,41,0.12);border:1px solid rgba(217,4,41,0.25);color:#ff8da1;font-size:12px;font-weight:800;letter-spacing:0.7px;text-transform:uppercase;">
+          SUPPORT THE MISSION
+        </div>
+
+        <h2 style="margin:0 0 14px 0;font-size:38px;line-height:1.1;font-weight:900;letter-spacing:0.4px;color:#ffffff;">
+          SUPPORT THIS PLATFORM
+        </h2>
+
+        <p style="margin:0 auto 30px auto;max-width:700px;font-size:17px;line-height:1.7;color:rgba(255,255,255,0.78);">
+          This platform helps raise awareness for missing people, push urgent cases further, and keep vital appeals in front of more eyes. Your support helps increase reach, improve the website, and keep important cases visible.
+        </p>
+
+        <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;">
+
+          <div style="padding:10px 16px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#d1d5db;font-size:13px;font-weight:700;">
+            🔁 More reach
+          </div>
+
+          <div style="padding:10px 16px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#d1d5db;font-size:13px;font-weight:700;">
+            📢 Stronger awareness
+          </div>
+
+          <div style="padding:10px 16px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#d1d5db;font-size:13px;font-weight:700;">
+            🌍 Bigger impact
+          </div>
+
+        </div>
+
+        <a href="/pages/donate"
+           style="display:inline-block;background:linear-gradient(135deg,#ff1744 0%,#d90429 58%,#a3001e 100%);color:#ffffff;padding:16px 34px;text-decoration:none;border-radius:16px;font-weight:900;font-size:14px;letter-spacing:0.8px;box-shadow:0 16px 36px rgba(217,4,41,0.35), inset 0 1px 0 rgba(255,255,255,0.18);transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;"
+           onmouseover="this.style.transform='translateY(-3px) scale(1.03)';this.style.boxShadow='0 22px 44px rgba(217,4,41,0.45), inset 0 1px 0 rgba(255,255,255,0.18)';this.style.filter='brightness(1.05)'"
+           onmouseout="this.style.transform='none';this.style.boxShadow='0 16px 36px rgba(217,4,41,0.35), inset 0 1px 0 rgba(255,255,255,0.18)';this.style.filter='none'">
+          DONATE NOW
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes mpaDonateShine {
+      0% { left: -35%; }
+      100% { left: 125%; }
+    }
+  </style>
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_NGwAiU (custom-liquid) {% endcomment %}
+<div style="padding:80px 20px;background:radial-gradient(circle at top,#0f172a,#020617);position:relative;overflow:hidden;">
+
+  <!-- subtle glow -->
+  <div style="position:absolute;top:-100px;left:-100px;width:300px;height:300px;background:#2563eb;opacity:0.15;filter:blur(120px);border-radius:50%;"></div>
+  <div style="position:absolute;bottom:-120px;right:-100px;width:300px;height:300px;background:#ff3b30;opacity:0.15;filter:blur(120px);border-radius:50%;"></div>
+
+  <div style="max-width:1100px;margin:0 auto;text-align:center;position:relative;z-index:2;">
+
+    <h2 style="font-size:32px;margin-bottom:10px;font-weight:800;color:#ffffff;letter-spacing:0.5px;">
+      HOW YOU CAN HELP
+    </h2>
+
+    <p style="color:#9ca3af;margin-bottom:40px;font-size:16px;">
+      Every action matters. A single share or sighting could help bring someone home.
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
+
+      <!-- CARD 1 -->
+      <div style="
+        background:linear-gradient(145deg,#0f172a,#020617);
+        border:1px solid rgba(255,255,255,0.08);
+        border-radius:18px;
+        padding:26px;
+        text-align:left;
+        transition:all 0.25s ease;
+        position:relative;
+        overflow:hidden;
+      "
+      onmouseover="this.style.transform='translateY(-8px) scale(1.02)';this.style.boxShadow='0 25px 50px rgba(0,0,0,0.6)'"
+      onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+
+        <div style="font-size:28px;margin-bottom:12px;">🔁</div>
+
+        <h3 style="margin:0 0 10px;color:#ffffff;font-size:18px;font-weight:800;">
+          SHARE ALERTS
+        </h3>
+
+        <p style="color:#9ca3af;font-size:14px;line-height:1.5;">
+          Sharing missing person posts massively increases reach. The right person seeing it at the right time can change everything.
+        </p>
+
+      </div>
+
+      <!-- CARD 2 -->
+      <div style="
+        background:linear-gradient(145deg,#0f172a,#020617);
+        border:1px solid rgba(255,255,255,0.08);
+        border-radius:18px;
+        padding:26px;
+        text-align:left;
+        transition:all 0.25s ease;
+        position:relative;
+        overflow:hidden;
+      "
+      onmouseover="this.style.transform='translateY(-8px) scale(1.02)';this.style.boxShadow='0 25px 50px rgba(0,0,0,0.6)'"
+      onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+
+        <div style="font-size:28px;margin-bottom:12px;">📍</div>
+
+        <h3 style="margin:0 0 10px;color:#ffffff;font-size:18px;font-weight:800;">
+          REPORT SIGHTINGS
+        </h3>
+
+        <p style="color:#9ca3af;font-size:14px;line-height:1.5;">
+          If you see something, report it immediately. Even small details can help authorities piece together movements.
+        </p>
+
+      </div>
+
+      <!-- CARD 3 -->
+      <div style="
+        background:linear-gradient(145deg,#0f172a,#020617);
+        border:1px solid rgba(255,255,255,0.08);
+        border-radius:18px;
+        padding:26px;
+        text-align:left;
+        transition:all 0.25s ease;
+        position:relative;
+        overflow:hidden;
+      "
+      onmouseover="this.style.transform='translateY(-8px) scale(1.02)';this.style.boxShadow='0 25px 50px rgba(0,0,0,0.6)'"
+      onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+
+        <div style="font-size:28px;margin-bottom:12px;">👀</div>
+
+        <h3 style="margin:0 0 10px;color:#ffffff;font-size:18px;font-weight:800;">
+          STAY AWARE
+        </h3>
+
+        <p style="color:#9ca3af;font-size:14px;line-height:1.5;">
+          Stay updated on cases near you. Awareness increases the chances of recognition in public places.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+{% comment %} Restored homepage section: custom_liquid_dyAkm4 (custom-liquid) {% endcomment %}
+<div style="padding:60px 20px;background:#111;color:white;text-align:center;">
+  <div style="max-width:900px;margin:0 auto;">
+
+    <h2 style="font-size:34px;line-height:1.2;margin:0 0 15px 0;font-weight:700;">
+      STAY UPDATED. SUPPORT THE MISSION.
+    </h2>
+
+    <p style="font-size:18px;line-height:1.6;margin:0 0 30px 0;">
+      Join the email list for updates on missing people and urgent appeals.  
+      If you want to support this work, you can also donate below.
+    </p>
+
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;">
+      <a href="/pages/donate" style="display:inline-block;background:#d90429;color:white;padding:14px 24px;text-decoration:none;font-weight:700;border-radius:6px;">
+        DONATE NOW
+      </a>
+
+      <a href="/pages/report-update" style="display:inline-block;background:white;color:#111;padding:14px 24px;text-decoration:none;font-weight:700;border-radius:6px;">
+        REPORT / UPDATE
+      </a>
+    </div>
+
+    <div style="margin-top:10px;">
+      <p style="font-size:14px;opacity:0.85;margin:0;">
+        Every share, report and donation helps extend the reach of urgent missing person alerts.
+      </p>
+    </div>
+
+  </div>
+</div>

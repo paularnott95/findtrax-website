@@ -1,0 +1,485 @@
+{% assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase %}
+{% assign case_owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase %}
+{% assign last_seen_place = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | strip %}
+{% assign last_seen_at = article.metafields.custom.last_seen_at.value | default: article.metafields.custom.last_seen_at | strip %}
+{% assign last_seen_precision = article.metafields.custom.last_seen_precision.value | default: article.metafields.custom.last_seen_precision | strip %}
+{% assign last_seen_lat = article.metafields.custom.last_seen_lat.value | default: article.metafields.custom.last_seen_lat | strip %}
+{% assign last_seen_lng = article.metafields.custom.last_seen_lng.value | default: article.metafields.custom.last_seen_lng | strip %}
+{% assign country_name = article.metafields.custom.country.value | default: article.metafields.custom.country | strip %}
+{% assign region_name = article.metafields.custom.region.value | default: article.metafields.custom.region | strip %}
+{% assign city_name = article.metafields.custom.city.value | default: article.metafields.custom.city | strip %}
+{% assign age_text = article.metafields.custom.age.value | default: article.metafields.custom.age | strip %}
+{% assign reported_missing_at = article.metafields.custom.reported_missing_at.value | default: article.metafields.custom.reported_missing_at | strip %}
+
+{% assign local_police_name = article.metafields.custom.local_police_name.value | default: article.metafields.custom.local_police_name | strip %}
+{% assign local_police_phone = article.metafields.custom.local_police_phone.value | default: article.metafields.custom.local_police_phone | strip %}
+{% assign local_police_url = article.metafields.custom.local_police_url.value | default: article.metafields.custom.local_police_url | strip %}
+{% assign emergency_number = article.metafields.custom.emergency_number.value | default: article.metafields.custom.emergency_number | strip %}
+{% assign non_emergency_number = article.metafields.custom.non_emergency_number.value | default: article.metafields.custom.non_emergency_number | strip %}
+{% assign missing_charity_contact = article.metafields.custom.missing_charity_contact.value | default: article.metafields.custom.missing_charity_contact | strip %}
+{% assign local_support_services = article.metafields.custom.local_support_services.value | default: article.metafields.custom.local_support_services | strip %}
+{% assign local_charities = article.metafields.custom.local_charities.value | default: article.metafields.custom.local_charities | strip %}
+
+{% assign area_missing_history = article.metafields.custom.area_missing_history.value | default: article.metafields.custom.area_missing_history | strip %}
+{% assign area_missing_source = article.metafields.custom.area_missing_source.value | default: article.metafields.custom.area_missing_source | strip %}
+{% assign area_missing_last_checked = article.metafields.custom.area_missing_last_checked.value | default: article.metafields.custom.area_missing_last_checked | strip %}
+{% assign area_crime_summary = article.metafields.custom.area_crime_summary.value | default: article.metafields.custom.area_crime_summary | strip %}
+{% assign area_crime_source = article.metafields.custom.area_crime_source.value | default: article.metafields.custom.area_crime_source | strip %}
+{% assign area_crime_last_checked = article.metafields.custom.area_crime_last_checked.value | default: article.metafields.custom.area_crime_last_checked | strip %}
+{% assign area_safety_notes = article.metafields.custom.area_safety_notes.value | default: article.metafields.custom.area_safety_notes | strip %}
+
+{% assign weather_at_missing_time = article.metafields.custom.weather_at_missing_time.value | default: article.metafields.custom.weather_at_missing_time | strip %}
+{% assign weather_source = article.metafields.custom.weather_source.value | default: article.metafields.custom.weather_source | strip %}
+{% assign weather_last_checked = article.metafields.custom.weather_last_checked.value | default: article.metafields.custom.weather_last_checked | strip %}
+
+{% assign police_reference = article.metafields.custom.police_reference.value | default: article.metafields.custom.police_reference | default: article.metafields.custom.case_reference.value | default: article.metafields.custom.case_reference | strip %}
+{% assign police_contact = article.metafields.custom.police_contact.value | default: article.metafields.custom.police_contact | default: article.metafields.custom.source_contact.value | default: article.metafields.custom.source_contact | default: article.metafields.custom.contact_info.value | default: article.metafields.custom.contact_info | strip %}
+{% assign source_name = article.metafields.custom.source.value | default: article.metafields.custom.source | default: article.metafields.custom.source_name.value | default: article.metafields.custom.source_name | strip %}
+
+{% assign is_found_safe = false %}
+{% if blog.handle == 'found-safe' or case_status == 'found' or case_status == 'resolved' or case_owner_status == 'resolved' %}
+  {% assign is_found_safe = true %}
+{% endif %}
+
+{% assign tag_country = '' %}
+{% assign tag_lastseen = '' %}
+{% assign vulnerable_from_tags = false %}
+
+{% for tag in article.tags %}
+  {% assign tag_downcase = tag | downcase %}
+  {% if tag_country == blank and tag_downcase contains 'country:' %}
+    {% assign tag_country = tag | split: ':' | last | strip %}
+  {% endif %}
+  {% if tag_lastseen == blank and tag_downcase contains 'lastseen:' %}
+    {% assign tag_lastseen = tag | split: ':' | last | strip %}
+  {% endif %}
+  {% if tag_downcase contains 'child' or tag_downcase contains 'teen' or tag_downcase contains 'teenager' or tag_downcase contains 'elderly' or tag_downcase contains 'vulnerable' or tag_downcase contains 'dementia' or tag_downcase contains 'autism' or tag_downcase contains 'mental health' or tag_downcase contains 'high-risk' %}
+    {% assign vulnerable_from_tags = true %}
+  {% endif %}
+{% endfor %}
+
+{% if last_seen_place == blank and tag_lastseen != blank %}
+  {% assign last_seen_place = tag_lastseen %}
+{% endif %}
+
+{% if country_name == blank and tag_country != blank %}
+  {% assign country_name = tag_country %}
+{% endif %}
+
+{% assign age_value = age_text | plus: 0 %}
+{% assign vulnerable_person = false %}
+{% if vulnerable_from_tags %}
+  {% assign vulnerable_person = true %}
+{% elsif age_text != blank and age_value > 0 %}
+  {% if age_value < 18 or age_value > 65 %}
+    {% assign vulnerable_person = true %}
+  {% endif %}
+{% endif %}
+
+{% assign location_text = '' %}
+{% if last_seen_place != blank %}
+  {% assign location_text = last_seen_place %}
+{% endif %}
+{% if city_name != blank and city_name != last_seen_place %}
+  {% if location_text != blank %}
+    {% assign location_text = location_text | append: ', ' %}
+  {% endif %}
+  {% assign location_text = location_text | append: city_name %}
+{% endif %}
+{% if region_name != blank and region_name != city_name %}
+  {% if location_text != blank %}
+    {% assign location_text = location_text | append: ', ' %}
+  {% endif %}
+  {% assign location_text = location_text | append: region_name %}
+{% endif %}
+{% if country_name != blank %}
+  {% if location_text != blank %}
+    {% assign location_text = location_text | append: ', ' %}
+  {% endif %}
+  {% assign location_text = location_text | append: country_name %}
+{% endif %}
+
+{% assign map_query = location_text %}
+{% if map_query == blank %}
+  {% assign map_query = article.title | strip %}
+{% endif %}
+
+{% assign has_coordinates = false %}
+{% if last_seen_lat != blank and last_seen_lng != blank %}
+  {% assign has_coordinates = true %}
+{% endif %}
+
+{% assign has_exact_last_seen_time = false %}
+{% if last_seen_precision == 'exact_time' or last_seen_at contains 'T' or last_seen_at contains ':' %}
+  {% assign has_exact_last_seen_time = true %}
+{% endif %}
+
+{% assign country_lookup = country_name | default: tag_country | downcase %}
+{% if emergency_number == blank %}
+  {% if country_lookup contains 'uk' or country_lookup contains 'united kingdom' or country_lookup contains 'england' or country_lookup contains 'scotland' or country_lookup contains 'wales' or country_lookup contains 'northern ireland' %}
+    {% assign emergency_number = '999' %}
+  {% elsif country_lookup contains 'united states' or country_lookup == 'usa' or country_lookup == 'us' or country_lookup contains 'america' %}
+    {% assign emergency_number = '911' %}
+  {% elsif country_lookup contains 'canada' %}
+    {% assign emergency_number = '911' %}
+  {% elsif country_lookup contains 'australia' %}
+    {% assign emergency_number = '000' %}
+  {% elsif country_lookup != blank %}
+    {% assign emergency_number = '112' %}
+  {% endif %}
+{% endif %}
+
+{% if non_emergency_number == blank %}
+  {% if country_lookup contains 'uk' or country_lookup contains 'united kingdom' or country_lookup contains 'england' or country_lookup contains 'scotland' or country_lookup contains 'wales' or country_lookup contains 'northern ireland' %}
+    {% assign non_emergency_number = '101' %}
+  {% elsif country_lookup contains 'australia' %}
+    {% assign non_emergency_number = '131 444' %}
+  {% endif %}
+{% endif %}
+
+{% if missing_charity_contact == blank %}
+  {% if country_lookup contains 'uk' or country_lookup contains 'united kingdom' or country_lookup contains 'england' or country_lookup contains 'scotland' or country_lookup contains 'wales' or country_lookup contains 'northern ireland' %}
+    {% assign missing_charity_contact = 'Missing People 116 000' %}
+  {% endif %}
+{% endif %}
+
+{% if local_charities == blank and missing_charity_contact != blank %}
+  {% assign local_charities = missing_charity_contact %}
+{% endif %}
+
+{% assign local_contact_fallback = '' %}
+{% if country_lookup contains 'united states' or country_lookup == 'usa' or country_lookup == 'us' or country_lookup contains 'america' %}
+  {% assign local_contact_fallback = 'Use the police department named in the original appeal where available.' %}
+{% elsif country_lookup contains 'canada' %}
+  {% assign local_contact_fallback = 'Use the police service listed in the original appeal where available.' %}
+{% elsif country_lookup != blank %}
+  {% assign local_contact_fallback = 'Use local police or emergency services listed in the original appeal when possible.' %}
+{% else %}
+  {% assign local_contact_fallback = 'Contact local emergency services or the police force listed in the original appeal.' %}
+{% endif %}
+
+{% assign local_support_fallback = 'Verified local support and charity contacts are not connected yet.' %}
+{% if local_support_services == blank and local_charities != blank %}
+  {% assign local_support_fallback = 'Broad verified country-level charity contact is shown below while local support services are still being connected.' %}
+{% endif %}
+
+{% unless is_found_safe %}
+  <section class="case-location-map-card case-location-map-card--standalone sidebar-card sidebar-card--map" data-case-location-card data-map-query="{{ map_query | escape }}" data-map-lat="{{ last_seen_lat }}" data-map-lng="{{ last_seen_lng }}">
+    <div class="case-location-map-card__eyebrow">Last Seen Location</div>
+    <div class="case-location-map-card__frame">
+      {% if location_text != blank or has_coordinates %}
+        <div class="case-location-map-card__placeholder" data-case-location-map-placeholder>
+          Loading location map…
+        </div>
+        <div class="case-location-map-card__pin" aria-hidden="true"></div>
+        <iframe
+          title="Last seen location map"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          data-case-location-map
+        ></iframe>
+      {% else %}
+        <div class="case-location-map-card__placeholder">
+          Last seen location is not available for this case yet.
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="case-location-map-card__location">
+      {% if location_text != blank %}
+        {{ location_text }}
+      {% else %}
+        No public location has been added yet.
+      {% endif %}
+    </div>
+    {% if last_seen_at != blank %}
+      <div class="case-location-map-card__meta">Last seen time/date recorded: {{ last_seen_at }}</div>
+      {% if last_seen_precision == 'date_only' %}
+        <div class="case-location-map-card__meta">Date confirmed, exact time not confirmed.</div>
+      {% endif %}
+    {% endif %}
+  </section>
+
+  <section class="case-location-map-card__section case-location-map-card__section--search sidebar-card">
+    <div class="case-location-map-card__visual case-location-map-card__visual--search" aria-hidden="true">
+      <svg viewBox="0 0 160 90" class="case-location-map-card__visual-svg" focusable="false">
+        <rect width="160" height="90" rx="18" fill="#10090a"/>
+        <path d="M24 63 C42 50, 58 46, 72 50 C88 54, 102 48, 118 36 C124 32, 132 28, 140 28" stroke="#ff5a5a" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <circle cx="48" cy="54" r="8" fill="#ff3d3d"/>
+        <circle cx="98" cy="44" r="8" fill="#ff8383"/>
+        <circle cx="132" cy="28" r="10" fill="#ffe3e3"/>
+        <path d="M128 42 L136 42 L136 62 L120 62 L120 52" stroke="#ffd1d1" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="case-location-map-card__section-label">Organised Searches</div>
+    <p class="case-location-map-card__search-copy">
+      Do not self-deploy into risky areas without guidance. Want to help organise or join a local search? Coordinate with police, family representatives, or verified search groups before attending.
+    </p>
+    <a href="/pages/contact" class="case-location-map-card__cta">Register Search Interest</a>
+  </section>
+
+  <section class="case-location-map-card__section case-location-map-card__section--contacts sidebar-card">
+    <div class="case-location-map-card__section-label">Local Contacts For This Case</div>
+    <div class="case-location-map-card__list">
+      {% if emergency_number != blank %}
+        <div class="case-location-map-card__row">
+          <div class="case-location-map-card__row-label">Emergency</div>
+          <div class="case-location-map-card__row-value">{{ emergency_number }}</div>
+        </div>
+      {% endif %}
+
+      {% if non_emergency_number != blank %}
+        <div class="case-location-map-card__row">
+          <div class="case-location-map-card__row-label">Police Non-Emergency</div>
+          <div class="case-location-map-card__row-value">{{ non_emergency_number }}</div>
+        </div>
+      {% endif %}
+
+      {% if local_police_name != blank %}
+        <div class="case-location-map-card__row">
+          <div class="case-location-map-card__row-label">Local Police</div>
+          <div class="case-location-map-card__row-value">{{ local_police_name }}</div>
+        </div>
+      {% endif %}
+
+      {% if local_police_phone != blank %}
+        <div class="case-location-map-card__row">
+          <div class="case-location-map-card__row-label">Local Police Phone</div>
+          <div class="case-location-map-card__row-value">{{ local_police_phone }}</div>
+        </div>
+      {% endif %}
+
+      {% if local_police_url != blank %}
+        <div class="case-location-map-card__row">
+          <div class="case-location-map-card__row-label">Local Police Link</div>
+          <div class="case-location-map-card__row-value"><a href="{{ local_police_url }}" target="_blank" rel="noopener noreferrer">{{ local_police_url }}</a></div>
+        </div>
+      {% endif %}
+
+      {% if missing_charity_contact != blank %}
+        <div class="case-location-map-card__row">
+          <div class="case-location-map-card__row-label">Missing Charity Contact</div>
+          <div class="case-location-map-card__row-value">{{ missing_charity_contact }}</div>
+        </div>
+      {% endif %}
+
+      {% if police_reference != blank %}
+        <div class="case-location-map-card__row">
+          <div class="case-location-map-card__row-label">Police Reference</div>
+          <div class="case-location-map-card__row-value">{{ police_reference }}</div>
+        </div>
+      {% endif %}
+
+      {% if police_contact != blank %}
+        <div class="case-location-map-card__row">
+          <div class="case-location-map-card__row-label">Police or Source Contact</div>
+          <div class="case-location-map-card__row-value">{{ police_contact }}</div>
+        </div>
+      {% elsif source_name != blank %}
+        <div class="case-location-map-card__row">
+          <div class="case-location-map-card__row-label">Source</div>
+          <div class="case-location-map-card__row-value">{{ source_name }}</div>
+        </div>
+      {% endif %}
+    </div>
+
+    <p class="case-location-map-card__copy">{{ local_contact_fallback }}</p>
+
+    {% if vulnerable_person %}
+      <p class="case-location-map-card__welfare">
+        Because this case may involve a vulnerable person, report sightings immediately to emergency services if there is an urgent risk.
+      </p>
+    {% endif %}
+  </section>
+
+  <section class="case-location-map-card__section case-location-map-card__section--support sidebar-card">
+    <div class="case-location-map-card__section-label">Local Support &amp; Charities</div>
+    {% if local_support_services != blank or local_charities != blank %}
+      <div class="case-location-map-card__list">
+        {% if local_support_services != blank %}
+          <div class="case-location-map-card__row">
+            <div class="case-location-map-card__row-label">Support Services</div>
+            <div class="case-location-map-card__row-value">{{ local_support_services }}</div>
+          </div>
+        {% endif %}
+        {% if local_charities != blank %}
+          <div class="case-location-map-card__row">
+            <div class="case-location-map-card__row-label">Charities</div>
+            <div class="case-location-map-card__row-value">{{ local_charities }}</div>
+          </div>
+        {% endif %}
+      </div>
+    {% else %}
+      <p class="case-location-map-card__copy">{{ local_support_fallback }}</p>
+    {% endif %}
+  </section>
+
+  <section class="case-location-map-card__section case-location-map-card__section--weather sidebar-card{% unless customer %} case-member-panel--locked{% endunless %}">
+    <div class="case-location-map-card__section-label">Weather When Last Seen</div>
+    {% if customer %}
+      {% if weather_at_missing_time == 'Historic weather provider not connected.' or weather_source == 'Historic weather provider not connected.' %}
+        <p class="case-location-map-card__copy">Historic weather provider not connected.</p>
+      {% elsif weather_at_missing_time != blank %}
+        <div class="case-location-map-card__list">
+          <div class="case-location-map-card__row">
+            <div class="case-location-map-card__row-label">Conditions</div>
+            <div class="case-location-map-card__row-value">{{ weather_at_missing_time }}</div>
+          </div>
+          {% if last_seen_precision == 'date_only' %}
+            <div class="case-location-map-card__row">
+              <div class="case-location-map-card__row-label">Time Precision</div>
+              <div class="case-location-map-card__row-value">Date confirmed, exact time not confirmed.</div>
+            </div>
+          {% endif %}
+        </div>
+        {% if weather_source != blank %}
+          <p class="case-location-map-card__meta"><strong>Source:</strong> {{ weather_source }}</p>
+        {% endif %}
+        {% if weather_last_checked != blank %}
+          <p class="case-location-map-card__meta"><strong>Last Checked:</strong> {{ weather_last_checked }}</p>
+        {% endif %}
+      {% elsif has_exact_last_seen_time == false %}
+        <p class="case-location-map-card__copy">Exact last-seen time/date is needed to calculate historic weather.</p>
+      {% else %}
+        <p class="case-location-map-card__copy">Verified weather data is not available for this case yet.</p>
+      {% endif %}
+    {% else %}
+      <div class="case-member-panel__lock">LOCKED MEMBER PANEL</div>
+      <div class="case-member-panel__blurred">
+        <p>Sign in to view weather conditions from the time this person was last seen.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="case-location-map-card__section case-location-map-card__section--area sidebar-card{% unless customer %} case-member-panel--locked{% endunless %}">
+    <div class="case-location-map-card__section-label">Area Context &amp; Safety Data</div>
+    {% if customer %}
+      {% if area_missing_history != blank or area_crime_summary != blank or area_crime_source != blank or area_crime_last_checked != blank or area_missing_source != blank or area_missing_last_checked != blank or area_safety_notes != blank %}
+        <div class="case-location-map-card__list">
+          {% if area_crime_summary != blank %}
+            <div class="case-location-map-card__row">
+              <div class="case-location-map-card__row-label">Crime Statistics</div>
+              <div class="case-location-map-card__row-value">{{ area_crime_summary }}</div>
+            </div>
+          {% endif %}
+          {% if area_missing_history != blank %}
+            <div class="case-location-map-card__row">
+              <div class="case-location-map-card__row-label">Missing People Statistics</div>
+              <div class="case-location-map-card__row-value">{{ area_missing_history }}</div>
+            </div>
+          {% endif %}
+          {% if area_safety_notes != blank %}
+            <div class="case-location-map-card__row">
+              <div class="case-location-map-card__row-label">Safety Notes</div>
+              <div class="case-location-map-card__row-value">{{ area_safety_notes }}</div>
+            </div>
+          {% endif %}
+        </div>
+        {% if area_crime_source != blank %}
+          <p class="case-location-map-card__meta"><strong>Crime Source:</strong> {{ area_crime_source }}</p>
+        {% endif %}
+        {% if area_crime_last_checked != blank %}
+          <p class="case-location-map-card__meta"><strong>Crime Last Checked:</strong> {{ area_crime_last_checked }}</p>
+        {% endif %}
+        {% if area_missing_source != blank %}
+          <p class="case-location-map-card__meta"><strong>Missing People Source:</strong> {{ area_missing_source }}</p>
+        {% endif %}
+        {% if area_missing_last_checked != blank %}
+          <p class="case-location-map-card__meta"><strong>Missing People Last Checked:</strong> {{ area_missing_last_checked }}</p>
+        {% endif %}
+      {% else %}
+        <p class="case-location-map-card__copy">Verified local statistics are not available for this case yet.</p>
+      {% endif %}
+    {% else %}
+      <div class="case-member-panel__lock">LOCKED MEMBER PANEL</div>
+      <div class="case-member-panel__blurred">
+        <p>Sign in to view area safety and local statistics.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if location_text != blank or has_coordinates %}
+    <script>
+      (function() {
+        var cards = document.querySelectorAll('[data-case-location-card]');
+
+        cards.forEach(function(card) {
+          if (card.dataset.mapInitialised === 'true') return;
+          card.dataset.mapInitialised = 'true';
+
+          var iframe = card.querySelector('[data-case-location-map]');
+          var placeholder = card.querySelector('[data-case-location-map-placeholder]');
+          var query = card.getAttribute('data-map-query') || '';
+          var latValue = card.getAttribute('data-map-lat') || '';
+          var lngValue = card.getAttribute('data-map-lng') || '';
+
+          if (!iframe) return;
+
+          function renderFallback(message) {
+            if (placeholder) {
+              placeholder.textContent = message || 'Map unavailable for this location right now.';
+            }
+          }
+
+          function renderMap(lat, lng) {
+            var latitude = parseFloat(lat);
+            var longitude = parseFloat(lng);
+
+            if (isNaN(latitude) || isNaN(longitude)) {
+              renderFallback();
+              return;
+            }
+
+            var latDelta = 0.22;
+            var lonDelta = 0.28;
+            var bbox = [
+              longitude - lonDelta,
+              latitude - latDelta,
+              longitude + lonDelta,
+              latitude + latDelta
+            ].join('%2C');
+
+            iframe.src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + bbox + '&layer=mapnik&marker=' + latitude + '%2C' + longitude;
+            iframe.addEventListener('load', function() {
+              if (placeholder) {
+                placeholder.style.display = 'none';
+              }
+            }, { once: true });
+          }
+
+          if (latValue && lngValue) {
+            renderMap(latValue, lngValue);
+            return;
+          }
+
+          if (!query) {
+            renderFallback('Last seen location is not available for this case yet.');
+            return;
+          }
+
+          var encodedQuery = encodeURIComponent(query);
+          var searchUrl = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=' + encodedQuery;
+
+          fetch(searchUrl, { headers: { Accept: 'application/json' } })
+            .then(function(response) {
+              if (!response.ok) throw new Error('Location lookup failed');
+              return response.json();
+            })
+            .then(function(results) {
+              if (!Array.isArray(results) || !results.length) {
+                renderFallback();
+                return;
+              }
+
+              var result = results[0];
+              renderMap(result.lat, result.lon);
+            })
+            .catch(function() {
+              renderFallback();
+            });
+        });
+      })();
+    </script>
+  {% endif %}
+
+{% endunless %}

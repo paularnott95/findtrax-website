@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "member-area",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

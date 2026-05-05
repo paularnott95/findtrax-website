@@ -1,0 +1,413 @@
+{% assign source_blog = blogs['missing-persons'] %}
+{% assign now_ts = 'now' | date: '%s' | plus: 0 %}
+{% assign fill_mode = fill_mode | default: false %}
+{% assign fill_limit = fill_limit | default: 3 %}
+
+{% assign active_handles = '|' %}
+{% assign visible_count = 0 %}
+{% assign fallback_count = 0 %}
+
+<div class="boosted-sidebar-section">
+  <div class="boosted-sidebar-shell">
+    <div class="boosted-sidebar-glow"></div>
+
+    <div class="boosted-sidebar-header">
+      <div class="boosted-sidebar-kicker-wrap">
+        <span class="boosted-sidebar-live-dot"></span>
+        <span class="boosted-sidebar-kicker">LIVE PRIORITY VISIBILITY</span>
+      </div>
+
+      <h2 class="boosted-sidebar-title">BOOSTED APPEALS</h2>
+      <div class="boosted-sidebar-subtitle">
+        Paid boosted cases appear here in a vertical sidebar.
+      </div>
+    </div>
+
+    <div class="boosted-sidebar-list" data-rotate-list>
+      {% if source_blog != blank %}
+        {% for article in source_blog.articles %}
+          {% assign boost_live_new = article.metafields.custom.boost_live.value %}
+          {% assign boost_live_old = article.metafields.custom.boost_active.value %}
+
+          {% assign points_new = article.metafields.custom.boost_points.value | default: 0 | plus: 0 %}
+          {% assign points_old = article.metafields.custom.priority_score.value | default: 0 | plus: 0 %}
+          {% assign points = points_new %}
+          {% if points == 0 and points_old > 0 %}
+            {% assign points = points_old %}
+          {% endif %}
+
+          {% assign boost_end_raw = article.metafields.custom.boost_ends.value %}
+          {% if boost_end_raw == blank %}
+            {% assign boost_end_raw = article.metafields.custom.boost_end_date.value %}
+          {% endif %}
+
+          {% assign boost_end_ts = 0 %}
+          {% if boost_end_raw != blank %}
+            {% assign boost_end_ts = boost_end_raw | date: '%s' | plus: 0 %}
+          {% endif %}
+
+          {% assign boost_live = false %}
+          {% if boost_live_new == true or boost_live_old == true or boost_live_new == 'true' or boost_live_old == 'true' %}
+            {% assign boost_live = true %}
+          {% endif %}
+
+          {% assign is_active_paid = false %}
+          {% if boost_live == true and points > 0 and boost_end_ts > now_ts %}
+            {% assign is_active_paid = true %}
+          {% endif %}
+
+          {% if is_active_paid and visible_count < fill_limit %}
+            {% assign visible_count = visible_count | plus: 1 %}
+            {% assign token = article.handle | append: '|' %}
+            {% assign active_handles = active_handles | append: token %}
+            <div class="boosted-sidebar-card js-visible-slot">
+              {% render 'boosted-priority-card', article: article, fallback_mode: false %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if visible_count == 0 and source_blog != blank %}
+        {% for article in source_blog.articles %}
+          {% assign public_tag_blob = article.tags | join: '|' | downcase %}
+          {% assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | default: '' | downcase %}
+          {% assign hide_fallback_case = false %}
+          {% if case_status contains 'found' or case_status contains 'safe' or case_status contains 'located' or case_status contains 'closed' or case_status contains 'archived' or case_status contains 'draft' or case_status contains 'review' or case_status contains 'private' %}
+            {% assign hide_fallback_case = true %}
+          {% endif %}
+          {% if public_tag_blob contains 'found safe' or public_tag_blob contains 'found-safe' or public_tag_blob contains 'located' or public_tag_blob contains 'closed' or public_tag_blob contains 'private' or public_tag_blob contains 'draft' or public_tag_blob contains 'review' or public_tag_blob contains 'demo' or public_tag_blob contains 'debug' %}
+            {% assign hide_fallback_case = true %}
+          {% endif %}
+          {% assign token = article.handle | append: '|' %}
+          {% if hide_fallback_case == false and fallback_count < fill_limit %}
+            {% unless active_handles contains token %}
+              {% assign fallback_count = fallback_count | plus: 1 %}
+              <div class="boosted-sidebar-card boosted-sidebar-card--fallback js-visible-slot">
+                {% render 'boosted-priority-card', article: article, fallback_mode: true %}
+              </div>
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if visible_count == 0 and fallback_count == 0 %}
+        <div class="boosted-sidebar-empty">
+          No featured appeals are currently available. Please check the latest missing person appeals.
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="boosted-sidebar-pool" data-rotate-pool>
+      {% if source_blog != blank %}
+        {% for article in source_blog.articles %}
+          {% assign boost_live_new = article.metafields.custom.boost_live.value %}
+          {% assign boost_live_old = article.metafields.custom.boost_active.value %}
+
+          {% assign points_new = article.metafields.custom.boost_points.value | default: 0 | plus: 0 %}
+          {% assign points_old = article.metafields.custom.priority_score.value | default: 0 | plus: 0 %}
+          {% assign points = points_new %}
+          {% if points == 0 and points_old > 0 %}
+            {% assign points = points_old %}
+          {% endif %}
+
+          {% assign boost_end_raw = article.metafields.custom.boost_ends.value %}
+          {% if boost_end_raw == blank %}
+            {% assign boost_end_raw = article.metafields.custom.boost_end_date.value %}
+          {% endif %}
+
+          {% assign boost_end_ts = 0 %}
+          {% if boost_end_raw != blank %}
+            {% assign boost_end_ts = boost_end_raw | date: '%s' | plus: 0 %}
+          {% endif %}
+
+          {% assign boost_live = false %}
+          {% if boost_live_new == true or boost_live_old == true or boost_live_new == 'true' or boost_live_old == 'true' %}
+            {% assign boost_live = true %}
+          {% endif %}
+
+          {% assign is_active_paid = false %}
+          {% if boost_live == true and points > 0 and boost_end_ts > now_ts %}
+            {% assign is_active_paid = true %}
+          {% endif %}
+
+          {% if is_active_paid %}
+            <div class="boosted-sidebar-pool-item">
+              {% render 'boosted-priority-card', article: article, fallback_mode: false %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.boosted-sidebar-section{
+  width:100%;
+  height:100%;
+}
+
+.boosted-sidebar-shell{
+  position:relative;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(255,80,80,0.30) 0%, rgba(255,80,80,0.12) 18%, transparent 42%),
+    radial-gradient(circle at 88% 84%, rgba(255,40,40,0.22) 0%, rgba(255,40,40,0.08) 22%, transparent 48%),
+    linear-gradient(180deg,#3a0b10 0%, #25090d 28%, #16070a 62%, #0f0507 100%);
+  border:1px solid rgba(255,70,70,0.55);
+  border-radius:20px;
+  padding:16px;
+  box-shadow:
+    0 0 0 1px rgba(255,100,100,0.10) inset,
+    0 0 24px rgba(255,40,40,0.24),
+    0 0 56px rgba(170,10,10,0.18),
+    0 22px 46px rgba(0,0,0,0.34);
+  overflow:hidden;
+  height:100%;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  animation:boostedSidebarBorderPulse 2.2s ease-in-out infinite;
+}
+
+.boosted-sidebar-glow{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,60,60,0.18) 30%,
+      rgba(255,180,180,0.14) 50%,
+      rgba(255,60,60,0.18) 70%,
+      transparent 100%
+    );
+  transform:translateX(-100%);
+ animation:boostedSidebarGlowSweep 3s linear infinite;
+  pointer-events:none;
+  filter:blur(0.5px);
+  opacity:.9;
+}
+
+.boosted-sidebar-shell:before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:4px;
+  background:linear-gradient(90deg,#ff3131 0%,#ff7b7b 50%,#ff3131 100%);
+  opacity:.95;
+}
+
+.boosted-sidebar-header{
+  position:relative;
+  z-index:2;
+  margin-bottom:14px;
+  padding-top:6px;
+}
+
+.boosted-sidebar-kicker-wrap{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(255,49,49,0.14);
+  border:1px solid rgba(255,80,80,0.22);
+  margin-bottom:10px;
+}
+
+.boosted-sidebar-live-dot{
+  width:9px;
+  height:9px;
+  border-radius:999px;
+  background:#ff4747;
+  box-shadow:0 0 12px rgba(255,71,71,0.9);
+  animation:boostedSidebarPulse 1.8s ease-in-out infinite;
+}
+
+.boosted-sidebar-kicker{
+  color:#ffb2b2;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+
+.boosted-sidebar-title{
+  margin:0 0 6px;
+  color:#fff;
+  font-size:21px;
+  line-height:1.05;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.boosted-sidebar-subtitle{
+  color:rgba(255,255,255,0.72);
+  font-size:12px;
+  line-height:1.4;
+}
+
+.boosted-sidebar-list{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  flex:1;
+  min-height:0;
+  overflow:hidden;
+  will-change: transform;
+}
+
+.boosted-sidebar-card{
+  width:100%;
+  opacity:1;
+  transition:opacity .4s ease, transform .4s ease;
+  min-height:0;
+}
+
+.boosted-sidebar-card.is-fading{
+  opacity:.15;
+  transform:translateY(4px);
+}
+
+.boosted-sidebar-pool{
+  display:none;
+}
+
+.boosted-sidebar-empty{
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+/* SIDEBAR CARD FIT */
+.boosted-sidebar-card .bp-card{
+  width:100%;
+  height:100%;
+}
+
+.boosted-sidebar-card .bp-card__image{
+  height:118px !important;
+}
+
+.boosted-sidebar-card .bp-card__overlay-bottom{
+  left:18px !important;
+  right:18px !important;
+  bottom:10px !important;
+  min-height:30px !important;
+  border-radius:999px !important;
+  font-size:10px !important;
+  letter-spacing:.45px !important;
+  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease !important;
+}
+
+.boosted-sidebar-card .bp-card:hover .bp-card__overlay-bottom{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 12px 24px rgba(0,0,0,0.28);
+  filter:brightness(1.06);
+}
+
+.boosted-sidebar-card .bp-card__body{
+  padding:10px 10px 12px !important;
+}
+
+.boosted-sidebar-card .bp-card__title{
+  font-size:12px !important;
+  line-height:1.18 !important;
+  margin:0 0 7px !important;
+}
+
+.boosted-sidebar-card .bp-card__meta{
+  font-size:9px !important;
+  margin-bottom:8px !important;
+}
+
+.boosted-sidebar-card .bp-card__stats{
+  gap:5px !important;
+}
+
+.boosted-sidebar-card .bp-card__pill{
+  font-size:8px !important;
+  min-height:24px !important;
+  padding:0 8px !important;
+}
+
+.boosted-sidebar-card .bp-card__badge,
+.boosted-sidebar-card .bp-card__points{
+  min-height:24px !important;
+  font-size:8px !important;
+  padding:0 8px !important;
+}
+
+@keyframes boostedSidebarPulse{
+  0%,100%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(1.25); opacity:.7; }
+}
+
+@keyframes boostedSidebarGlowSweep{
+  0%{
+    transform:translateX(-120%);
+    opacity:.6;
+  }
+  50%{
+    opacity:1;
+  }
+  100%{
+    transform:translateX(120%);
+    opacity:.6;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  var sidebar = document.querySelector('.boosted-sidebar-list');
+  if (!sidebar) return;
+
+  var cards = Array.from(sidebar.children);
+
+  // Only run if more than 3 cards exist
+  if (cards.length <= 3) return;
+
+  // Clone cards for infinite loop
+  cards.forEach(function(card){
+    var clone = card.cloneNode(true);
+    clone.setAttribute('aria-hidden','true');
+    sidebar.appendChild(clone);
+  });
+
+  var scrollY = 0;
+  var speed = 0.25;
+  var isHovering = false;
+
+  function animate(){
+    if (!isHovering){
+      scrollY += speed;
+
+      var halfHeight = sidebar.scrollHeight / 2;
+
+      if (scrollY >= halfHeight){
+        scrollY = 0;
+      }
+
+      sidebar.style.transform = 'translateY(-' + scrollY + 'px)';
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  sidebar.addEventListener('mouseenter', function(){
+    isHovering = true;
+  });
+
+  sidebar.addEventListener('mouseleave', function(){
+    isHovering = false;
+  });
+
+});
+</script>

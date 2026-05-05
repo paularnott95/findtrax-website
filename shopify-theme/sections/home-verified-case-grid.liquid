@@ -1,0 +1,71 @@
+{% assign source_blog = blogs['missing-persons'] %}
+{% assign rendered_count = 0 %}
+{% assign max_items = section.settings.max_items | default: 8 | plus: 0 %}
+{% if max_items <= 0 %}
+  {% assign max_items = 8 %}
+{% endif %}
+
+{% comment %}
+  DO NOT replace/remove without preserving fallback render.
+  The homepage must still show its static shell when the dynamic case blog is empty or unavailable.
+{% endcomment %}
+<section class="home-verified-case-grid" data-home-verified-cases>
+  <div class="page-width">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px 0;">
+      <h2 style="margin:0;color:#ffffff;font-size:26px;line-height:1.1;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;">
+        {{ section.settings.title | default: 'Latest verified cases' | escape }}
+      </h2>
+      <a href="/blogs/missing-persons" style="color:rgba(255,255,255,0.82);text-decoration:none;font-weight:800;letter-spacing:0.04em;">
+        View all
+      </a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+      {% if source_blog != blank and source_blog.articles_count > 0 %}
+        {% for article in source_blog.articles limit: max_items %}
+          {% capture card_markup %}
+            {% render 'case-grid-card', article: article, listing_type: 'missing' %}
+          {% endcapture %}
+          {% if card_markup != blank %}
+            {{ card_markup }}
+            {% assign rendered_count = rendered_count | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    {% if rendered_count == 0 %}
+      <div style="margin-top:14px;padding:14px 16px;border:1px solid rgba(255,255,255,0.08);border-radius:14px;background:rgba(0,0,0,0.20);color:rgba(255,255,255,0.82);font-weight:700;">
+        No verified live cases are currently available in this section.
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home Verified Case Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Latest verified cases"
+    },
+    {
+      "type": "range",
+      "id": "max_items",
+      "label": "Max items",
+      "min": 1,
+      "max": 24,
+      "step": 1,
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Home Verified Case Grid"
+    }
+  ]
+}
+{% endschema %}

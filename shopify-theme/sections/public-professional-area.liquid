@@ -1,0 +1,458 @@
+{% comment %}
+  Public professional area on Shopify.
+  This replaces the old public Vercel route and keeps professional onboarding on the storefront.
+{% endcomment %}
+
+{% assign professional_login_return_separator = '?' %}
+{% assign professional_register_return_separator = '?' %}
+{% if routes.account_login_url contains '?' %}
+  {% assign professional_login_return_separator = '&' %}
+{% endif %}
+{% if routes.account_register_url contains '?' %}
+  {% assign professional_register_return_separator = '&' %}
+{% endif %}
+{% assign professional_member_return_url = routes.account_login_url | append: professional_login_return_separator | append: 'return_url=/pages/member-area' %}
+{% assign professional_register_return_url = routes.account_register_url | append: professional_register_return_separator | append: 'return_url=/pages/member-area' %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .professional-area-{{ section.id }} {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    color: #fff;
+  }
+
+  .professional-area__shell-{{ section.id }} {
+    overflow: hidden;
+    border-radius: 32px;
+    padding: 1.5rem;
+    background:
+      radial-gradient(circle at top left, rgba(236, 72, 72, 0.22), transparent 24%),
+      radial-gradient(circle at right top, rgba(168, 85, 247, 0.08), transparent 26%),
+      linear-gradient(180deg, #160608 0%, #090203 100%);
+    border: 1px solid rgba(255, 105, 120, 0.18);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .professional-area__hero-{{ section.id }},
+  .professional-area__card-{{ section.id }},
+  .professional-area__tier-{{ section.id }},
+  .professional-area__service-{{ section.id }} {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #170709 0%, #0b0203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .professional-area__hero-{{ section.id }} {
+    border-radius: 28px;
+    padding: 2rem;
+  }
+
+  .professional-area__eyebrow-{{ section.id }} {
+    margin: 0 0 0.55rem;
+    color: #e3aeb5;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .professional-area__heading-{{ section.id }} {
+    margin: 0;
+    font-size: clamp(3rem, 5vw, 5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .professional-area__intro-{{ section.id }} {
+    max-width: 64rem;
+    margin: 1rem 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.3rem;
+    line-height: 1.7;
+  }
+
+  .professional-area__actions-{{ section.id }},
+  .professional-area__chips-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.4rem;
+  }
+
+  .professional-area__button-{{ section.id }},
+  .professional-area__button-secondary-{{ section.id }},
+  .professional-area__chip-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.4rem;
+    padding: 0 1.3rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .professional-area__button-{{ section.id }} {
+    background: linear-gradient(180deg, #ff3b3b 0%, #d61f1f 100%);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(173, 17, 17, 0.22);
+  }
+
+  .professional-area__button-secondary-{{ section.id }} {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+  }
+
+  .professional-area__chip-{{ section.id }} {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.8);
+    min-height: 3rem;
+    font-size: 0.92rem;
+  }
+
+  .professional-area__grid-{{ section.id }},
+  .professional-area__tiers-{{ section.id }},
+  .professional-area__services-{{ section.id }} {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .professional-area__grid-{{ section.id }} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .professional-area__tiers-{{ section.id }} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .professional-area__services-{{ section.id }} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .professional-area__card-{{ section.id }},
+  .professional-area__tier-{{ section.id }},
+  .professional-area__service-{{ section.id }} {
+    border-radius: 24px;
+    padding: 1.5rem;
+  }
+
+  .professional-area__label-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .professional-area__title-{{ section.id }} {
+    margin: 0.6rem 0 0;
+    font-size: 1.65rem;
+    text-transform: uppercase;
+  }
+
+  .professional-area__copy-{{ section.id }} {
+    margin: 0.8rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .professional-area__controls-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .professional-area__control-{{ section.id }} {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .professional-area__control-{{ section.id }} label {
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .professional-area__control-{{ section.id }} select,
+  .professional-area__control-{{ section.id }} input {
+    width: 100%;
+    min-height: 3.4rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: #fff;
+    padding: 0.85rem 1rem;
+  }
+
+  .professional-area__note-{{ section.id }} {
+    margin-top: 1.5rem;
+    border-radius: 22px;
+    border: 1px solid rgba(251, 191, 36, 0.18);
+    background: rgba(251, 191, 36, 0.08);
+    padding: 1rem 1.15rem;
+    color: #fde68a;
+    line-height: 1.6;
+  }
+
+  .professional-area__tier-tag-{{ section.id }} {
+    display: inline-flex;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.45rem 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media screen and (max-width: 989px) {
+    .professional-area__grid-{{ section.id }},
+    .professional-area__tiers-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .professional-area__services-{{ section.id }},
+    .professional-area__controls-{{ section.id }} {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .professional-area__shell-{{ section.id }} {
+      padding: 1rem;
+      border-radius: 24px;
+    }
+
+    .professional-area__hero-{{ section.id }},
+    .professional-area__card-{{ section.id }},
+    .professional-area__tier-{{ section.id }},
+    .professional-area__service-{{ section.id }} {
+      padding: 1.2rem;
+      border-radius: 20px;
+    }
+
+    .professional-area__services-{{ section.id }},
+    .professional-area__controls-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+{%- endstyle -%}
+
+<section class="professional-area-{{ section.id }} section-{{ section.id }}-padding">
+  <div class="professional-area__shell-{{ section.id }}">
+    <div class="professional-area__hero-{{ section.id }}">
+      <p class="professional-area__eyebrow-{{ section.id }}">Professional Network</p>
+      <h1 class="professional-area__heading-{{ section.id }}">PROFESSIONAL ACCESS</h1>
+      <div class="professional-area__intro-{{ section.id }}">
+        <p>Professionals can create an account, apply for verification, choose the countries they can help in, and access professional tools after approval.</p>
+      </div>
+
+      <div class="professional-area__actions-{{ section.id }}">
+        <a href="{{ professional_member_return_url }}" class="professional-area__button-{{ section.id }}">LOG IN TO PROFESSIONAL ACCOUNT</a>
+        <a href="{{ professional_register_return_url }}" class="professional-area__button-secondary-{{ section.id }}">CREATE PROFESSIONAL ACCOUNT</a>
+        <a href="/pages/professionals" class="professional-area__button-secondary-{{ section.id }}">VIEW PROFESSIONALS DIRECTORY</a>
+      </div>
+
+      <div class="professional-area__chips-{{ section.id }}">
+        <span class="professional-area__chip-{{ section.id }}">Country Coverage</span>
+        <span class="professional-area__chip-{{ section.id }}">Worldwide Option</span>
+        <span class="professional-area__chip-{{ section.id }}">Premium Inbox Rules</span>
+        <span class="professional-area__chip-{{ section.id }}">Verification Review</span>
+      </div>
+    </div>
+
+    <div class="professional-area__grid-{{ section.id }}">
+      <article class="professional-area__card-{{ section.id }}">
+        <div class="professional-area__label-{{ section.id }}">Dashboard Preview</div>
+        <h2 class="professional-area__title-{{ section.id }}">
+          {% if customer %}Welcome back, {{ customer.first_name | default: customer.name | default: 'Professional' | escape }}{% else %}Professional Access{% endif %}
+        </h2>
+        <p class="professional-area__copy-{{ section.id }}">
+          Professionals use the normal website login and then move into the storefront member area. Coverage, visibility, and safe-contact tools stay on the public website, not the Vercel control panel.
+        </p>
+      </article>
+
+      <article class="professional-area__card-{{ section.id }}">
+        <div class="professional-area__label-{{ section.id }}">Verification Approval</div>
+        <h2 class="professional-area__title-{{ section.id }}">Approval Before Listing</h2>
+        <p class="professional-area__copy-{{ section.id }}">
+          Professional profiles only appear publicly after review. Approval protects families and keeps direct access locked until checks are complete.
+        </p>
+      </article>
+
+      <article class="professional-area__card-{{ section.id }}">
+        <div class="professional-area__label-{{ section.id }}">Premium Inbox</div>
+        <h2 class="professional-area__title-{{ section.id }}">Safe Contact Path</h2>
+        <p class="professional-area__copy-{{ section.id }}">
+          Premium inbox access is reserved for approved professionals and verified case owners. Public visitors never see private family contact details.
+        </p>
+      </article>
+    </div>
+
+    <div class="professional-area__card-{{ section.id }}" style="margin-top: 1.5rem;">
+      <div class="professional-area__label-{{ section.id }}">Coverage Setup</div>
+      <h2 class="professional-area__title-{{ section.id }}">Coverage And Services</h2>
+      <p class="professional-area__copy-{{ section.id }}">
+        Professionals can select countries, regions, worldwide support, and service categories for their public profile.
+      </p>
+
+      <div class="professional-area__controls-{{ section.id }}">
+        <div class="professional-area__control-{{ section.id }}">
+          <label for="professional-country-{{ section.id }}">Country Selector</label>
+          <select id="professional-country-{{ section.id }}">
+            <option>United Kingdom</option>
+            <option>United States</option>
+            <option>Australia</option>
+            <option>Canada</option>
+            <option>Worldwide</option>
+          </select>
+        </div>
+        <div class="professional-area__control-{{ section.id }}">
+          <label for="professional-region-{{ section.id }}">Region / State</label>
+          <input id="professional-region-{{ section.id }}" type="text" placeholder="Add main working region">
+        </div>
+        <div class="professional-area__control-{{ section.id }}">
+          <label for="professional-services-{{ section.id }}">Services Offered</label>
+          <input id="professional-services-{{ section.id }}" type="text" placeholder="Search teams, legal support, safeguarding">
+        </div>
+        <div class="professional-area__control-{{ section.id }}">
+          <label for="professional-worldwide-{{ section.id }}">Worldwide Option</label>
+          <select id="professional-worldwide-{{ section.id }}">
+            <option>Available on request</option>
+            <option>Worldwide enabled</option>
+            <option>Country-specific only</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="professional-area__note-{{ section.id }}">
+        The public website shows professional onboarding and profile intent only. Direct inbox contact remains gated by approval, premium status, and member verification. After login, approved professionals and normal members can see different storefront tools based on customer tags and supported metafields.
+      </div>
+    </div>
+
+    <div class="professional-area__services-{{ section.id }}">
+      {% for block in section.blocks %}
+        {% if block.type == 'service' %}
+          <article class="professional-area__service-{{ section.id }}" {{ block.shopify_attributes }}>
+            <div class="professional-area__label-{{ section.id }}">Service</div>
+            <h3 class="professional-area__title-{{ section.id }}">{{ block.settings.title }}</h3>
+            <p class="professional-area__copy-{{ section.id }}">{{ block.settings.copy }}</p>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="professional-area__tiers-{{ section.id }}">
+      {% for block in section.blocks %}
+        {% if block.type == 'tier' %}
+          <article class="professional-area__tier-{{ section.id }}" {{ block.shopify_attributes }}>
+            <div class="professional-area__tier-tag-{{ section.id }}">{{ block.settings.kicker }}</div>
+            <h3 class="professional-area__title-{{ section.id }}">{{ block.settings.title }}</h3>
+            <p class="professional-area__copy-{{ section.id }}">{{ block.settings.copy }}</p>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Public Professional Area",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "PROFESSIONAL ACCESS"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro",
+      "default": "<p>Log in as a professional, create a professional account, and review how directory access, coverage, and protected member-area tools work on the public website.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "service",
+      "name": "Service",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Search Team Support" },
+        { "type": "textarea", "id": "copy", "label": "Copy", "default": "Show search, legal, counselling, translation, or safeguarding coverage without exposing private direct contact details." }
+      ]
+    },
+    {
+      "type": "tier",
+      "name": "Tier",
+      "settings": [
+        { "type": "text", "id": "kicker", "label": "Kicker", "default": "PROFESSIONAL BASIC" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Directory Presence" },
+        { "type": "textarea", "id": "copy", "label": "Copy", "default": "Approved basic professionals can appear publicly, but inbox access remains review-first." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Public Professional Area",
+      "blocks": [
+        { "type": "service" },
+        { "type": "service", "settings": { "title": "Legal Support", "copy": "Present legal, safeguarding, translation, transport, or media support in a structured storefront layout." } },
+        { "type": "service", "settings": { "title": "Counselling And Safeguarding", "copy": "Support families with approved welfare-focused services while preserving contact gating and review controls." } },
+        { "type": "service", "settings": { "title": "Worldwide Response", "copy": "Indicate global support capacity without bypassing verification and premium eligibility rules." } },
+        { "type": "tier" },
+        { "type": "tier", "settings": { "kicker": "PROFESSIONAL PREMIUM", "title": "Priority Listing + Inbox", "copy": "Approved premium professionals can be prioritised and may unlock direct inbox access once case-owner safety rules are satisfied." } },
+        { "type": "tier", "settings": { "kicker": "PROFESSIONAL ENTERPRISE", "title": "Featured Partner Access", "copy": "Enterprise partners can receive the strongest visibility, wider country coverage, and future featured placement once approved." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

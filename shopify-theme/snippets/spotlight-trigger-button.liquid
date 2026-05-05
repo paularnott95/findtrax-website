@@ -1,0 +1,516 @@
+{% if article %}
+
+{% assign p_primary_24 = all_products['primary-spotlight-24-hours'] %}
+{% assign p_primary_3  = all_products['primary-spotlight-3-days'] %}
+{% assign p_primary_7  = all_products['primary-spotlight-7-days'] %}
+
+{% assign p_support_24 = all_products['supporting-spotlight-24-hours'] %}
+{% assign p_support_3  = all_products['supporting-spotlight-3-days'] %}
+{% assign p_support_7  = all_products['supporting-spotlight-7-days'] %}
+
+<div class="mp-spotlight-entry-wrap">
+  <button type="button" class="mp-spotlight-entry-btn" data-spotlight-open>
+    <span class="mp-spotlight-entry-btn__glow"></span>
+    <span class="mp-spotlight-entry-btn__title">PLACE IN SPOTLIGHT</span>
+    <span class="mp-spotlight-entry-btn__sub">Activate premium homepage visibility for this case</span>
+  </button>
+</div>
+
+<div class="mp-spotlight-modal" data-spotlight-modal aria-hidden="true">
+  <div class="mp-spotlight-modal__backdrop" data-spotlight-close></div>
+
+  <div class="mp-spotlight-modal__panel" role="dialog" aria-modal="true" aria-label="Spotlight placement">
+    <div class="mp-spotlight-modal__border-light"></div>
+    <div class="mp-spotlight-modal__glow"></div>
+
+    <button type="button" class="mp-spotlight-modal__close" data-spotlight-close aria-label="Close">×</button>
+
+    <div class="mp-spotlight-modal__topbar">
+      <div class="mp-spotlight-modal__topbar-pill">
+        <span class="mp-spotlight-modal__topbar-dot"></span>
+        SPOTLIGHT SYSTEM ACTIVE
+      </div>
+      <div class="mp-spotlight-modal__topbar-text">LIMITED PRIORITY POSITIONS</div>
+    </div>
+
+    <div class="mp-spotlight-modal__header">
+      <div class="mp-spotlight-modal__eyebrow">CASE READY FOR SPOTLIGHT</div>
+      <h3 class="mp-spotlight-modal__title">PLACE THIS CASE IN SPOTLIGHT</h3>
+      <p class="mp-spotlight-modal__subtitle">
+        You are activating premium homepage visibility for:
+        <strong>{{ article.title }}</strong>
+      </p>
+    </div>
+
+    <div class="mp-spotlight-modal__availability">
+      <div class="mp-spotlight-modal__availability-pill mp-spotlight-modal__availability-pill--primary">
+        1 PRIMARY SLOT AVAILABLE
+      </div>
+      <div class="mp-spotlight-modal__availability-pill">
+        2 SUPPORTING SLOTS AVAILABLE
+      </div>
+    </div>
+
+    <div class="mp-spotlight-modal__placement-grid">
+      <button
+        type="button"
+        class="mp-spotlight-choice mp-spotlight-choice--primary is-selected"
+        data-spotlight-choice
+        data-level="primary"
+        data-price-24="39.99"
+        data-price-3="89.99"
+        data-price-7="159.99"
+      >
+        <span class="mp-spotlight-choice__badge">MOST EFFECTIVE PLACEMENT</span>
+        <span class="mp-spotlight-choice__title">PRIMARY SPOTLIGHT</span>
+        <span class="mp-spotlight-choice__subtitle">Dominant homepage centre position</span>
+
+        <div class="mp-spotlight-choice__preview mp-spotlight-choice__preview--primary">
+          <span></span><span class="is-main"></span><span></span>
+        </div>
+
+        <ul class="mp-spotlight-choice__list">
+          <li>Highest visibility position</li>
+          <li>Main homepage focus point</li>
+          <li>Maximum attention and engagement</li>
+        </ul>
+      </button>
+
+      <button
+        type="button"
+        class="mp-spotlight-choice"
+        data-spotlight-choice
+        data-level="supporting"
+        data-price-24="19.99"
+        data-price-3="44.99"
+        data-price-7="79.99"
+      >
+        <span class="mp-spotlight-choice__title">SUPPORTING SPOTLIGHT</span>
+        <span class="mp-spotlight-choice__subtitle">Premium homepage supporting placement</span>
+
+        <div class="mp-spotlight-choice__preview mp-spotlight-choice__preview--supporting">
+          <span class="is-main"></span><span></span><span class="is-main"></span>
+        </div>
+
+        <ul class="mp-spotlight-choice__list">
+          <li>Premium side positioning</li>
+          <li>Enhanced homepage visibility</li>
+          <li>Strong secondary exposure</li>
+        </ul>
+      </button>
+    </div>
+
+    <div class="mp-spotlight-modal__durations">
+      <div class="mp-spotlight-modal__section-label">CHOOSE VISIBILITY PERIOD</div>
+
+      <div class="mp-spotlight-duration-row">
+        <button type="button" class="mp-spotlight-duration is-selected" data-spotlight-duration data-duration="24">
+          <span class="mp-spotlight-duration__title">24H BOOSTED VISIBILITY</span>
+          <span class="mp-spotlight-duration__sub">Fast priority activation</span>
+        </button>
+
+        <button type="button" class="mp-spotlight-duration" data-spotlight-duration data-duration="3">
+          <span class="mp-spotlight-duration__title">3 DAY EXTENDED EXPOSURE</span>
+          <span class="mp-spotlight-duration__sub">Sustained premium reach</span>
+        </button>
+
+        <button type="button" class="mp-spotlight-duration" data-spotlight-duration data-duration="7">
+          <span class="mp-spotlight-duration__title">7 DAY MAXIMUM REACH</span>
+          <span class="mp-spotlight-duration__sub">Highest long-form visibility</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mp-spotlight-modal__summary">
+      <div class="mp-spotlight-modal__summary-head">
+        <div>
+          <div class="mp-spotlight-modal__section-label">SELECTED SPOTLIGHT PLAN</div>
+          <div class="mp-spotlight-modal__summary-title" data-spotlight-summary-label>PRIMARY SPOTLIGHT • 24 HOURS</div>
+        </div>
+        <div class="mp-spotlight-modal__price" data-spotlight-price>£39.99</div>
+      </div>
+
+      <div class="mp-spotlight-modal__summary-copy" data-spotlight-summary-copy>
+        Highest visibility placement with dominant homepage positioning for maximum case attention.
+      </div>
+
+      <div class="mp-spotlight-modal__impact">
+        <div class="mp-spotlight-modal__impact-label">VISIBILITY LEVEL</div>
+        <div class="mp-spotlight-modal__impact-bar">
+          <span data-spotlight-impact-fill style="width:80%;"></span>
+        </div>
+      </div>
+
+      <div class="mp-spotlight-modal__microcopy">
+        Cases in Spotlight receive stronger homepage attention and increased visibility across visitor sessions.
+      </div>
+    </div>
+
+    <div class="mp-spotlight-modal__actions">
+      <form method="post" action="/cart/add" class="mp-spotlight-modal__form">
+        <input
+  type="hidden"
+  name="id"
+  value=""
+  data-spotlight-variant-input
+  data-primary-24="{% if p_primary_24 and p_primary_24.selected_or_first_available_variant %}{{ p_primary_24.selected_or_first_available_variant.id }}{% endif %}"
+  data-primary-3="{% if p_primary_3 and p_primary_3.selected_or_first_available_variant %}{{ p_primary_3.selected_or_first_available_variant.id }}{% endif %}"
+  data-primary-7="{% if p_primary_7 and p_primary_7.selected_or_first_available_variant %}{{ p_primary_7.selected_or_first_available_variant.id }}{% endif %}"
+  data-support-24="{% if p_support_24 and p_support_24.selected_or_first_available_variant %}{{ p_support_24.selected_or_first_available_variant.id }}{% endif %}"
+  data-support-3="{% if p_support_3 and p_support_3.selected_or_first_available_variant %}{{ p_support_3.selected_or_first_available_variant.id }}{% endif %}"
+  data-support-7="{% if p_support_7 and p_support_7.selected_or_first_available_variant %}{{ p_support_7.selected_or_first_available_variant.id }}{% endif %}"
+>
+
+        <input type="hidden" name="properties[case_id]" value="{{ article.id }}">
+        <input type="hidden" name="properties[case_title]" value="{{ article.title | escape }}">
+      <input type="hidden" name="properties[PlacementType]" value="spotlight">
+<input type="hidden" name="properties[ArticleGID]" value="gid://shopify/Article/{{ article.id }}">
+        <input type="hidden" name="properties[spotlight_level]" value="primary" data-spotlight-level-input>
+        <input type="hidden" name="properties[spotlight_duration]" value="24h" data-spotlight-duration-input>
+
+        <button type="submit" class="mp-spotlight-modal__cta">
+          SECURE SPOTLIGHT PLACEMENT
+        </button>
+      </form>
+
+      <button type="button" class="mp-spotlight-modal__cancel" data-spotlight-close>
+        Continue without Spotlight
+      </button>
+    </div>
+  </div>
+</div>
+
+{% render 'alert-dispatch-cta',
+  article: article,
+  entity_type: 'spotlight',
+  entity_id: article.id,
+  entity_handle: article.handle,
+  entity_title: article.title
+%}
+
+<style>
+.mp-spotlight-entry-wrap{margin:16px auto 20px;text-align:center;}
+.mp-spotlight-entry-btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;max-width:430px;margin:0 auto;padding:16px 18px;border:1px solid rgba(255,255,255,0.08);border-radius:16px;background:radial-gradient(circle at 50% 0%, rgba(255,60,60,0.18) 0%, transparent 62%),linear-gradient(180deg,#2a0709 0%, #170405 100%);color:#fff;overflow:hidden;cursor:pointer;box-shadow:0 12px 28px rgba(0,0,0,0.34),0 0 22px rgba(255,20,20,0.12),inset 0 0 18px rgba(255,0,0,0.05);transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
+.mp-spotlight-entry-btn:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 18px 36px rgba(0,0,0,0.42),0 0 30px rgba(255,25,25,0.22),inset 0 0 22px rgba(255,0,0,0.08);filter:brightness(1.05);}
+.mp-spotlight-entry-btn__glow{position:absolute;top:0;left:-35%;width:32%;height:100%;background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);transform:skewX(-18deg);animation:mpSpotlightSweep 3.8s linear infinite;pointer-events:none;}
+.mp-spotlight-entry-btn__title{position:relative;z-index:2;font-size:14px;line-height:1.1;font-weight:900;letter-spacing:.08em;text-transform:uppercase;}
+.mp-spotlight-entry-btn__sub{position:relative;z-index:2;font-size:11px;line-height:1.35;color:rgba(255,255,255,0.78);font-weight:700;}
+
+body.spotlight-open{overflow:hidden !important;}
+
+.mp-spotlight-modal{
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mp-spotlight-modal__panel{
+  position: relative;
+  z-index: 2147483002;
+
+  margin: 0 auto;
+  width: min(820px, 92vw);
+
+  /* 👇 THIS IS THE CHANGE */
+  max-height: 95vh;   /* was 90vh */
+  overflow: visible;  /* remove scroll */
+
+  border-radius: 26px;
+  padding: 24px 22px; /* tiny extra space */
+
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255,40,40,0.18) 0%, transparent 25%),
+    linear-gradient(180deg, #140405 0%, #080203 100%);
+
+  border: 1px solid rgba(255,70,70,0.25);
+
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 40px rgba(180,0,0,0.18);
+
+  transform: none !important;
+}
+
+.mp-spotlight-modal__backdrop{
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,0.85);
+
+  z-index: 2147483001; /* VERY HIGH */
+}
+
+.mp-spotlight-modal.is-open{
+  display: flex;
+}
+
+
+body.spotlight-open{
+  overflow: hidden;
+}
+
+body.spotlight-open::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  z-index: 999998;
+  pointer-events: none;
+}
+
+.mp-spotlight-modal__border-light{position:absolute;inset:0;padding:2px;border-radius:28px;background:linear-gradient(90deg,#ff1b1b,#ff8b8b,#ff1b1b,#ff8b8b,#ff1b1b);background-size:300% 100%;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spotlightBorderRun 4s linear infinite;opacity:.94;pointer-events:none;}
+.mp-spotlight-modal__glow{position:absolute;inset:-16%;background:radial-gradient(circle at 50% 22%, rgba(255,30,30,0.18) 0%, transparent 18%),radial-gradient(circle at 20% 54%, rgba(255,20,20,0.08) 0%, transparent 24%),radial-gradient(circle at 80% 54%, rgba(255,50,50,0.10) 0%, transparent 24%);filter:blur(42px);pointer-events:none;}
+.mp-spotlight-modal__close{position:absolute;top:14px;right:14px;z-index:3;width:38px;height:38px;border:0;border-radius:999px;cursor:pointer;background:rgba(255,255,255,0.06);color:#fff;font-size:22px;line-height:1;}
+
+.mp-spotlight-modal__topbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.mp-spotlight-modal__topbar-pill{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 12px;border-radius:999px;background:linear-gradient(180deg, rgba(255,22,22,0.22), rgba(90,5,5,0.20));border:1px solid rgba(255,90,90,0.30);color:#fff3f3;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;animation:spotlightAlertPulse 1.15s ease-in-out infinite;}
+.mp-spotlight-modal__topbar-dot{width:8px;height:8px;border-radius:999px;background:#ff4747;box-shadow:0 0 10px rgba(255,71,71,0.95),0 0 18px rgba(255,71,71,0.75);animation:spotlightAlertDot 1.15s ease-in-out infinite;}
+.mp-spotlight-modal__topbar-text{color:#ffd4d4;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
+
+.mp-spotlight-modal__header{position:relative;z-index:2;margin-bottom:14px;}
+.mp-spotlight-modal__eyebrow{color:#ffb8b8;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.mp-spotlight-modal__title{margin:0 0 8px;color:#fff;font-size:32px;line-height:1;font-weight:900;text-transform:uppercase;}
+.mp-spotlight-modal__subtitle{margin:0;color:rgba(255,255,255,0.78);font-size:14px;line-height:1.5;}
+
+.mp-spotlight-modal__availability{position:relative;z-index:2;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.mp-spotlight-modal__availability-pill{display:inline-flex;align-items:center;min-height:32px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:#ffe0e0;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;}
+.mp-spotlight-modal__availability-pill--primary{background:linear-gradient(180deg, rgba(255,30,30,0.14), rgba(90,5,5,0.10));border-color:rgba(255,80,80,0.24);}
+
+.mp-spotlight-modal__placement-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.18fr 1fr;gap:14px;margin-bottom:16px;}
+.mp-spotlight-choice{position:relative;text-align:left;padding:16px;border-radius:22px;border:1px solid rgba(255,255,255,0.08);background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),linear-gradient(180deg, #1a090a 0%, #0d0405 100%);color:#fff;cursor:pointer;transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease, filter .22s ease;}
+.mp-spotlight-choice:hover{transform:translateY(-2px);}
+.mp-spotlight-choice.is-selected{border-color:rgba(255,90,90,0.30);box-shadow:0 0 0 1px rgba(255,255,255,0.03) inset,0 0 26px rgba(255,30,30,0.14),0 18px 32px rgba(0,0,0,0.28);}
+.mp-spotlight-choice--primary.is-selected{box-shadow:0 0 0 1px rgba(255,255,255,0.03) inset,0 0 34px rgba(255,30,30,0.20),0 20px 40px rgba(0,0,0,0.32);filter:brightness(1.03);}
+.mp-spotlight-choice__badge{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;margin-bottom:10px;border-radius:999px;background:linear-gradient(180deg,#d51a1a 0%, #8f0b0b 100%);color:#fff;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;}
+.mp-spotlight-choice__title{display:block;font-size:22px;line-height:1.05;font-weight:900;margin-bottom:6px;text-transform:uppercase;}
+.mp-spotlight-choice__subtitle{display:block;color:#ffd6d6;font-size:12px;font-weight:700;margin-bottom:14px;}
+.mp-spotlight-choice__preview{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:8px;margin-bottom:14px;}
+.mp-spotlight-choice__preview span{display:block;height:48px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);}
+.mp-spotlight-choice__preview span.is-main{background:linear-gradient(180deg, rgba(255,40,40,0.26), rgba(110,8,8,0.16));border-color:rgba(255,90,90,0.20);box-shadow:0 0 18px rgba(255,30,30,0.12);}
+.mp-spotlight-choice__list{margin:0;padding-left:16px;color:rgba(255,255,255,0.78);font-size:12px;line-height:1.5;}
+
+.mp-spotlight-modal__section-label{color:#ffb8b8;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.mp-spotlight-modal__durations{position:relative;z-index:2;margin-bottom:16px;}
+.mp-spotlight-duration-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.mp-spotlight-duration{text-align:left;padding:12px 12px 13px;border-radius:16px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#fff;cursor:pointer;transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;}
+.mp-spotlight-duration.is-selected{border-color:rgba(255,90,90,0.26);box-shadow:0 0 20px rgba(255,30,30,0.10);background:linear-gradient(180deg, rgba(255,30,30,0.10), rgba(80,5,5,0.08));}
+.mp-spotlight-duration__title{display:block;font-size:11px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;}
+.mp-spotlight-duration__sub{display:block;font-size:10px;color:rgba(255,255,255,0.72);}
+
+.mp-spotlight-modal__summary{position:relative;z-index:2;border-radius:20px;padding:16px;background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),linear-gradient(180deg, #19090a 0%, #0d0405 100%);border:1px solid rgba(255,70,70,0.14);margin-bottom:16px;}
+.mp-spotlight-modal__summary-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px;}
+.mp-spotlight-modal__summary-title{color:#fff;font-size:20px;font-weight:900;text-transform:uppercase;line-height:1.1;}
+.mp-spotlight-modal__price{color:#fff;font-size:28px;font-weight:900;line-height:1;white-space:nowrap;}
+.mp-spotlight-modal__summary-copy{color:rgba(255,255,255,0.78);font-size:13px;line-height:1.55;margin-bottom:12px;}
+.mp-spotlight-modal__impact{margin-bottom:10px;}
+.mp-spotlight-modal__impact-label{color:#ffd0d0;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.mp-spotlight-modal__impact-bar{width:100%;height:12px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);}
+.mp-spotlight-modal__impact-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#ff4747 0%, #b90d0d 100%);box-shadow:0 0 16px rgba(255,30,30,0.22);transition:width .24s ease;}
+.mp-spotlight-modal__microcopy{color:rgba(255,255,255,0.64);font-size:11px;line-height:1.45;}
+
+.mp-spotlight-modal__actions{position:relative;z-index:2;}
+.mp-spotlight-modal__form{margin:0 0 10px;}
+.mp-spotlight-modal__cta{width:100%;min-height:52px;border:0;border-radius:16px;cursor:pointer;background:linear-gradient(180deg,#ff4747 0%, #a90c0c 100%);color:#fff;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 14px 28px rgba(190,16,16,0.32),0 0 22px rgba(255,30,30,0.16);animation:spotlightRedFlash 1.2s ease-in-out infinite;}
+.mp-spotlight-modal__cancel{display:block;width:100%;border:0;background:none;color:rgba(255,255,255,0.74);font-size:12px;font-weight:700;cursor:pointer;}
+
+@keyframes mpSpotlightSweep{0%{left:-35%;}100%{left:120%;}}
+@keyframes spotlightBorderRun{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
+@keyframes spotlightRedFlash{0%,100%{filter:brightness(1);}50%{filter:brightness(1.16);}}
+@keyframes spotlightAlertPulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.18);}}
+@keyframes spotlightAlertDot{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.25);opacity:.72;}}
+
+@media (max-width: 900px){
+  .mp-spotlight-modal__placement-grid{grid-template-columns:1fr;}
+  .mp-spotlight-duration-row{grid-template-columns:1fr;}
+  .mp-spotlight-modal__title{font-size:26px;}
+  .mp-spotlight-modal__price{font-size:24px;}
+}
+@media (max-width: 700px){
+  .mp-spotlight-modal{padding:10px;}
+  .mp-spotlight-modal__panel{padding:16px 14px 14px;border-radius:22px;}
+  .mp-spotlight-modal__border-light{border-radius:22px;}
+  .mp-spotlight-entry-btn{max-width:none;width:100%;}
+  .mp-spotlight-entry-btn__title{font-size:13px;}
+  .mp-spotlight-entry-btn__sub{font-size:10px;}
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var modal = document.querySelector('[data-spotlight-modal]');
+  var btn = document.querySelector('[data-spotlight-open]');
+
+  if (!modal || !btn) return;
+
+  document.body.appendChild(modal);
+
+  var closeEls = modal.querySelectorAll('[data-spotlight-close]');
+  var choiceBtns = modal.querySelectorAll('[data-spotlight-choice]');
+  var durationBtns = modal.querySelectorAll('[data-spotlight-duration]');
+  var summaryLabel = modal.querySelector('[data-spotlight-summary-label]');
+  var summaryCopy = modal.querySelector('[data-spotlight-summary-copy]');
+  var priceEl = modal.querySelector('[data-spotlight-price]');
+  var impactFill = modal.querySelector('[data-spotlight-impact-fill]');
+  var levelInput = modal.querySelector('[data-spotlight-level-input]');
+  var durationInput = modal.querySelector('[data-spotlight-duration-input]');
+  var variantInput = modal.querySelector('[data-spotlight-variant-input]');
+  var form = modal.querySelector('.mp-spotlight-modal__form');
+
+  var selectedChoice = modal.querySelector('[data-spotlight-choice].is-selected');
+  var selectedDuration = modal.querySelector('[data-spotlight-duration].is-selected');
+
+  function getSummaryCopy(level, duration) {
+    if (level === 'primary') {
+      if (duration === '24') return 'Highest visibility placement with dominant homepage positioning for maximum case attention.';
+      if (duration === '3') return 'Extended premium centre placement for stronger repeated exposure.';
+      return 'Maximum reach through dominant homepage visibility.';
+    }
+    if (duration === '24') return 'Supporting placement to quickly increase visibility.';
+    if (duration === '3') return 'Extended supporting exposure across more visitors.';
+    return 'Longer supporting visibility for sustained reach.';
+  }
+
+  function getImpact(level, duration) {
+    if (level === 'primary' && duration === '24') return '80%';
+    if (level === 'primary' && duration === '3') return '90%';
+    if (level === 'primary' && duration === '7') return '100%';
+    if (level === 'supporting' && duration === '24') return '55%';
+    if (level === 'supporting' && duration === '3') return '70%';
+    return '85%';
+  }
+
+  function getPrice(choice, duration) {
+    if (!choice) return '0.00';
+    if (duration === '24') return choice.getAttribute('data-price-24') || '0.00';
+    if (duration === '3') return choice.getAttribute('data-price-3') || '0.00';
+    return choice.getAttribute('data-price-7') || '0.00';
+  }
+
+  function getVariantId(level, duration) {
+    if (!variantInput) return '';
+    if (level === 'primary' && duration === '24') return variantInput.getAttribute('data-primary-24') || '';
+    if (level === 'primary' && duration === '3') return variantInput.getAttribute('data-primary-3') || '';
+    if (level === 'primary' && duration === '7') return variantInput.getAttribute('data-primary-7') || '';
+    if (level === 'supporting' && duration === '24') return variantInput.getAttribute('data-support-24') || '';
+    if (level === 'supporting' && duration === '3') return variantInput.getAttribute('data-support-3') || '';
+    if (level === 'supporting' && duration === '7') return variantInput.getAttribute('data-support-7') || '';
+    return '';
+  }
+
+  function durationText(duration) {
+    if (duration === '24') return '24 HOURS';
+    if (duration === '3') return '3 DAYS';
+    return '7 DAYS';
+  }
+
+  function updateUI() {
+    if (!selectedChoice || !selectedDuration) return;
+
+    var level = selectedChoice.getAttribute('data-level');
+    var duration = selectedDuration.getAttribute('data-duration');
+    var price = getPrice(selectedChoice, duration);
+    var variantId = getVariantId(level, duration);
+
+    if (summaryLabel) {
+      summaryLabel.textContent =
+        (level === 'primary' ? 'PRIMARY SPOTLIGHT' : 'SUPPORTING SPOTLIGHT') +
+        ' • ' + durationText(duration);
+    }
+
+    if (summaryCopy) {
+      summaryCopy.textContent = getSummaryCopy(level, duration);
+    }
+
+    if (priceEl) {
+      priceEl.textContent = '£' + price;
+    }
+
+    if (impactFill) {
+      impactFill.style.width = getImpact(level, duration);
+    }
+
+    if (levelInput) {
+      levelInput.value = level;
+    }
+
+    if (durationInput) {
+      durationInput.value = duration === '24' ? '24h' : (duration === '3' ? '3d' : '7d');
+    }
+
+    if (variantInput) {
+      variantInput.value = variantId;
+    }
+  }
+
+  function openModal() {
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('spotlight-open');
+    updateUI();
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('spotlight-open');
+  }
+
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    openModal();
+  });
+
+  closeEls.forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      closeModal();
+    });
+  });
+
+  choiceBtns.forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      choiceBtns.forEach(function(b) {
+        b.classList.remove('is-selected');
+      });
+      el.classList.add('is-selected');
+      selectedChoice = el;
+      updateUI();
+    });
+  });
+
+  durationBtns.forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      durationBtns.forEach(function(b) {
+        b.classList.remove('is-selected');
+      });
+      el.classList.add('is-selected');
+      selectedDuration = el;
+      updateUI();
+    });
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      if (!variantInput || !variantInput.value) {
+        e.preventDefault();
+        alert('This Spotlight option is not linked to a product yet.');
+      }
+    });
+  }
+
+  updateUI();
+});
+</script>
+{% endif %}

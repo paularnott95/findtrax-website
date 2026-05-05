@@ -1,0 +1,537 @@
+{% comment %}
+  Public professionals directory on Shopify.
+  Only approved and safe display information should appear here. No private emails or phone numbers are rendered.
+{% endcomment %}
+
+{% assign member_directory_login_return_separator = '?' %}
+{% if routes.account_login_url contains '?' %}
+  {% assign member_directory_login_return_separator = '&' %}
+{% endif %}
+{% assign member_directory_return_url = routes.account_login_url | append: member_directory_login_return_separator | append: 'return_url=/pages/member-area' %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .professionals-directory-{{ section.id }} {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    color: #fff;
+  }
+
+  .professionals-directory__shell-{{ section.id }} {
+    overflow: hidden;
+    border-radius: 32px;
+    padding: 1.5rem;
+    background:
+      radial-gradient(circle at top left, rgba(236, 72, 72, 0.22), transparent 24%),
+      radial-gradient(circle at right top, rgba(59, 130, 246, 0.09), transparent 26%),
+      linear-gradient(180deg, #160608 0%, #090203 100%);
+    border: 1px solid rgba(255, 105, 120, 0.18);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .professionals-directory__hero-{{ section.id }},
+  .professionals-directory__filters-{{ section.id }},
+  .professionals-directory__card-{{ section.id }} {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #170709 0%, #0b0203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .professionals-directory__hero-{{ section.id }},
+  .professionals-directory__filters-{{ section.id }} {
+    border-radius: 28px;
+    padding: 2rem;
+  }
+
+  .professionals-directory__eyebrow-{{ section.id }} {
+    margin: 0 0 0.55rem;
+    color: #e3aeb5;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .professionals-directory__heading-{{ section.id }} {
+    margin: 0;
+    font-size: clamp(3rem, 5vw, 5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .professionals-directory__intro-{{ section.id }} {
+    max-width: 66rem;
+    margin: 1rem 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.2rem;
+    line-height: 1.7;
+  }
+
+  .professionals-directory__actions-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.4rem;
+  }
+
+  .professionals-directory__button-{{ section.id }},
+  .professionals-directory__button-secondary-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.4rem;
+    padding: 0 1.3rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .professionals-directory__button-{{ section.id }} {
+    background: linear-gradient(180deg, #ff3b3b 0%, #d61f1f 100%);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(173, 17, 17, 0.22);
+  }
+
+  .professionals-directory__button-secondary-{{ section.id }} {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+  }
+
+  .professionals-directory__filter-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .professionals-directory__field-{{ section.id }} {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .professionals-directory__field-{{ section.id }} label {
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .professionals-directory__field-{{ section.id }} select,
+  .professionals-directory__field-{{ section.id }} input {
+    width: 100%;
+    min-height: 3.4rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: #fff;
+    padding: 0.85rem 1rem;
+  }
+
+  .professionals-directory__list-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .professionals-directory__card-{{ section.id }} {
+    border-radius: 24px;
+    padding: 1.5rem;
+  }
+
+  .professionals-directory__badges-{{ section.id }},
+  .professionals-directory__meta-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .professionals-directory__badge-{{ section.id }},
+  .professionals-directory__meta-chip-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.2rem;
+    padding: 0 0.8rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .professionals-directory__badge-{{ section.id }} {
+    border: 1px solid rgba(16, 185, 129, 0.22);
+    background: rgba(16, 185, 129, 0.14);
+    color: #d1fae5;
+  }
+
+  .professionals-directory__meta-chip-{{ section.id }} {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .professionals-directory__name-{{ section.id }} {
+    margin: 1rem 0 0;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .professionals-directory__copy-{{ section.id }} {
+    margin: 0.8rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .professionals-directory__safe-note-{{ section.id }} {
+    margin-top: 1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(251, 191, 36, 0.18);
+    background: rgba(251, 191, 36, 0.08);
+    padding: 0.9rem 1rem;
+    color: #fde68a;
+    line-height: 1.6;
+  }
+
+  .professionals-directory__cta-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.2rem;
+    margin-top: 1rem;
+    padding: 0 1.15rem;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ff3b3b 0%, #d61f1f 100%);
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .professionals-directory__empty-{{ section.id }} {
+    margin-top: 1.5rem;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.4rem;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  @media screen and (max-width: 989px) {
+    .professionals-directory__filter-grid-{{ section.id }},
+    .professionals-directory__list-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .professionals-directory__shell-{{ section.id }} {
+      padding: 1rem;
+      border-radius: 24px;
+    }
+
+    .professionals-directory__hero-{{ section.id }},
+    .professionals-directory__filters-{{ section.id }},
+    .professionals-directory__card-{{ section.id }} {
+      padding: 1.2rem;
+      border-radius: 20px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="professionals-directory-{{ section.id }} section-{{ section.id }}-padding" data-country-section data-country-scope="all">
+  <div class="professionals-directory__shell-{{ section.id }}">
+    <div class="professionals-directory__hero-{{ section.id }}">
+      <p class="professionals-directory__eyebrow-{{ section.id }}">Verified Professionals</p>
+      <h1 class="professionals-directory__heading-{{ section.id }}">{{ section.settings.heading }}</h1>
+      <div class="professionals-directory__intro-{{ section.id }}">{{ section.settings.intro }}</div>
+      <div class="professionals-directory__actions-{{ section.id }}">
+        <a href="/pages/professional-area" class="professionals-directory__button-{{ section.id }}">Professional Access</a>
+        <a href="{{ member_directory_return_url }}" class="professionals-directory__button-secondary-{{ section.id }}">Member Login</a>
+      </div>
+    </div>
+
+    <div class="professionals-directory__filters-{{ section.id }}">
+      <p class="professionals-directory__eyebrow-{{ section.id }}">Directory Filters</p>
+      <div class="professionals-directory__filter-grid-{{ section.id }}">
+        <div class="professionals-directory__field-{{ section.id }}">
+          <label for="directory-country-{{ section.id }}">Country</label>
+          <select id="directory-country-{{ section.id }}" data-country-filter>
+            <option value="">All countries</option>
+          </select>
+        </div>
+        <div class="professionals-directory__field-{{ section.id }}">
+          <label for="directory-service-{{ section.id }}">Service</label>
+          <select id="directory-service-{{ section.id }}" data-service-filter>
+            <option value="">All services</option>
+          </select>
+        </div>
+        <div class="professionals-directory__field-{{ section.id }}">
+          <label for="directory-search-{{ section.id }}">Search</label>
+          <input id="directory-search-{{ section.id }}" type="text" placeholder="Search professional, country, service" data-search-filter>
+        </div>
+      </div>
+    </div>
+
+    <div class="professionals-directory__list-{{ section.id }}" data-directory-list>
+      {% for block in section.blocks %}
+        {% if block.type == 'professional' and block.settings.is_verified %}
+          <article
+            class="professionals-directory__card-{{ section.id }}"
+            data-professional-card
+            data-pro-profile
+            data-pro-profile-id="{{ block.settings.profile_id | default: block.id | escape }}"
+            data-pro-profile-type="{% if block.settings.profile_type == 'organisation' %}organisation{% else %}professional{% endif %}"
+            data-pro-profile-title="{{ block.settings.name | escape }}"
+            data-pro-profile-url="{{ canonical_url }}#professional-{{ block.id }}"
+            data-pro-customer-id="{{ block.settings.professional_customer_id | escape }}"
+            data-organisation-id="{{ block.settings.organisation_id | escape }}"
+            data-country-scope="{% assign professional_country = block.settings.country | downcase %}{% if professional_country contains 'united kingdom' or professional_country == 'uk' or professional_country == 'gb' %}uk{% elsif professional_country contains 'united states' or professional_country == 'us' or professional_country == 'usa' %}us{% elsif professional_country contains 'canada' or professional_country == 'ca' %}ca{% elsif professional_country contains 'australia' or professional_country == 'au' %}au{% else %}all{% endif %}"
+            data-country="{{ block.settings.country | escape }}"
+            data-services="{{ block.settings.services | downcase | escape }}"
+            data-search="{{ block.settings.name | append: ' ' | append: block.settings.country | append: ' ' | append: block.settings.services | append: ' ' | append: block.settings.bio | downcase | escape }}"
+            id="professional-{{ block.id }}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="professionals-directory__badges-{{ section.id }}">
+              <span class="professionals-directory__badge-{{ section.id }}">Verified Professional</span>
+              <span class="professionals-directory__meta-chip-{{ section.id }}">{{ block.settings.tier }}</span>
+              {% if block.settings.worldwide %}
+                <span class="professionals-directory__meta-chip-{{ section.id }}">Worldwide</span>
+              {% endif %}
+            </div>
+
+            <h2 class="professionals-directory__name-{{ section.id }}">{{ block.settings.name }}</h2>
+            <div class="professionals-directory__meta-{{ section.id }}" style="margin-top: 0.85rem;">
+              <span class="professionals-directory__meta-chip-{{ section.id }}">{{ block.settings.country }}</span>
+              {% if block.settings.region != blank %}
+                <span class="professionals-directory__meta-chip-{{ section.id }}">{{ block.settings.region }}</span>
+              {% endif %}
+              {% if block.settings.response_time != blank %}
+                <span class="professionals-directory__meta-chip-{{ section.id }}">Response: {{ block.settings.response_time }}</span>
+              {% endif %}
+            </div>
+
+            <p class="professionals-directory__copy-{{ section.id }}">{{ block.settings.services }}</p>
+            <p class="professionals-directory__copy-{{ section.id }}">{{ block.settings.bio }}</p>
+
+            <div class="professionals-directory__safe-note-{{ section.id }}">
+              Contact is routed through a safe inbox path. Private emails and phone numbers are not shown publicly, and direct access remains subject to member verification and approval rules.
+            </div>
+
+            <a href="{{ section.settings.contact_link }}" class="professionals-directory__cta-{{ section.id }}">Contact Through Safe Inbox</a>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="professionals-directory__empty-{{ section.id }}" data-directory-empty hidden>
+      No verified professionals match the current country, service, or search filters.
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    var sectionRoot = document.querySelector('.professionals-directory-{{ section.id }}');
+    if (!sectionRoot) return;
+
+    var countrySelect = sectionRoot.querySelector('[data-country-filter]');
+    var serviceSelect = sectionRoot.querySelector('[data-service-filter]');
+    var searchInput = sectionRoot.querySelector('[data-search-filter]');
+    var cards = Array.prototype.slice.call(sectionRoot.querySelectorAll('[data-professional-card]'));
+    var emptyState = sectionRoot.querySelector('[data-directory-empty]');
+
+    function uniqueSorted(values) {
+      return Array.from(new Set(values.filter(Boolean))).sort();
+    }
+
+    function fillSelect(select, values) {
+      values.forEach(function(value) {
+        var option = document.createElement('option');
+        option.value = value.toLowerCase();
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    if (countrySelect) {
+      fillSelect(countrySelect, uniqueSorted(cards.map(function(card) { return card.getAttribute('data-country') || ''; })));
+    }
+
+    if (serviceSelect) {
+      var services = [];
+      cards.forEach(function(card) {
+        var raw = card.getAttribute('data-services') || '';
+        raw.split(',').forEach(function(item) {
+          var clean = item.trim();
+          if (clean) services.push(clean);
+        });
+      });
+      fillSelect(serviceSelect, uniqueSorted(services.map(function(item) {
+        return item.replace(/\b\w/g, function(letter) { return letter.toUpperCase(); });
+      })));
+    }
+
+    function applyFilters() {
+      var country = countrySelect ? countrySelect.value : '';
+      var service = serviceSelect ? serviceSelect.value : '';
+      var search = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      var visible = 0;
+
+      cards.forEach(function(card) {
+        var cardCountry = (card.getAttribute('data-country') || '').toLowerCase();
+        var cardServices = (card.getAttribute('data-services') || '').toLowerCase();
+        var cardSearch = (card.getAttribute('data-search') || '').toLowerCase();
+        var matchesCountry = !country || cardCountry === country;
+        var matchesService = !service || cardServices.indexOf(service) !== -1;
+        var matchesSearch = !search || cardSearch.indexOf(search) !== -1;
+        var show = matchesCountry && matchesService && matchesSearch;
+
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+
+      if (emptyState) emptyState.hidden = visible !== 0;
+    }
+
+    [countrySelect, serviceSelect, searchInput].forEach(function(node) {
+      if (!node) return;
+      node.addEventListener('input', applyFilters);
+      node.addEventListener('change', applyFilters);
+    });
+
+    applyFilters();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Public Pro Directory",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "PROFESSIONALS"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro",
+      "default": "<p>Browse verified professionals by country and service type. Public cards show safe summary information only and route contact through a controlled inbox flow.</p>"
+    },
+    {
+      "type": "url",
+      "id": "contact_link",
+      "label": "Safe inbox link"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "professional",
+      "name": "Professional",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Name", "default": "Northbridge Search Support" },
+        { "type": "text", "id": "profile_id", "label": "Profile ID" },
+        {
+          "type": "select",
+          "id": "profile_type",
+          "label": "Profile type",
+          "default": "professional",
+          "options": [
+            { "value": "professional", "label": "Professional" },
+            { "value": "organisation", "label": "Organisation" }
+          ]
+        },
+        { "type": "text", "id": "professional_customer_id", "label": "Professional customer ID" },
+        { "type": "text", "id": "organisation_id", "label": "Organisation ID" },
+        { "type": "text", "id": "country", "label": "Country", "default": "United Kingdom" },
+        { "type": "text", "id": "region", "label": "Region", "default": "Greater London" },
+        { "type": "text", "id": "services", "label": "Services", "default": "search team, safeguarding, media support" },
+        { "type": "textarea", "id": "bio", "label": "Bio", "default": "Approved support profile prepared for public website listing with safe contact gating and no direct private contact details." },
+        { "type": "text", "id": "tier", "label": "Tier", "default": "Professional Premium" },
+        { "type": "text", "id": "response_time", "label": "Response time", "default": "within 24 hours" },
+        { "type": "checkbox", "id": "is_verified", "label": "Verified", "default": true },
+        { "type": "checkbox", "id": "worldwide", "label": "Worldwide support", "default": false }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Public Pro Directory",
+      "blocks": [
+        { "type": "professional" },
+        {
+          "type": "professional",
+          "settings": {
+            "name": "Blue Ridge Case Support",
+            "country": "United States",
+            "region": "North Carolina",
+            "services": "private investigator, legal support, transport",
+            "bio": "US-based approved profile placeholder for legal and search support with future safe inbox routing.",
+            "tier": "Professional Enterprise",
+            "response_time": "same day",
+            "worldwide": true
+          }
+        },
+        {
+          "type": "professional",
+          "settings": {
+            "name": "Southern Cross Safeguarding",
+            "country": "Australia",
+            "region": "New South Wales",
+            "services": "safeguarding, counsellor, translation",
+            "bio": "Approved Australia profile placeholder focused on safe case support and reviewed contact routing.",
+            "tier": "Professional Premium",
+            "response_time": "within 48 hours"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

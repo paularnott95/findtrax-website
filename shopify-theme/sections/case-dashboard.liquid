@@ -1,0 +1,1207 @@
+{% comment %}
+UNIT 3 — CASE OWNER DASHBOARD FRONTEND
+
+WHAT THIS BUILDS
+- Member-facing dashboard section for case owners
+- Sections for:
+  1) Active Cases
+  2) Pending Actions
+  3) Resolved Cases
+- Buttons/UI for:
+  - submit update request
+  - mark case as found
+  - request professional contact status review
+  - view case
+- Includes premium modal shells for:
+  - submit update request
+  - mark case as found
+- Frontend only for now
+
+IMPORTANT
+- This version assumes future member/account integration.
+- For now it renders from your blog + metafield logic where possible.
+- Later units will wire this into actual account ownership, review queues, and archive automation.
+{% endcomment %}
+
+{% assign active_case_count = 0 %}
+{% assign pending_case_count = 0 %}
+{% assign resolved_case_count = 0 %}
+
+<section class="case-dashboard-system" id="case-dashboard-system-{{ section.id }}">
+  <div class="case-dashboard-shell">
+    <div class="case-dashboard-shell-border"></div>
+    <div class="case-dashboard-shell-glow"></div>
+    <div class="case-dashboard-shell-noise"></div>
+
+    <aside class="ma-control-sidebar ma-program-panel" aria-label="Case dashboard navigation">
+      <div class="ma-control-sidebar__brand">Case Dashboard</div>
+      <nav class="ma-control-sidebar__nav">
+        <a class="ma-control-sidebar__link is-active" href="#case-dashboard-system-{{ section.id }}"><span class="ma-control-sidebar__icon">01</span>Summary</a>
+        <a class="ma-control-sidebar__link" href="#case-dashboard-system-{{ section.id }}"><span class="ma-control-sidebar__icon">02</span>Active</a>
+        <a class="ma-control-sidebar__link" href="#case-dashboard-system-{{ section.id }}"><span class="ma-control-sidebar__icon">03</span>Pending</a>
+        <a class="ma-control-sidebar__link" href="#case-dashboard-system-{{ section.id }}"><span class="ma-control-sidebar__icon">04</span>Resolved</a>
+      </nav>
+    </aside>
+
+    <div class="case-dashboard-topbar">
+      <div class="case-dashboard-top-pill">CASE DASHBOARD</div>
+      <div class="case-dashboard-top-status">ACTIVE • PENDING • RESOLVED</div>
+    </div>
+
+    <div class="case-dashboard-header">
+      <div class="case-dashboard-header-copy">
+        <div class="case-dashboard-kicker">MEMBER CASE AREA</div>
+        <h2>MANAGE YOUR CASES</h2>
+        <p>Track active cases, submit updates for review, request found-safe status, and manage resolved cases in one place.</p>
+      </div>
+
+      <div class="case-dashboard-summary-grid">
+        <div class="case-dashboard-summary-box">
+          <div class="case-dashboard-summary-label">ACTIVE CASES</div>
+          <div class="case-dashboard-summary-value" data-count-active>0</div>
+        </div>
+        <div class="case-dashboard-summary-box">
+          <div class="case-dashboard-summary-label">PENDING ACTIONS</div>
+          <div class="case-dashboard-summary-value" data-count-pending>0</div>
+        </div>
+        <div class="case-dashboard-summary-box">
+          <div class="case-dashboard-summary-label">RESOLVED CASES</div>
+          <div class="case-dashboard-summary-value" data-count-resolved>0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="case-dashboard-tabs">
+      <button type="button" class="case-dashboard-tab is-active" data-dashboard-tab="active">ACTIVE CASES</button>
+      <button type="button" class="case-dashboard-tab" data-dashboard-tab="pending">PENDING ACTIONS</button>
+      <button type="button" class="case-dashboard-tab" data-dashboard-tab="resolved">RESOLVED CASES</button>
+    </div>
+
+    <div class="case-dashboard-panel is-active" data-dashboard-panel="active">
+      <div class="case-dashboard-panel-head">
+        <div>
+          <div class="case-dashboard-kicker">LIVE MISSING CASES</div>
+          <h3>ACTIVE CASES</h3>
+        </div>
+        <p>Live cases that can still receive update requests and found-safe requests.</p>
+      </div>
+
+      <div class="case-dashboard-grid">
+        {% for article in blogs['missing-persons'].articles limit: 12 %}
+          {% assign status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase %}
+          {% assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase %}
+          {% assign assigned_member = article.metafields.custom.assigned_member_id.value | default: article.metafields.custom.assigned_member_id %}
+          {% assign professional_live = article.metafields.custom.professional_contact_live.value | default: article.metafields.custom.professional_contact_live %}
+          {% assign last_seen_place = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place %}
+          {% assign age = article.metafields.custom.age.value | default: article.metafields.custom.age %}
+
+          {% assign show_active = false %}
+          {% if status == blank or status contains 'approved_live' or status contains 'live' %}
+            {% if owner_status contains 'assigned' or assigned_member != blank or owner_status == blank %}
+              {% assign show_active = true %}
+            {% endif %}
+          {% endif %}
+
+          {% if show_active %}
+            {% assign active_case_count = active_case_count | plus: 1 %}
+            <article class="case-dashboard-card"
+                     data-case-card="active"
+                     data-case-title="{{ article.title | escape }}"
+                     data-case-url="{{ article.url | escape }}"
+                     data-case-id="{{ article.id }}">
+              <div class="case-dashboard-card-ring"></div>
+              <div class="case-dashboard-card-image-wrap">
+                {% if article.image %}
+                  <img src="{{ article.image | image_url: width: 600 }}" alt="{{ article.title | escape }}" class="case-dashboard-card-image" width="{{ article.image.width }}" height="{{ article.image.height }}">
+                {% else %}
+                  <div class="case-dashboard-card-image-placeholder">NO IMAGE</div>
+                {% endif %}
+                <div class="case-dashboard-card-image-overlay"></div>
+                <div class="case-dashboard-card-badge">LIVE CASE</div>
+              </div>
+
+              <div class="case-dashboard-card-body">
+                <h4>{{ article.title }}</h4>
+                <div class="case-dashboard-card-meta">
+                  {% if age != blank %}<span>AGE {{ age }}</span>{% endif %}
+                  {% if last_seen_place != blank %}<span>{{ last_seen_place }}</span>{% endif %}
+                </div>
+
+                <div class="case-dashboard-status-list">
+                  <div class="case-dashboard-status-item">
+                    <strong>CASE STATUS</strong>
+                    <span>LIVE</span>
+                  </div>
+                  <div class="case-dashboard-status-item">
+                    <strong>PROFESSIONAL CONTACT</strong>
+                    <span>
+                      {% if professional_live == true or professional_live == 'true' or professional_live == '1' %}
+                        ENABLED
+                      {% else %}
+                        LOCKED / NOT ENABLED
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="case-dashboard-card-actions">
+                  <a href="{{ article.url }}" class="case-dashboard-btn dark">VIEW CASE</a>
+                  <button type="button" class="case-dashboard-btn" data-open-update-modal data-case-title="{{ article.title | escape }}">SUBMIT UPDATE</button>
+                  <button type="button" class="case-dashboard-btn primary" data-open-found-modal data-case-title="{{ article.title | escape }}">MARK AS FOUND</button>
+                </div>
+              </div>
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if active_case_count == 0 %}
+        <div class="case-dashboard-empty">
+          <div class="case-dashboard-empty-title">NO ACTIVE CASES</div>
+          <p>Once a case is approved and assigned, it will appear here.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="case-dashboard-panel" data-dashboard-panel="pending">
+      <div class="case-dashboard-panel-head">
+        <div>
+          <div class="case-dashboard-kicker">UNDER REVIEW</div>
+          <h3>PENDING ACTIONS</h3>
+        </div>
+        <p>Submissions, claims, updates, and found requests waiting for review.</p>
+      </div>
+
+      <div class="case-dashboard-grid compact">
+        {% for article in blogs['missing-persons'].articles limit: 12 %}
+          {% assign status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase %}
+          {% if status contains 'submitted' or status contains 'under_review' or status contains 'update_pending_review' or status contains 'found_pending_review' or status contains 'pending' %}
+            {% assign pending_case_count = pending_case_count | plus: 1 %}
+            <article class="case-dashboard-card compact-card" data-case-card="pending">
+              <div class="case-dashboard-card-body compact-body">
+                <div class="case-dashboard-compact-top">
+                  <div class="case-dashboard-compact-kicker">PENDING</div>
+                  <div class="case-dashboard-compact-status">{{ status | replace: '_', ' ' | upcase }}</div>
+                </div>
+                <h4>{{ article.title }}</h4>
+                <p>This item is currently in the review queue and has not completed the workflow yet.</p>
+                <div class="case-dashboard-card-actions">
+                  <a href="{{ article.url }}" class="case-dashboard-btn dark">VIEW CASE</a>
+                </div>
+              </div>
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if pending_case_count == 0 %}
+        <div class="case-dashboard-empty">
+          <div class="case-dashboard-empty-title">NO PENDING ACTIONS</div>
+          <p>Submitted items under review will appear here.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="case-dashboard-panel" data-dashboard-panel="resolved">
+      <div class="case-dashboard-panel-head">
+        <div>
+          <div class="case-dashboard-kicker">FOUND / RESOLVED</div>
+          <h3>RESOLVED CASES</h3>
+        </div>
+        <p>Read-only archive area for found-safe or resolved cases with reduced public detail.</p>
+      </div>
+
+      <div class="case-dashboard-grid">
+        {% for article in blogs['found-safe'].articles limit: 12 %}
+          {% assign resolved_case_count = resolved_case_count | plus: 1 %}
+          <article class="case-dashboard-card resolved-card" data-case-card="resolved">
+            <div class="case-dashboard-card-ring"></div>
+            <div class="case-dashboard-card-image-wrap resolved-image-wrap">
+              {% if article.image %}
+                <img src="{{ article.image | image_url: width: 600 }}" alt="{{ article.title | escape }}" class="case-dashboard-card-image resolved-image" width="{{ article.image.width }}" height="{{ article.image.height }}">
+              {% else %}
+                <div class="case-dashboard-card-image-placeholder">NO IMAGE</div>
+              {% endif %}
+              <div class="case-dashboard-card-image-overlay resolved-overlay"></div>
+              <div class="case-dashboard-card-badge resolved-badge">RESOLVED</div>
+            </div>
+
+            <div class="case-dashboard-card-body">
+              <h4>{{ article.title }}</h4>
+              <div class="case-dashboard-status-list">
+                <div class="case-dashboard-status-item">
+                  <strong>CASE STATUS</strong>
+                  <span>RESOLVED / ARCHIVED</span>
+                </div>
+                <div class="case-dashboard-status-item">
+                  <strong>PROFESSIONAL CONTACT</strong>
+                  <span>DISABLED</span>
+                </div>
+              </div>
+              <div class="case-dashboard-card-actions">
+                <a href="{{ article.url }}" class="case-dashboard-btn dark">VIEW ARCHIVE</a>
+                <button type="button" class="case-dashboard-btn ghost">REQUEST FULL REMOVAL</button>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      {% if resolved_case_count == 0 %}
+        <div class="case-dashboard-empty">
+          <div class="case-dashboard-empty-title">NO RESOLVED CASES</div>
+          <p>Found-safe or resolved cases will appear here once reviewed and archived.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- UPDATE REQUEST MODAL -->
+<div class="case-dashboard-modal" id="case-update-modal-{{ section.id }}" aria-hidden="true">
+  <div class="case-dashboard-modal-backdrop" data-close-update-modal></div>
+  <div class="case-dashboard-modal-dialog">
+    <div class="case-dashboard-modal-shell">
+      <button type="button" class="case-dashboard-modal-close" data-close-update-modal aria-label="Close">×</button>
+      <div class="case-dashboard-kicker">UPDATE REQUEST</div>
+      <h3>SUBMIT A CASE UPDATE</h3>
+      <p>Updates are reviewed before appearing on the live case.</p>
+
+      <div class="case-dashboard-selected-case">
+        <div class="case-dashboard-selected-case-label">CASE</div>
+        <div class="case-dashboard-selected-case-title" data-update-case-title>No case selected</div>
+      </div>
+
+      <form class="case-dashboard-modal-form">
+        <div class="case-dashboard-field">
+          <label>UPDATE TYPE</label>
+          <select>
+            <option>New sighting</option>
+            <option>Correction to case details</option>
+            <option>Additional information</option>
+            <option>Police update</option>
+            <option>Media update</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="case-dashboard-field">
+          <label>UPDATE DETAILS</label>
+          <textarea rows="5" placeholder="Describe the update clearly."></textarea>
+        </div>
+
+        <div class="case-dashboard-field">
+          <label>OPTIONAL SUPPORTING IMAGE / SCREENSHOT</label>
+          <input type="file" accept="image/*,application/pdf">
+        </div>
+
+        <div class="case-dashboard-modal-actions">
+          <button type="button" class="case-dashboard-btn dark" data-close-update-modal>CANCEL</button>
+          <button type="submit" class="case-dashboard-btn primary">SUBMIT UPDATE REQUEST</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- FOUND MODAL -->
+<div class="case-dashboard-modal" id="case-found-modal-{{ section.id }}" aria-hidden="true">
+  <div class="case-dashboard-modal-backdrop" data-close-found-modal></div>
+  <div class="case-dashboard-modal-dialog">
+    <div class="case-dashboard-modal-shell">
+      <button type="button" class="case-dashboard-modal-close" data-close-found-modal aria-label="Close">×</button>
+      <div class="case-dashboard-kicker">FOUND / RESOLVED REQUEST</div>
+      <h3>MARK CASE AS FOUND</h3>
+      <p>Once reviewed, the case will be removed from live missing listings and moved into a privacy-reduced archive.</p>
+
+      <div class="case-dashboard-selected-case">
+        <div class="case-dashboard-selected-case-label">CASE</div>
+        <div class="case-dashboard-selected-case-title" data-found-case-title>No case selected</div>
+      </div>
+
+      <form class="case-dashboard-modal-form">
+        <div class="case-dashboard-field">
+          <label>OUTCOME</label>
+          <select>
+            <option>Found safe</option>
+            <option>Case resolved</option>
+            <option>Request full removal</option>
+          </select>
+        </div>
+
+        <div class="case-dashboard-field">
+          <label>DATE FOUND / RESOLVED</label>
+          <input type="date">
+        </div>
+
+        <div class="case-dashboard-field">
+          <label>SHORT UPDATE</label>
+          <textarea rows="4" placeholder="Add a short explanation."></textarea>
+        </div>
+
+        <div class="case-dashboard-field">
+          <label>ARCHIVE PRIVACY PREFERENCE</label>
+          <select>
+            <option>Keep a reduced public archive</option>
+            <option>Keep only a minimal archive</option>
+            <option>Request full removal after review</option>
+          </select>
+        </div>
+
+        <div class="case-dashboard-field">
+          <label>OPTIONAL PROOF / SCREENSHOT</label>
+          <input type="file" accept="image/*,application/pdf">
+        </div>
+
+        <div class="case-dashboard-modal-actions">
+          <button type="button" class="case-dashboard-btn dark" data-close-found-modal>CANCEL</button>
+          <button type="submit" class="case-dashboard-btn primary">SUBMIT FOUND REQUEST</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+.case-dashboard-system{
+  max-width:1280px;
+  margin:24px auto;
+  padding:0 10px;
+}
+
+.case-dashboard-shell{
+  position:relative;
+  overflow:hidden;
+  border-radius:34px;
+  padding:18px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(220,40,60,0.20) 0%, transparent 24%),
+    radial-gradient(circle at 10% 50%, rgba(255,70,90,0.12) 0%, transparent 20%),
+    radial-gradient(circle at 90% 50%, rgba(255,70,90,0.12) 0%, transparent 20%),
+    linear-gradient(180deg, #150507 0%, #0a0203 48%, #050102 100%);
+  border:1px solid rgba(255,80,96,0.22);
+  box-shadow:0 30px 90px rgba(0,0,0,0.50), 0 0 70px rgba(180,22,40,0.16);
+}
+
+.case-dashboard-shell-border,
+.case-dashboard-shell-glow,
+.case-dashboard-shell-noise{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.case-dashboard-shell-border{
+  padding:2px;
+  border-radius:34px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,70,90,0.82), rgba(255,255,255,0.03), rgba(255,70,90,0.44), rgba(255,255,255,0.02));
+  background-size:280% 100%;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:caseDashBorderRun 7s linear infinite;
+}
+
+.case-dashboard-shell-glow{
+  inset:-20%;
+  background:
+    radial-gradient(circle at 50% 16%, rgba(196,54,70,0.24) 0%, transparent 18%),
+    radial-gradient(circle at 18% 48%, rgba(176,33,48,0.12) 0%, transparent 20%),
+    radial-gradient(circle at 82% 46%, rgba(176,33,48,0.12) 0%, transparent 22%);
+  filter:blur(58px);
+}
+
+.case-dashboard-shell-noise{
+  background:
+    linear-gradient(rgba(255,255,255,0.012), rgba(255,255,255,0.012)),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.008) 3px);
+  mix-blend-mode:screen;
+  opacity:.14;
+}
+
+.case-dashboard-topbar,
+.case-dashboard-header,
+.case-dashboard-tabs,
+.case-dashboard-panel{
+  position:relative;
+  z-index:2;
+}
+
+.case-dashboard-topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.case-dashboard-top-pill,
+.case-dashboard-top-status,
+.case-dashboard-kicker,
+.case-dashboard-summary-label,
+.case-dashboard-help-title,
+.case-dashboard-compact-kicker,
+.case-dashboard-review-title,
+.case-dashboard-selected-case-label{
+  color:#e7b6bc;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.case-dashboard-top-pill,
+.case-dashboard-top-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:32px;
+  padding:0 14px;
+  border-radius:999px;
+  color:#fff;
+}
+
+.case-dashboard-top-pill{ background:linear-gradient(180deg, #ca2f40 0%, #7b111c 100%); }
+.case-dashboard-top-status{ background:linear-gradient(180deg, rgba(34,13,15,0.84), rgba(14,6,7,0.94)); border:1px solid rgba(255,255,255,0.05); }
+
+.case-dashboard-header{
+  display:grid;
+  grid-template-columns:minmax(0, 1.2fr) minmax(340px, .8fr);
+  gap:18px;
+  margin-bottom:18px;
+}
+
+.case-dashboard-header-copy,
+.case-dashboard-summary-box,
+.case-dashboard-card,
+.case-dashboard-empty,
+.case-dashboard-modal-shell{
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.012)),
+    linear-gradient(180deg, #19080b 0%, #0a0203 100%);
+  border:1px solid rgba(255,255,255,0.05);
+  box-shadow:0 20px 44px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,255,255,0.02) inset;
+}
+
+.case-dashboard-header-copy{ padding:26px; }
+.case-dashboard-header-copy h2,
+.case-dashboard-panel-head h3,
+.case-dashboard-modal-shell h3{
+  margin:8px 0 10px;
+  color:#fff;
+  font-size:38px;
+  line-height:1.02;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.case-dashboard-header-copy p,
+.case-dashboard-panel-head p,
+.case-dashboard-card-body p,
+.case-dashboard-empty p,
+.case-dashboard-modal-shell p,
+.case-dashboard-selected-case-title{
+  color:rgba(255,255,255,0.82);
+  line-height:1.6;
+}
+
+.case-dashboard-summary-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+}
+
+.case-dashboard-summary-box{ padding:20px; }
+.case-dashboard-summary-value{
+  margin-top:8px;
+  color:#fff;
+  font-size:34px;
+  font-weight:900;
+}
+
+.case-dashboard-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.case-dashboard-tab,
+.case-dashboard-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:0 18px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  text-decoration:none;
+  transition:transform .28s ease, box-shadow .28s ease, filter .28s ease;
+}
+
+.case-dashboard-tab,
+.case-dashboard-btn.dark{
+  background:linear-gradient(180deg, #2a2527 0%, #161113 100%);
+  box-shadow:0 10px 22px rgba(0,0,0,0.18);
+}
+
+.case-dashboard-tab.is-active,
+.case-dashboard-btn,
+.case-dashboard-btn.primary{
+  background:linear-gradient(180deg, #df4053 0%, #8f1421 100%);
+  box-shadow:0 14px 28px rgba(124,19,29,0.30), 0 0 28px rgba(223,64,83,0.18);
+}
+
+.case-dashboard-btn.ghost{
+  background:linear-gradient(180deg, rgba(223,64,83,0.14), rgba(223,64,83,0.06));
+  border:1px solid rgba(223,64,83,0.16);
+}
+
+.case-dashboard-panel{ display:none; }
+.case-dashboard-panel.is-active{ display:block; }
+
+.case-dashboard-panel-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.case-dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:18px;
+}
+
+.case-dashboard-grid.compact{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+
+.case-dashboard-card{
+  position:relative;
+  overflow:hidden;
+}
+
+.case-dashboard-card-ring{
+  position:absolute;
+  inset:-2px;
+  border-radius:30px;
+  box-shadow:
+    0 0 0 1px rgba(255,90,110,0.16),
+    0 0 28px rgba(210,40,60,0.16),
+    0 0 60px rgba(140,20,32,0.10);
+  pointer-events:none;
+}
+
+.case-dashboard-card-image-wrap{
+  position:relative;
+  overflow:hidden;
+  height:250px;
+}
+
+.case-dashboard-card-image,
+.case-dashboard-card-image-placeholder{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.case-dashboard-card-image-placeholder{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
+
+.case-dashboard-card-image-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.56) 100%);
+}
+
+.case-dashboard-card-badge{
+  position:absolute;
+  top:14px;
+  left:14px;
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:0 12px;
+  border-radius:999px;
+  background:linear-gradient(180deg, #d23446 0%, #88131e 100%);
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.resolved-badge{
+  background:linear-gradient(180deg, #2d9f5a 0%, #177241 100%);
+}
+
+.resolved-image{
+  filter:blur(22px) saturate(.88) brightness(.78) contrast(.9);
+  transform:scale(1.1);
+  transform-origin:center center;
+  opacity:.78;
+}
+
+.resolved-overlay{
+  background:linear-gradient(180deg, rgba(5,12,8,0.28) 0%, rgba(5,12,8,0.72) 100%);
+}
+
+.case-dashboard-card-body{ padding:18px; }
+.case-dashboard-card-body h4,
+.case-dashboard-compact-status,
+.case-dashboard-empty-title{
+  margin:0 0 10px;
+  color:#fff;
+  font-size:22px;
+  line-height:1.08;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.case-dashboard-card-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.case-dashboard-card-meta span,
+.case-dashboard-compact-status,
+.case-dashboard-status-item span{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.06);
+  color:#f4d6d9;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.case-dashboard-status-list{
+  display:grid;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.case-dashboard-status-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.case-dashboard-status-item strong{
+  color:rgba(255,255,255,0.74);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.case-dashboard-card-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.compact-card .compact-body{
+  padding:22px;
+}
+
+.case-dashboard-compact-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:8px;
+}
+
+.case-dashboard-empty{
+  padding:28px;
+  text-align:center;
+}
+
+.case-dashboard-modal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:none;
+}
+
+.case-dashboard-modal.is-open{ display:block; }
+
+.case-dashboard-modal-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(7,2,3,0.72);
+  backdrop-filter:blur(8px);
+}
+
+.case-dashboard-modal-dialog{
+  position:relative;
+  width:min(760px, calc(100vw - 24px));
+  margin:24px auto;
+  z-index:2;
+}
+
+.case-dashboard-modal-shell{ padding:24px; }
+
+.case-dashboard-modal-close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  background:linear-gradient(180deg, rgba(42,15,18,0.96), rgba(18,7,8,0.96));
+  color:#fff;
+  font-size:26px;
+  line-height:1;
+}
+
+.case-dashboard-selected-case{
+  margin:18px 0;
+  padding:16px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.case-dashboard-modal-form{ display:grid; gap:14px; }
+.case-dashboard-field{ display:flex; flex-direction:column; gap:8px; }
+.case-dashboard-field label{
+  color:#f4d6d9;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.case-dashboard-field input,
+.case-dashboard-field select,
+.case-dashboard-field textarea{
+  width:100%;
+  min-height:50px;
+  padding:14px 16px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  color:#fff;
+  font-size:14px;
+}
+.case-dashboard-field textarea{ resize:vertical; min-height:auto; }
+.case-dashboard-field select option{ color:#111; }
+
+.case-dashboard-modal-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:6px;
+}
+
+.ma-program-panel,
+.ma-control-card,
+.ma-control-stat,
+.ma-control-list,
+.ma-control-empty{
+  background:linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  border:1px solid rgba(17,24,39,0.08);
+  border-radius:20px;
+  box-shadow:
+    0 20px 45px rgba(15,23,42,0.10),
+    0 2px 6px rgba(15,23,42,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.case-dashboard-system{
+  max-width:1300px;
+  background:#eef1f5;
+  border-radius:28px;
+  padding:18px;
+}
+
+.case-dashboard-shell{
+  display:grid;
+  grid-template-columns:240px minmax(0,1fr);
+  gap:18px;
+  overflow:visible;
+  padding:18px;
+  background:#eef1f5;
+  border:0;
+  box-shadow:none;
+}
+
+.case-dashboard-shell-border,
+.case-dashboard-shell-glow,
+.case-dashboard-shell-noise{
+  display:none;
+}
+
+.ma-control-sidebar{
+  position:sticky;
+  top:24px;
+  z-index:3;
+  align-self:start;
+  padding:16px;
+}
+
+.ma-control-sidebar__brand{
+  color:#111827;
+  font-size:18px;
+  font-weight:800;
+}
+
+.ma-control-sidebar__nav{
+  display:grid;
+  gap:8px;
+  margin-top:16px;
+}
+
+.ma-control-sidebar__link{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:42px;
+  padding:0 12px;
+  border-radius:14px;
+  color:#475569;
+  font-size:13px;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.ma-control-sidebar__link.is-active{
+  background:rgba(220,38,38,0.08);
+  color:#991b1b;
+}
+
+.ma-control-sidebar__icon{
+  width:20px;
+  color:#94a3b8;
+}
+
+.case-dashboard-topbar,
+.case-dashboard-header,
+.case-dashboard-tabs,
+.case-dashboard-panel{
+  grid-column:2;
+}
+
+.case-dashboard-topbar{
+  margin-bottom:0;
+  padding:16px 18px;
+  border-radius:20px;
+  background:linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  border:1px solid rgba(17,24,39,0.08);
+  box-shadow:0 16px 36px rgba(15,23,42,0.08);
+}
+
+.case-dashboard-top-pill,
+.case-dashboard-top-status{
+  background:#ffffff;
+  border:1px solid rgba(15,23,42,0.10);
+  color:#334155;
+  box-shadow:0 8px 22px rgba(15,23,42,0.06);
+}
+
+.case-dashboard-top-pill{
+  background:rgba(220,38,38,0.08);
+  color:#991b1b;
+}
+
+.case-dashboard-kicker,
+.case-dashboard-summary-label,
+.case-dashboard-help-title,
+.case-dashboard-compact-kicker,
+.case-dashboard-review-title,
+.case-dashboard-selected-case-label{
+  color:#64748b;
+}
+
+.case-dashboard-header-copy,
+.case-dashboard-summary-box,
+.case-dashboard-card,
+.case-dashboard-empty,
+.case-dashboard-modal-shell,
+.case-dashboard-selected-case{
+  background:linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  border:1px solid rgba(17,24,39,0.08);
+  color:#111827;
+  box-shadow:
+    0 20px 45px rgba(15,23,42,0.10),
+    0 2px 6px rgba(15,23,42,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.case-dashboard-header-copy h2,
+.case-dashboard-panel-head h3,
+.case-dashboard-modal-shell h3,
+.case-dashboard-card-body h4,
+.case-dashboard-compact-status,
+.case-dashboard-empty-title,
+.case-dashboard-summary-value{
+  color:#111827;
+}
+
+.case-dashboard-header-copy p,
+.case-dashboard-panel-head p,
+.case-dashboard-card-body p,
+.case-dashboard-empty p,
+.case-dashboard-modal-shell p,
+.case-dashboard-selected-case-title{
+  color:#475569;
+}
+
+.case-dashboard-tab,
+.case-dashboard-btn.dark,
+.case-dashboard-card-meta span,
+.case-dashboard-compact-status,
+.case-dashboard-status-item span{
+  background:#ffffff;
+  border:1px solid rgba(15,23,42,0.10);
+  color:#334155;
+  box-shadow:0 8px 22px rgba(15,23,42,0.06);
+}
+
+.case-dashboard-tab.is-active,
+.case-dashboard-btn,
+.case-dashboard-btn.primary{
+  background:#b91c1c;
+  color:#ffffff;
+  box-shadow:0 12px 24px rgba(185,28,28,0.18);
+}
+
+.case-dashboard-btn.ghost{
+  background:rgba(220,38,38,0.08);
+  border-color:rgba(220,38,38,0.20);
+  color:#991b1b;
+}
+
+.case-dashboard-status-item strong,
+.case-dashboard-field label{
+  color:#64748b;
+}
+
+.case-dashboard-field input,
+.case-dashboard-field select,
+.case-dashboard-field textarea{
+  background:#ffffff;
+  border:1px solid rgba(15,23,42,0.12);
+  color:#111827;
+}
+
+@keyframes caseDashBorderRun{
+  0%{ background-position:0% 50%; }
+  100%{ background-position:280% 50%; }
+}
+
+@media (max-width: 1100px){
+  .case-dashboard-header,
+  .case-dashboard-grid,
+  .case-dashboard-grid.compact{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 760px){
+  .case-dashboard-system,
+  .case-dashboard-shell{
+    border-radius:22px;
+    padding:14px;
+  }
+
+  .case-dashboard-shell{
+    display:block;
+  }
+
+  .ma-control-sidebar{
+    position:static;
+    margin-bottom:14px;
+  }
+
+  .case-dashboard-header-copy,
+  .case-dashboard-summary-box,
+  .case-dashboard-card,
+  .case-dashboard-empty,
+  .case-dashboard-modal-shell{
+    border-radius:20px;
+  }
+
+  .case-dashboard-header-copy h2,
+  .case-dashboard-panel-head h3,
+  .case-dashboard-modal-shell h3{
+    font-size:30px;
+  }
+
+  .case-dashboard-topbar,
+  .case-dashboard-tabs,
+  .case-dashboard-panel-head,
+  .case-dashboard-card-actions,
+  .case-dashboard-modal-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .case-dashboard-btn,
+  .case-dashboard-tab{
+    width:100%;
+  }
+}
+</style>
+
+<script>
+(function() {
+  var sectionId = {{ section.id | json }};
+  var shell = document.getElementById('case-dashboard-system-' + sectionId);
+  if (!shell) return;
+
+  var tabs = Array.prototype.slice.call(shell.querySelectorAll('[data-dashboard-tab]'));
+  var panels = Array.prototype.slice.call(shell.querySelectorAll('[data-dashboard-panel]'));
+  var updateModal = document.getElementById('case-update-modal-' + sectionId);
+  var foundModal = document.getElementById('case-found-modal-' + sectionId);
+  var updateCaseTitle = updateModal ? updateModal.querySelector('[data-update-case-title]') : null;
+  var foundCaseTitle = foundModal ? foundModal.querySelector('[data-found-case-title]') : null;
+
+  function switchTab(tabName) {
+    tabs.forEach(function(tab) {
+      tab.classList.toggle('is-active', tab.getAttribute('data-dashboard-tab') === tabName);
+    });
+    panels.forEach(function(panel) {
+      panel.classList.toggle('is-active', panel.getAttribute('data-dashboard-panel') === tabName);
+    });
+  }
+
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      switchTab(tab.getAttribute('data-dashboard-tab'));
+    });
+  });
+
+  function setCounts() {
+    var active = shell.querySelectorAll('[data-case-card="active"]').length;
+    var pending = shell.querySelectorAll('[data-case-card="pending"]').length;
+    var resolved = shell.querySelectorAll('[data-case-card="resolved"]').length;
+
+    var activeEl = shell.querySelector('[data-count-active]');
+    var pendingEl = shell.querySelector('[data-count-pending]');
+    var resolvedEl = shell.querySelector('[data-count-resolved]');
+
+    if (activeEl) activeEl.textContent = active;
+    if (pendingEl) pendingEl.textContent = pending;
+    if (resolvedEl) resolvedEl.textContent = resolved;
+  }
+
+  function openModal(modal) {
+    if (!modal) return;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.documentElement.style.overflow = 'hidden';
+  }
+
+  function closeModal(modal) {
+    if (!modal) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.documentElement.style.overflow = '';
+  }
+
+  shell.querySelectorAll('[data-open-update-modal]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (updateCaseTitle) updateCaseTitle.textContent = btn.getAttribute('data-case-title') || 'Selected case';
+      openModal(updateModal);
+    });
+  });
+
+  shell.querySelectorAll('[data-open-found-modal]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (foundCaseTitle) foundCaseTitle.textContent = btn.getAttribute('data-case-title') || 'Selected case';
+      openModal(foundModal);
+    });
+  });
+
+  if (updateModal) {
+    updateModal.querySelectorAll('[data-close-update-modal]').forEach(function(btn) {
+      btn.addEventListener('click', function() { closeModal(updateModal); });
+    });
+  }
+
+  if (foundModal) {
+    foundModal.querySelectorAll('[data-close-found-modal]').forEach(function(btn) {
+      btn.addEventListener('click', function() { closeModal(foundModal); });
+    });
+  }
+
+  [updateModal, foundModal].forEach(function(modal) {
+    if (!modal) return;
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closeModal(modal);
+    });
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal(updateModal);
+      closeModal(foundModal);
+    }
+  });
+
+  if (updateModal) {
+    var updateForm = updateModal.querySelector('form');
+    if (updateForm) {
+      updateForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Next build stage will connect this update request to the real review queue.');
+      });
+    }
+  }
+
+  if (foundModal) {
+    var foundForm = foundModal.querySelector('form');
+    if (foundForm) {
+      foundForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Next build stage will connect this found request to the review queue and archive automation.');
+      });
+    }
+  }
+
+  setCounts();
+  switchTab('active');
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Case Dashboard",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Case Dashboard"
+    }
+  ]
+}
+{% endschema %}

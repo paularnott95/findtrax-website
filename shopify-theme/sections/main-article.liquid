@@ -1,0 +1,746 @@
+{{ 'section-blog-post.css' | asset_url | stylesheet_tag }}
+{{ 'case-page-premium.css' | asset_url | stylesheet_tag }}
+{{ 'case-comments.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase
+  assign case_owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase
+  assign case_found_note = article.metafields.custom.case_found_note.value | default: article.metafields.custom.case_found_note
+  assign case_updates_json = article.metafields.custom.case_updates_json.value | default: article.metafields.custom.case_updates_json
+  assign found_safe = false
+  assign is_seo_advice_article = false
+  assign share_url = request.origin | append: article.url
+  assign customer_tags_text = ''
+  assign professional_help_requested = article.metafields.custom.professional_help_enabled.value | default: article.metafields.custom.professional_help_enabled | default: article.metafields.custom.professional_help_requested.value | default: article.metafields.custom.professional_help_requested | default: article.metafields.custom.requesting_professional_help.value | default: article.metafields.custom.requesting_professional_help
+  assign case_owner_professional_help = article.metafields.custom.case_owner_professional_help.value | default: article.metafields.custom.case_owner_professional_help
+  assign case_allows_professional_contact = false
+  if professional_help_requested == true or professional_help_requested == 'true' or professional_help_requested == 'yes' or case_owner_professional_help == true or case_owner_professional_help == 'true' or case_owner_professional_help == 'yes'
+    assign case_allows_professional_contact = true
+  endif
+  if customer
+    assign customer_tags_text = customer.tags | join: ',' | downcase
+  endif
+  assign customer_is_professional = false
+  assign customer_is_premium_pro = false
+  if customer_tags_text contains 'professional'
+    assign customer_is_professional = true
+  endif
+  if customer_tags_text contains 'professional_premium' or customer_tags_text contains 'professional-enterprise' or customer_tags_text contains 'professional_enterprise' or customer_tags_text contains 'elite' or customer_tags_text contains 'top tier' or customer_tags_text contains 'premium'
+    assign customer_is_premium_pro = true
+  endif
+  if blog.handle == 'found-safe' or case_status == 'found' or case_status == 'resolved' or case_owner_status == 'resolved'
+    assign found_safe = true
+  endif
+  if blog.handle == 'missing-person-advice' or blog.handle == 'advice'
+    assign is_seo_advice_article = true
+  endif
+  for article_tag in article.tags
+    assign article_tag_downcase = article_tag | downcase | strip
+    if article_tag_downcase == 'seo-blog'
+      assign is_seo_advice_article = true
+    endif
+  endfor
+-%}
+
+{%- capture app_markup -%}{%- endcapture -%}
+{%- capture share_block_markup -%}{%- endcapture -%}
+{%- capture comments_markup -%}{%- endcapture -%}
+{%- assign title_show_date = false -%}
+
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+    {%- when '@app' -%}
+      {%- capture app_markup -%}
+        {{ app_markup }}
+        <div class="page-width page-width--narrow">
+          {% render block %}
+        </div>
+      {%- endcapture -%}
+
+    {%- when 'featured_image' -%}
+      {%- assign featured_image_block_present = true -%}
+
+    {%- when 'title' -%}
+      {%- assign title_show_date = block.settings.blog_show_date -%}
+
+    {%- when 'content' -%}
+      {%- assign content_block_present = true -%}
+
+    {%- when 'share' -%}
+      {%- capture share_block_markup -%}
+        <div
+          class="article-template__social-sharing{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          {% render 'share-button', block: block, share_link: share_url %}
+        </div>
+      {%- endcapture -%}
+  {%- endcase -%}
+{%- endfor -%}
+
+{%- if blog.comments_enabled? -%}
+  {%- capture comments_markup -%}
+    <div class="case-page-comments">
+      <div class="article-template__comment-wrapper background-secondary">
+        <div
+          id="comments"
+          class="{% if settings.animations_reveal_on_scroll %}scroll-trigger animate--slide-in{% endif %}"
+        >
+          <div class="case-page-card__eyebrow">Members-Only Comments</div>
+          <h2 class="case-page-card__title">Community updates and moderated discussion</h2>
+
+          {%- if article.comments_count > 0 -%}
+            {%- assign anchorId = '#Comments-' | append: article.id -%}
+
+            <h3 id="Comments-{{ article.id }}" tabindex="-1">
+              {{ 'blogs.article.comments' | t: count: article.comments_count }}
+            </h3>
+
+            {% paginate article.comments by 5 %}
+              <div class="article-template__comments">
+                {%- if comment.status == 'pending' and comment.content -%}
+                  <article id="{{ comment.id }}" class="article-template__comments-comment">
+                    {{ comment.content }}
+                    <footer class="right">
+                      <span class="circle-divider caption-with-letter-spacing">{{ comment.author }}</span>
+                    </footer>
+                  </article>
+                {%- endif -%}
+
+                {%- for comment in article.comments -%}
+                  <article id="{{ comment.id }}" class="article-template__comments-comment">
+                    {{ comment.content }}
+                    <footer class="right">
+                      <span class="circle-divider caption-with-letter-spacing">{{ comment.author }}</span><span class="caption-with-letter-spacing">
+                        {{- comment.created_at | time_tag: format: 'date' -}}
+                      </span>
+                    </footer>
+                  </article>
+                {%- endfor %}
+
+                {% render 'pagination', paginate: paginate, anchor: anchorId %}
+              </div>
+            {% endpaginate %}
+          {%- endif -%}
+
+          {% form 'new_comment', article %}
+            {%- liquid
+              assign post_message = 'blogs.article.success'
+              if blog.moderated? and comment.status == 'unapproved'
+                assign post_message = 'blogs.article.success_moderated'
+              endif
+            -%}
+
+            <h3>{{ 'blogs.article.comment_form_title' | t }}</h3>
+
+            {%- if form.errors -%}
+              <div class="form__message" role="alert">
+                <h4 class="form-status caption-large text-body" tabindex="-1" autofocus>
+                  <span class="svg-wrapper">
+                    {{- 'icon-error.svg' | inline_asset_content -}}
+                  </span>
+                  {{ 'templates.contact.form.error_heading' | t }}
+                </h4>
+              </div>
+
+              <ul class="form-status-list caption-large">
+                {%- for field in form.errors -%}
+                  <li>
+                    <a href="#CommentForm-{{ field }}" class="link">
+                      {%- if form.errors.translated_fields[field] contains 'author' -%}
+                        {{ 'blogs.article.name' | t }}
+                      {%- elsif form.errors.translated_fields[field] contains 'body' -%}
+                        {{ 'blogs.article.message' | t }}
+                      {%- else -%}
+                        {{ form.errors.translated_fields[field] }}
+                      {%- endif -%}
+                      {{ form.errors.messages[field] }}
+                    </a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- elsif form.posted_successfully? -%}
+              <div class="form-status-list form__message" role="status">
+                <h4 class="form-status" tabindex="-1" autofocus>
+                  <span class="svg-wrapper">
+                    {{- 'icon-success.svg' | inline_asset_content -}}
+                  </span>
+                  {{ post_message | t }}
+                </h4>
+              </div>
+            {%- endif -%}
+
+            <div {% if blog.moderated? == false %}class="article-template__comments-fields"{% endif %}>
+              <div class="article-template__comment-fields">
+                <div class="field field--with-error">
+                  <input
+                    type="text"
+                    name="comment[author]"
+                    id="CommentForm-author"
+                    class="field__input"
+                    autocomplete="name"
+                    value="{{ form.author }}"
+                    aria-required="true"
+                    required
+                    {% if form.errors contains 'author' %}
+                      aria-invalid="true"
+                      aria-describedby="CommentForm-author-error"
+                    {% endif %}
+                    placeholder="{{ 'blogs.article.name' | t }}"
+                  >
+                  <label class="field__label" for="CommentForm-author">
+                    {{- 'blogs.article.name' | t }}
+                    <span aria-hidden="true">*</span>
+                  </label>
+
+                  {%- if form.errors contains 'author' -%}
+                    <small id="CommentForm-author-error">
+                      <span class="form__message">
+                        <span class="svg-wrapper">
+                          {{- 'icon-error.svg' | inline_asset_content -}}
+                        </span>
+                        {{- 'blogs.article.name' | t }}
+                        {{ form.errors.messages.author }}.
+                      </span>
+                    </small>
+                  {%- endif -%}
+                </div>
+
+                <div class="field field--with-error">
+                  <input
+                    type="email"
+                    name="comment[email]"
+                    id="CommentForm-email"
+                    autocomplete="email"
+                    class="field__input"
+                    value="{{ form.email }}"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    aria-required="true"
+                    required
+                    {% if form.errors contains 'email' %}
+                      aria-invalid="true"
+                      aria-describedby="CommentForm-email-error"
+                    {% endif %}
+                    placeholder="{{ 'blogs.article.email' | t }}"
+                  >
+                  <label class="field__label" for="CommentForm-email">
+                    {{- 'blogs.article.email' | t }}
+                    <span aria-hidden="true">*</span>
+                  </label>
+
+                  {%- if form.errors contains 'email' -%}
+                    <small id="CommentForm-email-error">
+                      <span class="form__message">
+                        <span class="svg-wrapper">
+                          {{- 'icon-error.svg' | inline_asset_content -}}
+                        </span>
+                        {{- 'blogs.article.email' | t }}
+                        {{ form.errors.messages.email }}.
+                      </span>
+                    </small>
+                  {%- endif -%}
+                </div>
+              </div>
+
+              <div class="field field--with-error">
+                <textarea
+                  rows="5"
+                  name="comment[body]"
+                  id="CommentForm-body"
+                  class="text-area field__input"
+                  aria-required="true"
+                  required
+                  {% if form.errors contains 'body' %}
+                    aria-invalid="true"
+                    aria-describedby="CommentForm-body-error"
+                  {% endif %}
+                  placeholder="{{ 'blogs.article.message' | t }}"
+                >{{ form.body }}</textarea>
+
+                <label class="form__label field__label" for="CommentForm-body">
+                  {{- 'blogs.article.message' | t }}
+                  <span aria-hidden="true">*</span>
+                </label>
+              </div>
+
+              {%- if form.errors contains 'body' -%}
+                <small id="CommentForm-body-error">
+                  <span class="form__message">
+                    <span class="svg-wrapper">
+                      {{- 'icon-error.svg' | inline_asset_content -}}
+                    </span>
+                    {{- 'blogs.article.message' | t }}
+                    {{ form.errors.messages.body }}.
+                  </span>
+                </small>
+              {%- endif -%}
+            </div>
+
+            {%- if blog.moderated? -%}
+              <p class="article-template__comment-warning caption">{{ 'blogs.article.moderated' | t }}</p>
+            {%- endif -%}
+
+            <input type="submit" class="button" value="{{ 'blogs.article.post' | t }}">
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  {%- endcapture -%}
+{%- endif -%}
+
+{% if is_seo_advice_article %}
+  {{ 'seo-advice-blog.css' | asset_url | stylesheet_tag }}
+
+  <article class="seo-advice-article">
+    <div class="seo-advice-article__inner">
+      <div class="seo-advice-article__hero">
+        <div>
+          <div class="seo-advice-article__meta">
+            Missing Alerts advice{% if article.published_at %} • {{ article.published_at | time_tag: format: 'date' }}{% endif %}
+          </div>
+          <h1 class="seo-advice-article__title">{{ article.title | escape }}</h1>
+          {% if article.excerpt != blank %}
+            <p class="seo-advice-article__excerpt">{{ article.excerpt | strip_html }}</p>
+          {% endif %}
+          {% if share_block_markup != blank %}
+            {{ share_block_markup }}
+          {% endif %}
+          <div class="seo-advice-share-loop" aria-label="Share this Missing Alerts advice">
+            <p>Stay informed and help share information safely.</p>
+            <a href="#SeoAdviceNewsletter-{{ article.id }}">Get Alerts</a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener">Facebook</a>
+            <a href="https://wa.me/?text={{ article.title | url_encode }} {{ share_url | url_encode }}" target="_blank" rel="noopener">WhatsApp</a>
+            <button type="button" data-case-copy-link="{{ share_url }}">Copy link</button>
+          </div>
+        </div>
+        <div class="seo-advice-article__visual" aria-hidden="true">
+          {% if article.image %}
+            {{ article.image | image_url: width: 900 | image_tag: loading: 'eager', widths: '360, 540, 720, 900', alt: article.title }}
+          {% else %}
+            <img src="{{ 'missing-person-silhouette.svg' | asset_url }}" alt="" width="900" height="600" loading="eager">
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="seo-advice-article__layout">
+        <div class="seo-advice-article__main">
+          {% render 'adsense-slot', slot_type: 'advice', position: 'after-intro' %}
+          {% liquid
+            assign cleaned_article_content = article.content
+            assign legacy_support_intro = '<p>If this advice helped you, or if you want to support the platform, you can buy us a coffee and help keep Missing Alerts running.</p>'
+            assign legacy_support_button_text = 'Buy me' | append: ' a coffee ☕'
+            assign legacy_support_button = '<a href="https://buymeacoffee.com/missingalerts" class="seo-advice-button" target="_blank" rel="noopener">' | append: legacy_support_button_text | append: '</a>'
+            assign cleaned_article_content = cleaned_article_content | replace: legacy_support_intro, ''
+            assign cleaned_article_content = cleaned_article_content | replace: legacy_support_button, ''
+          %}
+          <div class="seo-advice-article__body">
+            {{ cleaned_article_content }}
+          </div>
+
+          {% render 'related-safety-products',
+            article: article,
+            heading: 'Related safety product guides',
+            limit: 3
+          %}
+
+          <section class="seo-advice-location-funnel" aria-labelledby="SeoAdviceLocationFunnel-{{ article.id }}">
+            <div>
+              <p class="seo-advice-support-box__eyebrow">Location alerts</p>
+              <h2 id="SeoAdviceLocationFunnel-{{ article.id }}">Find missing people by location</h2>
+              <p>Use the location pages to check live alerts, nearby areas and police-first guidance for priority regions.</p>
+            </div>
+            <div class="seo-advice-location-funnel__links">
+              <a href="/pages/missing-people-location?loc=united-kingdom/england/london">missing people in London</a>
+              <a href="/pages/missing-people-location?loc=united-states/new-york/new-york-city">missing people in New York</a>
+              <a href="/pages/missing-people-location?loc=france/ile-de-france/paris">missing people in Paris</a>
+              <a href="/pages/missing-people-location?loc=india/maharashtra/mumbai">missing people in Mumbai</a>
+              <a href="/pages/missing-people-location?loc=australia/new-south-wales/sydney">missing people in Sydney</a>
+              <a href="/pages/submit-case">report a missing person</a>
+            </div>
+          </section>
+          {% assign seo_advice_cases_blog = blogs['missing-persons'] %}
+          {% if seo_advice_cases_blog != blank %}
+            <section class="seo-advice-location-funnel" aria-labelledby="SeoAdviceCaseFunnel-{{ article.id }}">
+              <div>
+                <p class="seo-advice-support-box__eyebrow">Current appeals</p>
+                <h2 id="SeoAdviceCaseFunnel-{{ article.id }}">Related missing person cases</h2>
+                <p>These current public appeals connect advice readers back into live case pages and local location hubs.</p>
+              </div>
+              <div class="seo-advice-location-funnel__links">
+                {% for case_article in seo_advice_cases_blog.articles limit: 6 %}
+                  <a href="{{ case_article.url }}">{{ case_article.title | escape }}</a>
+                {% endfor %}
+              </div>
+            </section>
+          {% endif %}
+          {% render 'adsense-slot', slot_type: 'advice', position: 'near-bottom' %}
+
+          <section class="seo-advice-conversion" aria-labelledby="SeoAdviceConversion-{{ article.id }}">
+            <div>
+              <p class="seo-advice-support-box__eyebrow">Stay informed</p>
+              <h2 id="SeoAdviceConversion-{{ article.id }}">Don't miss important Missing Alerts updates</h2>
+              <p>We'll only send relevant updates. Always contact police first. No spam. Only important updates.</p>
+            </div>
+            <div class="seo-advice-support-box__actions">
+              <a href="#SeoAdviceNewsletter-{{ article.id }}" class="seo-advice-button">Get Alerts</a>
+              <a href="/pages/top-missing-locations" class="seo-advice-button seo-advice-button--secondary">Find locations</a>
+            </div>
+          </section>
+
+          {% liquid
+            assign buy_me_a_coffee_url = settings.buy_me_a_coffee_url | default: section.settings.buy_me_a_coffee_url | default: 'https://buymeacoffee.com/missingalerts'
+            if buy_me_a_coffee_url == blank
+              assign buy_me_a_coffee_url = 'https://buymeacoffee.com/missingalerts'
+            endif
+            assign seo_advice_support_box_id = 'SeoAdviceSupport-' | append: article.id
+          %}
+          <!-- MA_SUPPORT_BOX_REFRESH_FINAL -->
+          {% render 'support-missing-alerts-box', support_url: buy_me_a_coffee_url, support_box_id: seo_advice_support_box_id %}
+
+          {% if settings.newsletter_enable %}
+            <section class="seo-advice-newsletter">
+              {% form 'customer', class: 'newsletter-form' %}
+                <input type="hidden" name="contact[tags]" value="newsletter,missing-alerts-advice,location-digest-weekly">
+                <label class="seo-advice-newsletter__label" for="SeoAdviceNewsletter-{{ article.id }}">Get Missing Alerts updates</label>
+                <div class="seo-advice-newsletter__row">
+                  <input id="SeoAdviceNewsletter-{{ article.id }}" type="email" name="contact[email]" autocomplete="email" placeholder="Email address" class="seo-advice-newsletter__input" required>
+                  <button type="submit" class="seo-advice-button">Join alerts</button>
+                </div>
+                <p>We'll only send relevant updates. Always contact police first. No spam. Only important updates.</p>
+              {% endform %}
+            </section>
+          {% endif %}
+        </div>
+
+        <aside class="seo-advice-sidebar" aria-label="Missing Alerts actions">
+          <a href="/blogs/missing-persons" class="seo-advice-sidebar__card seo-advice-sidebar__card--red">
+            <span>Search live missing cases</span>
+            <strong>View current public appeals</strong>
+          </a>
+          <a href="/pages/submit-a-case" class="seo-advice-sidebar__card">
+            <span>Submit a case</span>
+            <strong>Create a Missing Alerts appeal</strong>
+          </a>
+          <a href="/pages/member-area" class="seo-advice-sidebar__card">
+            <span>Join local alerts</span>
+            <strong>Manage member support and alerts</strong>
+          </a>
+          <a href="/pages/support-missing-alerts" class="seo-advice-sidebar__card">
+            <span>Support Missing Alerts</span>
+            <strong>Help keep appeals visible</strong>
+          </a>
+          <div class="seo-advice-sidebar__panel">
+            <span>Boosted appeals</span>
+            {% render 'boosted-sidebar' %}
+          </div>
+          <div class="seo-advice-sidebar__panel">
+            <span>Ad / sponsor</span>
+            {% render 'adsense-slot', slot_type: 'advice', position: 'sidebar' %}
+          </div>
+          <div class="seo-advice-sidebar__panel">
+            <span>Related advice</span>
+            <a href="/pages/missing-person-advice">Advice hub</a>
+            <a href="/blogs/missing-person-advice/tagged/topic:safe-social-sharing">Safe sharing</a>
+            <a href="/blogs/missing-person-advice/tagged/topic:missing-person-poster-guide">Poster guidance</a>
+          </div>
+          {% render 'related-safety-products',
+            article: article,
+            heading: 'Safety product guides',
+            limit: 2
+          %}
+        </aside>
+      </div>
+
+      <div class="article-template__back element-margin-top center">
+        <a href="/pages/missing-person-advice" class="article-template__link link animate-arrow">
+          <span class="icon-wrap">
+            <span class="svg-wrapper">
+              {{- 'icon-arrow.svg' | inline_asset_content -}}
+            </span>
+          </span>
+          Back to advice hub
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": {{ article.title | json }},
+      "description": {{ article.excerpt_or_content | strip_html | truncate: 160 | json }},
+      "datePublished": {{ article.published_at | date: '%Y-%m-%d' | json }},
+      "dateModified": {{ article.updated_at | date: '%Y-%m-%d' | json }},
+      "mainEntityOfPage": {{ request.origin | append: article.url | json }}
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Missing Person Advice Hub",
+          "item": {{ request.origin | append: '/pages/missing-person-advice' | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ article.title | json }},
+          "item": {{ request.origin | append: article.url | json }}
+        }
+      ]
+    }
+  </script>
+{% else %}
+<article class="article-template article-template--premium">
+
+  <div class="case-page-premium">
+    {% if app_markup != blank %}
+      <div class="case-page-apps">
+        {{ app_markup }}
+      </div>
+    {% endif %}
+
+    {% render 'ma-spotlight-bar', article: article %}
+    {% render 'case-page-compact-spotlight', article: article, blog: blog %}
+
+    <div class="case-page-shell">
+      {% render 'case-page-main-file',
+        article: article,
+        blog: blog,
+        section: section,
+        found_safe: found_safe,
+        case_status: case_status,
+        case_owner_status: case_owner_status,
+        case_found_note: case_found_note,
+        case_updates_json: case_updates_json,
+        share_url: share_url,
+        share_block_markup: share_block_markup,
+        comments_markup: comments_markup,
+        title_show_date: title_show_date
+      %}
+
+      {% render 'case-page-right-rail', mode: 'actions', article: article, blog: blog, found_safe: found_safe, section: section %}
+
+      {% render 'case-page-left-rail', article: article, blog: blog, found_safe: found_safe %}
+      {% render 'case-page-right-rail', mode: 'support', article: article, blog: blog, found_safe: found_safe, section: section %}
+    </div>
+
+    {% render 'case-page-bottom-panels', article: article, blog: blog %}
+
+    {% render 'adsense-slot', slot_type: 'case', position: 'lower-page-after-safety' %}
+
+    {% render 'missing-alerts-signup',
+      location_slug: article.metafields.custom.location_slug_path.value,
+      location_label: article.metafields.custom.last_seen_area.value | default: article.metafields.custom.city_town.value | default: article.title,
+      page_type: 'article'
+    %}
+
+    <div class="article-template__back element-margin-top center{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <a href="{{ blog.url }}" class="article-template__link link animate-arrow">
+        <span class="icon-wrap">
+          <span class="svg-wrapper">
+            {{- 'icon-arrow.svg' | inline_asset_content -}}
+          </span>
+        </span>
+        {{ 'blogs.article.back_to_blog' | t: title: blog.title | escape }}
+      </a>
+    </div>
+  </div>
+</article>
+
+<script>
+  window.MissingAlertsCaseComments = {
+    apiBase: window.MISSING_ALERTS_API_BASE || 'https://project-155fd.vercel.app',
+    caseHandle: {{ article.handle | json }},
+    articleId: {{ article.id | json }},
+    caseTitle: {{ article.title | json }},
+    customerId: {% if customer %}{{ customer.id | json }}{% else %}null{% endif %},
+    customerEmail: {% if customer %}{{ customer.email | json }}{% else %}null{% endif %},
+    customerName: {% if customer %}{{ customer.name | json }}{% else %}null{% endif %},
+    signedIn: {% if customer %}true{% else %}false{% endif %},
+    isProfessional: {{ customer_is_professional | json }},
+    premiumProfessional: {{ customer_is_premium_pro | json }},
+    caseAllowsProfessionalContact: {{ case_allows_professional_contact | json }}
+  };
+
+  (function() {
+    var copyButtons = document.querySelectorAll('[data-case-copy-link]');
+
+    copyButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        var url = button.getAttribute('data-case-copy-link');
+        if (!url || !navigator.clipboard) return;
+        navigator.clipboard.writeText(url);
+      });
+    });
+  })();
+</script>
+<script src="{{ 'case-comments.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign schema_case_city = article.metafields.custom.city_town.value | default: article.metafields.custom.city_town | default: article.metafields.custom.city.value | default: article.metafields.custom.city | strip
+  assign schema_case_region = article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | default: article.metafields.custom.region.value | default: article.metafields.custom.region | strip
+  assign schema_case_country = article.metafields.custom.country.value | default: article.metafields.custom.country | default: article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | strip
+  assign schema_case_location = schema_case_city
+  if schema_case_location != blank and schema_case_region != blank
+    assign schema_case_location = schema_case_location | append: ', ' | append: schema_case_region
+  elsif schema_case_region != blank
+    assign schema_case_location = schema_case_region
+  endif
+  if schema_case_location != blank and schema_case_country != blank
+    assign schema_case_location = schema_case_location | append: ', ' | append: schema_case_country
+  endif
+  assign schema_case_age = article.metafields.custom.age.value | default: article.metafields.custom.age | strip
+  assign schema_case_gender = article.metafields.custom.gender.value | default: article.metafields.custom.gender | strip
+  assign schema_last_seen_at = article.metafields.custom.last_seen_at.value | default: article.metafields.custom.last_seen_at | strip
+  assign schema_reported_missing_at = article.metafields.custom.reported_missing_at.value | default: article.metafields.custom.reported_missing_at | strip
+-%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "NewsArticle",
+        "headline": {{ article.title | json }},
+        "description": {{ article.excerpt_or_content | strip_html | truncate: 180 | json }},
+        "datePublished": {{ article.published_at | date: '%Y-%m-%d' | json }},
+        "dateModified": {{ article.updated_at | date: '%Y-%m-%d' | json }},
+        "mainEntityOfPage": {{ request.origin | append: article.url | json }},
+        "author": { "@type": "Organization", "name": "Missing Alerts" },
+        "publisher": { "@type": "Organization", "name": "Missing Alerts" }
+        {% if article.image %},
+          "image": [{{ article.image | image_url: width: 1200 | prepend: 'https:' | json }}]
+        {% endif %}
+        {% if schema_case_location != blank %},
+          "spatialCoverage": {
+            "@type": "Place",
+            "name": {{ schema_case_location | json }}
+          }
+        {% endif %}
+      },
+      {
+        "@type": "MissingPerson",
+        "name": {{ article.title | json }},
+        "url": {{ request.origin | append: article.url | json }}
+        {% if article.image %},
+          "image": {{ article.image | image_url: width: 800 | prepend: 'https:' | json }}
+        {% endif %}
+        {% if schema_case_age != blank %},
+          "age": {{ schema_case_age | json }}
+        {% endif %}
+        {% if schema_case_gender != blank %},
+          "gender": {{ schema_case_gender | json }}
+        {% endif %}
+        {% if schema_case_location != blank %},
+          "lastKnownLocation": {
+            "@type": "Place",
+            "name": {{ schema_case_location | json }}
+          }
+        {% endif %}
+        {% if schema_last_seen_at != blank %},
+          "dateMissing": {{ schema_last_seen_at | json }}
+        {% elsif schema_reported_missing_at != blank %},
+          "dateMissing": {{ schema_reported_missing_at | json }}
+        {% endif %}
+      }
+    ]
+  }
+</script>
+<script type="application/ld+json">
+  {{ article | structured_data }}
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:sections.main-article.name",
+  "tag": "section",
+  "class": "section",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "featured_image",
+      "name": "t:sections.main-article.blocks.featured_image.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "image_height",
+          "options": [
+            {
+              "value": "adapt",
+              "label": "t:sections.main-article.blocks.featured_image.settings.image_height.options__1.label"
+            },
+            {
+              "value": "small",
+              "label": "t:sections.main-article.blocks.featured_image.settings.image_height.options__2.label"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.main-article.blocks.featured_image.settings.image_height.options__3.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.main-article.blocks.featured_image.settings.image_height.options__4.label"
+            }
+          ],
+          "default": "adapt",
+          "label": "t:sections.main-article.blocks.featured_image.settings.image_height.label"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "name": "t:sections.main-article.blocks.title.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "blog_show_date",
+          "default": true,
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_date.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_show_author",
+          "default": false,
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_author.label"
+        }
+      ]
+    },
+    {
+      "type": "content",
+      "name": "t:sections.main-article.blocks.content.name",
+      "limit": 1
+    },
+    {
+      "type": "share",
+      "name": "t:sections.main-article.blocks.share.name",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "text",
+          "id": "share_label",
+          "label": "t:sections.main-article.blocks.share.settings.text.label",
+          "default": "t:sections.main-article.blocks.share.settings.text.default"
+        }
+      ]
+    }
+  ],
+  "settings": [
+      {
+        "type": "url",
+        "id": "buy_me_a_coffee_url",
+        "label": "Advice Support Platform URL"
+      }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,222 @@
+{% assign directory_login_return_separator = '?' %}
+{% if routes.account_login_url contains '?' %}
+  {% assign directory_login_return_separator = '&' %}
+{% endif %}
+{% assign directory_login_url = routes.account_login_url | append: directory_login_return_separator | append: 'return_url=/pages/member-area' %}
+{% assign directory_customer_tags = '' %}
+{% assign directory_member_status = '' %}
+{% assign directory_professional_status = '' %}
+{% assign eligible_to_contact = false %}
+{% assign approved_professional_access = false %}
+{% if customer %}
+  {% assign directory_customer_tags = customer.tags | join: ',' | downcase %}
+  {% assign directory_member_status = customer.metafields.custom.membership_status.value | default: customer.metafields.custom.membership_status | append: '' | downcase %}
+  {% assign directory_professional_status = customer.metafields.custom.professional_verification_status.value | default: customer.metafields.custom.professional_verification_status | default: customer.metafields.custom.professional_status.value | default: customer.metafields.custom.professional_status | append: '' | downcase %}
+  {% if directory_customer_tags contains 'professional'
+    or directory_customer_tags contains 'pro'
+    or directory_customer_tags contains 'professional_access'
+    or directory_customer_tags contains 'professional_plus'
+    or directory_customer_tags contains 'professional_elite'
+    or directory_customer_tags contains 'professional_verified'
+    or directory_customer_tags contains 'verified-professional'
+    or directory_customer_tags contains 'approved-professional'
+  %}
+    {% assign approved_professional_access = true %}
+  {% endif %}
+  {% if directory_customer_tags contains 'verified'
+    or directory_customer_tags contains 'approved'
+    or directory_customer_tags contains 'claimed_case_owner'
+    or directory_customer_tags contains 'uploaded_case_owner'
+    or directory_customer_tags contains 'case_owner'
+    or directory_member_status contains 'verified'
+    or directory_professional_status contains 'verified'
+  %}
+  {% assign eligible_to_contact = true %}
+  {% endif %}
+{% endif %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding { padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px; padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px; }
+  @media screen and (min-width: 750px) { .section-{{ section.id }}-padding { padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px; } }
+  .professionals-directory-{{ section.id }} { max-width: 1320px; margin: 0 auto; padding: 0 1.5rem; color: #fff; }
+  .professionals-directory__shell-{{ section.id }} { overflow: hidden; border-radius: 32px; padding: 1.5rem; background: radial-gradient(circle at top left, rgba(255,49,86,0.24), transparent 26%), radial-gradient(circle at 80% 10%, rgba(76,120,255,0.10), transparent 24%), linear-gradient(180deg,#090a0d 0%,#050506 100%); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 24px 80px rgba(0,0,0,0.36), inset 0 1px 0 rgba(255,255,255,0.04); }
+  .professionals-directory__hero-{{ section.id }}, .professionals-directory__filters-{{ section.id }}, .professionals-directory__card-{{ section.id }}, .professionals-directory__empty-{{ section.id }} { background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)), linear-gradient(180deg, #15161a 0%, #0a0b0e 100%); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 18px 40px rgba(0,0,0,0.24); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  .professionals-directory__hero-{{ section.id }}, .professionals-directory__filters-{{ section.id }}, .professionals-directory__empty-{{ section.id }} { border-radius: 28px; padding: 1.6rem; }
+  .professionals-directory__card-{{ section.id }} { border-radius: 24px; padding: 1.25rem; }
+  .professionals-directory__eyebrow-{{ section.id }}, .professionals-directory__field-{{ section.id }} label, .professionals-directory__badge-{{ section.id }}, .professionals-directory__meta-chip-{{ section.id }} { font-size: 0.9rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+  .professionals-directory__eyebrow-{{ section.id }} { margin: 0 0 0.55rem; color: #ffb4bf; }
+  .professionals-directory__heading-{{ section.id }}, .professionals-directory__name-{{ section.id }} { margin: 0; text-transform: uppercase; }
+  .professionals-directory__heading-{{ section.id }} { font-size: clamp(3rem,5vw,5rem); line-height: 0.95; }
+  .professionals-directory__intro-{{ section.id }}, .professionals-directory__copy-{{ section.id }}, .professionals-directory__safe-note-{{ section.id }} { color: rgba(255,255,255,0.76); line-height: 1.7; }
+  .professionals-directory__intro-{{ section.id }} { max-width: 66rem; margin: 1rem 0 0; font-size: 1.15rem; }
+  .professionals-directory__actions-{{ section.id }} { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 1.5rem; }
+  .professionals-directory__button-{{ section.id }}, .professionals-directory__button-secondary-{{ section.id }}, .professionals-directory__cta-{{ section.id }}, .professionals-directory__locked-cta-{{ section.id }} { display: inline-flex; align-items: center; justify-content: center; min-height: 3.4rem; padding: 0 1.35rem; border-radius: 999px; text-decoration: none; font-size: 0.9rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; }
+  .professionals-directory__button-{{ section.id }}, .professionals-directory__cta-{{ section.id }} { color: #fff; background: linear-gradient(135deg, #ff2f43 0%, #d90429 58%, #8f0016 100%); box-shadow: 0 14px 28px rgba(217,4,41,0.28); }
+  .professionals-directory__button-secondary-{{ section.id }}, .professionals-directory__locked-cta-{{ section.id }} { color: #fff; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); }
+  .professionals-directory__filter-grid-{{ section.id }} { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .professionals-directory__field-{{ section.id }} { display: grid; gap: 0.55rem; }
+  .professionals-directory__field-{{ section.id }} input, .professionals-directory__field-{{ section.id }} select { width: 100%; min-height: 3.35rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: #fff; padding: 0.9rem 1rem; }
+  .professionals-directory__list-{{ section.id }} { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .professionals-directory__badges-{{ section.id }}, .professionals-directory__meta-{{ section.id }} { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+  .professionals-directory__badge-{{ section.id }}, .professionals-directory__meta-chip-{{ section.id }} { display: inline-flex; align-items: center; min-height: 2.2rem; padding: 0 0.8rem; border-radius: 999px; }
+  .professionals-directory__badge-{{ section.id }} { border: 1px solid rgba(16,185,129,0.22); background: rgba(16,185,129,0.14); color: #d1fae5; }
+  .professionals-directory__meta-chip-{{ section.id }} { border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.82); }
+  .professionals-directory__name-{{ section.id }} { margin-top: 1rem; font-size: 1.5rem; }
+  .professionals-directory__safe-note-{{ section.id }} { margin-top: 1rem; padding: 0.95rem 1rem; border-radius: 18px; border: 1px solid rgba(251,191,36,0.18); background: rgba(251,191,36,0.08); }
+  @media screen and (max-width: 989px) { .professionals-directory__filter-grid-{{ section.id }}, .professionals-directory__list-{{ section.id }} { grid-template-columns: 1fr; } }
+  @media screen and (max-width: 749px) { .professionals-directory__shell-{{ section.id }} { padding: 1rem; border-radius: 24px; } .professionals-directory__hero-{{ section.id }}, .professionals-directory__filters-{{ section.id }}, .professionals-directory__card-{{ section.id }}, .professionals-directory__empty-{{ section.id }} { padding: 1.2rem; border-radius: 20px; } }
+{%- endstyle -%}
+
+<section class="professionals-directory-{{ section.id }} section-{{ section.id }}-padding">
+  <div class="professionals-directory__shell-{{ section.id }}">
+    <div class="professionals-directory__hero-{{ section.id }}">
+      <p class="professionals-directory__eyebrow-{{ section.id }}">Verified Professionals</p>
+      <h1 class="professionals-directory__heading-{{ section.id }}">PROFESSIONALS DIRECTORY</h1>
+      <p class="professionals-directory__intro-{{ section.id }}">
+        BROWSE VERIFIED PROFESSIONALS BY COUNTRY AND SERVICE TYPE. PUBLIC CARDS ONLY SHOW SAFE SUMMARY INFORMATION AND NEVER EXPOSE PRIVATE EMAILS OR PHONE NUMBERS.
+      </p>
+      <div class="professionals-directory__actions-{{ section.id }}">
+        <a href="/pages/professional-area" class="professionals-directory__button-{{ section.id }}">PROFESSIONAL ACCESS</a>
+        <a href="/pages/professional-membership" class="professionals-directory__button-secondary-{{ section.id }}">BECOME A PROFESSIONAL</a>
+        <a href="{{ directory_login_url }}" class="professionals-directory__button-secondary-{{ section.id }}">MEMBER LOGIN</a>
+      </div>
+    </div>
+
+    <div class="professionals-directory__filters-{{ section.id }}">
+      <p class="professionals-directory__eyebrow-{{ section.id }}">FILTERS</p>
+      <div class="professionals-directory__filter-grid-{{ section.id }}">
+        <div class="professionals-directory__field-{{ section.id }}"><label for="pro-country-{{ section.id }}">COUNTRY</label><select id="pro-country-{{ section.id }}" data-directory-country><option value="">ALL COUNTRIES</option><option value="united kingdom">UNITED KINGDOM</option><option value="united states">UNITED STATES</option><option value="australia">AUSTRALIA</option></select></div>
+        <div class="professionals-directory__field-{{ section.id }}"><label for="pro-service-{{ section.id }}">SERVICE</label><select id="pro-service-{{ section.id }}" data-directory-service><option value="">ALL SERVICES</option><option value="private investigator">PRIVATE INVESTIGATOR</option><option value="search team">SEARCH TEAM</option><option value="legal support">LEGAL SUPPORT</option><option value="safeguarding">SAFEGUARDING</option><option value="translation">TRANSLATION</option><option value="media support">MEDIA SUPPORT</option></select></div>
+        <div class="professionals-directory__field-{{ section.id }}"><label for="pro-search-{{ section.id }}">SEARCH</label><input id="pro-search-{{ section.id }}" type="text" placeholder="SEARCH PROFESSIONALS" data-directory-search></div>
+      </div>
+    </div>
+
+    <div class="professionals-directory__list-{{ section.id }}" data-directory-list>
+      {% for block in section.blocks %}
+        {% if block.type == 'professional' %}
+          <article class="professionals-directory__card-{{ section.id }}" {{ block.shopify_attributes }} data-card-country="{{ block.settings.country | downcase }}" data-card-services="{{ block.settings.services | downcase }}" data-card-search="{{ block.settings.name | append: ' ' | append: block.settings.country | append: ' ' | append: block.settings.region | append: ' ' | append: block.settings.services | append: ' ' | append: block.settings.bio | downcase }}">
+            <div class="professionals-directory__badges-{{ section.id }}">
+              <span class="professionals-directory__badge-{{ section.id }}">VERIFIED PROFESSIONAL</span>
+              <span class="professionals-directory__meta-chip-{{ section.id }}">{{ block.settings.tier }}</span>
+              {% if block.settings.worldwide %}<span class="professionals-directory__meta-chip-{{ section.id }}">WORLDWIDE</span>{% endif %}
+            </div>
+            <h2 class="professionals-directory__name-{{ section.id }}">{{ block.settings.name }}</h2>
+            <div class="professionals-directory__meta-{{ section.id }}" style="margin-top: 0.85rem;">
+              <span class="professionals-directory__meta-chip-{{ section.id }}">{{ block.settings.country }}</span>
+              {% if block.settings.region != blank %}<span class="professionals-directory__meta-chip-{{ section.id }}">{{ block.settings.region }}</span>{% endif %}
+              {% if block.settings.response_time != blank %}<span class="professionals-directory__meta-chip-{{ section.id }}">RESPONSE {{ block.settings.response_time }}</span>{% endif %}
+            </div>
+            <p class="professionals-directory__copy-{{ section.id }}">{{ block.settings.services }}</p>
+            <p class="professionals-directory__copy-{{ section.id }}">{{ block.settings.bio }}</p>
+            <div class="professionals-directory__safe-note-{{ section.id }}">SAFE CONTACT ONLY. PRIVATE EMAILS AND PHONE NUMBERS ARE NEVER SHOWN PUBLICLY.</div>
+            {% if customer == blank %}
+              <a href="{{ directory_login_url }}" class="professionals-directory__locked-cta-{{ section.id }}">LOG IN TO CONTACT</a>
+            {% elsif approved_professional_access or eligible_to_contact %}
+              <a href="/pages/member-area#member-portal-inbox" class="professionals-directory__cta-{{ section.id }}">MESSAGE PROFESSIONAL</a>
+            {% else %}
+              <a href="/pages/professional-membership" class="professionals-directory__locked-cta-{{ section.id }}">PROFESSIONAL ACCESS REQUIRED</a>
+            {% endif %}
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="professionals-directory__empty-{{ section.id }}" data-directory-empty hidden>
+      NO VERIFIED PROFESSIONALS MATCH THE CURRENT FILTERS.
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    var root = document.querySelector('.professionals-directory-{{ section.id }}');
+    if (!root) return;
+    var countrySelect = root.querySelector('[data-directory-country]');
+    var serviceSelect = root.querySelector('[data-directory-service]');
+    var searchInput = root.querySelector('[data-directory-search]');
+    var cards = Array.prototype.slice.call(root.querySelectorAll('[data-card-country]'));
+    var emptyState = root.querySelector('[data-directory-empty]');
+    function applyFilters() {
+      var country = (countrySelect && countrySelect.value || '').toLowerCase();
+      var service = (serviceSelect && serviceSelect.value || '').toLowerCase();
+      var search = (searchInput && searchInput.value || '').trim().toLowerCase();
+      var visible = 0;
+      cards.forEach(function(card) {
+        var cardCountry = String(card.getAttribute('data-card-country') || '');
+        var cardServices = String(card.getAttribute('data-card-services') || '');
+        var cardSearch = String(card.getAttribute('data-card-search') || '');
+        var matchesCountry = !country || cardCountry === country || cardCountry.indexOf(country) !== -1;
+        var matchesService = !service || cardServices.indexOf(service) !== -1;
+        var matchesSearch = !search || cardSearch.indexOf(search) !== -1;
+        var show = matchesCountry && matchesService && matchesSearch;
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+      if (emptyState) emptyState.hidden = visible !== 0;
+    }
+    [countrySelect, serviceSelect, searchInput].forEach(function(node) {
+      if (!node) return;
+      node.addEventListener('input', applyFilters);
+      node.addEventListener('change', applyFilters);
+    });
+    applyFilters();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Professionals Directory",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "professional",
+      "name": "Professional",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Name", "default": "NORTHBRIDGE SEARCH SUPPORT" },
+        { "type": "text", "id": "country", "label": "Country", "default": "UNITED KINGDOM" },
+        { "type": "text", "id": "region", "label": "Region", "default": "GREATER LONDON" },
+        { "type": "text", "id": "services", "label": "Services", "default": "SEARCH TEAM, SAFEGUARDING, MEDIA SUPPORT" },
+        { "type": "textarea", "id": "bio", "label": "Bio", "default": "VERIFIED SUPPORT PROFILE PREPARED FOR SAFE PUBLIC LISTING AND CONTROLLED CASE-OWNER CONTACT." },
+        { "type": "text", "id": "tier", "label": "Tier", "default": "PROFESSIONAL PLUS" },
+        { "type": "text", "id": "response_time", "label": "Response time", "default": "WITHIN 24 HOURS" },
+        { "type": "checkbox", "id": "worldwide", "label": "Worldwide support", "default": false }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Professionals Directory",
+      "blocks": [
+        { "type": "professional" },
+        { "type": "professional", "settings": { "name": "BLUE RIDGE CASE SUPPORT", "country": "UNITED STATES", "region": "NORTH CAROLINA", "services": "PRIVATE INVESTIGATOR, LEGAL SUPPORT, TRANSPORT", "bio": "US-BASED APPROVED PROFILE PLACEHOLDER FOR LEGAL AND SEARCH SUPPORT WITH FUTURE SAFE INBOX ROUTING.", "tier": "PROFESSIONAL ELITE", "response_time": "SAME DAY", "worldwide": true } },
+        { "type": "professional", "settings": { "name": "SOUTHERN CROSS SAFEGUARDING", "country": "AUSTRALIA", "region": "NEW SOUTH WALES", "services": "SAFEGUARDING, COUNSELLOR, TRANSLATION", "bio": "APPROVED AUSTRALIA PROFILE PLACEHOLDER FOCUSED ON SAFE CASE SUPPORT AND REVIEWED CONTACT ROUTING.", "tier": "PROFESSIONAL ACCESS", "response_time": "WITHIN 48 HOURS" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

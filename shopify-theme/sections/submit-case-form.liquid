@@ -1,0 +1,1851 @@
+{% comment %}
+UNIT 2 — FULL SUBMIT / CLAIM CASE MULTI-STEP FORM
+
+WHAT THIS BUILDS
+- Full premium multi-step submission page section
+- Supports two modes:
+  1) New case submission
+  2) Claim an existing manual case
+- Includes structured location fields for worldwide future alert segmentation
+- Includes verification gate and professional contact lock wording
+- Includes Boost / Spotlight upsell after details are entered
+- Includes review step before submit
+
+IMPORTANT
+- This is frontend structure + data fields + UX flow.
+- Real submission saving, member linking, review queue, payments, and admin workflows come next.
+- For now this gives you the full guided UI as one complete section.
+
+RECOMMENDED USE
+- Put this on a dedicated page template, e.g. page.submit-case
+- Link the modal from Unit 1 to this page later, or embed this directly if preferred
+{% endcomment %}
+
+<section class="case-submit-system" id="case-submit-system-{{ section.id }}">
+  <div class="case-submit-shell">
+    <div class="case-submit-shell-border"></div>
+    <div class="case-submit-shell-glow"></div>
+    <div class="case-submit-shell-noise"></div>
+
+    <div class="case-submit-topbar">
+      <div class="case-submit-top-pill">SUBMIT A CASE</div>
+      <div class="case-submit-top-status">REVIEWED BEFORE PUBLICATION</div>
+    </div>
+
+    <div class="case-submit-header">
+      <div class="case-submit-header-copy">
+        <div class="case-submit-kicker">MISSING ALERTS CASE SUBMISSION</div>
+        <h1>SUBMIT OR CLAIM A CASE</h1>
+        <p>
+          Submit a missing person case for review, or request ownership of an existing case already published on the website.
+          Please report the case to police first where possible.
+        </p>
+      </div>
+
+      <div class="case-submit-help-card">
+        <div class="case-submit-help-title">IMPORTANT</div>
+        <p>Only verified direct family, guardians, or authorised case owners can unlock professional contact features. Public uploaders can still submit cases for review.</p>
+      </div>
+    </div>
+
+    <div class="case-submit-mode-row">
+      <button type="button" class="case-submit-mode-btn is-active" data-case-mode="new_case">SUBMIT A NEW CASE</button>
+      {% if customer %}
+        <button type="button" class="case-submit-mode-btn" data-case-mode="claim_case">CLAIM AN EXISTING CASE</button>
+      {% else %}
+        <button type="button" class="case-submit-mode-btn" disabled aria-disabled="true">CLAIM AN EXISTING CASE</button>
+      {% endif %}
+    </div>
+    {% unless customer %}
+      <p class="case-submit-intro">Login required to claim an existing case. You can still submit a new case for review.</p>
+    {% endunless %}
+
+    <div class="case-submit-progress">
+      <div class="case-submit-progress-bar">
+        <span data-progress-fill></span>
+      </div>
+      <div class="case-submit-progress-steps">
+        <span class="is-active" data-progress-step="1">BASIC INFO</span>
+        <span data-progress-step="2">LOCATION</span>
+        <span data-progress-step="3">DETAILS</span>
+        <span data-progress-step="4">VERIFICATION</span>
+        <span data-progress-step="5">VISIBILITY</span>
+        <span data-progress-step="6">REVIEW</span>
+      </div>
+    </div>
+
+    <form class="case-submit-form" id="case-submit-form-{{ section.id }}" novalidate>
+      <input type="hidden" name="submission_mode" value="new_case" data-submission-mode>
+      <input type="hidden" name="selected_claim_case" value="" data-selected-claim-case>
+      <input type="hidden" name="claimant_customer_id" value="{% if customer %}{{ customer.id | append: '' }}{% endif %}" data-claimant-customer-id>
+
+      <!-- STEP 1 -->
+      <div class="case-submit-step is-active" data-step="1">
+        <div class="case-submit-step-grid">
+          <div class="case-submit-card case-submit-main-card">
+            <div class="case-submit-kicker">STEP 1 OF 6</div>
+            <h2>BASIC CASE INFORMATION</h2>
+            <p class="case-submit-intro">Start with the key details we need to identify the person and check for possible existing matches.</p>
+
+            <div class="case-submit-grid two-up">
+              <div class="case-submit-field full">
+                <label for="person_name_{{ section.id }}">MISSING PERSON FULL NAME *</label>
+                <input type="text" id="person_name_{{ section.id }}" name="person_name" placeholder="Enter full name" required data-match-name>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="person_age_{{ section.id }}">AGE *</label>
+          <input type="number" id="person_age_{{ section.id }}" name="person_age" min="0" max="120" placeholder="Age" required data-match-age>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="person_gender_{{ section.id }}">GENDER / DESCRIPTOR</label>
+                <select id="person_gender_{{ section.id }}" name="person_gender">
+                  <option value="">Select option</option>
+                  <option>Boy</option>
+                  <option>Girl</option>
+                  <option>Man</option>
+                  <option>Woman</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Non-binary</option>
+                  <option>Prefer not to say</option>
+                </select>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="main_photo_{{ section.id }}">MAIN PHOTO *</label>
+                <input type="file" id="main_photo_{{ section.id }}" name="main_photo" accept="image/*" required>
+                <small>One main image keeps the upload process fast and easier to review.</small>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="last_seen_date_{{ section.id }}">DATE LAST SEEN *</label>
+                <input type="date" id="last_seen_date_{{ section.id }}" name="last_seen_date" required>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="last_seen_time_{{ section.id }}">TIME LAST SEEN</label>
+                <input type="time" id="last_seen_time_{{ section.id }}" name="last_seen_time">
+              </div>
+            </div>
+          </div>
+
+          <div class="case-submit-card case-submit-side-card">
+            <div class="case-submit-kicker">MATCH CHECK</div>
+            <h3>POSSIBLE EXISTING CASES</h3>
+            <p>When a likely existing case is found, the user can claim it instead of creating a duplicate.</p>
+
+            <div class="case-submit-match-empty" data-submit-match-empty>
+              <div class="case-submit-match-empty-icon">⌕</div>
+              <div class="case-submit-match-empty-title">NO MATCH CHECK YET</div>
+              <p>Start typing the person’s name to look for existing manual unassigned cases.</p>
+            </div>
+
+            <div class="case-submit-match-results is-hidden" data-submit-match-results>
+              {% assign unit2_claim_count = 0 %}
+              {% for article in blogs['missing-persons'].articles limit: 18 %}
+                {% assign source = article.metafields.custom.case_source.value | default: article.metafields.custom.case_source | downcase %}
+                {% assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase %}
+                {% assign assigned_member_id = article.metafields.custom.assigned_member_id.value | default: article.metafields.custom.assigned_member_id | append: '' %}
+                {% assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase %}
+                {% assign case_age = article.metafields.custom.age.value | default: article.metafields.custom.age %}
+                {% assign country = article.metafields.custom.country.value | default: article.metafields.custom.country %}
+                {% assign state_region = article.metafields.custom.state_region.value | default: article.metafields.custom.state_region %}
+                {% assign city = article.metafields.custom.city_town.value | default: article.metafields.custom.city_town %}
+
+                {% assign candidate_allowed = true %}
+
+                {% if case_status == 'found' or case_status == 'resolved' %}
+                  {% assign candidate_allowed = false %}
+                {% endif %}
+
+                {% if assigned_member_id != blank %}
+                  {% assign candidate_allowed = false %}
+                {% endif %}
+
+                {% if owner_status contains 'assigned' or owner_status contains 'claimed' or owner_status contains 'verified' or owner_status contains 'resolved' %}
+                  {% assign candidate_allowed = false %}
+                {% endif %}
+
+                {% if candidate_allowed == true and unit2_claim_count < 4 %}
+                  {% assign unit2_claim_count = unit2_claim_count | plus: 1 %}
+                  <div class="case-submit-match-card is-hidden"
+                       data-submit-match-card
+                       data-match-title="{{ article.title | strip_html | escape }}"
+                       data-match-handle="{{ article.handle | escape }}"
+                       data-match-age="{{ case_age | escape }}"
+                       data-match-country="{{ country | escape }}"
+                       data-match-region="{{ state_region | escape }}"
+                       data-match-city="{{ city | escape }}"
+                       data-match-url="{{ article.url | escape }}">
+                    <div class="case-submit-match-image-wrap">
+                      {% if article.image %}
+                        <img src="{{ article.image | image_url: width: 420 }}" alt="{{ article.title | escape }}" class="case-submit-match-image" width="{{ article.image.width }}" height="{{ article.image.height }}">
+                      {% else %}
+                        <div class="case-submit-match-image-placeholder">NO IMAGE</div>
+                      {% endif %}
+                    </div>
+                    <div class="case-submit-match-body">
+                      <div class="case-submit-match-tag">LIKELY MATCH</div>
+                      <h4>{{ article.title }}</h4>
+                      <div class="case-submit-match-meta">
+                        {% if case_age != blank %}<span>AGE {{ case_age }}</span>{% endif %}
+                        {% if country != blank %}<span>{{ country }}</span>{% endif %}
+                        {% if city != blank %}<span>{{ city }}</span>{% endif %}
+                      </div>
+                      <div class="case-submit-match-actions">
+                        {% if customer %}
+                          <button type="button" class="case-submit-claim-select" data-select-claim-case="{{ article.handle | escape }}" data-claim-title="{{ article.title | escape }}" data-claim-handle="{{ article.handle | escape }}">CLAIM THIS CASE</button>
+                        {% else %}
+                          <a href="{{ routes.account_login_url }}" class="case-submit-claim-select">LOGIN REQUIRED</a>
+                        {% endif %}
+                        <a href="{{ article.url }}" target="_blank" rel="noopener">VIEW</a>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <div class="case-submit-claim-selected is-hidden" data-claim-selected-ui>
+              <div class="case-submit-claim-selected-label">CLAIM MODE ACTIVE</div>
+              <div class="case-submit-claim-selected-title" data-claim-selected-title>Selected existing case</div>
+              <p>This existing manual case will be linked to the account after review instead of creating a duplicate.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="case-submit-step" data-step="2">
+        <div class="case-submit-card case-submit-main-card">
+          <div class="case-submit-kicker">STEP 2 OF 6</div>
+          <h2>STRUCTURED LOCATION DETAILS</h2>
+          <p class="case-submit-intro">These fields are important for future country, region, and city-based alert systems.</p>
+
+          <div class="case-submit-grid two-up">
+            <div class="case-submit-field full">
+              {% render 'location-selector',
+                id: 'submit-case-form',
+                country_name: 'country',
+                region_name: 'state_region',
+                city_name: 'city_town',
+                country_data_attr: 'data-match-country',
+                region_data_attr: 'data-match-region',
+                city_data_attr: 'data-match-city'
+              %}
+            </div>
+
+            <div class="case-submit-field">
+              <label for="last_seen_area_{{ section.id }}">LAST SEEN AREA *</label>
+              <input type="text" id="last_seen_area_{{ section.id }}" name="last_seen_area" placeholder="Street, district, station, park, centre, etc." required>
+            </div>
+
+            <div class="case-submit-field">
+              <label for="postcode_zip_{{ section.id }}">POSTCODE / ZIP</label>
+              <input type="text" id="postcode_zip_{{ section.id }}" name="postcode_zip" placeholder="Optional">
+            </div>
+
+            <div class="case-submit-field full">
+              <label for="linked_locations_{{ section.id }}">LINKED LOCATIONS / TRAVEL LINKS</label>
+              <textarea id="linked_locations_{{ section.id }}" name="linked_locations" rows="4" placeholder="List any other towns, cities, countries, transport routes or areas the person may be linked to."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="case-submit-step" data-step="3">
+        <div class="case-submit-card case-submit-main-card">
+          <div class="case-submit-kicker">STEP 3 OF 6</div>
+          <h2>PERSON AND CASE DETAILS</h2>
+          <p class="case-submit-intro">Small details can matter and may help someone recognise the person faster.</p>
+
+          <div class="case-submit-grid two-up">
+            <div class="case-submit-field full">
+              <label for="physical_description_{{ section.id }}">PHYSICAL DESCRIPTION</label>
+              <textarea id="physical_description_{{ section.id }}" name="physical_description" rows="4" placeholder="Height, build, hair, eyes, distinguishing features, glasses, tattoos, accent, etc."></textarea>
+            </div>
+
+            <div class="case-submit-field full">
+              <label for="clothing_last_seen_{{ section.id }}">CLOTHING WHEN LAST SEEN</label>
+              <textarea id="clothing_last_seen_{{ section.id }}" name="clothing_last_seen" rows="4" placeholder="What were they wearing when last seen?"></textarea>
+            </div>
+
+            <div class="case-submit-field full">
+              <label for="circumstances_{{ section.id }}">WHAT HAPPENED? *</label>
+              <textarea id="circumstances_{{ section.id }}" name="circumstances" rows="5" placeholder="Explain the situation and any urgent circumstances." required></textarea>
+            </div>
+
+            <div class="case-submit-field">
+              <label for="transport_info_{{ section.id }}">TRANSPORT / VEHICLE INFO</label>
+              <input type="text" id="transport_info_{{ section.id }}" name="transport_info" placeholder="Train, bus, car, registration, etc.">
+            </div>
+
+            <div class="case-submit-field">
+              <label for="languages_spoken_{{ section.id }}">LANGUAGES SPOKEN</label>
+              <input type="text" id="languages_spoken_{{ section.id }}" name="languages_spoken" placeholder="Optional">
+            </div>
+
+            <div class="case-submit-field">
+              <label for="welfare_concern_{{ section.id }}">WELFARE / VULNERABILITY CONCERN</label>
+              <select id="welfare_concern_{{ section.id }}" name="welfare_concern">
+                <option value="">Select option</option>
+                <option>High concern</option>
+                <option>Concern for welfare</option>
+                <option>Medical vulnerability</option>
+                <option>Mental health concern</option>
+                <option>Child / young person concern</option>
+                <option>Other concern</option>
+              </select>
+            </div>
+
+            <div class="case-submit-field">
+              <label for="with_belongings_{{ section.id }}">PHONE / MONEY / BELONGINGS LEFT BEHIND?</label>
+              <input type="text" id="with_belongings_{{ section.id }}" name="with_belongings" placeholder="Optional details">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="case-submit-step" data-step="4">
+        <div class="case-submit-step-grid single-wide">
+          <div class="case-submit-card case-submit-main-card">
+            <div class="case-submit-kicker">STEP 4 OF 6</div>
+            <h2>VERIFICATION AND CONTACT DETAILS</h2>
+            <p class="case-submit-intro">This helps protect the platform and ensures professional contact features are only unlocked for verified case owners.</p>
+
+            <div class="case-submit-grid two-up">
+              <div class="case-submit-field">
+                <label for="submitter_name_{{ section.id }}">YOUR FULL NAME *</label>
+                <input type="text" id="submitter_name_{{ section.id }}" name="submitter_name" required>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="submitter_email_{{ section.id }}">EMAIL ADDRESS *</label>
+              <input type="email" id="submitter_email_{{ section.id }}" name="submitter_email" required>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="submitter_phone_{{ section.id }}">PHONE NUMBER *</label>
+                <input type="tel" id="submitter_phone_{{ section.id }}" name="submitter_phone" required>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="relationship_to_person_{{ section.id }}">RELATIONSHIP TO THE MISSING PERSON *</label>
+                <select id="relationship_to_person_{{ section.id }}" name="relationship_to_person" required>
+                  <option value="">Select relationship</option>
+                  <option>Parent</option>
+                  <option>Guardian</option>
+                  <option>Close family member</option>
+                  <option>Authorised by family</option>
+                  <option>Concerned member of the public</option>
+                  <option>Friend</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="police_reference_{{ section.id }}">POLICE REFERENCE NUMBER *</label>
+                <input type="text" id="police_reference_{{ section.id }}" name="police_reference" placeholder="Enter police reference number" required>
+              </div>
+
+              <div class="case-submit-field">
+                <label for="police_force_{{ section.id }}">POLICE FORCE / AGENCY *</label>
+                <input type="text" id="police_force_{{ section.id }}" name="police_force" placeholder="Police force or agency name" required>
+              </div>
+
+              <div class="case-submit-field full">
+                <label for="no_reference_reason_{{ section.id }}">IF NO REFERENCE IS AVAILABLE, EXPLAIN WHY</label>
+                <textarea id="no_reference_reason_{{ section.id }}" name="no_reference_reason" rows="3" placeholder="If you do not have a police reference number yet, explain why."></textarea>
+              </div>
+
+              <div class="case-submit-field full">
+                <label for="claim_proof_{{ section.id }}">OPTIONAL PROOF / SUPPORTING IMAGE</label>
+                <input type="file" id="claim_proof_{{ section.id }}" name="claim_proof" accept="image/*,application/pdf">
+                <small>This can help with review if you are claiming an existing case or requesting professional contact.</small>
+              </div>
+            </div>
+
+            <div class="case-submit-verify-boxes">
+              <label class="case-submit-check-box">
+                <input type="checkbox" name="confirm_true" required>
+                <span>I confirm the information provided is true to the best of my knowledge.</span>
+              </label>
+
+              <label class="case-submit-check-box">
+                <input type="checkbox" name="confirm_direct_connection">
+                <span>I confirm I am directly connected to this case or have permission from the family.</span>
+              </label>
+            </div>
+
+            <div class="case-submit-professional-box">
+              <div class="case-submit-professional-copy">
+                <div class="case-submit-professional-kicker">PROFESSIONAL CONTACT REQUEST</div>
+                <h3>WOULD YOU LIKE TO BE CONTACTED BY TRUSTED PROFESSIONALS WHO MAY BE ABLE TO HELP?</h3>
+                <p>Professional contact is only enabled after verification for direct family, guardians, or authorised case owners. It is not automatically available to random public uploaders.</p>
+              </div>
+
+              <div class="case-submit-professional-fields">
+                <div class="case-submit-field">
+                  <label for="professional_contact_opt_in_{{ section.id }}">PROFESSIONAL CONTACT</label>
+                  <select id="professional_contact_opt_in_{{ section.id }}" name="professional_contact_opt_in" data-professional-opt-in>
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                  </select>
+                </div>
+
+                <div class="case-submit-field">
+                  <label for="preferred_contact_method_{{ section.id }}">PREFERRED CONTACT METHOD</label>
+                  <select id="preferred_contact_method_{{ section.id }}" name="preferred_contact_method">
+                    <option value="">Select option</option>
+                    <option>Email</option>
+                    <option>Phone</option>
+                    <option>Either</option>
+                  </select>
+                </div>
+
+                <div class="case-submit-field full">
+                  <label for="best_contact_times_{{ section.id }}">BEST CONTACT TIMES</label>
+                  <input type="text" id="best_contact_times_{{ section.id }}" name="best_contact_times" placeholder="Optional">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="case-submit-step" data-step="5">
+        <div class="case-submit-card case-submit-main-card">
+          <div class="case-submit-kicker">STEP 5 OF 6</div>
+          <h2>CHOOSE YOUR VISIBILITY OPTION</h2>
+          <p class="case-submit-intro">Submitting a case is free. Extra visibility options can be selected after details are entered and activated after approval.</p>
+
+          <div class="case-submit-upsell-grid">
+            <label class="case-submit-upsell-card is-selected" data-upsell-card>
+              <input type="radio" name="visibility_option" value="free" checked>
+              <div class="case-submit-upsell-kicker">FREE</div>
+              <h3>FREE LISTING</h3>
+              <p>Standard review and listing if approved.</p>
+              <ul>
+                <li>Reviewed submission</li>
+                <li>Standard website placement</li>
+                <li>Updates supported later</li>
+              </ul>
+            </label>
+
+            <label class="case-submit-upsell-card" data-upsell-card>
+              <input type="radio" name="visibility_option" value="boost">
+              <div class="case-submit-upsell-kicker">MORE VISIBILITY</div>
+              <h3>BOOSTED APPEAL</h3>
+              <p>Increase homepage visibility and stronger placement once approved.</p>
+              <ul>
+                <li>Higher visibility</li>
+                <li>More prominent exposure</li>
+                <li>Good option when time matters</li>
+              </ul>
+            </label>
+
+            <label class="case-submit-upsell-card spotlight-tier" data-upsell-card>
+              <input type="radio" name="visibility_option" value="spotlight">
+              <div class="case-submit-upsell-kicker">PREMIUM</div>
+              <h3>SPOTLIGHT FEATURE</h3>
+              <p>Top premium placement for the strongest homepage attention once approved.</p>
+              <ul>
+                <li>Highest-value placement</li>
+                <li>Top featured exposure</li>
+                <li>Designed for maximum attention</li>
+              </ul>
+            </label>
+          </div>
+
+          <div class="case-submit-psychology-strip">
+            <div class="case-submit-psychology-box">
+              <div class="case-submit-psychology-title">FREE UPLOAD</div>
+              <p>You can always submit for review without paying.</p>
+            </div>
+            <div class="case-submit-psychology-box">
+              <div class="case-submit-psychology-title">BOOSTED APPEAL</div>
+              <p>More people may see the case sooner through stronger placement.</p>
+            </div>
+            <div class="case-submit-psychology-box">
+              <div class="case-submit-psychology-title">SPOTLIGHT</div>
+              <p>Premium homepage focus designed to attract the strongest attention.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="case-submit-step" data-step="6">
+        <div class="case-submit-step-grid single-wide">
+          <div class="case-submit-card case-submit-main-card">
+            <div class="case-submit-kicker">STEP 6 OF 6</div>
+            <h2>REVIEW YOUR SUBMISSION</h2>
+            <p class="case-submit-intro">Review the summary below before submitting. All cases are reviewed before publication.</p>
+
+            <div class="case-submit-review-grid">
+              <div class="case-submit-review-box">
+                <div class="case-submit-review-title">SUBMISSION TYPE</div>
+                <div class="case-submit-review-value" data-review-mode>New case submission</div>
+              </div>
+
+              <div class="case-submit-review-box">
+                <div class="case-submit-review-title">PERSON</div>
+                <div class="case-submit-review-value" data-review-name>—</div>
+              </div>
+
+              <div class="case-submit-review-box">
+                <div class="case-submit-review-title">LOCATION</div>
+                <div class="case-submit-review-value" data-review-location>—</div>
+              </div>
+
+              <div class="case-submit-review-box">
+                <div class="case-submit-review-title">VISIBILITY OPTION</div>
+                <div class="case-submit-review-value" data-review-visibility>Free listing</div>
+              </div>
+
+              <div class="case-submit-review-box">
+                <div class="case-submit-review-title">PROFESSIONAL CONTACT</div>
+                <div class="case-submit-review-value" data-review-professional>Not requested</div>
+              </div>
+
+              <div class="case-submit-review-box">
+                <div class="case-submit-review-title">VERIFICATION NOTE</div>
+                <div class="case-submit-review-value">Professional contact features remain locked until verification is approved.</div>
+              </div>
+            </div>
+
+            <label class="case-submit-check-box final-confirm">
+              <input type="checkbox" name="final_confirm" required>
+              <span>I understand this submission will be reviewed before publication and that any professional contact request requires verification approval.</span>
+            </label>
+
+            <div class="case-submit-final-actions">
+              <button type="submit" class="case-submit-submit-btn">SUBMIT CASE FOR REVIEW</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="case-submit-nav">
+        <button type="button" class="case-submit-nav-btn dark" data-step-back>BACK</button>
+        <button type="button" class="case-submit-nav-btn primary" data-step-next>NEXT STEP</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+.case-submit-system{
+  max-width:1280px;
+  margin:24px auto;
+  padding:0 10px;
+}
+
+.case-submit-shell{
+  position:relative;
+  overflow:hidden;
+  min-height:760px;
+  border-radius:34px;
+  padding:18px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(220,40,60,0.20) 0%, transparent 24%),
+    radial-gradient(circle at 10% 50%, rgba(255,70,90,0.12) 0%, transparent 20%),
+    radial-gradient(circle at 90% 50%, rgba(255,70,90,0.12) 0%, transparent 20%),
+    linear-gradient(180deg, #150507 0%, #0a0203 48%, #050102 100%);
+  border:1px solid rgba(255,80,96,0.22);
+  box-shadow:0 30px 90px rgba(0,0,0,0.50), 0 0 70px rgba(180,22,40,0.16);
+}
+
+.case-submit-shell-border{
+  position:absolute;
+  inset:0;
+  padding:2px;
+  border-radius:34px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,70,90,0.82), rgba(255,255,255,0.03), rgba(255,70,90,0.44), rgba(255,255,255,0.02));
+  background-size:280% 100%;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:caseSubmitBorderRun 7s linear infinite;
+  pointer-events:none;
+}
+
+.case-submit-shell-glow{
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 50% 16%, rgba(196,54,70,0.24) 0%, transparent 18%),
+    radial-gradient(circle at 18% 48%, rgba(176,33,48,0.12) 0%, transparent 20%),
+    radial-gradient(circle at 82% 46%, rgba(176,33,48,0.12) 0%, transparent 22%);
+  filter:blur(58px);
+  pointer-events:none;
+}
+
+.case-submit-shell-noise{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(rgba(255,255,255,0.012), rgba(255,255,255,0.012)),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.008) 3px);
+  mix-blend-mode:screen;
+  opacity:.14;
+  pointer-events:none;
+}
+
+.case-submit-topbar,
+.case-submit-header,
+.case-submit-mode-row,
+.case-submit-progress,
+.case-submit-form,
+.case-submit-nav{
+  position:relative;
+  z-index:2;
+}
+
+.case-submit-topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.case-submit-top-pill,
+.case-submit-top-status,
+.case-submit-kicker,
+.case-submit-step-label,
+.case-submit-help-title,
+.case-submit-professional-kicker,
+.case-submit-upsell-kicker,
+.case-submit-psychology-title,
+.case-submit-review-title,
+.case-submit-match-tag,
+.case-submit-claim-selected-label{
+  color:#e7b6bc;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.case-submit-top-pill,
+.case-submit-top-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:32px;
+  padding:0 14px;
+  border-radius:999px;
+  color:#fff;
+}
+
+.case-submit-top-pill{
+  background:linear-gradient(180deg, #ca2f40 0%, #7b111c 100%);
+}
+
+.case-submit-top-status{
+  background:linear-gradient(180deg, rgba(34,13,15,0.84), rgba(14,6,7,0.94));
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.case-submit-header{
+  display:grid;
+  grid-template-columns:minmax(0, 1.2fr) minmax(300px, .8fr);
+  gap:18px;
+  margin-bottom:18px;
+}
+
+.case-submit-header-copy,
+.case-submit-help-card,
+.case-submit-card,
+.case-submit-upsell-card,
+.case-submit-psychology-box,
+.case-submit-review-box{
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.012)),
+    linear-gradient(180deg, #19080b 0%, #0a0203 100%);
+  border:1px solid rgba(255,255,255,0.05);
+  box-shadow:0 20px 44px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,255,255,0.02) inset;
+}
+
+.case-submit-header-copy,
+.case-submit-help-card{
+  padding:26px;
+}
+
+.case-submit-header-copy h1{
+  margin:8px 0 10px;
+  color:#fff;
+  font-size:42px;
+  line-height:1.02;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.case-submit-header-copy p,
+.case-submit-help-card p,
+.case-submit-intro,
+.case-submit-professional-copy p,
+.case-submit-upsell-card p,
+.case-submit-psychology-box p,
+.case-submit-review-value,
+.case-submit-match-empty p,
+.case-submit-claim-selected p{
+  color:rgba(255,255,255,0.82);
+  line-height:1.6;
+}
+
+.case-submit-mode-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.case-submit-mode-btn{
+  min-height:46px;
+  padding:0 18px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.08);
+  cursor:pointer;
+  background:linear-gradient(180deg, #2a2527 0%, #161113 100%);
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.case-submit-mode-btn.is-active{
+  background:linear-gradient(180deg, #df4053 0%, #8f1421 100%);
+  box-shadow:0 14px 28px rgba(124,19,29,0.30), 0 0 28px rgba(223,64,83,0.18);
+}
+
+.case-submit-progress{
+  margin-bottom:18px;
+}
+
+.case-submit-progress-bar{
+  width:100%;
+  height:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  overflow:hidden;
+}
+
+.case-submit-progress-bar span{
+  display:block;
+  width:16.66%;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg, #df4053 0%, #ff7384 100%);
+  box-shadow:0 0 24px rgba(223,64,83,0.22);
+  transition:width .28s ease;
+}
+
+.case-submit-progress-steps{
+  display:grid;
+  grid-template-columns:repeat(6, minmax(0, 1fr));
+  gap:8px;
+  margin-top:10px;
+}
+
+.case-submit-progress-steps span{
+  text-align:center;
+  color:rgba(255,255,255,0.46);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.case-submit-progress-steps span.is-active{
+  color:#fff;
+}
+
+.case-submit-step{
+  display:none;
+}
+
+.case-submit-step.is-active{
+  display:block;
+}
+
+.case-submit-step-grid{
+  display:grid;
+  grid-template-columns:minmax(0, 1.1fr) minmax(360px, .9fr);
+  gap:18px;
+}
+
+.case-submit-step-grid.single-wide{
+  grid-template-columns:1fr;
+}
+
+.case-submit-card{
+  padding:24px;
+}
+
+.case-submit-card h2{
+  margin:8px 0 10px;
+  color:#fff;
+  font-size:34px;
+  line-height:1.04;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.case-submit-grid{
+  display:grid;
+  gap:14px;
+  margin-top:18px;
+}
+
+.case-submit-grid.two-up{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+
+.case-submit-field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.case-submit-field.full{
+  grid-column:1 / -1;
+}
+
+.case-submit-field label{
+  color:#f4d6d9;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.case-submit-field input,
+.case-submit-field select,
+.case-submit-field textarea{
+  width:100%;
+  min-height:50px;
+  padding:14px 16px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  color:#fff;
+  font-size:14px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.case-submit-field textarea{
+  min-height:auto;
+  resize:vertical;
+}
+
+.case-submit-field input::placeholder,
+.case-submit-field textarea::placeholder{
+  color:rgba(255,255,255,0.42);
+}
+
+.case-submit-field select option{
+  color:#111;
+}
+
+.case-submit-field small{
+  color:rgba(255,255,255,0.56);
+  line-height:1.5;
+}
+
+.case-submit-match-empty{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  min-height:300px;
+}
+
+.case-submit-match-empty-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:62px;
+  height:62px;
+  border-radius:18px;
+  background:linear-gradient(180deg, rgba(223,64,83,0.18), rgba(223,64,83,0.06));
+  color:#fff;
+  font-size:28px;
+  margin-bottom:14px;
+}
+
+.case-submit-match-empty-title,
+.case-submit-claim-selected-title,
+.case-submit-match-card h4,
+.case-submit-upsell-card h3{
+  margin:8px 0 8px;
+  color:#fff;
+  font-size:24px;
+  line-height:1.08;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.case-submit-match-results.is-hidden,
+.case-submit-claim-selected.is-hidden{
+  display:none;
+}
+
+.case-submit-match-card{
+  display:grid;
+  grid-template-columns:100px 1fr;
+  gap:14px;
+  margin-top:14px;
+  padding:12px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.case-submit-match-card.is-hidden{
+  display:none;
+}
+
+.case-submit-match-image-wrap{
+  overflow:hidden;
+  border-radius:16px;
+  height:128px;
+}
+
+.case-submit-match-image,
+.case-submit-match-image-placeholder{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.case-submit-match-image-placeholder{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
+
+.case-submit-match-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.case-submit-match-meta span{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.06);
+  color:#f4d6d9;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.case-submit-match-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+
+.case-submit-claim-select,
+.case-submit-match-actions a,
+.case-submit-nav-btn,
+.case-submit-submit-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:0 18px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  text-decoration:none;
+  transition:transform .28s ease, box-shadow .28s ease, filter .28s ease;
+}
+
+.case-submit-claim-select,
+.case-submit-nav-btn.primary,
+.case-submit-submit-btn{
+  background:linear-gradient(180deg, #df4053 0%, #8f1421 100%);
+  box-shadow:0 14px 28px rgba(124,19,29,0.30), 0 0 28px rgba(223,64,83,0.18);
+}
+
+.case-submit-match-actions a,
+.case-submit-nav-btn.dark{
+  background:linear-gradient(180deg, #2a2527 0%, #161113 100%);
+  box-shadow:0 10px 22px rgba(0,0,0,0.18);
+}
+
+.case-submit-verify-boxes{
+  display:grid;
+  gap:12px;
+  margin-top:18px;
+}
+
+.case-submit-check-box{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:16px;
+  border-radius:18px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+  border:1px solid rgba(255,255,255,0.05);
+  color:#fff;
+}
+
+.case-submit-check-box input{
+  margin-top:3px;
+}
+
+.case-submit-professional-box{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) minmax(280px, .9fr);
+  gap:16px;
+  margin-top:18px;
+  padding:18px;
+  border-radius:22px;
+  background:linear-gradient(180deg, rgba(223,64,83,0.10), rgba(223,64,83,0.03));
+  border:1px solid rgba(223,64,83,0.16);
+}
+
+.case-submit-upsell-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:16px;
+  margin-top:18px;
+}
+
+.case-submit-upsell-card{
+  padding:22px;
+  cursor:pointer;
+  transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+}
+
+.case-submit-upsell-card:hover{
+  transform:translateY(-4px);
+}
+
+.case-submit-upsell-card.is-selected{
+  border-color:rgba(223,64,83,0.34);
+  box-shadow:0 26px 50px rgba(0,0,0,0.46), 0 0 34px rgba(210,44,60,0.14);
+}
+
+.case-submit-upsell-card input{
+  display:none;
+}
+
+.case-submit-upsell-card ul{
+  margin:14px 0 0;
+  padding-left:18px;
+  color:rgba(255,255,255,0.82);
+}
+
+.case-submit-upsell-card li + li{
+  margin-top:8px;
+}
+
+.case-submit-psychology-strip{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:14px;
+  margin-top:18px;
+}
+
+.case-submit-psychology-box,
+.case-submit-review-box{
+  padding:18px;
+}
+
+.case-submit-review-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:14px;
+  margin-top:18px;
+}
+
+.case-submit-review-value{
+  margin-top:8px;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+}
+
+.case-submit-final-actions{
+  margin-top:20px;
+}
+
+.case-submit-submit-btn{
+  min-width:260px;
+}
+
+.case-submit-nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:18px;
+}
+
+.claim-sim-panel{
+  max-width:1280px;
+  margin:18px auto 0;
+  padding:0 10px;
+}
+
+.claim-sim-panel--hidden{
+  display:none;
+}
+
+.claim-sim-shell{
+  border-radius:24px;
+  padding:20px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)), linear-gradient(180deg, #130507 0%, #070203 100%);
+  border:1px dashed rgba(255,255,255,0.14);
+}
+
+.claim-sim-shell h2{
+  margin:8px 0 8px;
+  color:#fff;
+  font-size:28px;
+  line-height:1.05;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.claim-sim-copy,
+.claim-sim-row-handle,
+.claim-sim-result{
+  color:rgba(255,255,255,0.78);
+  line-height:1.6;
+}
+
+.claim-sim-list{
+  display:grid;
+  gap:12px;
+  margin-top:18px;
+}
+
+.claim-sim-row{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) auto;
+  gap:12px;
+  align-items:center;
+  padding:14px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.claim-sim-row-title{
+  color:#fff;
+  font-size:18px;
+  font-weight:800;
+  line-height:1.2;
+  text-transform:uppercase;
+}
+
+.claim-sim-row-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.claim-sim-result{
+  margin-top:18px;
+  padding:16px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  white-space:pre-line;
+}
+
+.claim-sim-result--hidden{
+  display:none;
+}
+
+.case-submit-nav-btn.is-hidden{
+  visibility:hidden;
+  pointer-events:none;
+}
+
+@keyframes caseSubmitBorderRun{
+  0%{ background-position:0% 50%; }
+  100%{ background-position:280% 50%; }
+}
+
+@media (max-width: 1100px){
+  .case-submit-header,
+  .case-submit-step-grid,
+  .case-submit-professional-box,
+  .case-submit-upsell-grid,
+  .case-submit-psychology-strip,
+  .case-submit-review-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 780px){
+  .case-submit-shell{
+    border-radius:22px;
+    padding:14px;
+  }
+
+  .case-submit-shell-border,
+  .case-submit-card,
+  .case-submit-header-copy,
+  .case-submit-help-card,
+  .case-submit-upsell-card,
+  .case-submit-psychology-box,
+  .case-submit-review-box{
+    border-radius:20px;
+  }
+
+  .case-submit-header-copy h1,
+  .case-submit-card h2{
+    font-size:30px;
+  }
+
+  .case-submit-grid.two-up,
+  .case-submit-progress-steps{
+    grid-template-columns:1fr;
+  }
+
+  .case-submit-topbar,
+  .case-submit-nav,
+  .case-submit-mode-row,
+  .case-submit-match-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .case-submit-nav-btn,
+  .case-submit-submit-btn,
+  .case-submit-claim-select,
+  .case-submit-match-actions a{
+    width:100%;
+  }
+
+  .claim-sim-row{
+    grid-template-columns:1fr;
+  }
+
+  .case-submit-match-card{
+    grid-template-columns:1fr;
+  }
+
+  .case-submit-match-image-wrap{
+    height:220px;
+  }
+}
+</style>
+<script>
+(function() {
+  var sectionId = {{ section.id | json }};
+  var form = document.getElementById('case-submit-form-' + sectionId);
+  if (!form) return;
+
+  var modeInput = form.querySelector('[data-submission-mode]');
+  var selectedClaimInput = form.querySelector('[data-selected-claim-case]');
+  var claimantCustomerIdInput = form.querySelector('[data-claimant-customer-id]');
+  var steps = Array.prototype.slice.call(form.querySelectorAll('[data-step]'));
+  var stepBackBtn = form.querySelector('[data-step-back]');
+  var stepNextBtn = form.querySelector('[data-step-next]');
+  var progressFill = form.closest('.case-submit-shell').querySelector('[data-progress-fill]');
+  var progressSteps = Array.prototype.slice.call(
+    form.closest('.case-submit-shell').querySelectorAll('[data-progress-step]')
+  );
+  var modeButtons = Array.prototype.slice.call(
+    form.closest('.case-submit-shell').querySelectorAll('[data-case-mode]')
+  );
+  var matchNameInput = form.querySelector('[data-match-name]');
+  var matchAgeInput = form.querySelector('[data-match-age]');
+  var matchCountryInput = form.querySelector('[data-match-country]');
+  var matchRegionInput = form.querySelector('[data-match-region]');
+  var matchCityInput = form.querySelector('[data-match-city]');
+  var matchEmpty = form.querySelector('[data-submit-match-empty]');
+  var matchResults = form.querySelector('[data-submit-match-results]');
+  var matchCards = Array.prototype.slice.call(form.querySelectorAll('[data-submit-match-card]'));
+  var claimSelectedUI = form.querySelector('[data-claim-selected-ui]');
+  var claimSelectedTitle = form.querySelector('[data-claim-selected-title]');
+  var upsellCards = Array.prototype.slice.call(form.querySelectorAll('[data-upsell-card]'));
+
+  var reviewMode = form.querySelector('[data-review-mode]');
+  var reviewName = form.querySelector('[data-review-name]');
+  var reviewLocation = form.querySelector('[data-review-location]');
+  var reviewVisibility = form.querySelector('[data-review-visibility]');
+  var reviewProfessional = form.querySelector('[data-review-professional]');
+
+  var currentStep = 1;
+  var maxStep = 6;
+  var claimLoginRequired = {% if customer %}false{% else %}true{% endif %};
+
+  function normalize(str) {
+    return (str || '').toString().trim().toLowerCase();
+  }
+
+  function getFieldValue(name) {
+    var field = form.querySelector('[name="' + name + '"]');
+    return field && field.value ? field.value : '';
+  }
+
+  function getFileName(name) {
+    var field = form.querySelector('[name="' + name + '"]');
+    if (field && field.files && field.files[0] && field.files[0].name) {
+      return field.files[0].name;
+    }
+    return '';
+  }
+
+  function setInputValueAndNotify(input, selectedValue) {
+    if (!input) return;
+
+    input.value = selectedValue;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function resolveSuggestionTarget(targetKey) {
+    if (!targetKey) return null;
+
+    var selectorMatch = null;
+
+    try {
+      selectorMatch = form.querySelector(targetKey);
+    } catch (error) {
+      selectorMatch = null;
+    }
+
+    return (
+      selectorMatch ||
+      form.querySelector('[name="' + targetKey + '"]') ||
+      form.querySelector('[data-suggestion-field="' + targetKey + '"]')
+    );
+  }
+
+  function findClaimCardByHandleOrTitle(value) {
+    var normalizedValue = normalize(value);
+    if (!normalizedValue) return null;
+
+    for (var i = 0; i < matchCards.length; i++) {
+      var card = matchCards[i];
+      var cardHandle = normalize(card.getAttribute('data-match-handle'));
+      var cardTitle = normalize(card.getAttribute('data-match-title'));
+
+      if (cardHandle === normalizedValue || cardTitle === normalizedValue) {
+        return card;
+      }
+    }
+
+    return null;
+  }
+
+  function updateMode(mode) {
+    if (mode === 'claim_case' && claimLoginRequired) {
+      mode = 'new_case';
+    }
+
+    if (modeInput) modeInput.value = mode;
+    if (claimantCustomerIdInput && mode === 'claim_case') {
+      claimantCustomerIdInput.value = String(claimantCustomerIdInput.value || '').trim();
+    }
+
+    modeButtons.forEach(function(btn) {
+      btn.classList.toggle('is-active', btn.getAttribute('data-case-mode') === mode);
+    });
+
+    if (reviewMode) {
+      reviewMode.textContent = mode === 'claim_case'
+        ? 'Claim existing case request'
+        : 'New case submission';
+    }
+  }
+
+  function updateStepFieldState() {
+    steps.forEach(function(step) {
+      var isActive = step.classList.contains('is-active');
+      var fields = step.querySelectorAll('input, select, textarea, button');
+
+      fields.forEach(function(field) {
+        if (field.type === 'hidden') return;
+        if (field.hasAttribute('data-step-back') || field.hasAttribute('data-step-next')) return;
+
+        if (!isActive && field.tagName !== 'BUTTON') {
+          field.setAttribute('data-was-disabled-by-step', 'true');
+          field.disabled = true;
+        } else if (isActive && field.hasAttribute('data-was-disabled-by-step')) {
+          field.disabled = false;
+          field.removeAttribute('data-was-disabled-by-step');
+        }
+      });
+    });
+  }
+
+  function showStep(stepNumber) {
+    currentStep = Math.max(1, Math.min(maxStep, stepNumber));
+
+    steps.forEach(function(step) {
+      step.classList.toggle(
+        'is-active',
+        parseInt(step.getAttribute('data-step'), 10) === currentStep
+      );
+    });
+
+    progressSteps.forEach(function(stepEl, index) {
+      stepEl.classList.toggle('is-active', index < currentStep);
+    });
+
+    if (progressFill) {
+      progressFill.style.width = ((currentStep / maxStep) * 100) + '%';
+    }
+
+    if (stepBackBtn) {
+      stepBackBtn.classList.toggle('is-hidden', currentStep === 1);
+    }
+
+    if (stepNextBtn) {
+      stepNextBtn.classList.toggle('is-hidden', currentStep === maxStep);
+    }
+
+    updateStepFieldState();
+
+    if (currentStep === 6) {
+      updateReview();
+    }
+  }
+
+  function runMatchCheck() {
+    var nameVal = normalize(matchNameInput && matchNameInput.value);
+    var ageVal = normalize(matchAgeInput && matchAgeInput.value);
+    var countryVal = normalize(matchCountryInput && matchCountryInput.value);
+    var regionVal = normalize(matchRegionInput && matchRegionInput.value);
+    var cityVal = normalize(matchCityInput && matchCityInput.value);
+
+    if (!nameVal || nameVal.length < 3) {
+      if (matchEmpty) matchEmpty.classList.remove('is-hidden');
+      if (matchResults) matchResults.classList.add('is-hidden');
+      matchCards.forEach(function(card) {
+        card.classList.add('is-hidden');
+      });
+      return;
+    }
+
+    var visibleCount = 0;
+
+    matchCards.forEach(function(card) {
+      var cardTitle = normalize(card.getAttribute('data-match-title'));
+      var cardAge = normalize(card.getAttribute('data-match-age'));
+      var cardCountry = normalize(card.getAttribute('data-match-country'));
+      var cardRegion = normalize(card.getAttribute('data-match-region'));
+      var cardCity = normalize(card.getAttribute('data-match-city'));
+
+      var nameMatch = cardTitle.indexOf(nameVal) !== -1 || nameVal.indexOf(cardTitle) !== -1;
+      var ageMatch = !ageVal || !cardAge || cardAge === ageVal;
+      var countryMatch = !countryVal || !cardCountry || cardCountry.indexOf(countryVal) !== -1 || countryVal.indexOf(cardCountry) !== -1;
+      var regionMatch = !regionVal || !cardRegion || cardRegion.indexOf(regionVal) !== -1 || regionVal.indexOf(cardRegion) !== -1;
+      var cityMatch = !cityVal || !cardCity || cardCity.indexOf(cityVal) !== -1 || cityVal.indexOf(cardCity) !== -1;
+
+      if (nameMatch && ageMatch && countryMatch && regionMatch && cityMatch) {
+        card.classList.remove('is-hidden');
+        visibleCount += 1;
+      } else {
+        card.classList.add('is-hidden');
+      }
+    });
+
+    if (visibleCount > 0) {
+      if (matchEmpty) matchEmpty.classList.add('is-hidden');
+      if (matchResults) matchResults.classList.remove('is-hidden');
+    } else {
+      if (matchEmpty) {
+        matchEmpty.classList.remove('is-hidden');
+        var title = matchEmpty.querySelector('.case-submit-match-empty-title');
+        var text = matchEmpty.querySelector('p');
+        if (title) title.textContent = 'NO LIKELY MATCH FOUND';
+        if (text) {
+          text.textContent = 'No likely manual unassigned case was found from the details entered. You can continue with a new case submission.';
+        }
+      }
+      if (matchResults) matchResults.classList.remove('is-hidden');
+    }
+  }
+
+  function updateReview() {
+    if (reviewMode) {
+      reviewMode.textContent = modeInput && modeInput.value === 'claim_case'
+        ? 'Claim existing case request'
+        : 'New case submission';
+    }
+
+    if (reviewName) {
+      var personName = form.querySelector('[name="person_name"]');
+      reviewName.textContent = (personName && personName.value) ? personName.value : '—';
+    }
+
+    if (reviewLocation) {
+      var country = form.querySelector('[name="country"]');
+      var region = form.querySelector('[name="state_region"]');
+      var city = form.querySelector('[name="city_town"]');
+      var bits = [];
+
+      if (city && city.value) bits.push(city.value);
+      if (region && region.value) bits.push(region.value);
+      if (country && country.value) bits.push(country.value);
+
+      reviewLocation.textContent = bits.length ? bits.join(', ') : '—';
+    }
+
+    if (reviewVisibility) {
+      var selectedVisibility = form.querySelector('input[name="visibility_option"]:checked');
+      var map = {
+        free: 'Free listing',
+        boost: 'Boosted appeal',
+        spotlight: 'Spotlight feature'
+      };
+      reviewVisibility.textContent = selectedVisibility
+        ? (map[selectedVisibility.value] || selectedVisibility.value)
+        : 'Free listing';
+    }
+
+    if (reviewProfessional) {
+      var professional = form.querySelector('[name="professional_contact_opt_in"]');
+      reviewProfessional.textContent = professional && professional.value === 'yes'
+        ? 'Requested — remains locked until verification approval'
+        : 'Not requested';
+    }
+  }
+
+  function normalizeClaimHandle(value) {
+    var normalized = String(value || '').trim().toLowerCase();
+
+    if (normalized.indexOf('missing-persons/') === 0) {
+      normalized = normalized.slice('missing-persons/'.length);
+    }
+
+    return normalized;
+  }
+
+  function prefillFromUrl() {
+    var params = new URLSearchParams(window.location.search);
+    if (!params.toString()) return;
+
+    var mode = params.get('mode');
+    var personName = params.get('person_name');
+    var personAge = params.get('person_age');
+    var country = params.get('country');
+    var stateRegion = params.get('state_region');
+    var cityTown = params.get('city_town');
+
+    if (mode === 'claim_case' || mode === 'new_case') {
+      updateMode(mode);
+    }
+
+    if (personName) {
+      var personNameField = form.querySelector('[name="person_name"]');
+      if (personNameField) personNameField.value = personName;
+    }
+
+    if (personAge) {
+      var personAgeField = form.querySelector('[name="person_age"]');
+      if (personAgeField) personAgeField.value = personAge;
+    }
+
+    if (country) {
+      var countryField = form.querySelector('[name="country"]');
+      if (countryField) countryField.value = country;
+    }
+
+    if (stateRegion) {
+      var stateRegionField = form.querySelector('[name="state_region"]');
+      if (stateRegionField) stateRegionField.value = stateRegion;
+    }
+
+    if (cityTown) {
+      var cityTownField = form.querySelector('[name="city_town"]');
+      if (cityTownField) cityTownField.value = cityTown;
+    }
+
+    runMatchCheck();
+    updateReview();
+  }
+
+  function validateCurrentFlow() {
+    var requiredFields = [
+      { name: 'person_name', label: 'missing person full name' },
+      { name: 'submitter_email', label: 'email address' }
+    ];
+
+    if (modeInput && modeInput.value !== 'claim_case') {
+      requiredFields.push({ name: 'person_age', label: 'age' });
+    }
+
+    if (modeInput && modeInput.value === 'claim_case') {
+      requiredFields.push({ name: 'selected_claim_case', label: 'an existing case to claim' });
+      requiredFields.push({ name: 'claimant_customer_id', label: 'your logged-in member account' });
+    }
+
+    for (var i = 0; i < requiredFields.length; i++) {
+      var fieldInfo = requiredFields[i];
+      var field = form.querySelector('[name="' + fieldInfo.name + '"]');
+
+      if (!field || !field.value || !String(field.value).trim()) {
+        alert('Please complete ' + fieldInfo.label + '.');
+        return false;
+      }
+    }
+
+    var finalConfirm = form.querySelector('[name="final_confirm"]');
+    if (finalConfirm && !finalConfirm.checked) {
+      alert('Please tick the final confirmation box.');
+      return false;
+    }
+
+    return true;
+  }
+
+  modeButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      updateMode(btn.getAttribute('data-case-mode'));
+    });
+  });
+
+  [matchNameInput, matchAgeInput, matchCountryInput, matchRegionInput, matchCityInput].forEach(function(input) {
+    if (!input) return;
+    input.addEventListener('input', runMatchCheck);
+    input.addEventListener('change', runMatchCheck);
+  });
+
+  form.addEventListener('click', function(event) {
+    var button = event.target.closest(
+      '[data-suggestion-target][data-suggestion-value], [data-fill-target][data-fill-value], [data-input-target][data-input-value]'
+    );
+
+    if (!button || !form.contains(button)) return;
+
+    var targetKey =
+      button.getAttribute('data-suggestion-target') ||
+      button.getAttribute('data-fill-target') ||
+      button.getAttribute('data-input-target') ||
+      '';
+    var selectedValue =
+      button.getAttribute('data-suggestion-value') ||
+      button.getAttribute('data-fill-value') ||
+      button.getAttribute('data-input-value') ||
+      '';
+    var input = resolveSuggestionTarget(targetKey);
+
+    if (!input) return;
+
+    event.preventDefault();
+    setInputValueAndNotify(input, selectedValue);
+  });
+
+  form.querySelectorAll('[data-select-claim-case]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var rawHandle = btn.getAttribute('data-claim-handle') || btn.getAttribute('data-select-claim-case') || '';
+      var claimHandle = normalizeClaimHandle(rawHandle);
+      var claimTitle = btn.getAttribute('data-claim-title') || 'Selected existing case';
+
+      if (!claimHandle) {
+        alert('No claim case was selected. Click CLAIM THIS CASE on a case card first.');
+        return;
+      }
+
+      updateMode('claim_case');
+
+      if (selectedClaimInput) {
+        selectedClaimInput.value = claimHandle;
+      }
+
+      if (claimSelectedTitle) {
+        claimSelectedTitle.textContent = claimTitle;
+      }
+
+      if (claimSelectedUI) {
+        claimSelectedUI.classList.remove('is-hidden');
+      }
+    });
+  });
+
+  upsellCards.forEach(function(card) {
+    card.addEventListener('click', function() {
+      upsellCards.forEach(function(c) {
+        c.classList.remove('is-selected');
+      });
+      card.classList.add('is-selected');
+      var radio = card.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+    });
+  });
+
+  if (stepBackBtn) {
+    stepBackBtn.addEventListener('click', function() {
+      showStep(currentStep - 1);
+    });
+  }
+
+  if (stepNextBtn) {
+    stepNextBtn.addEventListener('click', function() {
+      showStep(currentStep + 1);
+    });
+  }
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    updateReview();
+
+    if (!validateCurrentFlow()) {
+      return;
+    }
+
+    var temporarilyEnabled = [];
+    var disabledFields = form.querySelectorAll('input:disabled, select:disabled, textarea:disabled');
+
+    disabledFields.forEach(function(field) {
+      if (field.type === 'hidden') return;
+      field.disabled = false;
+      temporarilyEnabled.push(field);
+    });
+
+    var formData = new FormData(form);
+    var payload = {};
+    var currentMode = modeInput && modeInput.value ? modeInput.value : 'new_case';
+
+    if (currentMode === 'claim_case') {
+      payload.submission_mode = 'claim_case';
+      payload.selected_claim_case = normalizeClaimHandle(selectedClaimInput ? selectedClaimInput.value : '');
+      payload.linked_case_handle = payload.selected_claim_case;
+      payload.claimant_customer_id = String(claimantCustomerIdInput ? claimantCustomerIdInput.value : '').trim();
+      payload.person_name = getFieldValue('person_name');
+      payload.submitter_name = getFieldValue('submitter_name');
+      payload.submitter_email = getFieldValue('submitter_email');
+      payload.submitter_phone = getFieldValue('submitter_phone');
+      payload.relationship_to_person = getFieldValue('relationship_to_person');
+      payload.circumstances = getFieldValue('circumstances');
+      payload.no_reference_reason = getFieldValue('no_reference_reason');
+      payload.claim_proof = getFileName('claim_proof');
+      console.log('CLAIM FINAL SUBMIT PAYLOAD', payload);
+
+      if (!payload.selected_claim_case) {
+        temporarilyEnabled.forEach(function(field) {
+          field.disabled = true;
+        });
+        alert('No claim case was selected. Click CLAIM THIS CASE on a case card first.');
+        return;
+      }
+
+      if (!String(payload.claimant_customer_id || '').trim()) {
+        temporarilyEnabled.forEach(function(field) {
+          field.disabled = true;
+        });
+        alert('You must be logged in to claim an existing case.');
+        return;
+      }
+
+      if (!/^[a-z0-9-]+$/.test(payload.selected_claim_case)) {
+        temporarilyEnabled.forEach(function(field) {
+          field.disabled = true;
+        });
+        alert('Claim handle is invalid. It must be a raw article handle only.');
+        return;
+      }
+
+      if (!/^\d+$/.test(payload.claimant_customer_id)) {
+        temporarilyEnabled.forEach(function(field) {
+          field.disabled = true;
+        });
+        alert('Claim customer id is missing or invalid.');
+        return;
+      }
+    } else {
+      formData.forEach(function(value, key) {
+        if (value instanceof File) {
+          if (value && value.name) {
+            payload[key] = value.name;
+          }
+        } else {
+          payload[key] = value;
+        }
+      });
+    }
+
+    temporarilyEnabled.forEach(function(field) {
+      field.disabled = true;
+    });
+
+    try {
+      var response = await fetch('https://dashboard-ui-snowy-eight.vercel.app/api/case-submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      var result = await response.json();
+
+      if (!response.ok || !result.ok) {
+        console.error('API response error:', result);
+        throw new Error(result.error || 'Submission failed');
+      }
+
+      var successMessage = 'Case submitted successfully. Reference: ' + result.id;
+      if (result.professionalHelpMessage) {
+        successMessage += '\n\n' + result.professionalHelpMessage;
+      }
+      alert(successMessage);
+      form.reset();
+
+      if (selectedClaimInput) selectedClaimInput.value = '';
+      if (claimSelectedUI) claimSelectedUI.classList.add('is-hidden');
+      if (claimSelectedTitle) claimSelectedTitle.textContent = 'Selected existing case';
+
+      showStep(1);
+      updateMode('new_case');
+    } catch (error) {
+      console.error(error);
+      alert('Submission error: ' + (error.message || 'Unknown error'));
+    }
+  });
+
+  showStep(1);
+  updateMode('new_case');
+  prefillFromUrl();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Submit Case Form",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Submit Case Form"
+    }
+  ]
+}
+{% endschema %}

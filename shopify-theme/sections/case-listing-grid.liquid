@@ -1,0 +1,337 @@
+{{ 'case-listing-grid.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'case-listing-grid.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign listing_type = section.settings.listing_type | default: 'missing'
+  if template.suffix == 'found' or blog.handle == 'found-safe' or blog.handle == 'found'
+    assign listing_type = 'found'
+  elsif template.name == 'blog' and blog.handle == 'missing-persons'
+    assign listing_type = 'missing'
+  endif
+  assign is_found_listing = false
+  if listing_type == 'found'
+    assign is_found_listing = true
+  endif
+
+  assign customer_tags = ''
+  assign is_pro_customer = false
+  if customer
+    assign customer_tags = customer.tags | join: ',' | downcase
+    if customer_tags contains 'verified-pro' or customer_tags contains 'professional' or customer_tags contains 'pro'
+      assign is_pro_customer = true
+    endif
+  endif
+-%}
+
+<section
+  class="ma-case-listing-grid ma-case-listing-grid--{{ listing_type }}"
+  data-case-listing-grid
+  data-listing-type="{{ listing_type }}"
+  data-country-section
+  data-country-scope="all"
+>
+  <div class="ma-case-listing-grid__shell">
+    <header class="ma-case-listing-grid__header">
+      <p class="ma-case-listing-grid__eyebrow">{{ listing_type | upcase }} CASE DIRECTORY</p>
+      <h1 class="ma-case-listing-grid__heading">{{ section.settings.heading | default: blog.title | escape }}</h1>
+      {% if section.settings.subheading != blank %}
+        <p class="ma-case-listing-grid__subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+
+    <div class="ma-case-listing-grid__search-panel">
+      <div class="ma-case-listing-grid__basic-search">
+        <label for="CaseSearch-{{ section.id }}">Search cases</label>
+        <div class="ma-case-listing-grid__search-row">
+          <input id="CaseSearch-{{ section.id }}" type="search" data-case-search-input placeholder="Search by name, title, town, city, county, or country">
+          <button type="button" data-case-reset-filters>Reset filters</button>
+        </div>
+      </div>
+
+      {% if section.settings.show_advanced_search %}
+        <details class="ma-case-listing-grid__advanced{% unless customer %} is-locked{% endunless %}" data-advanced-search open>
+          <summary>
+            <span>Advanced search</span>
+            {% if customer %}
+              <strong>{% if is_pro_customer %}PRO SEARCH ENABLED{% else %}MEMBER SEARCH ENABLED{% endif %}</strong>
+            {% else %}
+              <strong>LOCKED</strong>
+            {% endif %}
+          </summary>
+
+          <div class="ma-case-listing-grid__advanced-wrap">
+            <div class="ma-case-listing-grid__advanced-fields">
+              <label>Country<input type="text" data-filter-country placeholder="Country code or name"{% unless customer %} disabled{% endunless %}></label>
+              <label>Region/county/state<input type="text" data-filter-region placeholder="Region, county, state"{% unless customer %} disabled{% endunless %}></label>
+              <label>City/town<input type="text" data-filter-city placeholder="City or town"{% unless customer %} disabled{% endunless %}></label>
+              <label>Case status<select data-filter-status{% unless customer %} disabled{% endunless %}><option value="">Any status</option><option value="missing">Missing</option><option value="found safe">Found safe</option><option value="resolved">Resolved</option><option value="located">Located</option><option value="returned">Returned</option></select></label>
+              <label>Age minimum<input type="number" min="0" data-filter-age-min placeholder="Min"{% unless customer %} disabled{% endunless %}></label>
+              <label>Age maximum<input type="number" min="0" data-filter-age-max placeholder="Max"{% unless customer %} disabled{% endunless %}></label>
+              <label>Gender<input type="text" data-filter-gender placeholder="Gender"{% unless customer %} disabled{% endunless %}></label>
+              <label>Missing/found date keyword<input type="text" data-filter-date-keyword placeholder="Date, year, month"{% unless customer %} disabled{% endunless %}></label>
+              <label>Last seen/location keyword<input type="text" data-filter-last-seen placeholder="Place or detail"{% unless customer %} disabled{% endunless %}></label>
+              <label>Article text keyword<input type="text" data-filter-article placeholder="Search article text"{% unless customer %} disabled{% endunless %}></label>
+              <label>Sort<select data-filter-sort{% unless customer %} disabled{% endunless %}><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="name-az">Name A-Z</option><option value="name-za">Name Z-A</option></select></label>
+              <label class="ma-case-listing-grid__checkbox"><input type="checkbox" data-filter-photo{% unless customer %} disabled{% endunless %}> Has photo</label>
+            </div>
+
+            {% if is_pro_customer %}
+              <div class="ma-case-listing-grid__pro-help" data-pro-help-search>
+                <div class="ma-case-listing-grid__pro-help-heading">
+                  <h2>PROFESSIONAL HELP REQUEST SEARCH</h2>
+                  <p>Search cases where families or case owners have asked for professional help.</p>
+                </div>
+                <div class="ma-case-listing-grid__pro-help-fields">
+                  <label>Wants professional help<select data-filter-wants-help><option value="">Any</option><option value="true">Yes</option><option value="false">No</option></select></label>
+                  <label>Help type<select data-filter-help-type><option value="">Any help type</option><option value="private investigator">Private investigator</option><option value="search volunteer">Search volunteer</option><option value="legal support">Legal support</option><option value="media support">Media support</option><option value="translation support">Translation support</option><option value="transport help">Transport help</option><option value="other">Other</option></select></label>
+                  <label>Contact allowed<select data-filter-contact-allowed><option value="">Any</option><option value="true">Yes</option><option value="false">No</option></select></label>
+                  <label>Verification status<select data-filter-verification-status><option value="">Any</option><option value="verified">Verified</option><option value="pending">Pending</option><option value="unknown">Unknown</option></select></label>
+                  <label>Keyword search<input type="text" data-filter-help-keyword placeholder="Help request keyword"></label>
+                </div>
+              </div>
+            {% endif %}
+
+          {% unless customer %}
+            <div class="ma-case-listing-grid__locked">
+              <div class="ma-case-listing-grid__lock-icon" aria-hidden="true"></div>
+              <p>Sign in to unlock advanced case search, location filters, photo filters and date tools.</p>
+              <a href="/account/login">SIGN IN</a>
+              <a href="/account/register">CREATE FREE MEMBER ACCOUNT</a>
+            </div>
+          {% endunless %}
+          </div>
+        </details>
+      {% endif %}
+
+      <div class="ma-case-listing-grid__status-row">
+        <p data-country-fallback-message hidden>No cases are currently listed for this country yet, so we’re showing all available cases.</p>
+        <span data-case-result-count>0 cases shown</span>
+      </div>
+    </div>
+
+    <div class="ma-case-listing-grid__empty" data-case-empty-message hidden>No cases match these filters yet.</div>
+
+    <div class="ma-case-listing-grid__cards" data-case-card-grid>
+      {%- assign rendered_count = 0 -%}
+      {%- paginate blog.articles by 50 -%}
+        {%- for article in blog.articles -%}
+          {%- liquid
+            assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase | strip
+            assign alternate_status = article.metafields.custom.status.value | default: article.metafields.custom.status | downcase | strip
+            assign tags_downcase = article.tags | join: ',' | downcase
+            assign status_scope = case_status | append: ' ' | append: alternate_status | append: ' ' | append: tags_downcase
+            assign article_blog_handle = blog.handle | default: article.blog.handle | default: '' | downcase
+            assign article_title_downcase = article.title | downcase
+            assign is_advice_article = false
+            if article_blog_handle contains 'advice' or tags_downcase contains 'seo-blog' or tags_downcase contains 'advice'
+              assign is_advice_article = true
+            elsif article_title_downcase contains 'what to do' or article_title_downcase contains 'how to'
+              assign is_advice_article = true
+            endif
+            assign is_found_case = false
+            assign rendered_status = 'missing'
+            if status_scope contains 'found safe' or status_scope contains 'found-safe'
+              assign is_found_case = true
+              assign rendered_status = 'found safe'
+            elsif status_scope contains 'resolved'
+              assign is_found_case = true
+              assign rendered_status = 'resolved'
+            elsif status_scope contains 'located'
+              assign is_found_case = true
+              assign rendered_status = 'located'
+            elsif status_scope contains 'returned'
+              assign is_found_case = true
+              assign rendered_status = 'returned'
+            elsif status_scope contains 'found'
+              assign is_found_case = true
+              assign rendered_status = 'found safe'
+            endif
+            assign show_article = false
+
+            if is_found_listing
+              if is_found_case
+                assign show_article = true
+              endif
+            else
+              assign show_article = true
+              if is_found_case
+                assign show_article = false
+              endif
+              assign rendered_status = 'missing'
+            endif
+
+            if is_advice_article
+              assign show_article = false
+            endif
+
+            assign case_country_code = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | strip | downcase
+            assign case_country_label = article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+            for article_tag in article.tags
+              assign tag_downcase = article_tag | downcase | strip
+              if tag_downcase contains 'country:'
+                assign case_country_code = tag_downcase | split: ':' | last | strip
+                break
+              endif
+            endfor
+            if case_country_code == blank
+              assign case_country_code = case_country_label | handleize
+            endif
+            if case_country_code == 'united-kingdom' or case_country_code == 'great-britain' or case_country_code == 'england' or case_country_code == 'scotland' or case_country_code == 'wales' or case_country_code == 'northern-ireland'
+              assign case_country_code = 'gb'
+            elsif case_country_code == 'united-states' or case_country_code == 'usa' or case_country_code == 'america'
+              assign case_country_code = 'us'
+            elsif case_country_code == 'ireland'
+              assign case_country_code = 'ie'
+            elsif case_country_code == 'canada'
+              assign case_country_code = 'ca'
+            elsif case_country_code == 'australia'
+              assign case_country_code = 'au'
+            elsif case_country_code == 'new-zealand'
+              assign case_country_code = 'nz'
+            endif
+            if case_country_code == blank
+              assign case_country_code = 'all'
+            endif
+            if case_country_code == 'uk'
+              assign case_country_code = 'gb'
+            endif
+            if case_country_label == blank
+              assign case_country_label = case_country_code | upcase
+            endif
+
+            assign case_city = article.metafields.custom.city_town.value | default: article.metafields.custom.city_town | default: article.metafields.custom.city.value | default: article.metafields.custom.city | strip
+            assign case_region = article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | default: article.metafields.custom.region.value | default: article.metafields.custom.region | strip
+            assign last_seen_place = article.metafields.custom.last_seen_area.value | default: article.metafields.custom.last_seen_area | default: article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | default: article.metafields.custom.last_seen_location.value | default: article.metafields.custom.last_seen_location | strip
+            assign case_gender = article.metafields.custom.gender.value | default: article.metafields.custom.gender | strip
+            assign location_search_text = article.metafields.custom.location_search_text.value | default: article.metafields.custom.location_search_text | strip
+            assign reported_missing_at = article.metafields.custom.reported_missing_at.value | default: article.metafields.custom.reported_missing_at | strip
+            assign last_seen_at = article.metafields.custom.last_seen_at.value | default: article.metafields.custom.last_seen_at | strip
+            assign found_at = article.metafields.custom.found_at.value | default: article.metafields.custom.found_at | default: article.metafields.custom.resolved_at.value | default: article.metafields.custom.resolved_at | strip
+            assign case_date_keywords = article.published_at | date: '%Y-%m-%d %B %Y'
+            if reported_missing_at != blank
+              assign case_date_keywords = case_date_keywords | append: ' ' | append: reported_missing_at
+            endif
+            if last_seen_at != blank
+              assign case_date_keywords = case_date_keywords | append: ' ' | append: last_seen_at
+            endif
+            if found_at != blank
+              assign case_date_keywords = case_date_keywords | append: ' ' | append: found_at
+            endif
+            assign display_location = article.metafields.custom.display_location.value | default: article.metafields.custom.display_location | strip
+            assign case_location = display_location | default: last_seen_place
+            if case_location == blank
+              assign case_location = case_city
+              if case_location != blank and case_region != blank
+                assign case_location = case_location | append: ', ' | append: case_region
+              elsif case_region != blank
+                assign case_location = case_region
+              endif
+              if case_location != blank and case_country_label != blank
+                assign case_location = case_location | append: ', ' | append: case_country_label
+              endif
+            endif
+            assign title_location = ''
+            assign normalized_title = article.title | replace: ' – ', ' - ' | replace: ' — ', ' - '
+            if case_location == blank and normalized_title contains ' - '
+              assign title_parts = normalized_title | split: ' - '
+              assign title_location = title_parts | last | strip
+              assign case_location = title_location
+            endif
+            if case_location == blank
+              assign article_location_clue = article.excerpt | strip_html | default: article.content | strip_html | truncatewords: 14
+              assign case_location = article_location_clue | default: 'Location details in case description'
+            endif
+            assign case_age = article.metafields.custom.age.value | default: article.metafields.custom.age | strip
+            assign wants_help_raw = article.metafields.custom.professional_help_requested.value | default: article.metafields.custom.professional_help_requested | default: article.metafields.custom.case_owner_professional_help.value | default: article.metafields.custom.case_owner_professional_help | default: article.metafields.custom.wants_professional_help.value | default: article.metafields.custom.wants_professional_help | append: '' | downcase | strip
+            assign wants_help = 'false'
+            if wants_help_raw == 'true' or wants_help_raw == 'yes' or wants_help_raw == '1' or wants_help_raw contains 'requested'
+              assign wants_help = 'true'
+            endif
+            assign help_type = article.metafields.custom.professional_help_type.value | default: article.metafields.custom.professional_help_type | default: article.metafields.custom.help_type.value | default: article.metafields.custom.help_type | default: 'other' | strip
+            assign contact_allowed_raw = article.metafields.custom.professional_contact_allowed.value | default: article.metafields.custom.professional_contact_allowed | default: article.metafields.custom.contact_allowed.value | default: article.metafields.custom.contact_allowed | append: '' | downcase | strip
+            assign contact_allowed = 'false'
+            if contact_allowed_raw == 'true' or contact_allowed_raw == 'yes' or contact_allowed_raw == '1'
+              assign contact_allowed = 'true'
+            endif
+            assign verification_status = article.metafields.custom.help_verification_status.value | default: article.metafields.custom.help_verification_status | default: article.metafields.custom.verification_status.value | default: article.metafields.custom.verification_status | default: 'unknown' | downcase | strip
+            if verification_status == blank
+              assign verification_status = 'unknown'
+            endif
+            assign help_keyword_text = wants_help_raw | append: ' ' | append: help_type | append: ' ' | append: verification_status
+          -%}
+
+          {% if show_article %}
+            {% assign rendered_count = rendered_count | plus: 1 %}
+            {% render 'case-grid-card',
+              article: article,
+              blog: blog,
+              status: rendered_status,
+              country_code: case_country_code,
+              country_label: case_country_label,
+              location: case_location,
+              region: case_region,
+              city: case_city,
+              age: case_age,
+              gender: case_gender,
+              date_keywords: case_date_keywords,
+              last_seen: last_seen_place,
+              listing_type: listing_type,
+              is_found_case: is_found_case,
+              is_pro_customer: is_pro_customer,
+              wants_help: wants_help,
+              help_type: help_type,
+              contact_allowed: contact_allowed,
+              verification_status: verification_status,
+              help_keyword_text: help_keyword_text,
+              location_search_text: location_search_text
+            %}
+          {% endif %}
+        {%- endfor -%}
+
+        {% if paginate.pages > 1 %}
+          <div class="ma-case-listing-grid__pagination">
+            {% render 'pagination', paginate: paginate %}
+          </div>
+        {% endif %}
+      {%- endpaginate -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Case listing grid",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "listing_type",
+      "label": "Listing type",
+      "default": "missing",
+      "options": [
+        { "value": "missing", "label": "Missing" },
+        { "value": "found", "label": "Found safe" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Missing cases"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Search active Missing Alerts cases by country, location, and case detail."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_advanced_search",
+      "label": "Show advanced search",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,82 @@
+{% liquid
+  assign social_amplify_live = article.metafields.custom.social_amplify_live.value | default: article.metafields.custom.social_amplify_live
+  assign social_amplify_completed = article.metafields.custom.social_amplify_completed.value | default: article.metafields.custom.social_amplify_completed
+  assign case_query = article.url | url_encode
+  assign title_query = article.title | url_encode
+%}
+
+{% if blog.handle == 'missing-persons' and found_safe != true %}
+  <section class="ma-social-amplify" aria-labelledby="ma-social-amplify-title-{{ article.id }}">
+    <div class="ma-social-amplify__status">
+      {% if social_amplify_live == true or social_amplify_live == 'true' %}
+        AMPLIFY ACTIVE
+      {% elsif social_amplify_completed == true or social_amplify_completed == 'true' %}
+        AMPLIFY COMPLETED
+      {% else %}
+        READY TO AMPLIFY
+      {% endif %}
+    </div>
+
+    <h3 id="ma-social-amplify-title-{{ article.id }}" class="ma-social-amplify__title">AMPLIFY THIS CASE</h3>
+
+    <p class="ma-social-amplify__copy">
+      This case has already been shared once by Missing Alerts when it was approved. Amplify it again to help push the appeal back in front of more people across our relevant social media network.
+    </p>
+
+    <p class="ma-social-amplify__psychology">The right person may not have seen it the first time.</p>
+
+    <div class="ma-social-amplify__trust">
+      We use selected country and regional pages, varied wording, and timed posting to help the appeal reach more people without spammy duplicate posting.
+    </div>
+
+    <ul class="ma-social-amplify__benefits" aria-label="Social media amplification benefits">
+      <li>Re-shares the case after the first free post</li>
+      <li>Targets the relevant country or region</li>
+      <li>Uses different wording across posts</li>
+      <li>Helps the appeal appear fresh again</li>
+      <li>Designed for urgent missing-person visibility</li>
+      <li>Can help reach people who missed the first appeal</li>
+      <li>Works alongside the website case page</li>
+      <li>Built to avoid spam-style repeated posting</li>
+      <li>Supports future status updates and re-appeals</li>
+      <li>Helps keep the case moving while people are still looking</li>
+    </ul>
+
+    <div class="ma-social-amplify__plans" aria-label="Social media amplification options">
+      <a
+        href="/products/amplify-standard?case={{ case_query }}&case_title={{ title_query }}"
+        class="ma-social-amplify__plan"
+        aria-label="Choose Standard Amplify for {{ article.title | escape }}"
+      >
+        <span class="ma-social-amplify__plan-head">
+          <span class="ma-social-amplify__plan-name">STANDARD AMPLIFY</span>
+        </span>
+        <span class="ma-social-amplify__plan-copy">Give this case another social push.</span>
+      </a>
+
+      <a
+        href="/products/amplify-priority?case={{ case_query }}&case_title={{ title_query }}"
+        class="ma-social-amplify__plan ma-social-amplify__plan--priority"
+        aria-label="Choose Priority Amplify for {{ article.title | escape }}"
+      >
+        <span class="ma-social-amplify__plan-head">
+          <span class="ma-social-amplify__plan-name">PRIORITY AMPLIFY</span>
+        </span>
+        <span class="ma-social-amplify__plan-copy">Reach more relevant people faster.</span>
+      </a>
+
+      <a
+        href="/products/amplify-emergency?case={{ case_query }}&case_title={{ title_query }}"
+        class="ma-social-amplify__plan"
+        aria-label="Choose Emergency Amplify for {{ article.title | escape }}"
+      >
+        <span class="ma-social-amplify__plan-head">
+          <span class="ma-social-amplify__plan-name">EMERGENCY AMPLIFY</span>
+        </span>
+        <span class="ma-social-amplify__plan-copy">Fastest social redistribution for urgent visibility.</span>
+      </a>
+    </div>
+
+    <p class="ma-social-amplify__small">Already shared once. Amplify again to reach more people.</p>
+  </section>
+{% endif %}

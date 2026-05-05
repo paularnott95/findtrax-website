@@ -1,0 +1,73 @@
+{{ 'member-alert-preferences.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'member-alert-preferences.js' | asset_url }}" defer="defer"></script>
+
+{% assign alert_country_pref = customer.metafields.custom.alert_pref_country_alerts.value | default: customer.metafields.custom.alert_pref_country_alerts | default: 'true' %}
+{% assign alert_near_pref = customer.metafields.custom.alert_pref_near_you_alerts.value | default: customer.metafields.custom.alert_pref_near_you_alerts %}
+{% assign alert_follow_pref = customer.metafields.custom.alert_pref_followed_case_updates.value | default: customer.metafields.custom.alert_pref_followed_case_updates | default: 'true' %}
+{% assign alert_found_pref = customer.metafields.custom.alert_pref_found_safe_updates.value | default: customer.metafields.custom.alert_pref_found_safe_updates | default: 'true' %}
+{% assign alert_professional_pref = customer.metafields.custom.alert_pref_professional_help_messages.value | default: customer.metafields.custom.alert_pref_professional_help_messages | default: 'true' %}
+{% assign alert_fundraiser_pref = customer.metafields.custom.alert_pref_fundraiser_support_updates.value | default: customer.metafields.custom.alert_pref_fundraiser_support_updates | default: 'true' %}
+{% assign alert_daily_digest_pref = customer.metafields.custom.alert_pref_daily_digest.value | default: customer.metafields.custom.alert_pref_daily_digest %}
+{% assign alert_weekly_digest_pref = customer.metafields.custom.alert_pref_weekly_digest.value | default: customer.metafields.custom.alert_pref_weekly_digest | default: 'true' %}
+{% if alert_near_pref == blank %}
+  {% assign alert_near_pref = 'true' %}
+{% endif %}
+
+<section
+  class="ma-alert-preferences"
+  data-member-alert-preferences
+  data-customer-id="{{ customer.id | append: '' | escape }}"
+  data-customer-email="{{ customer.email | escape }}"
+>
+  <div class="ma-alert-preferences__head">
+    <div>
+      <p class="ma-alert-preferences__eyebrow">INBOX ALERT SETTINGS</p>
+      <h2>INBOX ALERT SETTINGS</h2>
+    </div>
+  </div>
+  <p class="ma-alert-preferences__copy">
+    Choose which alerts appear in your Missing Alerts inbox. Emergency sightings should still be reported to police first.
+  </p>
+
+  <form class="ma-alert-preferences__form" data-alert-preferences-form>
+    <div class="ma-alert-preferences__list">
+      <label class="ma-alert-preferences__toggle">
+        <span>New missing cases in my country</span>
+        <input type="checkbox" name="countryAlerts" {% unless alert_country_pref == 'false' %}checked{% endunless %}>
+      </label>
+      <label class="ma-alert-preferences__toggle">
+        <span>Near my saved alert area</span>
+        <input type="checkbox" name="nearYouAlerts" {% if alert_near_pref == 'true' %}checked{% endif %}>
+      </label>
+      <label class="ma-alert-preferences__toggle">
+        <span>Updates on cases I follow</span>
+        <input type="checkbox" name="followedCaseUpdates" {% unless alert_follow_pref == 'false' %}checked{% endunless %}>
+      </label>
+      <label class="ma-alert-preferences__toggle">
+        <span>Found-safe updates on cases I follow</span>
+        <input type="checkbox" name="foundSafeUpdates" {% unless alert_found_pref == 'false' %}checked{% endunless %}>
+      </label>
+      <label class="ma-alert-preferences__toggle">
+        <span>Professional help messages</span>
+        <input type="checkbox" name="professionalHelpMessages" {% unless alert_professional_pref == 'false' %}checked{% endunless %}>
+      </label>
+      <label class="ma-alert-preferences__toggle">
+        <span>Fundraiser/support updates</span>
+        <input type="checkbox" name="fundraiserSupportUpdates" {% unless alert_fundraiser_pref == 'false' %}checked{% endunless %}>
+      </label>
+      <label class="ma-alert-preferences__toggle">
+        <span>Daily digest of recent alerts and nearby areas</span>
+        <input type="checkbox" name="dailyDigest" {% if alert_daily_digest_pref == 'true' %}checked{% endif %}>
+      </label>
+      <label class="ma-alert-preferences__toggle">
+        <span>Weekly digest of recent alerts, nearby areas and advice</span>
+        <input type="checkbox" name="weeklyDigest" {% unless alert_weekly_digest_pref == 'false' %}checked{% endunless %}>
+      </label>
+    </div>
+
+    <div class="ma-alert-preferences__actions">
+      <button type="submit">SAVE ALERT SETTINGS</button>
+      <p class="ma-alert-preferences__message" data-alert-preferences-message></p>
+    </div>
+  </form>
+</section>

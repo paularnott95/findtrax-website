@@ -1,0 +1,217 @@
+{% render 'restored-homepage' %}
+{% comment %}
+<section class="ma-safe-home">
+  <style>
+    .ma-safe-home {
+      color: rgb(var(--color-foreground));
+      background: rgb(var(--color-background));
+    }
+
+    .ma-safe-home__hero,
+    .ma-safe-home__section {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 56px 20px;
+    }
+
+    .ma-safe-home__hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+      gap: 32px;
+      align-items: center;
+      min-height: 480px;
+    }
+
+    .ma-safe-home__eyebrow {
+      margin: 0 0 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(var(--color-foreground), .68);
+    }
+
+    .ma-safe-home h1 {
+      margin: 0 0 18px;
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .ma-safe-home h2 {
+      margin: 0 0 18px;
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .ma-safe-home p {
+      margin: 0 0 18px;
+      max-width: 720px;
+      color: rgba(var(--color-foreground), .76);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .ma-safe-home__actions,
+    .ma-safe-home__links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .ma-safe-home__button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid rgba(var(--color-foreground), .18);
+      border-radius: 8px;
+      color: rgb(var(--color-foreground));
+      text-decoration: none;
+      font-weight: 750;
+    }
+
+    .ma-safe-home__button--primary {
+      background: rgb(var(--color-button));
+      border-color: rgb(var(--color-button));
+      color: rgb(var(--color-button-text));
+    }
+
+    .ma-safe-home__panel {
+      border: 1px solid rgba(var(--color-foreground), .12);
+      border-radius: 8px;
+      padding: 24px;
+      background: rgba(var(--color-foreground), .035);
+    }
+
+    .ma-safe-home__grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .ma-safe-home__item {
+      border: 1px solid rgba(var(--color-foreground), .12);
+      border-radius: 8px;
+      padding: 22px;
+      min-height: 180px;
+    }
+
+    .ma-safe-home__item h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .ma-safe-home__notice {
+      border-left: 4px solid currentColor;
+      padding: 16px 0 16px 18px;
+      margin-top: 24px;
+      max-width: 840px;
+    }
+
+    .ma-safe-home__links a {
+      color: rgb(var(--color-foreground));
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    @media screen and (max-width: 900px) {
+      .ma-safe-home__hero,
+      .ma-safe-home__grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ma-safe-home__hero,
+      .ma-safe-home__section {
+        padding: 42px 20px;
+      }
+    }
+  </style>
+
+  <div class="ma-safe-home__hero">
+    <div>
+      <p class="ma-safe-home__eyebrow">Missing person awareness and support</p>
+      <h1>Missing Alerts</h1>
+      <p>
+        Missing Alerts helps share missing-person appeals, public awareness information, updates, and safety guidance so communities can help keep verified appeals visible.
+      </p>
+      <p>
+        The platform is not a police service. Emergencies, sightings, and urgent information should always be reported to police or emergency services first.
+      </p>
+      <div class="ma-safe-home__actions">
+        <a class="ma-safe-home__button ma-safe-home__button--primary" href="/blogs/missing-persons">View Missing Appeals</a>
+        <a class="ma-safe-home__button" href="/pages/top-missing-locations">Explore Locations</a>
+        <a class="ma-safe-home__button" href="/blogs/found-safe">Found Safe Updates</a>
+        <a class="ma-safe-home__button" href="/pages/contact">Contact</a>
+      </div>
+    </div>
+
+    <div class="ma-safe-home__panel">
+      <h2>Report urgent information safely</h2>
+      <p>
+        If you believe you have seen a missing person, contact the police first. Do not approach if it could place anyone at risk, and avoid posting sensitive sightings publicly.
+      </p>
+      <a class="ma-safe-home__button ma-safe-home__button--primary" href="/pages/safety-report-to-police">Safety Guidance</a>
+    </div>
+  </div>
+
+  <div class="ma-safe-home__section">
+    <h2>How the platform helps</h2>
+    <div class="ma-safe-home__grid">
+      <div class="ma-safe-home__item">
+        <h3>Responsible sharing</h3>
+        <p>Appeals can be shared to improve public awareness while keeping safety, privacy, and source quality in view.</p>
+      </div>
+      <div class="ma-safe-home__item">
+        <h3>Case updates</h3>
+        <p>Families, case owners, and relevant authorities can request corrections, privacy reductions, updates, or removal.</p>
+      </div>
+      <div class="ma-safe-home__item">
+        <h3>Advice and visibility</h3>
+        <p>Helpful guidance and public awareness tools support communities without replacing official police reporting.</p>
+      </div>
+    </div>
+  </div>
+
+  {% render 'adsense-slot', slot_type: 'homepage', position: 'after-helpful-content' %}
+
+  <div class="ma-safe-home__section">
+    <h2>Priority locations</h2>
+    <p>Start with high-traffic location hubs, then move into nearby areas, alert pages and safe search guidance.</p>
+    <div class="ma-safe-home__links" aria-label="Priority Missing Alerts locations">
+      <a href="/pages/missing-people-location-live?loc=united-kingdom/england/london">Missing people in London</a>
+      <a href="/pages/missing-people-location-live?loc=united-states/new-york/new-york-city">Missing people in New York</a>
+      <a href="/pages/missing-people-location-live?loc=france/ile-de-france/paris">Missing people in Paris</a>
+      <a href="/pages/missing-people-location-live?loc=india/maharashtra/mumbai">Missing people in Mumbai</a>
+      <a href="/pages/missing-people-location-live?loc=australia/new-south-wales/sydney">Missing people in Sydney</a>
+      <a href="/pages/missing-alerts-near-me?loc=united-kingdom/england/london">Get alerts in London</a>
+    </div>
+  </div>
+
+  <div class="ma-safe-home__section">
+    <h2>Trust and policy information</h2>
+    <p>
+      Missing Alerts is preparing for ethical monetisation so support and advertising, if enabled later, can help keep the platform running without placing ads inside urgent appeal content.
+    </p>
+    <div class="ma-safe-home__notice">
+      <p>
+        This website is for awareness and support only. It does not replace contacting police, emergency services, or official case handlers.
+      </p>
+    </div>
+    <div class="ma-safe-home__links" aria-label="Trust and policy links">
+      <a href="/pages/about-missing-alerts">About Missing Alerts</a>
+      <a href="/pages/contact">Contact</a>
+      <a href="/policies/privacy-policy">Privacy Policy</a>
+      <a href="/policies/terms-of-service">Terms</a>
+      <a href="/pages/cookie-policy">Cookie Policy</a>
+      <a href="/pages/editorial-case-review-policy">Editorial &amp; Case Review Policy</a>
+      <a href="/pages/removal-correction-requests">Removal &amp; Correction Requests</a>
+      <a href="/pages/safety-report-to-police">Safety / Report to Police</a>
+    </div>
+  </div>
+</section>
+{% endcomment %}

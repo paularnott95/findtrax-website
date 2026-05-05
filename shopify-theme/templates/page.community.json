@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "community-membership",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

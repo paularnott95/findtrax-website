@@ -1,0 +1,9 @@
+{% for group in robots.default_groups %}
+{{ group.user_agent }}
+{% for rule in group.rules %}
+{{ rule }}
+{% endfor %}
+{% endfor %}
+Sitemap: https://missingalerts.com/sitemaps/page-sitemap-index.xml
+Sitemap: https://missingalerts.com/cdn/shop/t/5/assets/location-sitemap.xml
+Sitemap: https://seo.missingalerts.com/sitemaps/page-sitemap-index.xml

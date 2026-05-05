@@ -1,0 +1,241 @@
+{%- liquid
+  assign card_status = status | default: 'missing' | downcase
+  assign status_label = 'MISSING'
+  assign card_is_found_status = false
+  if card_status contains 'found' or card_status contains 'resolved' or card_status contains 'located' or card_status contains 'returned'
+    assign card_is_found_status = true
+  endif
+  if card_status contains 'resolved'
+    assign status_label = 'RESOLVED'
+  elsif card_status contains 'located'
+    assign status_label = 'LOCATED'
+  elsif card_status contains 'returned'
+    assign status_label = 'RETURNED'
+  elsif card_is_found_status
+    assign status_label = 'FOUND SAFE'
+  endif
+  assign should_render_card = true
+  if listing_type == 'found' and card_is_found_status == false
+    assign should_render_card = false
+  elsif listing_type == 'missing' and card_is_found_status
+    assign should_render_card = false
+  endif
+
+  assign case_title = article.title | default: title | default: 'Missing Alerts case'
+  assign public_case_handle = article.handle | downcase
+  assign public_case_title = case_title | downcase
+  if demo or public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test'
+    assign should_render_card = false
+  endif
+  if public_case_handle contains 'pablo' or public_case_handle contains 'esobar' or public_case_handle contains 'escobar' or public_case_handle contains 'miss-123' or public_case_handle contains 'automatic-fallback'
+    assign should_render_card = false
+  endif
+  if public_case_title contains 'pablo' or public_case_title contains 'esobar' or public_case_title contains 'escobar' or public_case_title contains 'miss, 123' or public_case_title contains 'miss 123' or public_case_title contains 'automatic fallback'
+    assign should_render_card = false
+  endif
+  if public_case_title contains 'automatic' and public_case_title contains 'fallback'
+    assign should_render_card = false
+  endif
+  if public_case_title contains 'miss' and public_case_title contains '123'
+    assign should_render_card = false
+  endif
+  if public_case_title contains 'placeholder' or public_case_title contains 'dummy' or public_case_title contains 'fake'
+    assign should_render_card = false
+  endif
+  assign case_excerpt = article.excerpt | strip_html | default: article.content | strip_html | truncatewords: 22
+  assign case_url = article.url | default: '#'
+  assign placeholder_image = 'missing-person-silhouette.svg' | asset_url
+  assign case_country = country_code | default: 'all' | downcase | strip
+  if case_country == 'uk'
+    assign case_country = 'gb'
+  endif
+  assign case_country_label = country_label | default: case_country | upcase
+  assign case_location = location | default: ''
+  assign case_location_slug_path = location_slug_path | default: article.metafields.custom.location_slug_path.value | default: article.metafields.custom.location_slug_path | default: ''
+  if case_location == blank or case_location == 'Location pending' or case_location == 'location pending' or case_location == 'Unknown' or case_location == 'unknown'
+    assign case_display_location = article.metafields.custom.display_location.value | default: article.metafields.custom.display_location | strip
+    assign case_last_seen_area = article.metafields.custom.last_seen_area.value | default: article.metafields.custom.last_seen_area | default: article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | default: article.metafields.custom.last_seen_location.value | default: article.metafields.custom.last_seen_location | strip
+    assign case_city_fallback = city | default: article.metafields.custom.city_town.value | default: article.metafields.custom.city_town | default: article.metafields.custom.city.value | default: article.metafields.custom.city | strip
+    assign case_region_fallback = region | default: article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | default: article.metafields.custom.region.value | default: article.metafields.custom.region | strip
+    assign case_country_fallback = country_label | default: article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+    assign structured_location = case_city_fallback
+    if structured_location != blank and case_region_fallback != blank
+      assign structured_location = structured_location | append: ', ' | append: case_region_fallback
+    elsif case_region_fallback != blank
+      assign structured_location = case_region_fallback
+    endif
+    if structured_location != blank and case_country_fallback != blank
+      assign structured_location = structured_location | append: ', ' | append: case_country_fallback
+    endif
+    assign title_location = ''
+    assign normalized_title = case_title | replace: ' – ', ' - ' | replace: ' — ', ' - '
+    if normalized_title contains ' - '
+      assign title_parts = normalized_title | split: ' - '
+      assign title_location = title_parts | last | strip
+    endif
+    assign article_location_clue = article.excerpt | strip_html | default: article.content | strip_html | truncatewords: 14
+    assign case_location = case_display_location | default: structured_location | default: case_last_seen_area | default: title_location | default: article_location_clue | default: 'Location details in case description'
+  endif
+  assign case_region = region | default: case_region_fallback | default: ''
+  assign case_city = city | default: case_city_fallback | default: ''
+  assign case_admin1 = admin1 | default: article.metafields.custom.location_admin1.value | default: article.metafields.custom.location_admin1 | default: article.metafields.custom.location_region.value | default: article.metafields.custom.location_region | default: article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | default: article.metafields.custom.region.value | default: article.metafields.custom.region | strip
+  assign case_admin2 = admin2 | default: article.metafields.custom.location_admin2.value | default: article.metafields.custom.location_admin2 | default: article.metafields.custom.location_county.value | default: article.metafields.custom.location_county | default: article.metafields.custom.county.value | default: article.metafields.custom.county | default: article.metafields.custom.district.value | default: article.metafields.custom.district | strip
+  assign case_town = town | default: article.metafields.custom.location_town.value | default: article.metafields.custom.location_town | default: article.metafields.custom.town.value | default: article.metafields.custom.town | strip
+  assign case_village = village | default: article.metafields.custom.location_village.value | default: article.metafields.custom.location_village | default: article.metafields.custom.village.value | default: article.metafields.custom.village | strip
+  assign case_region_id = region_id | default: article.metafields.custom.location_region_id.value | default: article.metafields.custom.location_region_id | default: article.metafields.custom.region_id.value | default: article.metafields.custom.region_id | strip
+  assign case_county_id = county_id | default: article.metafields.custom.location_county_id.value | default: article.metafields.custom.location_county_id | default: article.metafields.custom.county_id.value | default: article.metafields.custom.county_id | strip
+  assign case_city_id = city_id | default: article.metafields.custom.location_city_id.value | default: article.metafields.custom.location_city_id | default: article.metafields.custom.city_id.value | default: article.metafields.custom.city_id | strip
+  assign case_town_id = town_id | default: article.metafields.custom.location_town_id.value | default: article.metafields.custom.location_town_id | default: article.metafields.custom.town_id.value | default: article.metafields.custom.town_id | strip
+  assign case_village_id = village_id | default: article.metafields.custom.location_village_id.value | default: article.metafields.custom.location_village_id | default: article.metafields.custom.village_id.value | default: article.metafields.custom.village_id | strip
+  assign case_lat = lat | default: article.metafields.custom.location_lat.value | default: article.metafields.custom.location_lat | default: article.metafields.custom.last_seen_lat.value | default: article.metafields.custom.last_seen_lat | default: article.metafields.custom.latitude.value | default: article.metafields.custom.latitude | strip
+  assign case_lng = lng | default: article.metafields.custom.location_lng.value | default: article.metafields.custom.location_lng | default: article.metafields.custom.last_seen_lng.value | default: article.metafields.custom.last_seen_lng | default: article.metafields.custom.longitude.value | default: article.metafields.custom.longitude | strip
+  assign case_image_url = ''
+  if article.image
+    assign case_image_url = article.image | image_url: width: 360
+  endif
+  assign case_age = age | default: ''
+  assign case_age_numeric = case_age | plus: 0
+  for article_tag in article.tags
+    assign public_tag_downcase = article_tag | downcase | strip
+    if public_tag_downcase == 'test' or public_tag_downcase == 'demo' or public_tag_downcase == 'debug' or public_tag_downcase contains 'test:' or public_tag_downcase contains 'demo:' or public_tag_downcase contains 'debug:'
+      assign should_render_card = false
+    endif
+  endfor
+  assign case_gender = gender | default: ''
+  assign case_location_search_text = location_search_text | default: article.metafields.custom.location_search_text.value | default: article.metafields.custom.location_search_text | default: ''
+  assign case_content = article.content | strip_html | default: ''
+  assign case_date_keywords = date_keywords | default: article.published_at | date: '%Y-%m-%d'
+  assign has_case_photo = false
+  if article.image
+    assign has_case_photo = true
+  endif
+  assign blog_handle = blog.handle | default: article.blog.handle | default: 'missing-persons'
+  assign notify_case_handle = blog_handle | append: '/' | append: article.handle
+  assign wants_help_value = wants_help | default: 'false' | downcase
+  assign help_type_value = help_type | default: '' | downcase
+  assign contact_allowed_value = contact_allowed | default: 'false' | downcase
+  assign verification_status_value = verification_status | default: 'unknown' | downcase
+  assign help_keyword_value = help_keyword_text | default: help_type_value
+-%}
+
+{% if should_render_card %}
+<article
+  class="ma-case-grid-card"
+  data-case-card
+  data-country="{{ case_country | escape }}"
+  data-country-code="{{ case_country | escape }}"
+  data-region="{{ case_region | escape }}"
+  data-admin1="{{ case_admin1 | escape }}"
+  data-admin2="{{ case_admin2 | escape }}"
+  data-region-id="{{ case_region_id | escape }}"
+  data-county-id="{{ case_county_id | escape }}"
+  data-city="{{ case_city | escape }}"
+  data-town="{{ case_town | escape }}"
+  data-village="{{ case_village | escape }}"
+  data-city-id="{{ case_city_id | escape }}"
+  data-town-id="{{ case_town_id | escape }}"
+  data-village-id="{{ case_village_id | escape }}"
+  data-lat="{{ case_lat | escape }}"
+  data-lng="{{ case_lng | escape }}"
+  data-location="{{ case_location | escape }}"
+  data-location-slug-path="{{ case_location_slug_path | escape }}"
+  data-status="{{ status_label | escape }}"
+  data-case-status="{{ status_label | escape }}"
+  data-is-found="{% if card_is_found_status %}true{% else %}false{% endif %}"
+  data-is-advice="false"
+  data-age="{{ case_age | escape }}"
+  data-gender="{{ case_gender | escape }}"
+  data-has-photo="{% if has_case_photo %}true{% else %}false{% endif %}"
+  data-title="{{ case_title | escape }}"
+  data-name="{{ case_title | escape }}"
+  data-image="{{ case_image_url | escape }}"
+  data-excerpt="{{ case_excerpt | escape }}"
+  data-content="{{ case_content | truncate: 1200 | escape }}"
+  data-date="{{ article.published_at | date: '%Y-%m-%d' }}"
+  data-date-keywords="{{ case_date_keywords | escape }}"
+  data-url="{{ case_url | escape }}"
+  data-last-seen="{{ last_seen | default: case_location | escape }}"
+  data-wants-help="{{ wants_help_value | escape }}"
+  data-help-type="{{ help_type_value | escape }}"
+  data-contact-allowed="{{ contact_allowed_value | escape }}"
+  data-verification-status="{{ verification_status_value | escape }}"
+  data-help-keywords="{{ help_keyword_value | escape }}"
+  data-search-text="{{ case_title | append: ' ' | append: case_city | append: ' ' | append: case_region | append: ' ' | append: case_location | append: ' ' | append: case_location_search_text | append: ' ' | append: case_country_label | append: ' ' | append: status_label | append: ' ' | append: case_gender | append: ' ' | append: case_excerpt | append: ' ' | append: case_content | strip_html | truncate: 1500 | escape }}"
+>
+  <a class="ma-case-grid-card__media" href="{{ case_url }}">
+    {% if article.image %}
+      <img
+        src="{{ article.image | image_url: width: 720 }}"
+        alt="{{ article.image.alt | default: case_title | escape }}"
+        loading="lazy"
+        width="720"
+        height="540"
+      >
+    {% else %}
+      <img
+        src="{{ placeholder_image }}"
+        alt="{{ case_title | escape }}"
+        loading="lazy"
+        width="720"
+        height="540"
+      >
+    {% endif %}
+    <span class="ma-case-grid-card__status ma-case-grid-card__status--{{ status_label | handleize }}">{{ status_label }}</span>
+    {% if is_pro_customer and wants_help_value == 'true' %}
+      <span class="ma-case-grid-card__help-badge">HELP REQUESTED</span>
+    {% endif %}
+  </a>
+
+  <div class="ma-case-grid-card__body">
+    <div class="ma-case-grid-card__meta">
+      <span>{{ case_country_label }}</span>
+      {% if case_age != blank %}
+        <span>Age {{ case_age }}</span>
+      {% endif %}
+    </div>
+
+    <h2 class="ma-case-grid-card__title">
+      <a href="{{ case_url }}">{{ case_title | truncate: 70 | escape }}</a>
+    </h2>
+
+    <p class="ma-case-grid-card__location">{{ case_location | escape }}</p>
+
+    {% if case_excerpt != blank %}
+      <p class="ma-case-grid-card__excerpt">{{ case_excerpt | truncate: 135 }}</p>
+    {% endif %}
+  </div>
+
+  <div class="ma-case-grid-card__footer">
+    <span class="ma-case-grid-card__notify-count case-notify-count" data-notify-count data-case-handle="{{ notify_case_handle | escape }}">0 people following updates</span>
+
+    <div class="ma-case-grid-card__actions">
+      <button
+        type="button"
+        class="ma-case-grid-card__button ma-case-grid-card__button--follow case-notify-button js-case-notify-button"
+        data-default-follow-label="Follow"
+        data-case-title="{{ case_title | escape }}"
+        data-case-handle="{{ notify_case_handle | escape }}"
+        data-case-url="{{ case_url }}"
+        data-case-id="{{ article.id }}"
+        data-case-image="{% if article.image %}{{ article.image | image_url: width: 600 }}{% endif %}"
+        data-case-location="{{ case_location | escape }}"
+        data-case-status="{{ status_label | escape }}"
+        aria-label="Follow {{ case_title | escape }}"
+      >
+        <span class="ma-case-grid-card__bell" aria-hidden="true"></span>
+        <span class="case-notify-button__text">Follow</span>
+      </button>
+      <button
+        type="button"
+        class="ma-case-grid-card__button ma-case-grid-card__button--share case-share-button js-case-share-button"
+        data-default-share-label="Share"
+        data-share-title="{{ case_title | escape }}"
+        data-share-url="{{ shop.url }}{{ case_url }}"
+        aria-label="Share {{ case_title | escape }}"
+      >
+        Share
+      </button>
+    </div>
+  </div>
+</article>
+{% endif %}

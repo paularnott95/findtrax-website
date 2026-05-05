@@ -1,0 +1,1306 @@
+{%- liquid
+  assign seo_location_handles = 'missing-people-location,missing-alerts-near-me,missing-person-search-guide,missing-people-region,missing-people-country,missing-cases-near,no-active-missing-cases,missing-people-near-me,recent-missing-cases,help-find-missing'
+  assign request_page_handle = request.path | split: '/pages/' | last | split: '/' | first
+  assign render_location_expansion = false
+  if request.path contains '/pages/' and seo_location_handles contains request_page_handle
+    assign render_location_expansion = true
+  endif
+-%}
+
+{%- if request_page_handle == 'staff' -%}
+  {% render 'staff-access-card' %}
+{%- elsif render_location_expansion -%}
+  {% render 'location-case-page-content' %}
+{%- else -%}
+{{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .main-page-case-intelligence-{{ section.id }} {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    color: #fff;
+  }
+
+  .main-page-case-intelligence__shell-{{ section.id }} {
+    overflow: hidden;
+    border-radius: 32px;
+    padding: 1.5rem;
+    background:
+      radial-gradient(circle at top left, rgba(239, 68, 68, 0.24), transparent 24%),
+      radial-gradient(circle at right top, rgba(251, 191, 36, 0.08), transparent 28%),
+      linear-gradient(180deg, #170708 0%, #090203 100%);
+    border: 1px solid rgba(255, 105, 120, 0.18);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .main-page-case-intelligence__hero-{{ section.id }},
+  .main-page-case-intelligence__card-{{ section.id }},
+  .main-page-case-intelligence__note-{{ section.id }} {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #180809 0%, #0b0203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .main-page-case-intelligence__hero-{{ section.id }} {
+    border-radius: 28px;
+    padding: 2rem;
+  }
+
+  .main-page-case-intelligence__eyebrow-{{ section.id }} {
+    margin: 0 0 0.55rem;
+    color: #f4b8bf;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .main-page-case-intelligence__heading-{{ section.id }} {
+    margin: 0;
+    font-size: clamp(3rem, 5vw, 5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .main-page-case-intelligence__intro-{{ section.id }} {
+    max-width: 64rem;
+    margin: 1rem 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.22rem;
+    line-height: 1.7;
+  }
+
+  .main-page-case-intelligence__actions-{{ section.id }},
+  .main-page-case-intelligence__chips-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.4rem;
+  }
+
+  .main-page-case-intelligence__button-{{ section.id }},
+  .main-page-case-intelligence__button-secondary-{{ section.id }},
+  .main-page-case-intelligence__chip-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.4rem;
+    padding: 0 1.3rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .main-page-case-intelligence__button-{{ section.id }} {
+    background: linear-gradient(180deg, #ff3b3b 0%, #d61f1f 100%);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(173, 17, 17, 0.22);
+  }
+
+  .main-page-case-intelligence__button-secondary-{{ section.id }} {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+  }
+
+  .main-page-case-intelligence__chip-{{ section.id }} {
+    min-height: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.92rem;
+  }
+
+  .main-page-case-intelligence__grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .main-page-case-intelligence__network-{{ section.id }} {
+    margin-top: 1.75rem;
+  }
+
+  .main-page-case-intelligence__network-nav-{{ section.id }},
+  .main-page-case-intelligence__network-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .main-page-case-intelligence__network-nav-{{ section.id }} {
+    margin-top: 1.5rem;
+  }
+
+  .main-page-case-intelligence__card-{{ section.id }} {
+    border-radius: 24px;
+    padding: 1.5rem;
+  }
+
+  .main-page-case-intelligence__card-link-{{ section.id }} {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .main-page-case-intelligence__card-link-{{ section.id }}:hover,
+  .main-page-case-intelligence__card-link-{{ section.id }}:focus-visible {
+    transform: translateY(-2px);
+    transition: transform 180ms ease;
+  }
+
+  .main-page-case-intelligence__section-anchor-{{ section.id }} {
+    scroll-margin-top: 12rem;
+  }
+
+  .main-page-case-intelligence__label-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .main-page-case-intelligence__title-{{ section.id }} {
+    margin: 0.6rem 0 0;
+    font-size: 1.65rem;
+    text-transform: uppercase;
+  }
+
+  .main-page-case-intelligence__copy-{{ section.id }} {
+    margin: 0.8rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .main-page-case-intelligence__note-{{ section.id }} {
+    margin-top: 1.5rem;
+    border-radius: 22px;
+    padding: 1rem 1.15rem;
+    color: #fde68a;
+    line-height: 1.6;
+    border-color: rgba(251, 191, 36, 0.18);
+    background:
+      linear-gradient(180deg, rgba(251, 191, 36, 0.12), rgba(251, 191, 36, 0.07)),
+      linear-gradient(180deg, #181103 0%, #0f0902 100%);
+  }
+
+  .main-page-professional-membership-{{ section.id }} {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    color: #fff;
+  }
+
+  .main-page-professional-membership__shell-{{ section.id }} {
+    overflow: hidden;
+    border-radius: 32px;
+    padding: 1.5rem;
+    background:
+      radial-gradient(circle at top left, rgba(239, 68, 68, 0.24), transparent 24%),
+      radial-gradient(circle at right top, rgba(244, 63, 94, 0.10), transparent 30%),
+      linear-gradient(180deg, #170708 0%, #090203 100%);
+    border: 1px solid rgba(255, 105, 120, 0.18);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .main-page-professional-membership__hero-{{ section.id }},
+  .main-page-professional-membership__section-{{ section.id }},
+  .main-page-professional-membership__tier-{{ section.id }},
+  .main-page-professional-membership__note-{{ section.id }},
+  .main-page-professional-apply__hero-{{ section.id }},
+  .main-page-professional-apply__panel-{{ section.id }},
+  .main-page-professional-apply__field-{{ section.id }},
+  .main-page-professional-apply__note-{{ section.id }} {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #180809 0%, #0b0203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .main-page-professional-membership__hero-{{ section.id }},
+  .main-page-professional-apply__hero-{{ section.id }},
+  .main-page-professional-apply__panel-{{ section.id }} {
+    border-radius: 28px;
+    padding: 2rem;
+  }
+
+  .main-page-professional-membership__eyebrow-{{ section.id }},
+  .main-page-professional-apply__eyebrow-{{ section.id }} {
+    margin: 0 0 0.55rem;
+    color: #f4b8bf;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .main-page-professional-membership__heading-{{ section.id }},
+  .main-page-professional-apply__heading-{{ section.id }} {
+    margin: 0;
+    font-size: clamp(3rem, 5vw, 5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .main-page-professional-membership__intro-{{ section.id }},
+  .main-page-professional-apply__intro-{{ section.id }} {
+    max-width: 64rem;
+    margin: 1rem 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.22rem;
+    line-height: 1.7;
+  }
+
+  .main-page-professional-membership__actions-{{ section.id }},
+  .main-page-professional-membership__section-grid-{{ section.id }},
+  .main-page-professional-membership__tiers-{{ section.id }},
+  .main-page-professional-apply__grid-{{ section.id }},
+  .main-page-professional-apply__actions-{{ section.id }} {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .main-page-professional-membership__actions-{{ section.id }},
+  .main-page-professional-apply__actions-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+
+  .main-page-professional-membership__button-{{ section.id }},
+  .main-page-professional-membership__button-secondary-{{ section.id }},
+  .main-page-professional-apply__button-{{ section.id }},
+  .main-page-professional-apply__button-secondary-{{ section.id }},
+  .main-page-professional-membership__tag-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.4rem;
+    padding: 0 1.3rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .main-page-professional-membership__button-{{ section.id }},
+  .main-page-professional-apply__button-{{ section.id }} {
+    background: linear-gradient(180deg, #ff3b3b 0%, #d61f1f 100%);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(173, 17, 17, 0.22);
+  }
+
+  .main-page-professional-membership__button-secondary-{{ section.id }},
+  .main-page-professional-apply__button-secondary-{{ section.id }} {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+  }
+
+  .main-page-professional-membership__tag-{{ section.id }} {
+    min-height: 2.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+  }
+
+  .main-page-professional-membership__section-grid-{{ section.id }},
+  .main-page-professional-membership__tiers-{{ section.id }} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .main-page-professional-membership__section-{{ section.id }},
+  .main-page-professional-membership__tier-{{ section.id }} {
+    border-radius: 24px;
+    padding: 1.5rem;
+  }
+
+  .main-page-professional-membership__section-label-{{ section.id }},
+  .main-page-professional-membership__tier-label-{{ section.id }},
+  .main-page-professional-apply__field-label-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .main-page-professional-membership__section-title-{{ section.id }},
+  .main-page-professional-membership__tier-title-{{ section.id }} {
+    margin: 0.6rem 0 0;
+    font-size: 1.65rem;
+    text-transform: uppercase;
+  }
+
+  .main-page-professional-membership__copy-{{ section.id }},
+  .main-page-professional-apply__copy-{{ section.id }} {
+    margin: 0.8rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .main-page-professional-membership__list-{{ section.id }} {
+    margin: 1rem 0 0;
+    padding-left: 1.1rem;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.7;
+  }
+
+  .main-page-professional-membership__note-{{ section.id }},
+  .main-page-professional-apply__note-{{ section.id }} {
+    margin-top: 1.5rem;
+    border-radius: 22px;
+    padding: 1rem 1.15rem;
+    color: #fde68a;
+    line-height: 1.6;
+    border-color: rgba(251, 191, 36, 0.18);
+    background:
+      linear-gradient(180deg, rgba(251, 191, 36, 0.12), rgba(251, 191, 36, 0.07)),
+      linear-gradient(180deg, #181103 0%, #0f0902 100%);
+  }
+
+  .main-page-professional-apply__grid-{{ section.id }} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .main-page-professional-apply__field-{{ section.id }} {
+    border-radius: 22px;
+    padding: 1.25rem;
+  }
+
+  .main-page-professional-apply__field-value-{{ section.id }} {
+    margin: 0.75rem 0 0;
+    color: #fff;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .main-page-route-fallback-{{ section.id }} {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    color: #fff;
+  }
+
+  .main-page-route-fallback__shell-{{ section.id }} {
+    overflow: hidden;
+    border-radius: 32px;
+    padding: 1.5rem;
+    background:
+      radial-gradient(circle at top left, rgba(239, 68, 68, 0.24), transparent 24%),
+      radial-gradient(circle at right top, rgba(251, 191, 36, 0.08), transparent 28%),
+      linear-gradient(180deg, #170708 0%, #090203 100%);
+    border: 1px solid rgba(255, 105, 120, 0.18);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .main-page-route-fallback__diag-{{ section.id }},
+  .main-page-route-fallback__hero-{{ section.id }},
+  .main-page-route-fallback__card-{{ section.id }} {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #180809 0%, #0b0203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .main-page-route-fallback__diag-{{ section.id }},
+  .main-page-route-fallback__hero-{{ section.id }} {
+    border-radius: 28px;
+    padding: 1.15rem 1.35rem;
+  }
+
+  .main-page-route-fallback__diag-{{ section.id }} {
+    margin-bottom: 1rem;
+    border-color: rgba(251, 191, 36, 0.18);
+    background:
+      linear-gradient(180deg, rgba(251, 191, 36, 0.12), rgba(251, 191, 36, 0.06)),
+      linear-gradient(180deg, #181103 0%, #0f0902 100%);
+    color: #fde68a;
+    font-size: 0.92rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .main-page-route-fallback__hero-{{ section.id }} {
+    padding: 2rem;
+  }
+
+  .main-page-route-fallback__eyebrow-{{ section.id }},
+  .main-page-route-fallback__label-{{ section.id }} {
+    margin: 0 0 0.55rem;
+    color: #f4b8bf;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .main-page-route-fallback__heading-{{ section.id }},
+  .main-page-route-fallback__title-{{ section.id }} {
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .main-page-route-fallback__heading-{{ section.id }} {
+    font-size: clamp(2.8rem, 5vw, 4.8rem);
+    line-height: 0.95;
+  }
+
+  .main-page-route-fallback__intro-{{ section.id }},
+  .main-page-route-fallback__copy-{{ section.id }} {
+    margin: 1rem 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.7;
+  }
+
+  .main-page-route-fallback__actions-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.4rem;
+  }
+
+  .main-page-route-fallback__button-{{ section.id }},
+  .main-page-route-fallback__button-secondary-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.4rem;
+    padding: 0 1.35rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .main-page-route-fallback__button-{{ section.id }} {
+    color: #fff;
+    background: linear-gradient(135deg, #ff2f43 0%, #d90429 58%, #8f0016 100%);
+    box-shadow: 0 14px 28px rgba(217, 4, 41, 0.28);
+  }
+
+  .main-page-route-fallback__button-secondary-{{ section.id }} {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .main-page-route-fallback__grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .main-page-route-fallback__card-{{ section.id }} {
+    border-radius: 24px;
+    padding: 1.5rem;
+  }
+
+  .main-page-support-{{ section.id }} {
+    max-width: 980px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    color: #fff;
+  }
+
+  .main-page-support__box-{{ section.id }} {
+    background:
+      radial-gradient(circle at top left, rgba(229, 9, 20, 0.18), transparent 28%),
+      linear-gradient(180deg, rgba(20, 20, 20, 0.96), rgba(8, 8, 8, 0.98));
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 2.8rem;
+    box-shadow: 0 22px 58px rgba(0, 0, 0, 0.34);
+  }
+
+  .main-page-support__box-{{ section.id }} h1 {
+    margin: 0 0 1.3rem;
+    color: #fff;
+    font-size: clamp(3rem, 5vw, 5.2rem);
+    line-height: 0.96;
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .main-page-support__box-{{ section.id }} p,
+  .main-page-support__box-{{ section.id }} li {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.58rem;
+    line-height: 1.7;
+  }
+
+  .main-page-support__box-{{ section.id }} p {
+    margin: 0 0 1.25rem;
+  }
+
+  .main-page-support__box-{{ section.id }} ul {
+    margin: 0 0 1.5rem;
+    padding-left: 2.2rem;
+  }
+
+  .main-page-support__button-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.8rem;
+    margin-top: 0.5rem;
+    padding: 0 2rem;
+    border-radius: 6px;
+    background: #e50914;
+    color: #fff;
+    font-size: 1.32rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 12px 28px rgba(229, 9, 20, 0.28);
+  }
+
+  .main-page-support__button-{{ section.id }}:hover {
+    color: #fff;
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+
+  @media screen and (max-width: 989px) {
+    .main-page-case-intelligence__grid-{{ section.id }},
+    .main-page-case-intelligence__network-nav-{{ section.id }},
+    .main-page-case-intelligence__network-grid-{{ section.id }},
+    .main-page-professional-membership__section-grid-{{ section.id }},
+    .main-page-professional-membership__tiers-{{ section.id }},
+    .main-page-professional-apply__grid-{{ section.id }},
+    .main-page-route-fallback__grid-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .main-page-case-intelligence__shell-{{ section.id }},
+    .main-page-route-fallback__shell-{{ section.id }} {
+      padding: 1rem;
+      border-radius: 24px;
+    }
+
+    .main-page-route-fallback__diag-{{ section.id }},
+    .main-page-case-intelligence__hero-{{ section.id }},
+    .main-page-case-intelligence__card-{{ section.id }},
+    .main-page-case-intelligence__note-{{ section.id }},
+    .main-page-route-fallback__hero-{{ section.id }},
+    .main-page-route-fallback__card-{{ section.id }},
+    .main-page-professional-membership__hero-{{ section.id }},
+    .main-page-professional-membership__section-{{ section.id }},
+    .main-page-professional-membership__tier-{{ section.id }},
+    .main-page-professional-membership__note-{{ section.id }},
+    .main-page-professional-apply__hero-{{ section.id }},
+    .main-page-professional-apply__panel-{{ section.id }},
+    .main-page-professional-apply__field-{{ section.id }},
+    .main-page-professional-apply__note-{{ section.id }} {
+      padding: 1.2rem;
+      border-radius: 20px;
+    }
+
+    .main-page-support__box-{{ section.id }} {
+      padding: 2rem;
+    }
+  }
+{%- endstyle -%}
+
+{% if page.handle == 'case-intelligence' %}
+  <section class="main-page-case-intelligence-{{ section.id }} section-{{ section.id }}-padding">
+    <div class="main-page-case-intelligence__shell-{{ section.id }}">
+      <div class="main-page-case-intelligence__hero-{{ section.id }}">
+        <p class="main-page-case-intelligence__eyebrow-{{ section.id }}">Missing Alerts Community</p>
+        <h1 class="main-page-case-intelligence__heading-{{ section.id }}">COMMUNITY AREA</h1>
+        <div class="main-page-case-intelligence__intro-{{ section.id }}">
+          <p>General missing-person awareness, safety advice, volunteer guidance, family support, platform updates, and country community awareness.</p>
+        </div>
+
+        <div class="main-page-case-intelligence__actions-{{ section.id }}">
+          <a href="/pages/member-area#case-intelligence-network" class="main-page-case-intelligence__button-{{ section.id }}">Browse Community Area</a>
+
+          {% if customer %}
+            <a href="/pages/member-area#case-intelligence-network" class="main-page-case-intelligence__button-secondary-{{ section.id }}">Open Community Area</a>
+          {% else %}
+            <a href="/account/login" class="main-page-case-intelligence__button-secondary-{{ section.id }}">Log In / Join Free</a>
+          {% endif %}
+
+          <a href="/pages/professional-membership" class="main-page-case-intelligence__button-secondary-{{ section.id }}">Professionals Apply</a>
+        </div>
+
+        <div class="main-page-case-intelligence__chips-{{ section.id }}">
+          <span class="main-page-case-intelligence__chip-{{ section.id }}">Family Support</span>
+          <span class="main-page-case-intelligence__chip-{{ section.id }}">Safe Sharing Online</span>
+          <span class="main-page-case-intelligence__chip-{{ section.id }}">Volunteer Search Advice</span>
+          <span class="main-page-case-intelligence__chip-{{ section.id }}">Country Community Alerts</span>
+        </div>
+      </div>
+
+      <div class="main-page-case-intelligence__grid-{{ section.id }}">
+        <article class="main-page-case-intelligence__card-{{ section.id }}">
+          <div class="main-page-case-intelligence__label-{{ section.id }}">Family support</div>
+          <h2 class="main-page-case-intelligence__title-{{ section.id }}">Support Without Speculation</h2>
+          <p class="main-page-case-intelligence__copy-{{ section.id }}">
+            Community discussions are for general support, awareness, and practical guidance. Specific case information belongs in comments on that case page.
+          </p>
+        </article>
+
+        <article class="main-page-case-intelligence__card-{{ section.id }}">
+          <div class="main-page-case-intelligence__label-{{ section.id }}">Safe sharing online</div>
+          <h2 class="main-page-case-intelligence__title-{{ section.id }}">General Awareness And Safety Advice</h2>
+          <p class="main-page-case-intelligence__copy-{{ section.id }}">
+            Share prevention guidance, respectful online safety practices, platform updates, and community awareness without naming unverified people.
+          </p>
+        </article>
+
+        <article class="main-page-case-intelligence__card-{{ section.id }}">
+          <div class="main-page-case-intelligence__label-{{ section.id }}">Volunteer search advice</div>
+          <h2 class="main-page-case-intelligence__title-{{ section.id }}">Guidance For Helping Safely</h2>
+          <p class="main-page-case-intelligence__copy-{{ section.id }}">
+            Discuss safe search preparation, family support, prevention and awareness, questions and guidance, and country-level community alerts.
+          </p>
+        </article>
+      </div>
+
+      <div class="main-page-case-intelligence__note-{{ section.id }}">
+        General discussions only. No accusations, no speculation, and no naming unverified people. Urgent sightings should go to police or local emergency services first.
+      </div>
+
+      <div id="case-intelligence-network" class="main-page-case-intelligence__network-{{ section.id }}">
+        <div class="main-page-case-intelligence__hero-{{ section.id }}">
+          <p class="main-page-case-intelligence__eyebrow-{{ section.id }}">Community Discussions</p>
+          <h2 class="main-page-case-intelligence__title-{{ section.id }}">Explore The Community Area</h2>
+          <p class="main-page-case-intelligence__copy-{{ section.id }}">
+            Public visitors can review the categories and community rules here before joining. This area is not for specific case updates or sharing case leads.
+          </p>
+
+          <div class="main-page-case-intelligence__actions-{{ section.id }}">
+            <a href="/account/login" class="main-page-case-intelligence__button-{{ section.id }}">Join / Log In</a>
+            <a href="/pages/member-area#case-intelligence-network" class="main-page-case-intelligence__button-secondary-{{ section.id }}">Browse Community Area</a>
+            <a href="/pages/professional-membership" class="main-page-case-intelligence__button-secondary-{{ section.id }}">Professionals Apply</a>
+          </div>
+        </div>
+
+        <div class="main-page-case-intelligence__network-nav-{{ section.id }}">
+          <a href="#active-case-discussions" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__card-link-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Family support</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Family Support</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">Supportive, general discussion for families and communities.</p>
+          </a>
+
+          <a href="#local-intelligence" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__card-link-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Safe sharing online</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Safe Sharing Online</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">Respectful public sharing guidance without rumor or accusation.</p>
+          </a>
+
+          <a href="#verified-professional-advice" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__card-link-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Volunteer search advice</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Volunteer Search Advice</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">General search guidance that does not replace police instructions.</p>
+          </a>
+
+          <a href="#member-support" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__card-link-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Prevention and awareness</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Prevention And Awareness</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">General education, preparedness, and community safety topics.</p>
+          </a>
+
+          <a href="#possible-sightings" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__card-link-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Platform updates</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Platform Updates</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">Missing Alerts updates, feature notes, and community guidance.</p>
+          </a>
+
+          <a href="#safety-rules" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__card-link-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Questions and guidance</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Community Rules</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">No accusations, no speculation, no unverified names, and no public contact dumping.</p>
+          </a>
+        </div>
+
+        <div class="main-page-case-intelligence__network-grid-{{ section.id }}">
+          <article id="active-case-discussions" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__section-anchor-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Family support</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Family Support</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">
+              General support discussions can help families and communities share encouragement, practical needs, and respectful resources.
+            </p>
+          </article>
+
+          <article id="local-intelligence" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__section-anchor-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Safe sharing online</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Safe Sharing Online</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">
+              Share missing-person posts responsibly, avoid rumors, avoid naming unverified people, and do not post private contact information.
+            </p>
+          </article>
+
+          <article id="verified-professional-advice" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__section-anchor-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Volunteer search advice</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Volunteer Search Advice</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">
+              Discuss safe preparation, official coordination, search wellbeing, and how volunteers can help without interfering with authorities.
+            </p>
+          </article>
+
+          <article id="member-support" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__section-anchor-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Prevention and awareness</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Prevention And Awareness</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">
+              Discuss general prevention, online safety, family planning, and awareness practices that help communities respond responsibly.
+            </p>
+          </article>
+
+          <article id="possible-sightings" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__section-anchor-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Platform updates</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Platform Updates And Country Alerts</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">
+              Platform updates and country community alerts belong here. Case-specific sightings belong on that case page or with police if urgent.
+            </p>
+          </article>
+
+          <article id="safety-rules" class="main-page-case-intelligence__card-{{ section.id }} main-page-case-intelligence__section-anchor-{{ section.id }}">
+            <div class="main-page-case-intelligence__label-{{ section.id }}">Safety Rules</div>
+            <h3 class="main-page-case-intelligence__title-{{ section.id }}">Strict Moderation And Trust Protection</h3>
+            <p class="main-page-case-intelligence__copy-{{ section.id }}">
+              No accusations. No speculation. No unverified names. Urgent sightings should go to police or local emergency services first. Case-specific information belongs on the relevant case page.
+            </p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+{% elsif page.handle == 'missing-people-location' or page.handle == 'missing-people-location-live' %}
+  {% render 'location-case-page-content' %}
+
+  {{ 'missing-alerts-location-page.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'missing-alerts-location-registry.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'missing-alerts-location-page.js' | asset_url }}" defer="defer"></script>
+
+  <section class="main-page-route-fallback-{{ section.id }} section-{{ section.id }}-padding" data-location-page-fallback>
+    <div class="main-page-route-fallback__shell-{{ section.id }}">
+      <div class="main-page-route-fallback__diag-{{ section.id }}">PAGE ROUTE LOADED: {{ page.handle }}</div>
+
+      <div class="main-page-route-fallback__hero-{{ section.id }}">
+        <p class="main-page-route-fallback__eyebrow-{{ section.id }}">Location Directory Fallback</p>
+        <h1 class="main-page-route-fallback__heading-{{ section.id }}">Missing people by location</h1>
+        <div class="main-page-route-fallback__intro-{{ section.id }}">
+          <p>This fallback keeps the dynamic location route public if the Shopify page exists but has not been assigned the dedicated location template.</p>
+        </div>
+        <div class="main-page-route-fallback__actions-{{ section.id }}">
+          <a href="/pages/missing-people-location-live?country=uk&level=nation&location=england" class="main-page-route-fallback__button-{{ section.id }}">England</a>
+          <a href="/pages/missing-people-location-live?country=us&level=state&location=california" class="main-page-route-fallback__button-secondary-{{ section.id }}">California</a>
+          <a href="/pages/missing-people-location-live?country=ca&level=province&location=ontario" class="main-page-route-fallback__button-secondary-{{ section.id }}">Ontario</a>
+        </div>
+      </div>
+
+      <div class="main-page-route-fallback__grid-{{ section.id }}">
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">ROUTING CHECK</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">DYNAMIC TEMPLATE EXPECTED</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            Assign the `page.missing-people-location` template in Shopify Admin for the full map, active-case grid, local alert signup and nearby links.
+          </p>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">LOCATION</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">LOCATION PARAMS SUPPORTED</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            Location URLs support selected country, level, registry match, active missing count and excluded found/resolved count in the dedicated page script.
+          </p>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">PAGE CONTENT</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">DEFAULT PAGE CONTENT</h2>
+          <div class="main-page-route-fallback__copy-{{ section.id }}">
+            {{ page.content }}
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+{% elsif page.handle == 'missing-alerts-near-me' or page.handle == 'missing-person-search-guide' or page.handle == 'missing-people-region' or page.handle == 'missing-people-country' or page.handle == 'missing-cases-near' or page.handle == 'no-active-missing-cases' or page.handle == 'missing-people-near-me' or page.handle == 'recent-missing-cases' or page.handle == 'help-find-missing' or page.title == 'Missing Alerts Near Me' or page.title == 'Missing Person Search Guide' or page.title == 'Missing People Region' or page.title == 'Missing People Country' or page.title == 'Missing Cases Near Me' or page.title == 'No Active Missing Cases' or page.title == 'Missing People Near Me' or page.title == 'Recent Missing Cases' or page.title == 'Help Find Missing People' %}
+  {% render 'location-case-page-content' %}
+{% elsif page.handle == 'member-area' %}
+  <section class="main-page-route-fallback-{{ section.id }} section-{{ section.id }}-padding">
+    <div class="main-page-route-fallback__shell-{{ section.id }}">
+      <div class="main-page-route-fallback__diag-{{ section.id }}">PAGE ROUTE LOADED: {{ page.handle }}</div>
+
+      <div class="main-page-route-fallback__hero-{{ section.id }}">
+        <p class="main-page-route-fallback__eyebrow-{{ section.id }}">Member Area Fallback</p>
+        <h1 class="main-page-route-fallback__heading-{{ section.id }}">{{ page.title | default: 'MEMBER AREA' | escape }}</h1>
+        <div class="main-page-route-fallback__intro-{{ section.id }}">
+          <p>This default page fallback is active because the Shopify page may exist without the dedicated member-area template assignment.</p>
+        </div>
+
+        <div class="main-page-route-fallback__actions-{{ section.id }}">
+          {% if customer %}
+            <a href="/blogs/missing-persons" class="main-page-route-fallback__button-{{ section.id }}">Browse Missing Cases</a>
+          {% else %}
+            <a href="/account/login?return_url=/pages/member-area" class="main-page-route-fallback__button-{{ section.id }}">Member Login</a>
+          {% endif %}
+          <a href="/pages/community-membership" class="main-page-route-fallback__button-secondary-{{ section.id }}">Community Membership</a>
+          <a href="/pages/professional-area" class="main-page-route-fallback__button-secondary-{{ section.id }}">Professional Area</a>
+        </div>
+      </div>
+
+      <div class="main-page-route-fallback__grid-{{ section.id }}">
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">🔔 CASE ALERT INBOX</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">CASES YOU ARE FOLLOWING</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            Followed cases are stored only in this browser for now. This fallback preserves the local inbox hooks until the dedicated page template is assigned.
+          </p>
+          <div class="case-alert-inbox-shell" data-case-alert-inbox>
+            <div
+              class="case-alert-inbox-list"
+              data-followed-cases-list
+              data-empty-message="You are not following any cases yet. Tap the bell on any missing-person case to receive updates here."
+            ></div>
+            <div class="case-alert-inbox-empty" data-followed-cases-empty hidden>
+              <div class="case-alert-inbox-empty__eyebrow">NO FOLLOWED CASES YET</div>
+              <h3 class="case-alert-inbox-empty__title">YOUR CASE ALERT INBOX IS EMPTY</h3>
+              <p class="case-alert-inbox-empty__copy">
+                You are not following any cases yet. Tap the bell on any missing-person case to receive updates here.
+              </p>
+              <a href="/blogs/missing-persons" class="case-alert-inbox-empty__button">BROWSE MISSING CASES</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">📍 LOCAL AREA ALERTS</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">MEMBERSHIP ALERT PATHS</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            Local area alerts, one-off case alerts, and membership upgrades remain routed through the storefront membership pages.
+          </p>
+          <div class="main-page-route-fallback__actions-{{ section.id }}">
+            <a href="/pages/community-membership" class="main-page-route-fallback__button-{{ section.id }}">Set Up Local Alerts</a>
+            <a href="/pages/professional-membership" class="main-page-route-fallback__button-secondary-{{ section.id }}">Upgrade Membership</a>
+          </div>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">PAGE CONTENT</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">DEFAULT PAGE CONTENT</h2>
+          <div class="main-page-route-fallback__copy-{{ section.id }}">
+            {{ page.content }}
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+{% elsif page.handle == 'professional-area' %}
+  <section class="main-page-route-fallback-{{ section.id }} section-{{ section.id }}-padding">
+    <div class="main-page-route-fallback__shell-{{ section.id }}">
+      <div class="main-page-route-fallback__diag-{{ section.id }}">PAGE ROUTE LOADED: {{ page.handle }}</div>
+
+      <div class="main-page-route-fallback__hero-{{ section.id }}">
+        <p class="main-page-route-fallback__eyebrow-{{ section.id }}">Professional Area Fallback</p>
+        <h1 class="main-page-route-fallback__heading-{{ section.id }}">{{ page.title | default: 'PROFESSIONAL AREA' | escape }}</h1>
+        <div class="main-page-route-fallback__intro-{{ section.id }}">
+          <p>This default page fallback keeps the route visible while the dedicated professional-area template assignment is being confirmed.</p>
+        </div>
+
+        <div class="main-page-route-fallback__actions-{{ section.id }}">
+          {% unless customer %}
+            <a href="/account/login?return_url=/pages/professional-area" class="main-page-route-fallback__button-{{ section.id }}">Professional Login</a>
+          {% endunless %}
+          <a href="/pages/professional-membership" class="main-page-route-fallback__button-secondary-{{ section.id }}">Professional Membership</a>
+          <a href="/pages/professionals" class="main-page-route-fallback__button-secondary-{{ section.id }}">Professionals Directory</a>
+        </div>
+      </div>
+
+      <div class="main-page-route-fallback__grid-{{ section.id }}">
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">SAFE ACCESS</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">CONTROLLED PROFESSIONAL TOOLS</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            This fallback does not bypass any verification logic. Dedicated professional controls still depend on customer login, membership tier, and verification status.
+          </p>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">NEXT STEP</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">ASSIGN THE DEDICATED TEMPLATE</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            If this page record is using the default template, assign the dedicated professional-area template in Shopify Admin to restore the full gated experience.
+          </p>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">PAGE CONTENT</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">DEFAULT PAGE CONTENT</h2>
+          <div class="main-page-route-fallback__copy-{{ section.id }}">
+            {{ page.content }}
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+{% elsif page.handle == 'professionals' %}
+  <section class="main-page-route-fallback-{{ section.id }} section-{{ section.id }}-padding">
+    <div class="main-page-route-fallback__shell-{{ section.id }}">
+      <div class="main-page-route-fallback__diag-{{ section.id }}">PAGE ROUTE LOADED: {{ page.handle }}</div>
+
+      <div class="main-page-route-fallback__hero-{{ section.id }}">
+        <p class="main-page-route-fallback__eyebrow-{{ section.id }}">Professionals Directory Fallback</p>
+        <h1 class="main-page-route-fallback__heading-{{ section.id }}">{{ page.title | default: 'PROFESSIONALS DIRECTORY' | escape }}</h1>
+        <div class="main-page-route-fallback__intro-{{ section.id }}">
+          <p>This fallback keeps the public professionals route live if the page record exists but is still using the default page template.</p>
+        </div>
+        <div class="main-page-route-fallback__actions-{{ section.id }}">
+          <a href="/pages/professional-membership" class="main-page-route-fallback__button-{{ section.id }}">Become A Professional</a>
+          <a href="/pages/professional-area" class="main-page-route-fallback__button-secondary-{{ section.id }}">Professional Access</a>
+          <a href="/account/login?return_url=/pages/member-area" class="main-page-route-fallback__button-secondary-{{ section.id }}">Member Login</a>
+        </div>
+      </div>
+
+      <div class="main-page-route-fallback__grid-{{ section.id }}">
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">SAFE DIRECTORY</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">PUBLIC SUMMARY ONLY</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            The dedicated directory template should show public-safe profile summaries only and keep direct contact behind member and verification rules.
+          </p>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">ROUTING CHECK</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">DEFAULT TEMPLATE IS ACTIVE</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            This confirms the handle route is resolving through `page.json`. Assign the `page.professionals` template for the full directory layout.
+          </p>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">PAGE CONTENT</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">DEFAULT PAGE CONTENT</h2>
+          <div class="main-page-route-fallback__copy-{{ section.id }}">
+            {{ page.content }}
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+{% elsif page.handle == 'community-membership' %}
+  <section class="main-page-route-fallback-{{ section.id }} section-{{ section.id }}-padding">
+    <div class="main-page-route-fallback__shell-{{ section.id }}">
+      <div class="main-page-route-fallback__diag-{{ section.id }}">PAGE ROUTE LOADED: {{ page.handle }}</div>
+
+      <div class="main-page-route-fallback__hero-{{ section.id }}">
+        <p class="main-page-route-fallback__eyebrow-{{ section.id }}">Community Membership Fallback</p>
+        <h1 class="main-page-route-fallback__heading-{{ section.id }}">{{ page.title | default: 'COMMUNITY MEMBERSHIP' | escape }}</h1>
+        <div class="main-page-route-fallback__intro-{{ section.id }}">
+          <p>This fallback keeps the community membership route visible if the page exists but has not been assigned the dedicated membership template.</p>
+        </div>
+        <div class="main-page-route-fallback__actions-{{ section.id }}">
+          <a href="/account/login" class="main-page-route-fallback__button-{{ section.id }}">Member Login</a>
+          <a href="/account/register" class="main-page-route-fallback__button-secondary-{{ section.id }}">Community Sign Up</a>
+          <a href="/pages/member-area" class="main-page-route-fallback__button-secondary-{{ section.id }}">Member Area</a>
+        </div>
+      </div>
+
+      <div class="main-page-route-fallback__grid-{{ section.id }}">
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">MEMBERSHIP PATH</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">FOLLOW CASES AND LOCAL ALERTS</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            Community membership remains the safe storefront path for member inbox access, future local area alerts, and broader case-following tools.
+          </p>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">ROUTING CHECK</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">DEFAULT TEMPLATE IS ACTIVE</h2>
+          <p class="main-page-route-fallback__copy-{{ section.id }}">
+            This confirms the handle route is resolving through `page.json`. Assign the `page.community-membership` template for the full membership layout.
+          </p>
+        </article>
+
+        <article class="main-page-route-fallback__card-{{ section.id }}">
+          <div class="main-page-route-fallback__label-{{ section.id }}">PAGE CONTENT</div>
+          <h2 class="main-page-route-fallback__title-{{ section.id }}">DEFAULT PAGE CONTENT</h2>
+          <div class="main-page-route-fallback__copy-{{ section.id }}">
+            {{ page.content }}
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+{% elsif page.handle == 'professional-membership' %}
+  <section class="main-page-professional-membership-{{ section.id }} section-{{ section.id }}-padding">
+    <div class="main-page-professional-membership__shell-{{ section.id }}">
+      <div class="main-page-route-fallback__diag-{{ section.id }}">PAGE ROUTE LOADED: {{ page.handle }}</div>
+      <div class="main-page-professional-membership__hero-{{ section.id }}">
+        <p class="main-page-professional-membership__eyebrow-{{ section.id }}">Professional Access</p>
+        <h1 class="main-page-professional-membership__heading-{{ section.id }}">PROFESSIONAL MEMBERSHIP</h1>
+        <div class="main-page-professional-membership__intro-{{ section.id }}">
+          <p>Join Missing Alerts as a verified professional and support families with safe, structured case guidance.</p>
+        </div>
+
+        <div class="main-page-professional-membership__actions-{{ section.id }}">
+          <a href="/pages/professional-membership" class="main-page-professional-membership__button-{{ section.id }}">Apply For Professional Access</a>
+          <a href="/pages/professionals" class="main-page-professional-membership__button-secondary-{{ section.id }}">View Professional Directory</a>
+        </div>
+      </div>
+
+      <div class="main-page-professional-membership__section-grid-{{ section.id }}">
+        <article class="main-page-professional-membership__section-{{ section.id }}">
+          <div class="main-page-professional-membership__section-label-{{ section.id }}">Are You A Professional?</div>
+          <h2 class="main-page-professional-membership__section-title-{{ section.id }}">Verified Professional Categories</h2>
+          <p class="main-page-professional-membership__copy-{{ section.id }}">
+            This membership path is intended for investigators, search specialists, legal professionals, safeguarding consultants, support workers, media and awareness professionals, and verified organisations.
+          </p>
+        </article>
+
+        <article class="main-page-professional-membership__section-{{ section.id }}">
+          <div class="main-page-professional-membership__section-label-{{ section.id }}">What Professionals Get</div>
+          <h2 class="main-page-professional-membership__section-title-{{ section.id }}">Structured Tools And Visibility</h2>
+          <ul class="main-page-professional-membership__list-{{ section.id }}">
+            <li>Verified professional profile</li>
+            <li>Professional badge inside the Community Area</li>
+            <li>Ability to provide professional guidance through approved case support paths</li>
+            <li>Controlled contact requests from members and families</li>
+            <li>Professional listing visibility</li>
+            <li>Case support tools</li>
+            <li>Timeline and notes tools when available</li>
+            <li>Lead and request access when approved</li>
+            <li>Strict moderation and trust protection</li>
+          </ul>
+        </article>
+
+        <article class="main-page-professional-membership__section-{{ section.id }}">
+          <div class="main-page-professional-membership__section-label-{{ section.id }}">Safety Promise</div>
+          <h2 class="main-page-professional-membership__section-title-{{ section.id }}">Controlled Contact Only</h2>
+          <p class="main-page-professional-membership__copy-{{ section.id }}">
+            Professionals cannot freely contact vulnerable users. Contact is controlled, permission-based, and reviewed to protect families and maintain trust.
+          </p>
+        </article>
+      </div>
+
+      <div class="main-page-professional-membership__tiers-{{ section.id }}">
+        <article class="main-page-professional-membership__tier-{{ section.id }}">
+          <div class="main-page-professional-membership__tier-label-{{ section.id }}">PROFESSIONAL ACCESS</div>
+          <h3 class="main-page-professional-membership__tier-title-{{ section.id }}">Verified Visibility</h3>
+          <p class="main-page-professional-membership__copy-{{ section.id }}">
+            For verified professionals who want visibility and limited guidance tools.
+          </p>
+          <div class="main-page-professional-membership__actions-{{ section.id }}">
+            <a href="/pages/professional-membership" class="main-page-professional-membership__button-secondary-{{ section.id }}">Apply For Professional Access</a>
+          </div>
+        </article>
+
+        <article class="main-page-professional-membership__tier-{{ section.id }}">
+          <div class="main-page-professional-membership__tier-label-{{ section.id }}">PROFESSIONAL PLUS</div>
+          <h3 class="main-page-professional-membership__tier-title-{{ section.id }}">More Reach And Requests</h3>
+          <p class="main-page-professional-membership__copy-{{ section.id }}">
+            For active professionals who want more contact requests, stronger visibility, and more case tools.
+          </p>
+          <div class="main-page-professional-membership__actions-{{ section.id }}">
+            <a href="/pages/professional-membership" class="main-page-professional-membership__button-secondary-{{ section.id }}">Apply For Professional Access</a>
+          </div>
+        </article>
+
+        <article class="main-page-professional-membership__tier-{{ section.id }}">
+          <div class="main-page-professional-membership__tier-label-{{ section.id }}">PROFESSIONAL ELITE</div>
+          <h3 class="main-page-professional-membership__tier-title-{{ section.id }}">Agency And Team Access</h3>
+          <p class="main-page-professional-membership__copy-{{ section.id }}">
+            For agencies, teams, and organisations needing higher visibility and multiple team access.
+          </p>
+          <div class="main-page-professional-membership__actions-{{ section.id }}">
+            <a href="/pages/professional-membership" class="main-page-professional-membership__button-secondary-{{ section.id }}">Apply For Professional Access</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="main-page-professional-membership__note-{{ section.id }}">
+        Are you a professional? Apply for a professional account through the public storefront flow below. Access remains verification-led and safety reviewed.
+      </div>
+    </div>
+  </section>
+{% elsif page.handle == 'professional-apply' %}
+  <section class="main-page-professional-membership-{{ section.id }} section-{{ section.id }}-padding">
+    <div class="main-page-professional-membership__shell-{{ section.id }}">
+      <div class="main-page-professional-apply__hero-{{ section.id }}">
+        <p class="main-page-professional-apply__eyebrow-{{ section.id }}">Application Intake</p>
+        <h1 class="main-page-professional-apply__heading-{{ section.id }}">APPLY AS A PROFESSIONAL</h1>
+        <div class="main-page-professional-apply__intro-{{ section.id }}">
+          <p>Submit your professional details for review before visibility, guidance tools, and controlled contact access are enabled.</p>
+        </div>
+      </div>
+
+      <div class="main-page-professional-apply__panel-{{ section.id }}" style="margin-top: 1.5rem;">
+        <div class="main-page-professional-apply__grid-{{ section.id }}">
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Full Name</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Your full professional name</p>
+          </article>
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Business / Organisation Name</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Your company, agency, or organisation</p>
+          </article>
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Country</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Primary country of operation</p>
+          </article>
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Professional Category</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Investigator, search specialist, legal, safeguarding, support, media, or organisation</p>
+          </article>
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Email</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Your main professional email address</p>
+          </article>
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Phone</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Professional contact number</p>
+          </article>
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Website</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Official website or profile URL</p>
+          </article>
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Credentials / Licence / Registration</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Professional registration, licence, approval, or credentials</p>
+          </article>
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Why Do You Want Access?</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Explain how you would support families and contribute safely inside Missing Alerts</p>
+          </article>
+          <article class="main-page-professional-apply__field-{{ section.id }}">
+            <div class="main-page-professional-apply__field-label-{{ section.id }}">Agreement To Safeguarding Rules</div>
+            <p class="main-page-professional-apply__field-value-{{ section.id }}">Confirm that you accept moderation, safeguarding, and controlled-contact requirements</p>
+          </article>
+        </div>
+
+        <div class="main-page-professional-apply__actions-{{ section.id }}">
+          <a href="/account/register" class="main-page-professional-apply__button-{{ section.id }}">Submit Application</a>
+          <a href="/pages/professional-membership" class="main-page-professional-apply__button-secondary-{{ section.id }}">Back To Professional Membership</a>
+        </div>
+
+        <div class="main-page-professional-apply__note-{{ section.id }}">
+          TODO: connect this public professional application layout to a real Shopify or backend submission path. For now, the visible CTA routes into account registration without exposing an unreviewed direct-access channel.
+        </div>
+      </div>
+    </div>
+  </section>
+{% elsif page.handle == 'donate' or page.handle == 'support' %}
+  <section class="main-page-support-{{ section.id }} section-{{ section.id }}-padding">
+    <div class="main-page-support__box-{{ section.id }}">
+      <h1>SUPPORT MISSING ALERTS</h1>
+
+      <p>
+        Missing Alerts exists to help bring people home faster.
+      </p>
+
+      <p>
+        Every alert, every case, and every improvement to this platform is built and maintained by a small team working constantly behind the scenes.
+      </p>
+
+      <p>
+        We focus on speed, reach, and giving families the best possible chance of being seen.
+      </p>
+
+      <p>Your support helps us:</p>
+
+      <ul>
+        <li>Keep the platform running 24/7</li>
+        <li>Improve alert systems and global reach</li>
+        <li>Build better tools for families and professionals</li>
+        <li>Expand into more countries and communities</li>
+      </ul>
+
+      <p>
+        We don’t run on big funding.<br>
+        We run on urgency, commitment, and community support.
+      </p>
+
+      <p>
+        <a href="https://buymeacoffee.com/missingalerts" target="_blank" rel="noopener noreferrer" class="main-page-support__button-{{ section.id }}">
+          SUPPORT MISSING ALERTS
+        </a>
+      </p>
+    </div>
+  </section>
+{% else %}
+  <div class="page-width page-width--narrow section-{{ section.id }}-padding">
+    <h1 class="main-page-title page-title h0{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {{ page.title | escape }}
+    </h1>
+    <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      {{ page.content }}
+    </div>
+  </div>
+{% endif %}
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

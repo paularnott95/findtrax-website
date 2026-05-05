@@ -1,0 +1,58 @@
+{% liquid
+  assign organised_searches_json = article.metafields.custom.organised_searches_json.value | default: article.metafields.custom.organised_searches_json
+  assign search_live = article.metafields.custom.organised_search_live.value | default: article.metafields.custom.organised_search_live
+  assign search_title = article.metafields.custom.organised_search_title.value | default: article.metafields.custom.organised_search_title
+  assign search_date = article.metafields.custom.organised_search_date.value | default: article.metafields.custom.organised_search_date
+  assign search_time = article.metafields.custom.organised_search_time.value | default: article.metafields.custom.organised_search_time
+  assign search_location = article.metafields.custom.organised_search_location.value | default: article.metafields.custom.organised_search_location
+  assign search_area = article.metafields.custom.organised_search_area.value | default: article.metafields.custom.organised_search_area
+  assign search_contact = article.metafields.custom.organised_search_contact.value | default: article.metafields.custom.organised_search_contact
+  assign search_country = article.metafields.custom.organised_search_country.value | default: article.metafields.custom.organised_search_country
+  assign search_city = article.metafields.custom.organised_search_city.value | default: article.metafields.custom.organised_search_city
+  assign search_featured = article.metafields.custom.organised_search_featured.value | default: article.metafields.custom.organised_search_featured
+  assign search_safety = article.metafields.custom.organised_search_safety_notes.value | default: article.metafields.custom.organised_search_safety_notes
+  assign has_search_fields = false
+  if search_title != blank or search_date != blank or search_time != blank or search_location != blank or search_area != blank or search_contact != blank or search_city != blank or search_country != blank or search_safety != blank
+    assign has_search_fields = true
+  endif
+%}
+
+{% if search_live == true or search_live == 'true' or has_search_fields %}
+  <section
+    class="ma-organise-search ma-organise-search--details"
+    aria-labelledby="ma-organised-search-details-title-{{ article.id }}"
+    {% if organised_searches_json != blank %}data-organised-searches-json="{{ organised_searches_json | escape }}"{% endif %}
+  >
+    {% if search_featured == true or search_featured == 'true' %}
+      <div class="ma-organise-search__badge">FEATURED SEARCH</div>
+    {% endif %}
+    <h3 id="ma-organised-search-details-title-{{ article.id }}" class="ma-organise-search__title">ORGANISED SEARCH DETAILS</h3>
+    {% if search_title != blank %}
+      <p class="ma-organise-search__line">{{ search_title }}</p>
+    {% endif %}
+
+    <dl class="ma-organise-search__detail-list">
+      {% if search_date != blank %}
+        <div><dt>Date</dt><dd>{{ search_date | date: '%d %b %Y' }}</dd></div>
+      {% endif %}
+      {% if search_time != blank %}
+        <div><dt>Time</dt><dd>{{ search_time }}</dd></div>
+      {% endif %}
+      {% if search_location != blank %}
+        <div><dt>Meeting location</dt><dd>{{ search_location }}</dd></div>
+      {% endif %}
+      {% if search_area != blank %}
+        <div><dt>Search area</dt><dd>{{ search_area }}</dd></div>
+      {% endif %}
+      {% if search_city != blank or search_country != blank %}
+        <div><dt>City/country</dt><dd>{{ search_city }}{% if search_city != blank and search_country != blank %}, {% endif %}{{ search_country }}</dd></div>
+      {% endif %}
+      {% if search_contact != blank %}
+        <div><dt>Contact</dt><dd>{{ search_contact }}</dd></div>
+      {% endif %}
+      {% if search_safety != blank %}
+        <div><dt>Safety notes</dt><dd>{{ search_safety }}</dd></div>
+      {% endif %}
+    </dl>
+  </section>
+{% endif %}

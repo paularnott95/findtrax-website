@@ -1,0 +1,81 @@
+{% liquid
+  assign ma_affiliate_blog = blogs['missing-person-advice']
+  assign ma_heading = heading | default: 'Related safety product guides'
+  assign ma_limit = limit | default: 3
+%}
+
+<section class="ma-related-safety-products" aria-label="{{ ma_heading | escape }}">
+  <div class="ma-related-safety-products__head">
+    <p>Safety products</p>
+    <h2>{{ ma_heading | escape }}</h2>
+  </div>
+
+  {% render 'amazon-affiliate-disclosure' %}
+
+  <div class="ma-related-safety-products__grid">
+    {% assign ma_rendered = 0 %}
+    {% if ma_affiliate_blog != blank %}
+      {% for guide in ma_affiliate_blog.articles limit: 24 %}
+        {% assign guide_tags = guide.tags | join: ',' | downcase %}
+        {% if guide_tags contains 'amazon-affiliate' or guide_tags contains 'safety-products' %}
+          {% if ma_rendered < ma_limit %}
+            {% render 'safety-product-card',
+              title: guide.title,
+              url: guide.url,
+              text: guide.excerpt_or_content | strip_html | truncate: 130
+            %}
+            {% assign ma_rendered = ma_rendered | plus: 1 %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% if ma_rendered == 0 %}
+      {% render 'safety-product-card',
+        title: 'GPS trackers and ID safety planning',
+        url: '/blogs/missing-person-advice/tagged/amazon-affiliate',
+        text: 'Read product guides only after police-first reporting and practical safety planning are covered.'
+      %}
+      {% render 'safety-product-card',
+        title: 'Caregiver safety tools',
+        url: '/blogs/missing-person-advice/tagged/caregiver-safety-tools',
+        text: 'Compare alarms, ID options and everyday checks for families supporting vulnerable people.'
+      %}
+      {% render 'safety-product-card',
+        title: 'Travel safety products',
+        url: '/blogs/missing-person-advice/tagged/travel-safety-products',
+        text: 'Prepare backup power, ID information and safer travel routines before a trip.'
+      %}
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .ma-related-safety-products{
+    margin:24px 0;
+    padding:18px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:8px;
+    background:rgba(0,0,0,.18);
+  }
+  .ma-related-safety-products__head p{
+    margin:0 0 6px;
+    color:#ffd2d2;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  .ma-related-safety-products__head h2{
+    margin:0;
+    color:#fff;
+    font-size:22px;
+    line-height:1.2;
+  }
+  .ma-related-safety-products__grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    gap:12px;
+    margin-top:14px;
+  }
+</style>

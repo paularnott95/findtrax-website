@@ -1,0 +1,1331 @@
+{% comment %}
+SUBMIT A CASE / CLAIM A CASE ENTRY SYSTEM
+UNIT 1 — reusable trigger + entry modal + duplicate match review UI
+
+UPDATED VERSION
+- Placeholder alerts removed
+- Buttons now redirect to the real submit page:
+  /pages/submit-a-case
+- Basic details are passed through query params for future prefilling
+{% endcomment %}
+
+{% assign claim_candidates_count = 0 %}
+
+<section class="case-entry-launcher" id="case-entry-launcher-{{ section.id }}">
+  <div class="case-entry-launcher-inner">
+    {% if section.settings.show_primary_button %}
+      <button type="button" class="case-entry-primary-btn open-submit-case-modal" data-open-submit-case>
+        <span class="case-entry-primary-btn-glow"></span>
+        <span class="case-entry-primary-btn-text">SUBMIT A CASE</span>
+      </button>
+    {% endif %}
+
+    {% if customer %}
+      <a href="/pages/my-cases" class="case-entry-portal-btn">
+        MEMBER AREA
+      </a>
+    {% endif %}
+
+    {% if section.settings.show_support_text %}
+      <div class="case-entry-launcher-support">
+        <div class="case-entry-launcher-kicker">FREE REVIEWED SUBMISSION</div>
+        <p>Submit a missing person case for review, or claim an existing case that is already live on the website.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</section>
+
+<div class="case-entry-modal" id="case-entry-modal-{{ section.id }}" aria-hidden="true">
+  <div class="case-entry-backdrop" data-close-submit-case></div>
+
+  <div class="case-entry-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="case-entry-title-{{ section.id }}">
+    <button type="button" class="case-entry-close" aria-label="Close" data-close-submit-case>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="case-entry-shell">
+      <div class="case-entry-shell-border"></div>
+      <div class="case-entry-shell-glow"></div>
+      <div class="case-entry-shell-noise"></div>
+
+      <div class="case-entry-topbar">
+        <div class="case-entry-top-pill">SUBMIT A CASE</div>
+        <div class="case-entry-top-status">REVIEWED BEFORE PUBLICATION</div>
+      </div>
+
+      <div class="case-entry-main" data-entry-screen="chooser">
+        <div class="case-entry-hero">
+          <div class="case-entry-hero-copy">
+            <div class="case-entry-kicker">MISSING ALERTS CASE SUBMISSION</div>
+            <h2 id="case-entry-title-{{ section.id }}">SUBMIT OR CLAIM A CASE</h2>
+            <p>
+              Submit a new missing person case for review, or claim an existing case already published on the website.
+              Please report the case to police first where possible.
+            </p>
+          </div>
+
+          <div class="case-entry-help-card">
+            <div class="case-entry-help-card-title">IMPORTANT</div>
+            <p>Only verified direct family, guardians, or authorised case owners can unlock professional contact features later.</p>
+          </div>
+        </div>
+
+        <div class="case-entry-choice-grid">
+          <button type="button" class="case-entry-choice case-entry-choice-primary" data-entry-next="new_case">
+            <span class="case-entry-choice-glow"></span>
+            <span class="case-entry-choice-kicker">START HERE</span>
+            <span class="case-entry-choice-title">SUBMIT A NEW CASE</span>
+            <span class="case-entry-choice-text">Create a new reviewed submission for a missing person case.</span>
+          </button>
+
+          <button type="button" class="case-entry-choice case-entry-choice-secondary" data-entry-next="claim_case">
+            <span class="case-entry-choice-glow"></span>
+            <span class="case-entry-choice-kicker">ALREADY ON THE SITE?</span>
+            <span class="case-entry-choice-title">CLAIM AN EXISTING CASE</span>
+            <span class="case-entry-choice-text">If we already published the case manually, request ownership instead of creating a duplicate.</span>
+          </button>
+        </div>
+
+        <div class="case-entry-footer-note">
+          <strong>Need help reporting to police first?</strong>
+          <span>This platform is not a police reporting service. Use emergency police channels first where appropriate.</span>
+        </div>
+      </div>
+
+      <div class="case-entry-main is-hidden" data-entry-screen="details">
+        <div class="case-entry-step-top">
+          <button type="button" class="case-entry-back-btn" data-entry-back>
+            <span>←</span>
+            <span>BACK</span>
+          </button>
+          <div class="case-entry-step-label" data-entry-mode-label>SUBMIT A NEW CASE</div>
+        </div>
+
+        <div class="case-entry-form-wrap">
+          <div class="case-entry-form-main">
+            <div class="case-entry-kicker">FIRST CHECK FOR A MATCH</div>
+            <h3 class="case-entry-form-title">ENTER BASIC DETAILS</h3>
+            <p class="case-entry-form-intro">We use these details to look for possible existing cases before continuing.</p>
+
+            <div class="case-entry-grid">
+              <div class="case-entry-field case-entry-field-full">
+                <label for="case-entry-name-{{ section.id }}">MISSING PERSON FULL NAME</label>
+                <input type="text" id="case-entry-name-{{ section.id }}" placeholder="Enter full name" data-case-name-input>
+              </div>
+
+              <div class="case-entry-field">
+                <label for="case-entry-age-{{ section.id }}">AGE</label>
+                <input type="number" id="case-entry-age-{{ section.id }}" placeholder="Age" min="0" max="120" data-case-age-input>
+              </div>
+
+              <div class="case-entry-field case-entry-field--wide">
+                {% render 'location-selector',
+                  id: 'submit-case-entry',
+                  country_name: 'country',
+                  region_name: 'state_region',
+                  city_name: 'city_town',
+                  country_data_attr: 'data-case-country-input',
+                  region_data_attr: 'data-case-region-input',
+                  city_data_attr: 'data-case-city-input'
+                %}
+              </div>
+            </div>
+
+            <div class="case-entry-actions-row">
+              <button type="button" class="case-entry-check-btn" data-check-existing-cases>
+                CHECK FOR EXISTING CASES
+              </button>
+              <button type="button" class="case-entry-continue-btn" data-continue-no-match>
+                CONTINUE WITHOUT MATCH
+              </button>
+            </div>
+          </div>
+
+          <div class="case-entry-match-panel">
+            <div class="case-entry-match-head">
+              <div class="case-entry-match-kicker">MATCH CHECK</div>
+              <h4>WE MAY ALREADY HAVE THIS CASE</h4>
+              <p>If this is the same person, claiming the existing case avoids duplicates and links it to your account after review.</p>
+            </div>
+
+            <div class="case-entry-match-empty" data-match-empty>
+              <div class="case-entry-match-empty-icon">⌕</div>
+              <div class="case-entry-match-empty-title">NO CHECK RUN YET</div>
+              <p>Enter the person’s name and basic details, then check for existing matches.</p>
+            </div>
+
+            <div class="case-entry-match-results is-hidden" data-match-results>
+              {% for article in blogs['missing-persons'].articles limit: 12 %}
+                {% assign source = article.metafields.custom.case_source.value | default: article.metafields.custom.case_source | downcase %}
+                {% assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase %}
+                {% assign case_age = article.metafields.custom.age.value | default: article.metafields.custom.age %}
+                {% assign last_seen_place = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place %}
+                {% assign public_case_handle = article.handle | downcase %}
+                {% assign hide_public_case = false %}
+                {% if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test' %}
+                  {% assign hide_public_case = true %}
+                {% endif %}
+                {% for article_tag in article.tags %}
+                  {% assign public_tag_downcase = article_tag | downcase | strip %}
+                  {% if public_tag_downcase == 'test' or public_tag_downcase == 'demo' or public_tag_downcase == 'debug' or public_tag_downcase contains 'test:' or public_tag_downcase contains 'demo:' or public_tag_downcase contains 'debug:' %}
+                    {% assign hide_public_case = true %}
+                  {% endif %}
+                {% endfor %}
+
+                {% assign candidate_allowed = false %}
+                {% if hide_public_case == false %}
+                  {% if source == blank or source contains 'manual' or source contains 'admin' %}
+                    {% if owner_status == blank or owner_status contains 'unassigned' %}
+                      {% assign candidate_allowed = true %}
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+
+                {% if candidate_allowed == true and claim_candidates_count < 3 %}
+                  {% assign claim_candidates_count = claim_candidates_count | plus: 1 %}
+                  <div class="case-entry-match-card is-hidden"
+                       data-match-card
+                       data-match-name="{{ article.title | strip_html | escape }}"
+                       data-match-age="{{ case_age | escape }}"
+                       data-match-location="{{ last_seen_place | default: article.title | escape }}"
+                       data-match-country="{{ article.metafields.custom.country.value | default: article.metafields.custom.country | escape }}"
+                       data-match-region="{{ article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | escape }}">
+
+                    <div class="case-entry-match-image-wrap">
+                      {% if article.image %}
+                        <img src="{{ article.image | image_url: width: 500 }}" alt="{{ article.title | escape }}" class="case-entry-match-image" width="{{ article.image.width }}" height="{{ article.image.height }}">
+                      {% else %}
+                        <div class="case-entry-match-image-placeholder">NO IMAGE</div>
+                      {% endif %}
+                      <div class="case-entry-match-image-overlay"></div>
+                    </div>
+
+                    <div class="case-entry-match-body">
+                      <div class="case-entry-match-status">POSSIBLE MATCH</div>
+                      <h5>{{ article.title }}</h5>
+
+                      <div class="case-entry-match-meta">
+                        {% if case_age != blank %}<span>AGE {{ case_age }}</span>{% endif %}
+                        {% if last_seen_place != blank %}<span>{{ last_seen_place }}</span>{% endif %}
+                      </div>
+
+                      <div class="case-entry-match-actions">
+                        <button type="button"
+                                class="case-entry-claim-btn"
+                                data-claim-case
+                                data-claim-title="{{ article.title | escape }}"
+                                data-claim-url="{{ article.url | escape }}">
+                          CLAIM THIS CASE
+                        </button>
+                        <a href="{{ article.url }}" class="case-entry-view-link" target="_blank" rel="noopener">
+                          VIEW CASE
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <div class="case-entry-match-bottom is-hidden" data-match-bottom>
+              <button type="button" class="case-entry-no-match-btn" data-no-match-confirm>
+                THIS IS A DIFFERENT PERSON
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="case-entry-main is-hidden" data-entry-screen="claim_notice">
+        <div class="case-entry-step-top">
+          <button type="button" class="case-entry-back-btn" data-entry-back-to-details>
+            <span>←</span>
+            <span>BACK</span>
+          </button>
+          <div class="case-entry-step-label">CLAIM REQUEST SELECTED</div>
+        </div>
+
+        <div class="case-entry-claim-confirm">
+          <div class="case-entry-kicker">EXISTING CASE SELECTED</div>
+          <h3>YOU ARE CLAIMING AN EXISTING CASE</h3>
+          <p>This case will not be duplicated. You will continue through the same verification and review steps, but your request will assign the existing manual case to your member account if approved.</p>
+
+          <div class="case-entry-claim-selected" data-claim-selected-box>
+            <div class="case-entry-claim-selected-label">SELECTED CASE</div>
+            <div class="case-entry-claim-selected-title" data-claim-selected-title>Case selected</div>
+          </div>
+
+          <div class="case-entry-claim-note-grid">
+            <div class="case-entry-note-box">
+              <div class="case-entry-note-title">NO DUPLICATE POST CREATED</div>
+              <p>The existing case stays live and will be linked to you after approval.</p>
+            </div>
+            <div class="case-entry-note-box">
+              <div class="case-entry-note-title">VERIFICATION REQUIRED</div>
+              <p>Only direct family, guardians, or authorised case owners can gain control of an existing case.</p>
+            </div>
+          </div>
+
+          <div class="case-entry-claim-actions">
+            <button type="button" class="case-entry-continue-btn case-entry-continue-btn-strong" data-start-full-claim>
+              CONTINUE TO CLAIM VERIFICATION
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.case-entry-launcher{
+  width:100%;
+}
+
+.case-entry-launcher-inner{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.case-entry-portal-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:52px;
+  padding:0 24px;
+  border-radius:999px;
+  background:linear-gradient(180deg, #d7394d 0%, #89141f 100%);
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  text-decoration:none;
+  box-shadow:0 18px 38px rgba(137,20,31,0.28), 0 0 28px rgba(215,57,77,0.18);
+  transition:transform .28s ease, box-shadow .28s ease, filter .28s ease;
+}
+
+.case-entry-portal-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 22px 42px rgba(137,20,31,0.32), 0 0 36px rgba(215,57,77,0.22);
+  filter:brightness(1.03);
+}
+
+.case-entry-primary-btn{
+  position:relative;
+  overflow:hidden;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:52px;
+  padding:0 24px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  background:linear-gradient(180deg, #d7394d 0%, #89141f 100%);
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  box-shadow:0 18px 38px rgba(137,20,31,0.28), 0 0 28px rgba(215,57,77,0.18);
+  transition:transform .28s ease, box-shadow .28s ease, filter .28s ease;
+}
+
+.case-entry-primary-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 22px 42px rgba(137,20,31,0.32), 0 0 36px rgba(215,57,77,0.22);
+  filter:brightness(1.03);
+}
+
+.case-entry-primary-btn-glow{
+  position:absolute;
+  inset:auto -20% -120% -20%;
+  height:180%;
+  background:radial-gradient(circle, rgba(255,255,255,0.22) 0%, transparent 62%);
+  pointer-events:none;
+}
+
+.case-entry-primary-btn-text{
+  position:relative;
+  z-index:2;
+}
+
+.case-entry-launcher-support{
+  max-width:520px;
+}
+
+.case-entry-launcher-kicker{
+  margin-bottom:4px;
+  color:#b62535;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.case-entry-launcher-support p{
+  margin:0;
+  color:#3f3f46;
+  line-height:1.5;
+}
+
+.case-entry-modal{
+  position:fixed;
+  inset:0;
+  z-index:999;
+  display:none;
+}
+
+.case-entry-modal.is-open{
+  display:block;
+}
+
+.case-entry-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0, 0, 0, 0.92);
+  backdrop-filter:blur(4px);
+}
+
+.case-entry-modal-dialog{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:min(95vw, 1200px);
+  max-height:90vh;
+  overflow:hidden;
+  z-index:1000;
+}
+
+.case-entry-shell{
+  position:relative;
+  overflow-y:auto;
+  border-radius:34px;
+  max-height:calc(90vh - 80px);
+  padding:18px 18px 20px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(220,40,60,0.18) 0%, transparent 24%),
+    radial-gradient(circle at 10% 50%, rgba(255,70,90,0.12) 0%, transparent 20%),
+    radial-gradient(circle at 90% 50%, rgba(255,70,90,0.12) 0%, transparent 20%),
+    linear-gradient(180deg, #150507 0%, #0a0203 48%, #050102 100%);
+  border:1px solid rgba(255,80,96,0.22);
+  box-shadow:0 30px 90px rgba(0,0,0,0.50), 0 0 70px rgba(180,22,40,0.16);
+  min-height:720px;
+}
+
+.case-entry-shell-border{
+  position:absolute;
+  inset:0;
+  padding:2px;
+  border-radius:34px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,70,90,0.82), rgba(255,255,255,0.03), rgba(255,70,90,0.44), rgba(255,255,255,0.02));
+  background-size:280% 100%;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:caseEntryBorderRun 7s linear infinite;
+  pointer-events:none;
+}
+
+.case-entry-shell-glow{
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 50% 16%, rgba(196,54,70,0.24) 0%, transparent 18%),
+    radial-gradient(circle at 18% 48%, rgba(176,33,48,0.12) 0%, transparent 20%),
+    radial-gradient(circle at 82% 46%, rgba(176,33,48,0.12) 0%, transparent 22%);
+  filter:blur(58px);
+  pointer-events:none;
+}
+
+.case-entry-shell-noise{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(rgba(255,255,255,0.012), rgba(255,255,255,0.012)),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.008) 3px);
+  mix-blend-mode:screen;
+  opacity:.14;
+  pointer-events:none;
+}
+
+.case-entry-close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  z-index:4;
+  width:44px;
+  height:44px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  background:linear-gradient(180deg, rgba(42,15,18,0.96), rgba(18,7,8,0.96));
+  box-shadow:0 12px 24px rgba(0,0,0,0.28);
+}
+
+.case-entry-close span{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:18px;
+  height:2px;
+  background:#fff;
+  border-radius:2px;
+}
+
+.case-entry-close span:first-child{
+  transform:translate(-50%, -50%) rotate(45deg);
+}
+
+.case-entry-close span:last-child{
+  transform:translate(-50%, -50%) rotate(-45deg);
+}
+
+.case-entry-topbar{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:20px;
+  padding-right:56px;
+}
+
+.case-entry-top-pill,
+.case-entry-top-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:32px;
+  padding:0 14px;
+  border-radius:999px;
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.case-entry-top-pill{
+  background:linear-gradient(180deg, #ca2f40 0%, #7b111c 100%);
+  box-shadow:0 0 20px rgba(202,47,64,0.14);
+}
+
+.case-entry-top-status{
+  background:linear-gradient(180deg, rgba(34,13,15,0.84), rgba(14,6,7,0.94));
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.case-entry-main{
+  position:relative;
+  z-index:2;
+}
+
+.case-entry-main.is-hidden{
+  display:none;
+}
+
+.case-entry-hero{
+  display:grid;
+  grid-template-columns:minmax(0, 1.3fr) minmax(320px, .7fr);
+  gap:18px;
+  align-items:stretch;
+  margin-bottom:18px;
+}
+
+.case-entry-hero-copy,
+.case-entry-help-card,
+.case-entry-choice,
+.case-entry-form-main,
+.case-entry-match-panel,
+.case-entry-claim-confirm,
+.case-entry-note-box{
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.012)),
+    linear-gradient(180deg, #19080b 0%, #0a0203 100%);
+  border:1px solid rgba(255,255,255,0.05);
+  box-shadow:0 20px 44px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,255,255,0.02) inset;
+}
+
+.case-entry-hero-copy{
+  padding:28px;
+}
+
+.case-entry-kicker,
+.case-entry-choice-kicker,
+.case-entry-step-label,
+.case-entry-match-kicker,
+.case-entry-note-title,
+.case-entry-help-card-title,
+.case-entry-match-status,
+.case-entry-claim-selected-label{
+  color:#e7b6bc;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.case-entry-hero-copy h2,
+.case-entry-form-title,
+.case-entry-claim-confirm h3{
+  margin:8px 0 10px;
+  color:#fff;
+  font-size:40px;
+  line-height:1.02;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.case-entry-hero-copy p,
+.case-entry-help-card p,
+.case-entry-choice-text,
+.case-entry-form-intro,
+.case-entry-match-head p,
+.case-entry-match-empty p,
+.case-entry-note-box p,
+.case-entry-claim-confirm p{
+  color:rgba(255,255,255,0.82);
+  line-height:1.6;
+}
+
+.case-entry-help-card{
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.case-entry-choice-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:18px;
+  margin-bottom:18px;
+}
+
+.case-entry-choice{
+  padding:26px;
+  text-align:left;
+  cursor:pointer;
+  transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+
+.case-entry-choice:hover{
+  transform:translateY(-4px);
+  box-shadow:0 26px 50px rgba(0,0,0,0.46), 0 0 34px rgba(210,44,60,0.14);
+}
+
+.case-entry-choice-title{
+  display:block;
+  margin:8px 0;
+  color:#fff;
+  font-size:24px;
+  font-weight:900;
+  line-height:1.05;
+  text-transform:uppercase;
+}
+
+.case-entry-choice-text{
+  display:block;
+  font-size:14px;
+}
+
+.case-entry-choice-primary .case-entry-choice-glow,
+.case-entry-choice-secondary .case-entry-choice-glow{
+  position:absolute;
+  inset:auto -10% -80% -10%;
+  height:140%;
+  background:radial-gradient(circle, rgba(255,72,92,0.18) 0%, transparent 68%);
+  pointer-events:none;
+}
+
+.case-entry-footer-note{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:16px 18px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(34,13,15,0.84), rgba(14,6,7,0.94));
+  border:1px solid rgba(255,255,255,0.05);
+  color:#fff;
+}
+
+.case-entry-step-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.case-entry-back-btn,
+.case-entry-check-btn,
+.case-entry-continue-btn,
+.case-entry-no-match-btn,
+.case-entry-claim-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:0 18px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:transform .28s ease, box-shadow .28s ease, filter .28s ease;
+}
+
+.case-entry-back-btn,
+.case-entry-no-match-btn,
+.case-entry-check-btn{
+  background:linear-gradient(180deg, #2a2527 0%, #161113 100%);
+  box-shadow:0 10px 22px rgba(0,0,0,0.18);
+}
+
+.case-entry-continue-btn,
+.case-entry-claim-btn,
+.case-entry-continue-btn-strong{
+  background:linear-gradient(180deg, #df4053 0%, #8f1421 100%);
+  box-shadow:0 14px 28px rgba(124,19,29,0.30), 0 0 28px rgba(223,64,83,0.18);
+}
+
+.case-entry-back-btn:hover,
+.case-entry-check-btn:hover,
+.case-entry-continue-btn:hover,
+.case-entry-no-match-btn:hover,
+.case-entry-claim-btn:hover{
+  transform:translateY(-2px);
+}
+
+.case-entry-form-wrap{
+  display:grid;
+  grid-template-columns:minmax(0, 1.1fr) minmax(360px, .9fr);
+  gap:18px;
+}
+
+.case-entry-form-main,
+.case-entry-match-panel,
+.case-entry-claim-confirm{
+  padding:24px;
+}
+
+.case-entry-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:14px;
+  margin-top:18px;
+}
+
+.case-entry-field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.case-entry-field-full{
+  grid-column:1 / -1;
+}
+
+.case-entry-field label{
+  color:#f4d6d9;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.case-entry-field input,
+.case-entry-field select{
+  width:100%;
+  min-height:50px;
+  padding:0 16px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  color:#fff;
+  font-size:14px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.case-entry-field input::placeholder{
+  color:rgba(255,255,255,0.42);
+}
+
+.case-entry-field select option{
+  color:#111;
+}
+
+.case-entry-actions-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+
+.case-entry-match-head h4,
+.case-entry-match-empty-title,
+.case-entry-claim-selected-title{
+  margin:8px 0 8px;
+  color:#fff;
+  font-size:24px;
+  font-weight:900;
+  line-height:1.1;
+  text-transform:uppercase;
+}
+
+.case-entry-match-empty{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  min-height:360px;
+}
+
+.case-entry-match-empty-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:64px;
+  height:64px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(223,64,83,0.18), rgba(223,64,83,0.06));
+  color:#fff;
+  font-size:28px;
+  margin-bottom:14px;
+}
+
+.case-entry-match-results.is-hidden,
+.case-entry-match-bottom.is-hidden{
+  display:none;
+}
+
+.case-entry-match-card{
+  display:grid;
+  grid-template-columns:110px 1fr;
+  gap:14px;
+  margin-top:14px;
+  padding:12px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.case-entry-match-card.is-hidden{
+  display:none;
+}
+
+.case-entry-match-image-wrap{
+  position:relative;
+  overflow:hidden;
+  border-radius:16px;
+  height:132px;
+}
+
+.case-entry-match-image,
+.case-entry-match-image-placeholder{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.case-entry-match-image-placeholder{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+
+.case-entry-match-image-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.42) 100%);
+}
+
+.case-entry-match-body h5{
+  margin:6px 0 8px;
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+  line-height:1.1;
+  text-transform:uppercase;
+}
+
+.case-entry-match-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.case-entry-match-meta span{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.06);
+  color:#f4d6d9;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.case-entry-match-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+
+.case-entry-view-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:0 16px;
+  border-radius:999px;
+  text-decoration:none;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  background:linear-gradient(180deg, #2a2527 0%, #161113 100%);
+  box-shadow:0 10px 22px rgba(0,0,0,0.18);
+}
+
+.case-entry-match-bottom{
+  margin-top:14px;
+}
+
+.case-entry-claim-selected{
+  margin:18px 0;
+  padding:16px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.case-entry-claim-note-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:14px;
+  margin-top:18px;
+}
+
+.case-entry-note-box{
+  padding:18px;
+}
+
+.case-entry-claim-actions{
+  margin-top:20px;
+}
+
+@keyframes caseEntryBorderRun{
+  0%{ background-position:0% 50%; }
+  100%{ background-position:280% 50%; }
+}
+
+@media (max-width: 980px){
+  .case-entry-hero,
+  .case-entry-choice-grid,
+  .case-entry-form-wrap,
+  .case-entry-claim-note-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 720px){
+  .case-entry-modal-dialog{
+    width:calc(100vw - 12px);
+    margin:6px auto;
+    max-height:calc(100vh - 12px);
+  }
+
+  .case-entry-shell{
+    min-height:auto;
+    border-radius:22px;
+    padding:14px;
+  }
+
+  .case-entry-shell-border{
+    border-radius:22px;
+  }
+
+  .case-entry-hero-copy,
+  .case-entry-help-card,
+  .case-entry-choice,
+  .case-entry-form-main,
+  .case-entry-match-panel,
+  .case-entry-claim-confirm,
+  .case-entry-note-box{
+    border-radius:20px;
+  }
+
+  .case-entry-hero-copy h2,
+  .case-entry-form-title,
+  .case-entry-claim-confirm h3{
+    font-size:30px;
+  }
+
+  .case-entry-grid{
+    grid-template-columns:1fr;
+  }
+
+  .case-entry-actions-row,
+  .case-entry-claim-actions,
+  .case-entry-match-actions{
+    flex-direction:column;
+  }
+
+  .case-entry-back-btn,
+  .case-entry-check-btn,
+  .case-entry-continue-btn,
+  .case-entry-no-match-btn,
+  .case-entry-claim-btn,
+  .case-entry-view-link{
+    width:100%;
+  }
+
+  .case-entry-match-card{
+    grid-template-columns:1fr;
+  }
+
+  .case-entry-match-image-wrap{
+    height:220px;
+  }
+}
+</style>
+
+<script>
+(function() {
+  var sectionId = {{ section.id | json }};
+  var modal = document.getElementById('case-entry-modal-' + sectionId);
+  if (!modal) return;
+
+  var openers = document.querySelectorAll('[data-open-submit-case], .open-submit-case-modal');
+  var closers = modal.querySelectorAll('[data-close-submit-case]');
+  var chooserScreen = modal.querySelector('[data-entry-screen="chooser"]');
+  var detailsScreen = modal.querySelector('[data-entry-screen="details"]');
+  var claimNoticeScreen = modal.querySelector('[data-entry-screen="claim_notice"]');
+  var modeLabel = modal.querySelector('[data-entry-mode-label]');
+  var matchEmpty = modal.querySelector('[data-match-empty]');
+  var matchResults = modal.querySelector('[data-match-results]');
+  var matchBottom = modal.querySelector('[data-match-bottom]');
+  var matchCards = modal.querySelectorAll('[data-match-card]');
+  var nameInput = modal.querySelector('[data-case-name-input]');
+  var ageInput = modal.querySelector('[data-case-age-input]');
+  var countryInput = modal.querySelector('[data-case-country-input]');
+  var regionInput = modal.querySelector('[data-case-region-input]');
+  var cityInput = modal.querySelector('[data-case-city-input]');
+  var claimSelectedTitle = modal.querySelector('[data-claim-selected-title]');
+
+  var currentMode = 'new_case';
+  var selectedClaimTitle = '';
+
+  function openModal() {
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.documentElement.style.overflow = 'hidden';
+    showChooser();
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.documentElement.style.overflow = '';
+  }
+
+  function hideAllScreens() {
+    chooserScreen.classList.add('is-hidden');
+    detailsScreen.classList.add('is-hidden');
+    claimNoticeScreen.classList.add('is-hidden');
+  }
+
+  function showChooser() {
+    hideAllScreens();
+    chooserScreen.classList.remove('is-hidden');
+    resetMatchPanel();
+  }
+
+  function showDetails(mode) {
+    currentMode = mode || 'new_case';
+    hideAllScreens();
+    detailsScreen.classList.remove('is-hidden');
+    modeLabel.textContent = currentMode === 'claim_case' ? 'CLAIM AN EXISTING CASE' : 'SUBMIT A NEW CASE';
+  }
+
+  function showClaimNotice() {
+    hideAllScreens();
+    claimNoticeScreen.classList.remove('is-hidden');
+    claimSelectedTitle.textContent = selectedClaimTitle || 'Selected case';
+  }
+
+  function normalize(str) {
+    return (str || '').toString().trim().toLowerCase();
+  }
+
+  function setInputValueAndNotify(input, selectedValue) {
+    if (!input) return;
+
+    input.value = selectedValue;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function resolveSuggestionTarget(targetKey) {
+    if (!targetKey) return null;
+
+    var selectorMatch = null;
+
+    try {
+      selectorMatch = modal.querySelector(targetKey);
+    } catch (error) {
+      selectorMatch = null;
+    }
+
+    return (
+      selectorMatch ||
+      modal.querySelector('[name="' + targetKey + '"]') ||
+      modal.querySelector('[data-suggestion-field="' + targetKey + '"]')
+    );
+  }
+
+  function resetMatchPanel() {
+    if (matchEmpty) matchEmpty.classList.remove('is-hidden');
+    if (matchResults) matchResults.classList.add('is-hidden');
+    if (matchBottom) matchBottom.classList.add('is-hidden');
+    matchCards.forEach(function(card) {
+      card.classList.add('is-hidden');
+    });
+  }
+
+  function runMatchCheck() {
+    var nameVal = normalize(nameInput && nameInput.value);
+    var ageVal = normalize(ageInput && ageInput.value);
+    var countryVal = normalize(countryInput && countryInput.value);
+    var regionVal = normalize(regionInput && regionInput.value);
+    var cityVal = normalize(cityInput && cityInput.value);
+
+    if (!nameVal) {
+      resetMatchPanel();
+      return;
+    }
+
+    var visibleCount = 0;
+
+    matchCards.forEach(function(card) {
+      var cardName = normalize(card.getAttribute('data-match-name'));
+      var cardAge = normalize(card.getAttribute('data-match-age'));
+      var cardCountry = normalize(card.getAttribute('data-match-country'));
+      var cardRegion = normalize(card.getAttribute('data-match-region'));
+      var cardLocation = normalize(card.getAttribute('data-match-location'));
+
+      var nameMatch = cardName.indexOf(nameVal) !== -1 || nameVal.indexOf(cardName) !== -1;
+      var ageMatch = !ageVal || !cardAge || cardAge === ageVal;
+      var countryMatch = !countryVal || !cardCountry || cardCountry.indexOf(countryVal) !== -1 || countryVal.indexOf(cardCountry) !== -1;
+      var regionMatch = !regionVal || !cardRegion || cardRegion.indexOf(regionVal) !== -1 || regionVal.indexOf(cardRegion) !== -1;
+      var cityMatch = !cityVal || !cardLocation || cardLocation.indexOf(cityVal) !== -1 || cityVal.indexOf(cardLocation) !== -1;
+
+      if (nameMatch && ageMatch && countryMatch && regionMatch && cityMatch) {
+        card.classList.remove('is-hidden');
+        visibleCount += 1;
+      } else {
+        card.classList.add('is-hidden');
+      }
+    });
+
+    if (visibleCount > 0) {
+      if (matchEmpty) matchEmpty.classList.add('is-hidden');
+      if (matchResults) matchResults.classList.remove('is-hidden');
+      if (matchBottom) matchBottom.classList.remove('is-hidden');
+    } else {
+      resetMatchPanel();
+      if (matchEmpty) {
+        matchEmpty.classList.remove('is-hidden');
+        var title = matchEmpty.querySelector('.case-entry-match-empty-title');
+        var text = matchEmpty.querySelector('p');
+        if (title) title.textContent = 'NO LIKELY MATCH FOUND';
+        if (text) text.textContent = 'No likely existing manual case was found from the details entered. You can continue with a new submission.';
+      }
+    }
+  }
+
+  function buildSubmitPageUrl(mode) {
+    var params = new URLSearchParams();
+
+    params.set('mode', mode || currentMode || 'new_case');
+
+    if (nameInput && nameInput.value) params.set('person_name', nameInput.value);
+    if (ageInput && ageInput.value) params.set('person_age', ageInput.value);
+    if (countryInput && countryInput.value) params.set('country', countryInput.value);
+    if (regionInput && regionInput.value) params.set('state_region', regionInput.value);
+    if (cityInput && cityInput.value) params.set('city_town', cityInput.value);
+    if (selectedClaimTitle) params.set('selected_claim_case', selectedClaimTitle);
+
+    return '/pages/submit-a-case?' + params.toString();
+  }
+
+  function redirectToSubmitPage(mode) {
+    closeModal();
+    window.location.href = buildSubmitPageUrl(mode);
+  }
+
+  openers.forEach(function(opener) {
+    opener.addEventListener('click', function(e) {
+      e.preventDefault();
+      openModal();
+    });
+  });
+
+  closers.forEach(function(closer) {
+    closer.addEventListener('click', closeModal);
+  });
+
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeModal();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+
+  modal.querySelectorAll('[data-entry-next]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      showDetails(btn.getAttribute('data-entry-next'));
+    });
+  });
+
+  var backBtn = modal.querySelector('[data-entry-back]');
+  if (backBtn) {
+    backBtn.addEventListener('click', function() {
+      showChooser();
+    });
+  }
+
+  var backToDetailsBtn = modal.querySelector('[data-entry-back-to-details]');
+  if (backToDetailsBtn) {
+    backToDetailsBtn.addEventListener('click', function() {
+      showDetails('claim_case');
+    });
+  }
+
+  var checkBtn = modal.querySelector('[data-check-existing-cases]');
+  if (checkBtn) {
+    checkBtn.addEventListener('click', runMatchCheck);
+  }
+
+  [nameInput, ageInput, countryInput, regionInput, cityInput].forEach(function(input) {
+    if (!input) return;
+    input.addEventListener('input', function() {
+      if (normalize(nameInput && nameInput.value).length >= 3) {
+        runMatchCheck();
+      }
+    });
+    input.addEventListener('change', function() {
+      if (normalize(nameInput && nameInput.value).length >= 3) {
+        runMatchCheck();
+      }
+    });
+  });
+
+  modal.addEventListener('click', function(event) {
+    var button = event.target.closest(
+      '[data-suggestion-target][data-suggestion-value], [data-fill-target][data-fill-value], [data-input-target][data-input-value]'
+    );
+
+    if (!button || !modal.contains(button)) return;
+
+    var targetKey =
+      button.getAttribute('data-suggestion-target') ||
+      button.getAttribute('data-fill-target') ||
+      button.getAttribute('data-input-target') ||
+      '';
+    var selectedValue =
+      button.getAttribute('data-suggestion-value') ||
+      button.getAttribute('data-fill-value') ||
+      button.getAttribute('data-input-value') ||
+      '';
+    var input = resolveSuggestionTarget(targetKey);
+
+    if (!input) return;
+
+    event.preventDefault();
+    setInputValueAndNotify(input, selectedValue);
+  });
+
+  modal.querySelectorAll('[data-claim-case]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      selectedClaimTitle = btn.getAttribute('data-claim-title') || 'Selected case';
+      showClaimNotice();
+    });
+  });
+
+  var continueNoMatchBtn = modal.querySelector('[data-continue-no-match]');
+  if (continueNoMatchBtn) {
+    continueNoMatchBtn.addEventListener('click', function() {
+      redirectToSubmitPage('new_case');
+    });
+  }
+
+  var noMatchConfirmBtn = modal.querySelector('[data-no-match-confirm]');
+  if (noMatchConfirmBtn) {
+    noMatchConfirmBtn.addEventListener('click', function() {
+      redirectToSubmitPage('new_case');
+    });
+  }
+
+  var fullClaimBtn = modal.querySelector('[data-start-full-claim]');
+  if (fullClaimBtn) {
+    fullClaimBtn.addEventListener('click', function() {
+      redirectToSubmitPage('claim_case');
+    });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Submit Case Entry",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_primary_button",
+      "label": "Show primary button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_support_text",
+      "label": "Show support text",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Submit Case Entry"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,661 @@
+
+
+{% assign source_blog = blogs['missing-persons'] %}
+{% assign rendered_handles = '|' %}
+{% assign now_ts = 'now' | date: '%s' | plus: 0 %}
+{% assign paid_count = 0 %}
+{% assign fallback_count = 0 %}
+{% assign minimum_slots = 5 %}
+
+{% comment %}
+  DO NOT replace/remove without preserving fallback render.
+  Boosted appeals are dynamic; if the source blog or boosted data is unavailable, the homepage must still render a clean empty panel.
+{% endcomment %}
+<section class="boosted-bar" data-country-section data-country-scope="all">
+  <div class="boosted-bar-inner">
+
+    <div class="boosted-bar-glow"></div>
+
+<div class="boosted-header">
+  <div class="boosted-header-inline">
+    <div class="boosted-kicker-wrap">
+      <span class="boosted-kicker">LIVE PRIORITY VISIBILITY</span>
+    </div>
+
+    <h2 class="boosted-title">{{ section.settings.title }}</h2>
+
+    <div class="boosted-subtitle">
+      Paid boosted cases appear first. Higher point totals rank above lower point totals while boosts are live.
+    </div>
+  </div>
+</div>
+
+    <div class="boosted-viewport" id="boosted-viewport-{{ section.id }}">
+      <div class="boosted-track" id="boosted-track-{{ section.id }}" data-country-surface="boosted">
+
+        {% if source_blog != blank and source_blog.articles_count > 0 %}
+
+          {%- comment -%} ACTIVE PAID BOOSTS ONLY {%- endcomment -%}
+	        {% for article in source_blog.articles %}
+	  {% assign public_case_handle = article.handle | downcase %}
+	  {% assign public_case_title = article.title | downcase %}
+	  {% assign hide_public_case = false %}
+	  {% if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test' %}
+	    {% assign hide_public_case = true %}
+	  {% endif %}
+	  {% if public_case_handle contains 'pablo' or public_case_handle contains 'esobar' or public_case_handle contains 'escobar' or public_case_handle contains 'miss-123' or public_case_handle contains 'automatic-fallback' %}
+	    {% assign hide_public_case = true %}
+	  {% endif %}
+	  {% if public_case_title contains 'pablo' or public_case_title contains 'esobar' or public_case_title contains 'escobar' or public_case_title contains 'miss, 123' or public_case_title contains 'miss 123' or public_case_title contains 'automatic fallback' %}
+	    {% assign hide_public_case = true %}
+	  {% endif %}
+	  {% for article_tag in article.tags %}
+	    {% assign public_tag_downcase = article_tag | downcase | strip %}
+	    {% if public_tag_downcase == 'test' or public_tag_downcase == 'demo' or public_tag_downcase == 'debug' or public_tag_downcase contains 'test:' or public_tag_downcase contains 'demo:' or public_tag_downcase contains 'debug:' %}
+	      {% assign hide_public_case = true %}
+	    {% endif %}
+	  {% endfor %}
+	  {% if hide_public_case %}
+	    {% continue %}
+	  {% endif %}
+
+  {% assign spotlight_live = article.metafields.custom.spotlight_live.value %}
+
+  {% if spotlight_live == true or spotlight_live == 'true' %}
+    {% continue %}
+  {% endif %}
+
+  {% if article.handle == 'erik-netherfield' %}
+    {% continue %}
+  {% endif %}
+  
+            {% assign boost_live_new = article.metafields.custom.boost_live.value %}
+            {% assign boost_live_old = article.metafields.custom.boost_active.value %}
+
+            {% assign points = article.metafields.custom.boost_points.value | default: 0 | plus: 0 %}
+
+            {% assign total_boosts_new = article.metafields.custom.total_boosts.value | default: 0 | plus: 0 %}
+            {% assign total_boosts_old = article.metafields.custom.support_count.value | default: 0 | plus: 0 %}
+            {% assign total_boosts = total_boosts_new %}
+            {% if total_boosts == 0 and total_boosts_old > 0 %}
+              {% assign total_boosts = total_boosts_old %}
+            {% endif %}
+
+            {% assign boost_end_raw = article.metafields.custom.boost_ends.value %}
+            {% if boost_end_raw == blank %}
+              {% assign boost_end_raw = article.metafields.custom.boost_end_date.value %}
+            {% endif %}
+
+            {% assign boost_started_raw = article.metafields.custom.boost_started.value %}
+            {% if boost_started_raw == blank %}
+              {% assign boost_started_raw = article.metafields.custom.boost_start_date.value %}
+            {% endif %}
+
+            {% assign boost_end_ts = 0 %}
+{% assign boost_started_ts = 0 %}
+
+{% if boost_end_raw != blank %}
+  {% assign boost_end_ts = boost_end_raw | date: '%s' | plus: 0 %}
+{% endif %}
+
+{% if points > 0 and boost_end_ts > 0 and boost_end_ts <= now_ts %}
+  {% continue %}
+{% endif %}
+
+{% if boost_started_raw != blank %}
+  {% assign boost_started_ts = boost_started_raw | date: '%s' | plus: 0 %}
+{% endif %}
+
+{% assign boost_live = false %}
+{% if boost_live_new == true or boost_live_old == true or boost_live_new == 'true' or boost_live_old == 'true' %}
+  {% assign boost_live = true %}
+{% endif %}
+
+{% assign is_active_paid = false %}
+
+{% if boost_live == true and points > 0 and boost_end_ts > now_ts %}
+  {% assign is_active_paid = true %}
+{% endif %}
+
+
+            {% assign token = article.handle | append: '|' %}
+
+            {% if is_active_paid %}
+              {% unless rendered_handles contains token %}
+                {% assign rendered_handles = rendered_handles | append: token %}
+                {% assign paid_count = paid_count | plus: 1 %}
+
+                <div
+                  class="boosted-card boosted-card--paid"
+                  data-country-scope="{% assign case_country_scope = 'all' %}{% for article_tag in article.tags %}{% assign tag_downcase = article_tag | downcase | strip %}{% if tag_downcase contains 'country:' %}{% assign case_country_scope = tag_downcase | split: ':' | last | strip %}{% if case_country_scope == 'uk' %}{% assign case_country_scope = 'gb' %}{% endif %}{% break %}{% endif %}{% endfor %}{{ case_country_scope }}"
+                  data-card-type="paid"
+                  data-points="{{ points }}"
+                  data-total-boosts="{{ total_boosts }}"
+                  data-started="{{ boost_started_ts }}"
+                  data-handle="{{ article.handle }}"
+                >
+                  {% render 'boosted-priority-card', article: article, fallback_mode: false %}
+                </div>
+              {% endunless %}
+            {% endif %}
+          {% endfor %}
+
+          {% if paid_count == 0 %}
+            {% for article in source_blog.articles %}
+              {% assign public_case_handle = article.handle | downcase %}
+              {% assign public_case_title = article.title | downcase %}
+              {% assign hide_public_case = false %}
+              {% if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test' %}
+                {% assign hide_public_case = true %}
+              {% endif %}
+              {% if public_case_handle contains 'pablo' or public_case_handle contains 'esobar' or public_case_handle contains 'escobar' or public_case_handle contains 'miss-123' or public_case_handle contains 'automatic-fallback' %}
+                {% assign hide_public_case = true %}
+              {% endif %}
+              {% if public_case_title contains 'pablo' or public_case_title contains 'esobar' or public_case_title contains 'escobar' or public_case_title contains 'miss, 123' or public_case_title contains 'miss 123' or public_case_title contains 'automatic fallback' %}
+                {% assign hide_public_case = true %}
+              {% endif %}
+
+              {% assign public_tag_blob = article.tags | join: '|' | downcase %}
+              {% assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | default: '' | downcase %}
+              {% if case_status contains 'found' or case_status contains 'safe' or case_status contains 'located' or case_status contains 'closed' or case_status contains 'archived' or case_status contains 'draft' or case_status contains 'review' or case_status contains 'private' %}
+                {% assign hide_public_case = true %}
+              {% endif %}
+              {% if public_tag_blob contains 'found safe' or public_tag_blob contains 'found-safe' or public_tag_blob contains 'located' or public_tag_blob contains 'closed' or public_tag_blob contains 'private' or public_tag_blob contains 'draft' or public_tag_blob contains 'review' %}
+                {% assign hide_public_case = true %}
+              {% endif %}
+              {% for article_tag in article.tags %}
+                {% assign public_tag_downcase = article_tag | downcase | strip %}
+                {% if public_tag_downcase == 'test' or public_tag_downcase == 'demo' or public_tag_downcase == 'debug' or public_tag_downcase contains 'test:' or public_tag_downcase contains 'demo:' or public_tag_downcase contains 'debug:' %}
+                  {% assign hide_public_case = true %}
+                {% endif %}
+              {% endfor %}
+
+              {% assign token = article.handle | append: '|' %}
+              {% if hide_public_case == false and fallback_count < minimum_slots %}
+                {% unless rendered_handles contains token %}
+                  {% assign rendered_handles = rendered_handles | append: token %}
+                  {% assign fallback_count = fallback_count | plus: 1 %}
+                  <div
+                    class="boosted-card boosted-card--fallback"
+                    data-country-scope="{% assign case_country_scope = 'all' %}{% for article_tag in article.tags %}{% assign tag_downcase = article_tag | downcase | strip %}{% if tag_downcase contains 'country:' %}{% assign case_country_scope = tag_downcase | split: ':' | last | strip %}{% if case_country_scope == 'uk' %}{% assign case_country_scope = 'gb' %}{% endif %}{% break %}{% endif %}{% endfor %}{{ case_country_scope }}"
+                    data-card-type="fallback"
+                    data-handle="{{ article.handle }}"
+                  >
+                    {% render 'boosted-priority-card', article: article, fallback_mode: true %}
+                  </div>
+                {% endunless %}
+              {% endif %}
+            {% endfor %}
+
+            {% if fallback_count == 0 %}
+              <div class="boosted-card boosted-card--empty" data-card-type="empty">
+                <div style="padding:14px 16px;color:rgba(255,255,255,0.82);font-size:14px;line-height:1.4;">
+                  No featured appeals are currently available. Please check the latest missing person appeals.
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+
+        {% else %}
+          <div class="boosted-card boosted-card--empty" data-card-type="empty">
+            <div style="padding:14px 16px;color:rgba(255,255,255,0.82);font-size:14px;line-height:1.4;">
+              No featured appeals are currently available. Please check the latest missing person appeals.
+            </div>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .boosted-bar {
+    width: 100%;
+    margin: 22px 0 30px;
+  }
+
+ .boosted-bar-inner {
+  position: relative;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 62, 62, 0.14), transparent 26%),
+    radial-gradient(circle at 80% 70%, rgba(255, 90, 90, 0.10), transparent 26%),
+    linear-gradient(135deg, #120d0d 0%, #1a1111 35%, #220b0d 100%);
+  border: 1px solid rgba(255, 70, 70, 0.24);
+  border-radius: 20px;
+  padding: 12px 14px 12px;
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.28),
+    0 0 0 1px rgba(255,255,255,0.02) inset,
+    0 0 28px rgba(140,14,14,0.18);
+  overflow: hidden;
+}
+
+  .boosted-bar-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 59, 59, 0.08) 50%, transparent 100%);
+    transform: translateX(-100%);
+    animation: boostedGlowSweep 7s linear infinite;
+    pointer-events: none;
+  }
+
+  .boosted-bar-inner:before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff3131 0%, #ff7b7b 50%, #ff3131 100%);
+    opacity: 0.95;
+  }
+
+.boosted-header {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 8px;
+  padding-top: 0;
+}
+
+.boosted-header-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.boosted-kicker-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,45,45,0.34) 0%, rgba(120,10,10,0.24) 100%);
+  border: 1px solid rgba(255, 90, 90, 0.38);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.03) inset,
+    0 0 10px rgba(255,40,40,0.30),
+    0 0 22px rgba(255,20,20,0.22);
+  animation: boostedKickerFlash 0.9s ease-in-out infinite;
+}
+
+.boosted-kicker {
+  color: #ffd2d2;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.boosted-title {
+  margin: 0;
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 900;
+  text-transform: uppercase;
+  flex: 0 0 auto;
+}
+
+.boosted-subtitle {
+  color: rgba(255,255,255,0.72);
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0;
+  flex: 1 1 340px;
+}
+
+  .boosted-viewport {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    width: 100%;
+    cursor: grab;
+  }
+
+  .boosted-viewport.is-dragging {
+    cursor: grabbing;
+  }
+
+  .boosted-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  align-items: stretch;
+  will-change: transform;
+  padding: 4px 2px 6px;
+}
+
+.boosted-card {
+  min-width: calc((100vw - 120px) / 5);
+  max-width: 300px;
+  flex: 0 0 calc((100vw - 120px) / 5);
+  display: flex;
+  align-items: stretch;
+  align-self: stretch;
+  transition: transform 0.28s ease, filter 0.28s ease, box-shadow 0.28s ease;
+}
+
+.boosted-card .bp-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.boosted-card .bp-card__media {
+  flex: 0 0 auto;
+}
+
+.boosted-card .bp-card__image {
+  width: 100%;
+  height: 190px !important;
+  object-fit: cover;
+  object-position: center 32%;
+  display: block;
+}
+
+.boosted-card .bp-card__body {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 0 !important;
+  padding: 10px 10px 10px !important;
+}
+
+.boosted-card .bp-card__title {
+  min-height: 0 !important;
+  margin: 0 0 8px !important;
+  line-height: 1.16 !important;
+}
+
+.boosted-card .bp-card__stats {
+  margin-top: 8px !important;
+}
+
+  .boosted-card--paid {
+    filter: saturate(1.08);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03) inset,
+      0 10px 24px rgba(0,0,0,0.25),
+      0 0 18px rgba(255, 50, 50, 0.16);
+  }
+
+  .boosted-card:hover {
+    transform: translateY(-12px) scale(1.06);
+    filter: brightness(1.1);
+    box-shadow:
+      0 22px 40px rgba(0,0,0,0.4),
+      0 0 40px rgba(255, 30, 30, 0.45),
+      0 0 80px rgba(255, 30, 30, 0.25);
+  }
+
+  .boosted-card--paid:hover {
+    transform: translateY(-14px) scale(1.07);
+    box-shadow:
+      0 26px 50px rgba(0,0,0,0.45),
+      0 0 50px rgba(255, 20, 20, 0.6),
+      0 0 100px rgba(255, 20, 20, 0.3);
+    border: 1px solid rgba(255, 80, 80, 0.25);
+  }
+
+  .boosted-card--empty {
+    opacity: 0.86;
+  }
+
+  .boosted-empty {
+    color: #fff;
+    font-size: 14px;
+  }
+
+  @keyframes boostedPulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.25);
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes boostedGlowSweep {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes boostedKickerFlash {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03) inset,
+      0 0 8px rgba(255,40,40,0.22),
+      0 0 18px rgba(255,20,20,0.14);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.05) inset,
+      0 0 14px rgba(255,40,40,0.40),
+      0 0 30px rgba(255,20,20,0.28);
+    filter: brightness(1.08);
+  }
+}
+
+  @media screen and (max-width: 1200px) {
+  .boosted-card {
+    min-width: 260px;
+    flex: 0 0 260px;
+  }
+
+  .boosted-card .bp-card__image {
+    height: 180px !important;
+  }
+}
+
+@media screen and (max-width: 989px) {
+  .boosted-card {
+    min-width: 240px;
+    flex: 0 0 240px;
+  }
+
+  .boosted-title {
+    font-size: 26px;
+  }
+
+  .boosted-card .bp-card__image {
+    height: 170px !important;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .boosted-card {
+    min-width: 220px;
+    flex: 0 0 220px;
+  }
+
+  .boosted-title {
+    font-size: 22px;
+  }
+
+  .boosted-header-inline {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .boosted-subtitle {
+    flex-basis: 100%;
+  }
+
+  .boosted-card .bp-card__image {
+    height: 155px !important;
+  }
+}
+</style>
+
+<script>
+(function() {
+  var viewport = document.getElementById('boosted-viewport-{{ section.id }}');
+  var track = document.getElementById('boosted-track-{{ section.id }}');
+
+  if (!viewport || !track) return;
+
+  function sortCards() {
+    var cards = Array.from(track.querySelectorAll('.boosted-card'));
+
+    cards.sort(function(a, b) {
+      var typeA = a.dataset.cardType || 'empty';
+      var typeB = b.dataset.cardType || 'empty';
+
+      if (typeA !== typeB) {
+        return typeA === 'paid' ? -1 : 1;
+      }
+
+      var pointsA = parseInt(a.dataset.points || '0', 10);
+      var pointsB = parseInt(b.dataset.points || '0', 10);
+      if (pointsA !== pointsB) return pointsB - pointsA;
+
+      var boostsA = parseInt(a.dataset.totalBoosts || '0', 10);
+      var boostsB = parseInt(b.dataset.totalBoosts || '0', 10);
+      if (boostsA !== boostsB) return boostsB - boostsA;
+
+      var startedA = parseInt(a.dataset.started || '0', 10);
+      var startedB = parseInt(b.dataset.started || '0', 10);
+      return startedB - startedA;
+    });
+
+    cards.forEach(function(card) {
+      track.appendChild(card);
+    });
+  }
+
+  sortCards();
+
+  var originalCards = Array.from(track.querySelectorAll('.boosted-card'));
+  var originalCount = originalCards.length;
+
+  if (originalCount === 0) return;
+
+  if (originalCount <= 5) {
+    track.classList.add('is-static');
+    track.style.width = '100%';
+    track.style.transform = 'none';
+    return;
+  }
+
+  var scrollAmount = 0;
+  var speed = 0.35;
+  var isHovering = false;
+  var isDragging = false;
+  var startX = 0;
+  var startScroll = 0;
+
+  originalCards.forEach(function(card) {
+    var clone = card.cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    track.appendChild(clone);
+  });
+
+  function animate() {
+    if (!isHovering && !isDragging) {
+      scrollAmount += speed;
+
+      var halfWidth = track.scrollWidth / 2;
+      if (scrollAmount >= halfWidth) {
+        scrollAmount = 0;
+      }
+
+      track.style.transform = 'translateX(-' + scrollAmount + 'px)';
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  function onWheel(e) {
+    e.preventDefault();
+
+    scrollAmount += e.deltaY * 0.8 + e.deltaX * 0.8;
+
+    var halfWidth = track.scrollWidth / 2;
+    if (scrollAmount < 0) scrollAmount = halfWidth + scrollAmount;
+    if (scrollAmount >= halfWidth) scrollAmount = scrollAmount - halfWidth;
+
+    track.style.transform = 'translateX(-' + scrollAmount + 'px)';
+  }
+
+  function onDragStart(e) {
+    isDragging = true;
+    isHovering = true;
+    startX = e.touches ? e.touches[0].clientX : e.clientX;
+    startScroll = scrollAmount;
+    viewport.classList.add('is-dragging');
+  }
+
+  function onDragMove(e) {
+    if (!isDragging) return;
+
+    var currentX = e.touches ? e.touches[0].clientX : e.clientX;
+    var diff = currentX - startX;
+    var halfWidth = track.scrollWidth / 2;
+
+    scrollAmount = startScroll - diff;
+
+    if (scrollAmount < 0) scrollAmount = halfWidth + scrollAmount;
+    if (scrollAmount >= halfWidth) scrollAmount = scrollAmount - halfWidth;
+
+    track.style.transform = 'translateX(-' + scrollAmount + 'px)';
+  }
+
+  function onDragEnd() {
+    isDragging = false;
+    isHovering = false;
+    viewport.classList.remove('is-dragging');
+  }
+
+  animate();
+
+  viewport.addEventListener('mouseenter', function() {
+    isHovering = true;
+  });
+
+  viewport.addEventListener('mouseleave', function() {
+    isHovering = false;
+    isDragging = false;
+    viewport.classList.remove('is-dragging');
+  });
+
+  viewport.addEventListener('wheel', onWheel, { passive: false });
+
+  viewport.addEventListener('mousedown', onDragStart);
+  window.addEventListener('mousemove', onDragMove);
+  window.addEventListener('mouseup', onDragEnd);
+
+  viewport.addEventListener('touchstart', onDragStart, { passive: true });
+  viewport.addEventListener('touchmove', onDragMove, { passive: true });
+  viewport.addEventListener('touchend', onDragEnd);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Boosted Appeals",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "BOOSTED APPEALS",
+      "label": "Title"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Boosted Appeals"
+    }
+  ]
+}
+{% endschema %}

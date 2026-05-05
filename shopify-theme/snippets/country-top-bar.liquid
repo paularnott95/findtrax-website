@@ -1,0 +1,38 @@
+{% if mode == 'compact' %}
+  <div
+    id="missing-alerts-country-top-bar"
+    class="ma-header-country-row"
+    data-country-section
+    data-country-scope="all"
+  >
+    <div class="ma-header-country-control">
+      <label for="ma-header-country-input">Country:</label>
+      <div class="missing-alerts-country-combobox" data-country-combobox data-context="topbar">
+        <input
+          id="ma-header-country-input"
+          type="text"
+          class="missing-alerts-country-combobox__input"
+          data-country-input
+          autocomplete="off"
+          aria-label="Search country"
+        >
+        <div class="missing-alerts-country-combobox__list" data-country-list hidden></div>
+      </div>
+    </div>
+
+    <div class="ma-header-country-control">
+      <label for="ma-header-language-input">Language:</label>
+      <div class="missing-alerts-country-combobox" data-language-combobox data-context="topbar">
+        <input
+          id="ma-header-language-input"
+          type="text"
+          class="missing-alerts-country-combobox__input"
+          data-language-input
+          autocomplete="off"
+          aria-label="Search language"
+        >
+        <div class="missing-alerts-country-combobox__list" data-language-list hidden></div>
+      </div>
+    </div>
+  </div>
+{% endif %}

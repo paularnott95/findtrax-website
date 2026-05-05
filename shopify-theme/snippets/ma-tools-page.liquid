@@ -1,0 +1,97 @@
+{% liquid
+  assign product_key = product | default: 'overview'
+  assign product_label = 'Missing Alerts tools'
+  assign product_intro = 'Professional Missing Alerts tools for coordinating public appeals, case information, and outreach workflows.'
+  assign features = ''
+  if product_key == 'findtrax'
+    assign product_label = 'FindTrax'
+    assign product_intro = 'FindTrax is a Missing Alerts app for organising field search activity, sightings, routes, volunteers, clues, timelines, map planning, and live case updates.'
+    assign features = 'Search area planning|Map-based zones|Route and coverage tracking|Volunteer assignments|Sighting intake|Tip prioritisation|Timeline updates|Location notes|Team coordination|Field status updates|Case-linked search logs|Alert-ready summaries'
+  elsif product_key == 'intelpro'
+    assign product_label = 'IntelPro'
+    assign product_intro = 'IntelPro is a Missing Alerts case-intelligence workspace for keeping complex missing-person case information organised, reviewable, and ready for professional handover.'
+    assign features = 'Case dashboard|Person profiles|Lead management|Evidence and file organisation|Timeline builder|Location tracking|Contact logs|Notes and tasking|Relationship mapping|Document storage|Priority flags|Investigator-ready summaries|Secure collaboration|Public-field approval controls'
+  elsif product_key == 'mediareach'
+    assign product_label = 'MediaReach'
+    assign product_intro = 'MediaReach is a Missing Alerts outreach and media visibility app for publishing controlled, accurate public appeals without exposing private investigation details.'
+    assign features = 'Press-ready case summaries|Public appeal builder|Media kit creation|Social post templates|Alert signup campaigns|Update publishing workflow|Verified information blocks|Contact call-to-action management|Shareable case pages|Outreach performance tracking|Partner and media contact organisation|Family-safe messaging controls'
+  endif
+%}
+
+<section class="ma-tools-page" data-ma-tools-page="{{ product_key | escape }}">
+  <style>
+    .ma-tools-page{background:#07080a;color:#fff;padding:44px 18px 64px;margin:0 calc(50% - 50vw);width:100vw;box-sizing:border-box}
+    .ma-tools-page *{box-sizing:border-box}
+    .ma-tools-page__inner{max-width:1180px;margin:0 auto}
+    .ma-tools-page__hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:28px;align-items:center;padding:28px;border:1px solid rgba(255,255,255,.08);border-radius:22px;background:radial-gradient(circle at 18% 8%,rgba(220,38,38,.22),transparent 32%),linear-gradient(135deg,#16181d,#090a0d 62%,#17080b);box-shadow:0 28px 70px rgba(0,0,0,.38)}
+    .ma-tools-page__eyebrow{display:inline-flex;padding:7px 11px;border-radius:999px;background:rgba(220,38,38,.14);border:1px solid rgba(248,113,113,.24);color:#fecaca;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+    .ma-tools-page h1{margin:16px 0 12px;font-size:clamp(34px,5vw,62px);line-height:1.02;letter-spacing:0;font-weight:950}
+    .ma-tools-page__intro{margin:0;color:rgba(255,255,255,.78);font-size:17px;line-height:1.65;max-width:720px}
+    .ma-tools-page__actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+    .ma-tools-page__button{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 18px;border-radius:12px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:.04em;text-transform:uppercase;border:1px solid rgba(255,255,255,.12);color:#fff;background:#b91c1c}
+    .ma-tools-page__button--ghost{background:rgba(255,255,255,.06)}
+    .ma-tools-page__visual{min-height:360px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,#12151b,#07080a);padding:18px;display:grid;gap:12px;align-content:start;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+    .ma-tools-page__window{border-radius:14px;background:#0e1117;border:1px solid rgba(255,255,255,.08);padding:14px}
+    .ma-tools-page__window-top{display:flex;justify-content:space-between;gap:10px;color:#fca5a5;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}
+    .ma-tools-page__preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .ma-tools-page__preview-card{min-height:86px;border-radius:12px;background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.07);padding:12px}
+    .ma-tools-page__preview-card strong{display:block;font-size:13px;margin-bottom:8px}.ma-tools-page__preview-card span{display:block;color:rgba(255,255,255,.62);font-size:12px;line-height:1.35}
+    .ma-tools-page__section{margin-top:28px;padding:26px;border-radius:20px;border:1px solid rgba(255,255,255,.08);background:#0d0f13}
+    .ma-tools-page__section h2{margin:0 0 16px;font-size:28px;line-height:1.15}
+    .ma-tools-page__cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .ma-tools-page__card{border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);padding:16px;min-height:112px}
+    .ma-tools-page__card strong{display:block;margin-bottom:8px}.ma-tools-page__card p{margin:0;color:rgba(255,255,255,.68);font-size:14px;line-height:1.5}
+    .ma-tools-page__feature-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}
+    .ma-tools-page__feature-list li{padding:12px;border-radius:12px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);font-weight:800;font-size:13px}
+    .ma-tools-page__signup{margin-top:28px;padding:26px;border-radius:20px;background:linear-gradient(135deg,#1d0709,#0b0c0f);border:1px solid rgba(248,113,113,.24);text-align:center}
+    .ma-tools-page__launch{font-size:24px;font-weight:950;margin-bottom:16px}
+    .ma-tools-page__form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.ma-tools-page__form input{min-width:260px;height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.18);padding:0 14px;background:#fff;color:#111}.ma-tools-page__form button{height:46px;border:0;border-radius:12px;background:#dc2626;color:#fff;padding:0 18px;font-weight:900}
+    .ma-tools-page__notice{margin-top:10px;color:#fecaca;font-size:13px}
+    @media(max-width:900px){.ma-tools-page__hero{grid-template-columns:1fr}.ma-tools-page__cards,.ma-tools-page__feature-list{grid-template-columns:1fr}.ma-tools-page__visual{min-height:auto}}
+  </style>
+
+  <div class="ma-tools-page__inner">
+    {% if product_key == 'overview' %}
+      <div class="ma-tools-page__hero">
+        <div>
+          <span class="ma-tools-page__eyebrow">Missing Alerts tools</span>
+          <h1>Professional tools for safer public missing-person work.</h1>
+          <p class="ma-tools-page__intro">FindTrax, IntelPro, and MediaReach are Missing Alerts apps designed to support search coordination, case organisation, and controlled public outreach.</p>
+          <div class="ma-tools-page__actions">
+            <a class="ma-tools-page__button" href="/pages/findtrax">FindTrax</a>
+            <a class="ma-tools-page__button ma-tools-page__button--ghost" href="/pages/intelpro">IntelPro</a>
+            <a class="ma-tools-page__button ma-tools-page__button--ghost" href="/pages/mediareach">MediaReach</a>
+          </div>
+        </div>
+        <div class="ma-tools-page__visual" aria-label="Missing Alerts product suite preview">
+          <div class="ma-tools-page__window"><div class="ma-tools-page__window-top"><span>Suite overview</span><span>Missing Alerts</span></div><div class="ma-tools-page__preview-grid"><div class="ma-tools-page__preview-card"><strong>FindTrax</strong><span>Search areas, volunteers, sightings, and field updates.</span></div><div class="ma-tools-page__preview-card"><strong>IntelPro</strong><span>Facts, leads, timelines, files, and handover-ready summaries.</span></div><div class="ma-tools-page__preview-card"><strong>MediaReach</strong><span>Public appeals, media kits, sharing controls, and updates.</span></div><div class="ma-tools-page__preview-card"><strong>Privacy controls</strong><span>Keep public and private information clearly separated.</span></div></div></div>
+        </div>
+      </div>
+      <div class="ma-tools-page__section"><h2>Built for Missing Alerts workflows</h2><div class="ma-tools-page__cards"><article class="ma-tools-page__card"><strong>Search coordination</strong><p>Plan search zones, routes, sightings, and volunteer tasks around live public appeals.</p></article><article class="ma-tools-page__card"><strong>Case intelligence</strong><p>Keep facts, leads, people, files, and timelines organised for review and handover.</p></article><article class="ma-tools-page__card"><strong>Controlled outreach</strong><p>Publish accurate public appeals and updates without exposing private case details.</p></article></div></div>
+    {% else %}
+      <div class="ma-tools-page__hero">
+        <div>
+          <span class="ma-tools-page__eyebrow">Missing Alerts app</span>
+          <h1>{{ product_label }}</h1>
+          <p class="ma-tools-page__intro">{{ product_intro }}</p>
+          <div class="ma-tools-page__actions"><a class="ma-tools-page__button" href="#tool-signup-{{ product_key }}">Sign up for alerts here</a><a class="ma-tools-page__button ma-tools-page__button--ghost" href="/pages/tools">All tools</a></div>
+        </div>
+        <div class="ma-tools-page__visual" aria-label="{{ product_label }} UI preview">
+          <div class="ma-tools-page__window"><div class="ma-tools-page__window-top"><span>{{ product_label }}</span><span>Preview</span></div><div class="ma-tools-page__preview-grid"><div class="ma-tools-page__preview-card"><strong>Case linked</strong><span>Connects work to a Missing Alerts public case.</span></div><div class="ma-tools-page__preview-card"><strong>Reviewable</strong><span>Structured updates and notes stay audit-friendly.</span></div><div class="ma-tools-page__preview-card"><strong>Controlled visibility</strong><span>Separate public appeal fields from private working notes.</span></div><div class="ma-tools-page__preview-card"><strong>Launch ready</strong><span>Product updates begin before public release.</span></div></div></div>
+        </div>
+      </div>
+      <div class="ma-tools-page__section"><h2>Core features</h2><ul class="ma-tools-page__feature-list">{% assign feature_items = features | split: '|' %}{% for item in feature_items %}<li>{{ item }}</li>{% endfor %}</ul></div>
+      <div class="ma-tools-page__section"><h2>Workflow</h2><div class="ma-tools-page__cards"><article class="ma-tools-page__card"><strong>Set up the case</strong><p>Start from a verified Missing Alerts appeal and keep essential public fields source-backed.</p></article><article class="ma-tools-page__card"><strong>Coordinate the work</strong><p>Organise activity into structured updates instead of scattered chats, files, and posts.</p></article><article class="ma-tools-page__card"><strong>Publish safely</strong><p>Share only approved public updates while protecting family, investigative, and private information.</p></article></div></div>
+      <div class="ma-tools-page__section"><h2>Security and trust</h2><p class="ma-tools-page__intro">These tools are designed around source-backed case information, role-aware collaboration, and public/private field separation. Missing Alerts does not publish private family contact information or unverified sensitive claims in public product surfaces.</p></div>
+      <div id="tool-signup-{{ product_key }}" class="ma-tools-page__signup">
+        <div class="ma-tools-page__launch">Coming July 1st 2026</div>
+        {% form 'customer', class: 'ma-tools-page__form' %}
+          <input type="hidden" name="contact[tags]" value="tool-alerts,{{ product_label | handleize }}">
+          <input type="email" name="contact[email]" required placeholder="Email address" aria-label="Email address">
+          <button type="submit">Sign up for alerts here</button>
+        {% endform %}
+        <div class="ma-tools-page__notice">You’re on the list. We’ll send product updates before launch.</div>
+      </div>
+    {% endif %}
+  </div>
+</section>

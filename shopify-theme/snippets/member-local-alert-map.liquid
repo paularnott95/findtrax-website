@@ -1,0 +1,69 @@
+{{ 'home-local-alert-map.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer="defer"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" defer="defer"></script>
+<script src="{{ 'home-local-alert-map.js' | asset_url }}" defer="defer"></script>
+
+{% assign alert_country = customer.metafields.custom.alert_country.value | default: customer.metafields.custom.alert_country | strip %}
+{% assign alert_region = customer.metafields.custom.alert_region.value | default: customer.metafields.custom.alert_region | strip %}
+{% assign alert_city = customer.metafields.custom.alert_city.value | default: customer.metafields.custom.alert_city | strip %}
+{% assign alert_postcode = customer.metafields.custom.alert_postcode.value | default: customer.metafields.custom.alert_postcode | strip %}
+{% assign alert_lat = customer.metafields.custom.alert_location_lat.value | default: customer.metafields.custom.alert_location_lat | default: customer.metafields.custom.alert_lat.value | default: customer.metafields.custom.alert_lat | strip %}
+{% assign alert_lng = customer.metafields.custom.alert_location_lng.value | default: customer.metafields.custom.alert_location_lng | default: customer.metafields.custom.alert_lng.value | default: customer.metafields.custom.alert_lng | strip %}
+{% assign alert_country_code = customer.metafields.custom.alert_location_country_code.value | default: customer.metafields.custom.alert_location_country_code | strip %}
+
+<section
+  class="ma-local-alert-map ma-local-alert-map--member"
+  data-local-alert-map
+  data-local-alert-map-context="member"
+  data-logged-in="true"
+  data-customer-id="{{ customer.id | append: '' | escape }}"
+  data-customer-email="{{ customer.email | escape }}"
+>
+  <div class="ma-local-alert-map__shell">
+    <div class="ma-local-alert-map__header">
+      <div>
+        <p class="ma-local-alert-map__eyebrow">MEMBER ALERTS</p>
+        <h2>LOCAL ALERT MAP</h2>
+        <p class="ma-local-alert-map__subtitle">This map uses your saved alert area to show active missing-person appeals nearby or in your selected country.</p>
+      </div>
+      <div class="ma-local-alert-map__legend" aria-label="Map legend">
+        <span><i class="ma-local-alert-map__dot ma-local-alert-map__dot--user"></i> Your alert area</span>
+        <span><i class="ma-local-alert-map__dot ma-local-alert-map__dot--case"></i> Active case</span>
+      </div>
+    </div>
+
+    <div class="ma-local-alert-map__body">
+      <div
+        class="ma-local-alert-map__canvas"
+        data-local-alert-map-canvas
+        aria-label="Member local alert map"
+      ></div>
+
+      <div class="ma-local-alert-map__panel" data-local-alert-map-panel>
+        <div class="ma-local-alert-map__state" data-map-state="loading">
+          Loading local alert map...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" data-local-alert-member>
+    {
+      "loggedIn": true,
+      "country": {{ alert_country | json }},
+      "region": {{ alert_region | json }},
+      "city": {{ alert_city | json }},
+      "postcode": {{ alert_postcode | json }},
+      "location_country_code": {{ alert_country_code | json }},
+      "lat": {{ alert_lat | json }},
+      "lng": {{ alert_lng | json }},
+      "location_lat": {{ alert_lat | json }},
+      "location_lng": {{ alert_lng | json }}
+    }
+  </script>
+
+  <script type="application/json" data-local-alert-cases>[]</script>
+</section>

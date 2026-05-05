@@ -1,0 +1,55 @@
+{% assign spotlight_live = article.metafields.custom.spotlight_live.value | default: article.metafields.custom.spotlight_live %}
+{% assign spotlight_level = article.metafields.custom.spotlight_level.value | default: article.metafields.custom.spotlight_level | upcase %}
+{% assign spotlight_ends = article.metafields.custom.spotlight_ends.value | default: article.metafields.custom.spotlight_ends %}
+{% assign spotlight_active = false %}
+{% assign now_ts = 'now' | date: '%s' | plus: 0 %}
+{% assign spotlight_end_ts = 0 %}
+{% if spotlight_ends != blank %}
+  {% assign spotlight_end_ts = spotlight_ends | date: '%s' | plus: 0 %}
+{% endif %}
+{% if spotlight_live == true or spotlight_live == 'true' or spotlight_live == 'True' or spotlight_live == '1' or spotlight_live contains 'true' %}
+  {% if spotlight_end_ts == 0 or spotlight_end_ts > now_ts %}
+    {% assign spotlight_active = true %}
+  {% endif %}
+{% endif %}
+
+<section class="case-spotlight-strip" aria-label="Case spotlight status">
+  <div class="case-spotlight-strip__inner page-width">
+    <div class="case-spotlight-strip__status">
+      <span class="case-spotlight-strip__eyebrow">
+        {% if found_safe %}
+          Found Safe Archive
+        {% else %}
+          Premium Case Spotlight
+        {% endif %}
+      </span>
+      <h2 class="case-spotlight-strip__title">
+        {% if found_safe %}
+          Resolved case file with privacy protection still active.
+        {% elsif spotlight_active %}
+          Spotlight visibility is active for this public appeal.
+        {% else %}
+          High-visibility public case page built for sharing, response, and support.
+        {% endif %}
+      </h2>
+    </div>
+
+    <div class="case-spotlight-strip__meta">
+      <div class="case-spotlight-strip__chip">
+        {% if found_safe %}
+          STATUS: RESOLVED
+        {% elsif spotlight_active %}
+          SPOTLIGHT: LIVE
+        {% else %}
+          SPOTLIGHT: AVAILABLE
+        {% endif %}
+      </div>
+      {% if spotlight_level != blank and found_safe == false and spotlight_active %}
+        <div class="case-spotlight-strip__chip">LEVEL: {{ spotlight_level }}</div>
+      {% endif %}
+      {% if spotlight_ends != blank and found_safe == false and spotlight_active %}
+        <div class="case-spotlight-strip__chip">ENDS: {{ spotlight_ends | date: '%d %b %Y %H:%M' }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>

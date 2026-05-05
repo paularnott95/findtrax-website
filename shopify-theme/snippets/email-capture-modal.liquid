@@ -1,0 +1,41 @@
+<div class="ma-email-modal" data-ma-email-modal hidden aria-hidden="true">
+  <div class="ma-email-modal__backdrop" data-ma-email-close></div>
+  <div class="ma-email-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="EmailCaptureHeading">
+    <button class="ma-email-modal__close" type="button" data-ma-email-close aria-label="Close signup form">
+      &times;
+    </button>
+    <p class="ma-email-modal__eyebrow">Missing Alerts updates</p>
+    <h2 id="EmailCaptureHeading" class="ma-email-modal__heading">Stay Updated on Missing Alerts</h2>
+    <p class="ma-email-modal__text">
+      Get important updates, urgent cases, and ways to help — directly to your inbox.
+    </p>
+    {% form 'customer', id: 'MissingAlertsSignupForm', class: 'ma-email-modal__form' %}
+      <input type="hidden" name="contact[tags]" value="missing-alerts-updates">
+      <label class="ma-email-modal__label" for="MissingAlertsSignupEmail">Email address</label>
+      <input
+        id="MissingAlertsSignupEmail"
+        class="ma-email-modal__input"
+        type="email"
+        name="contact[email]"
+        value="{{ form.email }}"
+        autocomplete="email"
+        autocorrect="off"
+        autocapitalize="off"
+        required
+      >
+      <button class="ma-email-modal__submit" type="submit" name="commit">Get Alerts</button>
+      <p class="ma-email-modal__privacy">We respect your privacy. You can unsubscribe anytime.</p>
+      {%- if form.errors -%}
+        <small class="ma-email-modal__message ma-email-modal__message--error">
+          {{- form.errors.translated_fields.email | capitalize }}
+          {{ form.errors.messages.email -}}
+        </small>
+      {%- endif -%}
+      {%- if form.posted_successfully? -%}
+        <p class="ma-email-modal__message ma-email-modal__message--success" tabindex="-1" autofocus>
+          Thank you. We will send important Missing Alerts updates to your inbox.
+        </p>
+      {%- endif -%}
+    {% endform %}
+  </div>
+</div>

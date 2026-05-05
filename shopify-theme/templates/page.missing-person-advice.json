@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "seo-advice-blog-grid",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

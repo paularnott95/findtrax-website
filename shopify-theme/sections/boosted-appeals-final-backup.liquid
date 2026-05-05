@@ -1,0 +1,584 @@
+
+
+{% assign source_blog = blogs['missing-persons'] %}
+{% assign rendered_handles = '|' %}
+{% assign now_ts = 'now' | date: '%s' | plus: 0 %}
+{% assign paid_count = 0 %}
+{% assign fallback_count = 0 %}
+{% assign minimum_slots = 5 %}
+
+<section class="boosted-bar">
+  <div class="boosted-bar-inner">
+
+    <div class="boosted-bar-glow"></div>
+
+    <div class="boosted-header">
+      <div class="boosted-header-top">
+        <div class="boosted-kicker-wrap">
+          <span class="boosted-live-dot"></span>
+          <span class="boosted-kicker">LIVE PRIORITY VISIBILITY</span>
+        </div>
+      </div>
+
+      <h2 class="boosted-title">{{ section.settings.title }}</h2>
+      <div class="boosted-subtitle">
+        Paid boosted cases appear first. Higher point totals rank above lower point totals while boosts are live.
+      </div>
+    </div>
+
+    <div class="boosted-viewport" id="boosted-viewport-{{ section.id }}">
+      <div class="boosted-track" id="boosted-track-{{ section.id }}">
+
+        {% if source_blog != blank %}
+
+          {%- comment -%} ACTIVE PAID BOOSTS ONLY {%- endcomment -%}
+         {% for article in source_blog.articles %}
+          {% if article.handle == 'erik-netherfield' %}
+  {% continue %}
+{% endif %}
+            {% assign boost_live_new = article.metafields.custom.boost_live.value %}
+            {% assign boost_live_old = article.metafields.custom.boost_active.value %}
+
+            {% assign points = article.metafields.custom.boost_points.value | default: 0 | plus: 0 %}
+
+            {% assign total_boosts_new = article.metafields.custom.total_boosts.value | default: 0 | plus: 0 %}
+            {% assign total_boosts_old = article.metafields.custom.support_count.value | default: 0 | plus: 0 %}
+            {% assign total_boosts = total_boosts_new %}
+            {% if total_boosts == 0 and total_boosts_old > 0 %}
+              {% assign total_boosts = total_boosts_old %}
+            {% endif %}
+
+            {% assign boost_end_raw = article.metafields.custom.boost_ends.value %}
+            {% if boost_end_raw == blank %}
+              {% assign boost_end_raw = article.metafields.custom.boost_end_date.value %}
+            {% endif %}
+
+            {% assign boost_started_raw = article.metafields.custom.boost_started.value %}
+            {% if boost_started_raw == blank %}
+              {% assign boost_started_raw = article.metafields.custom.boost_start_date.value %}
+            {% endif %}
+
+            {% assign boost_end_ts = 0 %}
+{% assign boost_started_ts = 0 %}
+
+{% if boost_end_raw != blank %}
+  {% assign boost_end_ts = boost_end_raw | date: '%s' | plus: 0 %}
+{% endif %}
+
+{% if points > 0 and boost_end_ts > 0 and boost_end_ts <= now_ts %}
+  {% continue %}
+{% endif %}
+
+{% if boost_started_raw != blank %}
+  {% assign boost_started_ts = boost_started_raw | date: '%s' | plus: 0 %}
+{% endif %}
+
+{% assign boost_live = false %}
+{% if boost_live_new == true or boost_live_old == true or boost_live_new == 'true' or boost_live_old == 'true' %}
+  {% assign boost_live = true %}
+{% endif %}
+
+{% assign is_active_paid = false %}
+
+{% if boost_live == true and points > 0 and boost_end_ts > now_ts %}
+  {% assign is_active_paid = true %}
+{% endif %}
+
+
+            {% assign token = article.handle | append: '|' %}
+
+            {% if is_active_paid %}
+              {% unless rendered_handles contains token %}
+                {% assign rendered_handles = rendered_handles | append: token %}
+                {% assign paid_count = paid_count | plus: 1 %}
+
+                <div
+                  class="boosted-card boosted-card--paid"
+                  data-card-type="paid"
+                  data-points="{{ points }}"
+                  data-total-boosts="{{ total_boosts }}"
+                  data-started="{{ boost_started_ts }}"
+                  data-handle="{{ article.handle }}"
+                >
+                  {% render 'boosted-priority-card', article: article, fallback_mode: false %}
+                </div>
+              {% endunless %}
+            {% endif %}
+          {% endfor %}
+
+          {%- comment -%} FALLBACK CARDS TO FILL MINIMUM VISIBLE SLOTS {%- endcomment -%}
+          {% if paid_count < minimum_slots %}
+            {% assign fallback_needed = minimum_slots | minus: paid_count %}
+
+            {% for article in source_blog.articles %}
+              {% if article.handle == 'erik-netherfield' %}
+  {% continue %}
+{% endif %}
+              {% if fallback_count >= fallback_needed %}
+                {% break %}
+              {% endif %}
+
+              {% assign token = article.handle | append: '|' %}
+              {% assign is_found_safe = article.metafields.custom.found_safe.value %}
+
+              {% assign boost_live_new = article.metafields.custom.boost_live.value %}
+              {% assign boost_live_old = article.metafields.custom.boost_active.value %}
+              {% assign points = article.metafields.custom.boost_points.value | default: 0 | plus: 0 %}
+              {% assign boost_started_raw = article.metafields.custom.boost_started.value %}
+{% if boost_started_raw == blank %}
+  {% assign boost_started_raw = article.metafields.custom.boost_start_date.value %}
+{% endif %}
+
+              {% assign boost_end_raw = article.metafields.custom.boost_ends.value %}
+              {% if boost_end_raw == blank %}
+                {% assign boost_end_raw = article.metafields.custom.boost_end_date.value %}
+              {% endif %}
+
+              {% assign boost_end_ts = 0 %}
+{% if boost_end_raw != blank %}
+  {% assign boost_end_ts = boost_end_raw | date: '%s' | plus: 0 %}
+{% endif %}
+
+{% if points > 0 and boost_end_ts > 0 and boost_end_ts <= now_ts %}
+  {% continue %}
+{% endif %}
+
+{% assign boost_started_raw = article.metafields.custom.boost_started.value %}
+{% if boost_started_raw == blank %}
+  {% assign boost_started_raw = article.metafields.custom.boost_start_date.value %}
+{% endif %}
+
+              {% assign boost_live = false %}
+              {% if boost_live_new == true or boost_live_old == true or boost_live_new == 'true' or boost_live_old == 'true' %}
+                {% assign boost_live = true %}
+              {% endif %}
+
+              {% assign is_active_paid = false %}
+
+{% assign is_active_paid = false %}
+
+{% if boost_live == true and points > 0 and boost_end_ts > now_ts %}
+  {% assign is_active_paid = true %}
+{% endif %}
+
+           {% assign is_expired_boost = false %}
+{% if points > 0 and boost_end_ts > 0 and boost_end_ts <= now_ts %}
+  {% assign is_expired_boost = true %}
+{% endif %}
+
+{% unless rendered_handles contains token or is_found_safe == true or is_active_paid == true or is_expired_boost == true %}
+                {% assign rendered_handles = rendered_handles | append: token %}
+                {% assign fallback_count = fallback_count | plus: 1 %}
+
+                <div
+                  class="boosted-card boosted-card--fallback"
+                  data-card-type="fallback"
+                  data-points="0"
+                  data-total-boosts="0"
+                  data-started="0"
+                  data-handle="{{ article.handle }}"
+                >
+                  {% render 'boosted-priority-card', article: article, fallback_mode: true %}
+                </div>
+              {% endunless %}
+            {% endfor %}
+          {% endif %}
+           
+
+          {% if paid_count == 0 and fallback_count == 0 %}
+            {% for article in source_blog.articles limit: 5 %}
+              <div
+                class="boosted-card boosted-card--fallback"
+                data-card-type="fallback"
+                data-points="0"
+                data-total-boosts="0"
+                data-started="0"
+                data-handle="{{ article.handle }}"
+              >
+                {% render 'boosted-priority-card', article: article, fallback_mode: true %}
+              </div>
+            {% endfor %}
+          {% endif %}
+
+        {% else %}
+          <div class="boosted-empty">BLOG NOT FOUND.</div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .boosted-bar {
+    width: 100%;
+    margin: 22px 0 30px;
+  }
+
+  .boosted-bar-inner {
+    position: relative;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255, 62, 62, 0.14), transparent 26%),
+      radial-gradient(circle at 80% 70%, rgba(255, 90, 90, 0.10), transparent 26%),
+      linear-gradient(135deg, #120d0d 0%, #1a1111 35%, #220b0d 100%);
+    border: 1px solid rgba(255, 70, 70, 0.24);
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow:
+      0 18px 40px rgba(0,0,0,0.28),
+      0 0 0 1px rgba(255,255,255,0.02) inset,
+      0 0 28px rgba(140,14,14,0.18);
+    overflow: hidden;
+  }
+
+  .boosted-bar-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 59, 59, 0.08) 50%, transparent 100%);
+    transform: translateX(-100%);
+    animation: boostedGlowSweep 7s linear infinite;
+    pointer-events: none;
+  }
+
+  .boosted-bar-inner:before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff3131 0%, #ff7b7b 50%, #ff3131 100%);
+    opacity: 0.95;
+  }
+
+  .boosted-header {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 16px;
+    padding-top: 6px;
+  }
+
+  .boosted-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .boosted-kicker-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(255, 49, 49, 0.14);
+    border: 1px solid rgba(255, 80, 80, 0.22);
+  }
+
+  .boosted-live-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: #ff4747;
+    box-shadow: 0 0 12px rgba(255, 71, 71, 0.9);
+    animation: boostedPulse 1.8s ease-in-out infinite;
+  }
+
+  .boosted-kicker {
+    color: #ffb2b2;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+  }
+
+  .boosted-title {
+    margin: 0 0 6px;
+    color: #fff;
+    font-size: 30px;
+    line-height: 1.02;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .boosted-subtitle {
+    color: rgba(255,255,255,0.72);
+    font-size: 13px;
+    line-height: 1.45;
+    max-width: 800px;
+  }
+
+  .boosted-viewport {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    width: 100%;
+    cursor: grab;
+  }
+
+  .boosted-viewport.is-dragging {
+    cursor: grabbing;
+  }
+
+  .boosted-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    align-items: stretch;
+    will-change: transform;
+    padding: 4px 2px 6px;
+  }
+
+  .boosted-card {
+    min-width: calc((100vw - 120px) / 5);
+    max-width: 300px;
+    flex: 0 0 calc((100vw - 120px) / 5);
+    transition: transform 0.28s ease, filter 0.28s ease, box-shadow 0.28s ease;
+  }
+
+  .boosted-card--paid {
+    filter: saturate(1.08);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03) inset,
+      0 10px 24px rgba(0,0,0,0.25),
+      0 0 18px rgba(255, 50, 50, 0.16);
+  }
+
+  .boosted-card:hover {
+    transform: translateY(-12px) scale(1.06);
+    filter: brightness(1.1);
+    box-shadow:
+      0 22px 40px rgba(0,0,0,0.4),
+      0 0 40px rgba(255, 30, 30, 0.45),
+      0 0 80px rgba(255, 30, 30, 0.25);
+  }
+
+  .boosted-card--paid:hover {
+    transform: translateY(-14px) scale(1.07);
+    box-shadow:
+      0 26px 50px rgba(0,0,0,0.45),
+      0 0 50px rgba(255, 20, 20, 0.6),
+      0 0 100px rgba(255, 20, 20, 0.3);
+    border: 1px solid rgba(255, 80, 80, 0.25);
+  }
+
+  .boosted-card--fallback {
+    opacity: 0.86;
+  }
+
+  .boosted-empty {
+    color: #fff;
+    font-size: 14px;
+  }
+
+  @keyframes boostedPulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.25);
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes boostedGlowSweep {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @media screen and (max-width: 1200px) {
+    .boosted-card {
+      min-width: 260px;
+      flex: 0 0 260px;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .boosted-card {
+      min-width: 240px;
+      flex: 0 0 240px;
+    }
+
+    .boosted-title {
+      font-size: 26px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .boosted-card {
+      min-width: 220px;
+      flex: 0 0 220px;
+    }
+
+    .boosted-title {
+      font-size: 22px;
+    }
+  }
+</style>
+
+<script>
+(function() {
+  var viewport = document.getElementById('boosted-viewport-{{ section.id }}');
+  var track = document.getElementById('boosted-track-{{ section.id }}');
+
+  if (!viewport || !track) return;
+
+  function sortCards() {
+    var cards = Array.from(track.querySelectorAll('.boosted-card'));
+
+    cards.sort(function(a, b) {
+      var typeA = a.dataset.cardType || 'fallback';
+      var typeB = b.dataset.cardType || 'fallback';
+
+      if (typeA !== typeB) {
+        return typeA === 'paid' ? -1 : 1;
+      }
+
+      var pointsA = parseInt(a.dataset.points || '0', 10);
+      var pointsB = parseInt(b.dataset.points || '0', 10);
+      if (pointsA !== pointsB) return pointsB - pointsA;
+
+      var boostsA = parseInt(a.dataset.totalBoosts || '0', 10);
+      var boostsB = parseInt(b.dataset.totalBoosts || '0', 10);
+      if (boostsA !== boostsB) return boostsB - boostsA;
+
+      var startedA = parseInt(a.dataset.started || '0', 10);
+      var startedB = parseInt(b.dataset.started || '0', 10);
+      return startedB - startedA;
+    });
+
+    cards.forEach(function(card) {
+      track.appendChild(card);
+    });
+  }
+
+  sortCards();
+
+  var originalCards = Array.from(track.querySelectorAll('.boosted-card'));
+  var originalCount = originalCards.length;
+
+  if (originalCount === 0) return;
+
+  if (originalCount <= 5) {
+    track.classList.add('is-static');
+    track.style.width = '100%';
+    track.style.transform = 'none';
+    return;
+  }
+
+  var scrollAmount = 0;
+  var speed = 0.35;
+  var isHovering = false;
+  var isDragging = false;
+  var startX = 0;
+  var startScroll = 0;
+
+  originalCards.forEach(function(card) {
+    var clone = card.cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    track.appendChild(clone);
+  });
+
+  function animate() {
+    if (!isHovering && !isDragging) {
+      scrollAmount += speed;
+
+      var halfWidth = track.scrollWidth / 2;
+      if (scrollAmount >= halfWidth) {
+        scrollAmount = 0;
+      }
+
+      track.style.transform = 'translateX(-' + scrollAmount + 'px)';
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  function onWheel(e) {
+    e.preventDefault();
+
+    scrollAmount += e.deltaY * 0.8 + e.deltaX * 0.8;
+
+    var halfWidth = track.scrollWidth / 2;
+    if (scrollAmount < 0) scrollAmount = halfWidth + scrollAmount;
+    if (scrollAmount >= halfWidth) scrollAmount = scrollAmount - halfWidth;
+
+    track.style.transform = 'translateX(-' + scrollAmount + 'px)';
+  }
+
+  function onDragStart(e) {
+    isDragging = true;
+    isHovering = true;
+    startX = e.touches ? e.touches[0].clientX : e.clientX;
+    startScroll = scrollAmount;
+    viewport.classList.add('is-dragging');
+  }
+
+  function onDragMove(e) {
+    if (!isDragging) return;
+
+    var currentX = e.touches ? e.touches[0].clientX : e.clientX;
+    var diff = currentX - startX;
+    var halfWidth = track.scrollWidth / 2;
+
+    scrollAmount = startScroll - diff;
+
+    if (scrollAmount < 0) scrollAmount = halfWidth + scrollAmount;
+    if (scrollAmount >= halfWidth) scrollAmount = scrollAmount - halfWidth;
+
+    track.style.transform = 'translateX(-' + scrollAmount + 'px)';
+  }
+
+  function onDragEnd() {
+    isDragging = false;
+    isHovering = false;
+    viewport.classList.remove('is-dragging');
+  }
+
+  animate();
+
+  viewport.addEventListener('mouseenter', function() {
+    isHovering = true;
+  });
+
+  viewport.addEventListener('mouseleave', function() {
+    isHovering = false;
+    isDragging = false;
+    viewport.classList.remove('is-dragging');
+  });
+
+  viewport.addEventListener('wheel', onWheel, { passive: false });
+
+  viewport.addEventListener('mousedown', onDragStart);
+  window.addEventListener('mousemove', onDragMove);
+  window.addEventListener('mouseup', onDragEnd);
+
+  viewport.addEventListener('touchstart', onDragStart, { passive: true });
+  viewport.addEventListener('touchmove', onDragMove, { passive: true });
+  viewport.addEventListener('touchend', onDragEnd);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Boosted Appeals",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "BOOSTED APPEALS",
+      "label": "Title"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Boosted Appeals"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,70 @@
+<div
+  id="missing-alerts-country-popup"
+  class="missing-alerts-country-popup"
+  hidden
+  aria-hidden="true"
+>
+  <div class="missing-alerts-country-popup__overlay" data-country-popup-close></div>
+  <div
+    class="missing-alerts-country-popup__dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="missing-alerts-country-popup-title"
+  >
+    <button
+      type="button"
+      class="missing-alerts-country-popup__close"
+      data-country-popup-close
+      aria-label="Close country selector"
+    >
+      ×
+    </button>
+
+    <div class="missing-alerts-country-popup__eyebrow">Missing Alerts</div>
+    <h2 id="missing-alerts-country-popup-title" class="missing-alerts-country-popup__title">
+      SELECT YOUR COUNTRY
+    </h2>
+    <p class="missing-alerts-country-popup__copy">
+      Choose the country view you want to use for homepage content, cases, boosts, spotlight, and future translations.
+    </p>
+
+    <div class="missing-alerts-country-popup__controls">
+      <label class="missing-alerts-country-popup__field">
+        <span class="missing-alerts-country-popup__label">Country</span>
+        <div class="missing-alerts-country-combobox" data-country-combobox data-context="popup">
+          <input
+            type="text"
+            class="missing-alerts-country-combobox__input"
+            data-country-input
+            autocomplete="off"
+            aria-label="Search country"
+          >
+          <div class="missing-alerts-country-combobox__list" data-country-list hidden></div>
+        </div>
+      </label>
+
+      <label class="missing-alerts-country-popup__field">
+        <span class="missing-alerts-country-popup__label">Language</span>
+        <div class="missing-alerts-country-combobox" data-language-combobox data-context="popup">
+          <input
+            type="text"
+            class="missing-alerts-country-combobox__input"
+            data-language-input
+            autocomplete="off"
+            aria-label="Search language"
+          >
+          <div class="missing-alerts-country-combobox__list" data-language-list hidden></div>
+        </div>
+      </label>
+    </div>
+
+    <div class="missing-alerts-country-popup__actions">
+      <button type="button" class="missing-alerts-country-popup__button missing-alerts-country-popup__button--primary" data-country-save>
+        Continue
+      </button>
+      <button type="button" class="missing-alerts-country-popup__button missing-alerts-country-popup__button--global" data-country-select-global>
+        Stay Global
+      </button>
+    </div>
+  </div>
+</div>

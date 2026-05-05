@@ -1,0 +1,132 @@
+{{ 'location-selector.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'missing-alerts-location-registry.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'location-selector.js' | asset_url }}" defer="defer"></script>
+
+{% assign selector_id = id | default: section.id | default: 'default' %}
+{% assign initial_country = country | default: '' %}
+{% assign initial_region = region | default: '' %}
+{% assign initial_county = county | default: '' %}
+{% assign initial_city = city | default: '' %}
+{% assign selector_required = required | default: true %}
+{% assign selector_mode = mode | default: '' %}
+
+<div
+  class="ma-location-selector{% if selector_mode == 'smart-search' %} ma-location-selector--smart{% endif %}"
+  data-location-selector
+  {% if selector_mode != blank %}data-location-mode="{{ selector_mode | escape }}"{% endif %}
+  data-selector-id="{{ selector_id | escape }}"
+  data-initial-country="{{ initial_country | escape }}"
+  data-initial-region="{{ initial_region | escape }}"
+  data-initial-county="{{ initial_county | escape }}"
+  data-initial-city="{{ initial_city | escape }}"
+>
+  {% if selector_mode == 'smart-search' %}
+    <div class="ma-location-selector__recommended" aria-label="Recommended countries">
+      <button type="button" data-smart-country="GB" data-smart-country-name="United Kingdom">United Kingdom</button>
+      <button type="button" data-smart-country="US" data-smart-country-name="United States">United States</button>
+      <button type="button" data-smart-country="CA" data-smart-country-name="Canada">Canada</button>
+      <button type="button" data-smart-country="AU" data-smart-country-name="Australia">Australia</button>
+      <button type="button" data-smart-country="IE" data-smart-country-name="Ireland">Ireland</button>
+    </div>
+
+    <div class="ma-location-selector__smart" data-location-smart>
+      <label class="ma-location-selector__field ma-location-selector__field--smart">
+        <span>Search location</span>
+        <input
+          type="search"
+          name="member_alert_location_search"
+          data-location-smart-input
+          placeholder="Search country, city, town or region"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          inputmode="search"
+          role="combobox"
+          aria-expanded="false"
+          aria-controls="location-smart-results-{{ selector_id | escape }}"
+        >
+      </label>
+      <div class="ma-location-selector__smart-context" data-location-smart-context></div>
+      <div class="ma-location-selector__smart-actions" data-location-smart-actions hidden>
+        <button type="button" data-location-use-country>Use whole country</button>
+        <button type="button" data-location-change-country>Change country</button>
+      </div>
+      <div
+        class="ma-location-selector__smart-results"
+        id="location-smart-results-{{ selector_id | escape }}"
+        data-location-smart-results
+        role="listbox"
+        hidden
+      ></div>
+      <article class="ma-location-selector__selected" data-location-selected-card hidden>
+        <p>Your alert area:</p>
+        <strong data-location-selected-label></strong>
+        <button type="button" data-location-change>CHANGE</button>
+      </article>
+    </div>
+  {% else %}
+    <p class="ma-location-selector__helper">Choose the closest listed area so alerts reach the right people.</p>
+
+    <div class="ma-location-selector__grid">
+      <label class="ma-location-selector__field">
+        <span>Country</span>
+        <input type="search" data-location-filter-for="country" placeholder="Search countries">
+        <select data-location-country-select{% if selector_required %} required{% endif %}>
+          <option value="">Select country</option>
+        </select>
+      </label>
+
+      <label class="ma-location-selector__field">
+        <span>Region / state / province</span>
+        <input type="search" data-location-filter-for="region" placeholder="Search approved regions" disabled>
+        <select data-location-region-select disabled>
+          <option value="">Select country first</option>
+        </select>
+      </label>
+
+      <label class="ma-location-selector__field">
+        <span>County / local authority</span>
+        <input type="search" data-location-filter-for="county" placeholder="Search counties" disabled>
+        <select data-location-county-select disabled>
+          <option value="">Select region first</option>
+        </select>
+      </label>
+
+      <label class="ma-location-selector__field">
+        <span>City / town / village</span>
+        <input type="search" data-location-filter-for="city" placeholder="Search cities, towns or villages" disabled>
+        <select data-location-city-select disabled{% if selector_required %} required{% endif %}>
+          <option value="">Select nearest approved place</option>
+        </select>
+      </label>
+    </div>
+  {% endif %}
+
+  <p class="ma-location-selector__message" data-location-selector-message></p>
+
+  <input type="hidden" name="location_country_code" data-location-output="countryCode">
+  <input type="hidden" name="location_country_name" data-location-output="countryName">
+  <input type="hidden" name="location_region" data-location-output="region">
+  <input type="hidden" name="location_region_id" data-location-output="regionId">
+  <input type="hidden" name="location_region_slug" data-location-output="regionSlug">
+  <input type="hidden" name="location_county" data-location-output="county">
+  <input type="hidden" name="location_county_id" data-location-output="countyId">
+  <input type="hidden" name="location_county_slug" data-location-output="countySlug">
+  <input type="hidden" name="location_city" data-location-output="city">
+  <input type="hidden" name="location_city_id" data-location-output="cityId">
+  <input type="hidden" name="location_city_slug" data-location-output="citySlug">
+  <input type="hidden" name="location_town" data-location-output="town">
+  <input type="hidden" name="location_town_id" data-location-output="townId">
+  <input type="hidden" name="location_village" data-location-output="village">
+  <input type="hidden" name="location_village_id" data-location-output="villageId">
+  <input type="hidden" name="location_slug_path" data-location-output="slugPath">
+  <input type="hidden" name="location_full_path" data-location-output="fullPath">
+  <input type="hidden" name="location_lat" data-location-output="lat">
+  <input type="hidden" name="location_lng" data-location-output="lng">
+  <input type="hidden" name="location_scope" data-location-output="scope">
+
+  <input type="hidden" name="{{ country_name | default: 'country' }}" data-location-legacy="country"{% if country_data_attr != blank %} {{ country_data_attr }}{% endif %}>
+  <input type="hidden" name="{{ region_name | default: 'region' }}" data-location-legacy="region"{% if region_data_attr != blank %} {{ region_data_attr }}{% endif %}>
+  <input type="hidden" name="{{ city_name | default: 'city' }}" data-location-legacy="city"{% if city_data_attr != blank %} {{ city_data_attr }}{% endif %}>
+</div>

@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "professionals-directory",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

@@ -1,0 +1,120 @@
+{%- style -%}
+  .missing-alerts-staff-access {
+    min-height: 62vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 72px 20px;
+    background:
+      radial-gradient(circle at top left, rgba(210, 20, 20, 0.22), transparent 34%),
+      radial-gradient(circle at right, rgba(255, 255, 255, 0.06), transparent 30%),
+      linear-gradient(145deg, #050505 0%, #130304 54%, #050505 100%);
+    color: #fff;
+  }
+
+  .missing-alerts-staff-access__card {
+    width: min(100%, 620px);
+    padding: clamp(28px, 5vw, 48px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+      rgba(8, 8, 9, 0.94);
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    text-align: center;
+  }
+
+  .missing-alerts-staff-access__label {
+    margin: 0 0 12px;
+    color: #ffb4b4;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .missing-alerts-staff-access__heading {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(32px, 6vw, 52px);
+    line-height: 1;
+  }
+
+  .missing-alerts-staff-access__text {
+    max-width: 480px;
+    margin: 18px auto 0;
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .missing-alerts-staff-access__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin-top: 28px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #e72b2b 0%, #a90808 100%);
+    box-shadow: 0 14px 32px rgba(173, 17, 17, 0.28);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .missing-alerts-staff-access__button:hover,
+  .missing-alerts-staff-access__button:focus-visible {
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 18px 40px rgba(173, 17, 17, 0.38);
+  }
+
+  .missing-alerts-staff-access__warning {
+    margin: 18px 0 0;
+    color: rgba(255, 255, 255, 0.46);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  @media screen and (max-width: 749px) {
+    .missing-alerts-staff-access {
+      min-height: 58vh;
+      padding: 48px 16px;
+    }
+
+    .missing-alerts-staff-access__card {
+      border-radius: 18px;
+    }
+
+    .missing-alerts-staff-access__button {
+      width: 100%;
+    }
+  }
+{%- endstyle -%}
+
+<section class="missing-alerts-staff-access" aria-labelledby="MissingAlertsStaffAccessHeading">
+  <div class="missing-alerts-staff-access__card">
+    <p class="missing-alerts-staff-access__label">Staff Access</p>
+    <h1 id="MissingAlertsStaffAccessHeading" class="missing-alerts-staff-access__heading">
+      Missing Alerts Control Panel
+    </h1>
+    <p class="missing-alerts-staff-access__text">
+      Secure operational access for approved Missing Alerts staff only.
+    </p>
+    <a
+      href="https://dashboard-ui-snowy-eight.vercel.app/control-room"
+      class="missing-alerts-staff-access__button"
+      target="_blank"
+      rel="nofollow noopener noreferrer"
+    >
+      Open Control Panel
+    </a>
+    <p class="missing-alerts-staff-access__warning">Unauthorised access is not permitted.</p>
+  </div>
+</section>

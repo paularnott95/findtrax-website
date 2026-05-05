@@ -1,0 +1,227 @@
+{% assign source_blog = blogs['missing-persons'] %}
+{% assign placeholder_image = 'missing-person-silhouette.svg' | asset_url %}
+{% assign now_ts = 'now' | date: '%s' | plus: 0 %}
+{% assign primary_case = nil %}
+{% assign left_case = nil %}
+{% assign right_case = nil %}
+{% assign fallback_primary = nil %}
+{% assign fallback_left = nil %}
+{% assign fallback_right = nil %}
+{% assign primary_live = false %}
+{% assign left_live = false %}
+{% assign right_live = false %}
+
+{% if source_blog %}
+  {% for spotlight_article in source_blog.articles limit: 100 %}
+    {% assign live = spotlight_article.metafields.custom.spotlight_live.value | default: spotlight_article.metafields.custom.spotlight_live %}
+    {% assign level = spotlight_article.metafields.custom.spotlight_level.value | default: spotlight_article.metafields.custom.spotlight_level | downcase %}
+    {% assign slot = spotlight_article.metafields.custom.spotlight_slot.value | default: spotlight_article.metafields.custom.spotlight_slot | downcase %}
+    {% assign ends = spotlight_article.metafields.custom.spotlight_ends.value | default: spotlight_article.metafields.custom.spotlight_ends %}
+    {% assign case_status = spotlight_article.metafields.custom.case_status.value | default: spotlight_article.metafields.custom.case_status | downcase %}
+    {% assign owner_status = spotlight_article.metafields.custom.case_owner_status.value | default: spotlight_article.metafields.custom.case_owner_status | downcase %}
+    {% assign is_found_safe_case = false %}
+    {% if spotlight_article.blog.handle == 'found-safe' or case_status == 'found' or case_status == 'resolved' or owner_status == 'resolved' %}
+      {% assign is_found_safe_case = true %}
+    {% endif %}
+
+    {% assign end_ts = 0 %}
+    {% if ends != blank %}
+      {% assign end_ts = ends | date: '%s' | plus: 0 %}
+    {% endif %}
+
+    {% assign spotlight_active = false %}
+    {% if live == true or live == 'true' or live == 'True' or live == '1' or live contains 'true' %}
+      {% if end_ts == 0 or end_ts > now_ts %}
+        {% assign spotlight_active = true %}
+      {% endif %}
+    {% endif %}
+
+    {% assign fallback_allowed = true %}
+    {% if spotlight_article.id == article.id %}
+      {% assign fallback_allowed = false %}
+    {% endif %}
+
+    {% if is_found_safe_case == false and fallback_allowed %}
+      {% if fallback_primary == nil %}
+        {% assign fallback_primary = spotlight_article %}
+      {% elsif fallback_left == nil %}
+        {% assign fallback_left = spotlight_article %}
+      {% elsif fallback_right == nil and spotlight_article.id != fallback_left.id %}
+        {% assign fallback_right = spotlight_article %}
+      {% endif %}
+    {% endif %}
+
+    {% if spotlight_active %}
+      {% assign matches_primary = false %}
+      {% if slot == 'primary' or level contains 'primary' %}
+        {% assign matches_primary = true %}
+      {% endif %}
+
+      {% assign matches_supporting = false %}
+      {% if slot == 'supporting' or slot == 'supporting_left' or slot == 'supporting_right' or level contains 'supporting' or level contains 'support' %}
+        {% assign matches_supporting = true %}
+      {% endif %}
+
+      {% if primary_case == nil and matches_primary %}
+        {% assign primary_case = spotlight_article %}
+        {% assign primary_live = true %}
+      {% endif %}
+
+      {% if left_case == nil and slot == 'supporting_left' %}
+        {% assign left_case = spotlight_article %}
+        {% assign left_live = true %}
+      {% endif %}
+
+      {% if right_case == nil and slot == 'supporting_right' %}
+        {% assign right_case = spotlight_article %}
+        {% assign right_live = true %}
+      {% endif %}
+
+      {% if left_case == nil and matches_supporting %}
+        {% assign left_case = spotlight_article %}
+        {% assign left_live = true %}
+      {% elsif right_case == nil and left_case and spotlight_article.id != left_case.id and matches_supporting %}
+        {% assign right_case = spotlight_article %}
+        {% assign right_live = true %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% if fallback_primary == nil %}
+    {% for spotlight_article in source_blog.articles limit: 100 %}
+      {% assign case_status = spotlight_article.metafields.custom.case_status.value | default: spotlight_article.metafields.custom.case_status | downcase %}
+      {% assign owner_status = spotlight_article.metafields.custom.case_owner_status.value | default: spotlight_article.metafields.custom.case_owner_status | downcase %}
+      {% if spotlight_article.blog.handle != 'found-safe' and case_status != 'found' and case_status != 'resolved' and owner_status != 'resolved' %}
+        {% if fallback_primary == nil %}
+          {% assign fallback_primary = spotlight_article %}
+        {% elsif fallback_left == nil and spotlight_article.id != fallback_primary.id %}
+          {% assign fallback_left = spotlight_article %}
+        {% elsif fallback_right == nil and spotlight_article.id != fallback_primary.id and spotlight_article.id != fallback_left.id %}
+          {% assign fallback_right = spotlight_article %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if primary_case == nil %}
+    {% assign primary_case = fallback_primary %}
+  {% endif %}
+  {% if left_case == nil %}
+    {% if fallback_left and primary_case and fallback_left.id != primary_case.id %}
+      {% assign left_case = fallback_left %}
+    {% elsif fallback_primary and primary_case and fallback_primary.id != primary_case.id %}
+      {% assign left_case = fallback_primary %}
+    {% endif %}
+  {% endif %}
+  {% if right_case == nil %}
+    {% if fallback_right and primary_case and fallback_right.id != primary_case.id and left_case and fallback_right.id != left_case.id %}
+      {% assign right_case = fallback_right %}
+    {% elsif fallback_left and primary_case and fallback_left.id != primary_case.id and left_case and fallback_left.id != left_case.id %}
+      {% assign right_case = fallback_left %}
+    {% elsif fallback_primary and primary_case and fallback_primary.id != primary_case.id and left_case and fallback_primary.id != left_case.id %}
+      {% assign right_case = fallback_primary %}
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+{% if primary_case %}
+  <section class="case-compact-spotlight" aria-label="Featured spotlight cases">
+    <div class="case-compact-spotlight__header">
+      <div class="case-page-card__eyebrow">{% if primary_live or left_live or right_live %}Live Spotlight{% else %}Featured Cases{% endif %}</div>
+      <h2 class="case-compact-spotlight__title">Priority cases in focus</h2>
+    </div>
+
+    <div class="case-compact-spotlight__grid{% if left_case == blank and right_case == blank %} case-compact-spotlight__grid--single{% endif %}">
+      <a href="{{ primary_case.url }}" class="case-compact-spotlight__card case-compact-spotlight__card--primary">
+        <div class="case-compact-spotlight__media">
+          {% if primary_case.image %}
+            <img
+              src="{{ primary_case.image | image_url: width: 1200 }}"
+              alt="{{ primary_case.title | escape }}"
+              class="case-compact-spotlight__image"
+              loading="lazy"
+              width="{{ primary_case.image.width }}"
+              height="{{ primary_case.image.height }}"
+            >
+          {% else %}
+            <img
+              src="{{ placeholder_image }}"
+              alt="Missing person appeal image"
+              class="case-compact-spotlight__image"
+              loading="lazy"
+              width="1200"
+              height="1200"
+            >
+          {% endif %}
+          <span class="case-compact-spotlight__badge">{% if primary_live %}Primary Spotlight{% else %}Featured Case{% endif %}</span>
+        </div>
+        <div class="case-compact-spotlight__body">
+          <h3 class="case-compact-spotlight__name">{{ primary_case.title }}</h3>
+          <p class="case-compact-spotlight__text">{{ primary_case.excerpt_or_content | strip_html | truncate: 130 }}</p>
+        </div>
+      </a>
+
+      {% if left_case %}
+        <a href="{{ left_case.url }}" class="case-compact-spotlight__card case-compact-spotlight__card--supporting">
+          <div class="case-compact-spotlight__media">
+            {% if left_case.image %}
+              <img
+                src="{{ left_case.image | image_url: width: 900 }}"
+                alt="{{ left_case.title | escape }}"
+                class="case-compact-spotlight__image"
+                loading="lazy"
+                width="{{ left_case.image.width }}"
+                height="{{ left_case.image.height }}"
+              >
+            {% else %}
+              <img
+                src="{{ placeholder_image }}"
+                alt="Missing person appeal image"
+                class="case-compact-spotlight__image"
+                loading="lazy"
+                width="1200"
+                height="1200"
+              >
+            {% endif %}
+            <span class="case-compact-spotlight__badge">{% if left_live %}Supporting Spotlight{% else %}Fallback Feature{% endif %}</span>
+          </div>
+          <div class="case-compact-spotlight__body">
+            <h3 class="case-compact-spotlight__name">{{ left_case.title }}</h3>
+            <p class="case-compact-spotlight__text">{{ left_case.excerpt_or_content | strip_html | truncate: 90 }}</p>
+          </div>
+        </a>
+      {% endif %}
+
+      {% if right_case %}
+        <a href="{{ right_case.url }}" class="case-compact-spotlight__card case-compact-spotlight__card--supporting">
+          <div class="case-compact-spotlight__media">
+            {% if right_case.image %}
+              <img
+                src="{{ right_case.image | image_url: width: 900 }}"
+                alt="{{ right_case.title | escape }}"
+                class="case-compact-spotlight__image"
+                loading="lazy"
+                width="{{ right_case.image.width }}"
+                height="{{ right_case.image.height }}"
+              >
+            {% else %}
+              <img
+                src="{{ placeholder_image }}"
+                alt="Missing person appeal image"
+                class="case-compact-spotlight__image"
+                loading="lazy"
+                width="1200"
+                height="1200"
+              >
+            {% endif %}
+            <span class="case-compact-spotlight__badge">{% if right_live %}Supporting Spotlight{% else %}Fallback Feature{% endif %}</span>
+          </div>
+          <div class="case-compact-spotlight__body">
+            <h3 class="case-compact-spotlight__name">{{ right_case.title }}</h3>
+            <p class="case-compact-spotlight__text">{{ right_case.excerpt_or_content | strip_html | truncate: 90 }}</p>
+          </div>
+        </a>
+      {% endif %}
+    </div>
+  </section>
+{% endif %}

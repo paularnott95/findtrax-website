@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Theme settings",
+    "settings": [
+      {
+        "type": "text",
+        "id": "dummy",
+        "label": "Dummy setting",
+        "default": "ok"
+      },
+      {
+        "type": "header",
+        "content": "AdSense readiness"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_adsense",
+        "label": "Enable AdSense rendering",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "adsense_publisher_id",
+        "label": "AdSense publisher ID"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_ads_on_homepage",
+        "label": "Show ads on homepage",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_ads_on_advice_articles",
+        "label": "Show ads on advice articles",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_ads_on_location_pages",
+        "label": "Show ads on location pages",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_ads_on_case_pages",
+        "label": "Show ads on case pages",
+        "default": false
+      }
+    ]
+  }
+]

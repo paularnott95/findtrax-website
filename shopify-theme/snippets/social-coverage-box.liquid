@@ -1,0 +1,130 @@
+{% liquid
+  assign facebook_post_url = article.metafields.custom.facebook_post_url.value | default: article.metafields.custom.facebook_post_url
+  assign instagram_post_url = article.metafields.custom.instagram_post_url.value | default: article.metafields.custom.instagram_post_url
+  assign threads_post_url = article.metafields.custom.threads_post_url.value | default: article.metafields.custom.threads_post_url
+  assign x_post_url = article.metafields.custom.x_post_url.value | default: article.metafields.custom.x_post_url
+  assign tiktok_post_url = article.metafields.custom.tiktok_post_url.value | default: article.metafields.custom.tiktok_post_url
+  assign youtube_post_url = article.metafields.custom.youtube_post_url.value | default: article.metafields.custom.youtube_post_url
+
+  assign has_case_specific_coverage = false
+  if facebook_post_url != blank or instagram_post_url != blank or threads_post_url != blank or x_post_url != blank or tiktok_post_url != blank or youtube_post_url != blank
+    assign has_case_specific_coverage = true
+  endif
+
+  assign detected_country = article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+  if detected_country == blank
+    for article_tag in article.tags
+      assign tag_clean = article_tag | strip
+      assign tag_downcase = tag_clean | downcase
+      assign tag_prefix = tag_downcase | slice: 0, 8
+      if tag_prefix == 'country:'
+        assign detected_country = tag_clean | split: ':' | last | strip
+        break
+      endif
+    endfor
+  endif
+  if detected_country == blank
+    for article_tag in article.tags
+      assign tag_downcase = article_tag | downcase | strip
+      if tag_downcase == 'uk' or tag_downcase == 'united kingdom' or tag_downcase == 'england' or tag_downcase == 'scotland' or tag_downcase == 'wales' or tag_downcase == 'northern ireland'
+        assign detected_country = 'UK'
+        break
+      elsif tag_downcase == 'usa' or tag_downcase == 'united states' or tag_downcase == 'america'
+        assign detected_country = 'USA'
+        break
+      elsif tag_downcase == 'canada'
+        assign detected_country = 'Canada'
+        break
+      elsif tag_downcase == 'australia'
+        assign detected_country = 'Australia'
+        break
+      endif
+    endfor
+  endif
+
+  assign country_key = 'global'
+  assign detected_country_downcase = detected_country | downcase
+  if detected_country_downcase == 'uk' or detected_country_downcase == 'united kingdom' or detected_country_downcase == 'england' or detected_country_downcase == 'scotland' or detected_country_downcase == 'wales' or detected_country_downcase == 'northern ireland'
+    assign country_key = 'uk'
+  elsif detected_country_downcase == 'usa' or detected_country_downcase == 'united states' or detected_country_downcase == 'america'
+    assign country_key = 'usa'
+  elsif detected_country_downcase == 'canada'
+    assign country_key = 'canada'
+  elsif detected_country_downcase == 'australia'
+    assign country_key = 'australia'
+  endif
+
+  assign facebook_profile_url = 'https://facebook.com/missingalerts'
+  assign instagram_profile_url = 'https://instagram.com/missingalerts'
+  assign threads_profile_url = 'https://threads.net/@missingalerts'
+  assign x_profile_url = 'https://x.com/missingalerts'
+  assign tiktok_profile_url = 'https://tiktok.com/@missingalerts'
+  assign youtube_profile_url = 'https://youtube.com/@missingalerts'
+%}
+
+{% comment %}
+  TODO: Replace UK fallback profile URLs with Missing Alerts UK links when available; current values fall back to global.
+  TODO: Replace USA fallback profile URLs with Missing Alerts USA links when available; current values fall back to global.
+  TODO: Replace Canada fallback profile URLs with Missing Alerts Canada links when available; current values fall back to global.
+  TODO: Replace Australia fallback profile URLs with Missing Alerts Australia links when available; current values fall back to global.
+{% endcomment %}
+
+{% if blog.handle == 'missing-persons' %}
+  <section class="ma-social-coverage" aria-labelledby="ma-social-coverage-title-{{ article.id }}">
+    <div class="ma-social-coverage__eyebrow">
+      {% if has_case_specific_coverage %}
+        Case social coverage
+      {% else %}
+        {% if country_key == 'global' %}Global social profiles{% else %}{{ country_key | upcase }} social profiles{% endif %}
+      {% endif %}
+    </div>
+    <h2 id="ma-social-coverage-title-{{ article.id }}" class="ma-social-coverage__title">THIS CASE IS COVERED ON</h2>
+    <p class="ma-social-coverage__copy">
+      We have shared this appeal through our Missing Alerts social network. Follow the relevant pages for updates, re-appeals and community sharing.
+    </p>
+
+    <div class="ma-social-coverage__links" aria-label="Social coverage links">
+      {% if has_case_specific_coverage %}
+        {% if facebook_post_url != blank %}
+          <a href="{{ facebook_post_url }}" class="ma-social-coverage__link ma-social-coverage__link--facebook" target="_blank" rel="noopener noreferrer" aria-label="Open Facebook coverage for {{ article.title | escape }}">Facebook coverage</a>
+        {% endif %}
+        {% if instagram_post_url != blank %}
+          <a href="{{ instagram_post_url }}" class="ma-social-coverage__link ma-social-coverage__link--instagram" target="_blank" rel="noopener noreferrer" aria-label="Open Instagram coverage for {{ article.title | escape }}">Instagram coverage</a>
+        {% endif %}
+        {% if threads_post_url != blank %}
+          <a href="{{ threads_post_url }}" class="ma-social-coverage__link ma-social-coverage__link--threads" target="_blank" rel="noopener noreferrer" aria-label="Open Threads coverage for {{ article.title | escape }}">Threads coverage</a>
+        {% endif %}
+        {% if x_post_url != blank %}
+          <a href="{{ x_post_url }}" class="ma-social-coverage__link ma-social-coverage__link--x" target="_blank" rel="noopener noreferrer" aria-label="Open X coverage for {{ article.title | escape }}">X coverage</a>
+        {% endif %}
+        {% if tiktok_post_url != blank %}
+          <a href="{{ tiktok_post_url }}" class="ma-social-coverage__link ma-social-coverage__link--tiktok" target="_blank" rel="noopener noreferrer" aria-label="Open TikTok coverage for {{ article.title | escape }}">TikTok coverage</a>
+        {% endif %}
+        {% if youtube_post_url != blank %}
+          <a href="{{ youtube_post_url }}" class="ma-social-coverage__link ma-social-coverage__link--youtube" target="_blank" rel="noopener noreferrer" aria-label="Open YouTube coverage for {{ article.title | escape }}">YouTube coverage</a>
+        {% endif %}
+      {% else %}
+        {% if facebook_profile_url != blank %}
+          <a href="{{ facebook_profile_url }}" class="ma-social-coverage__link ma-social-coverage__link--facebook" target="_blank" rel="noopener noreferrer" aria-label="Open Missing Alerts Facebook profile">Facebook profile</a>
+        {% endif %}
+        {% if instagram_profile_url != blank %}
+          <a href="{{ instagram_profile_url }}" class="ma-social-coverage__link ma-social-coverage__link--instagram" target="_blank" rel="noopener noreferrer" aria-label="Open Missing Alerts Instagram profile">Instagram profile</a>
+        {% endif %}
+        {% if threads_profile_url != blank %}
+          <a href="{{ threads_profile_url }}" class="ma-social-coverage__link ma-social-coverage__link--threads" target="_blank" rel="noopener noreferrer" aria-label="Open Missing Alerts Threads profile">Threads profile</a>
+        {% endif %}
+        {% if x_profile_url != blank %}
+          <a href="{{ x_profile_url }}" class="ma-social-coverage__link ma-social-coverage__link--x" target="_blank" rel="noopener noreferrer" aria-label="Open Missing Alerts X profile">X profile</a>
+        {% endif %}
+        {% if tiktok_profile_url != blank %}
+          <a href="{{ tiktok_profile_url }}" class="ma-social-coverage__link ma-social-coverage__link--tiktok" target="_blank" rel="noopener noreferrer" aria-label="Open Missing Alerts TikTok profile">TikTok profile</a>
+        {% endif %}
+        {% if youtube_profile_url != blank %}
+          <a href="{{ youtube_profile_url }}" class="ma-social-coverage__link ma-social-coverage__link--youtube" target="_blank" rel="noopener noreferrer" aria-label="Open Missing Alerts YouTube profile">YouTube profile</a>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <p class="ma-social-coverage__note">Coverage links may update as new social posts are added.</p>
+  </section>
+{% endif %}

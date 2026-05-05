@@ -1,0 +1,42 @@
+{{ 'seo-advice-blog.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign case_text = article.title | append: ' ' | append: article.tags | downcase
+  assign show_child_teen = false
+  assign show_vulnerable = false
+  assign show_international = false
+
+  if case_text contains 'child' or case_text contains 'teen' or case_text contains 'teenager' or case_text contains 'minor'
+    assign show_child_teen = true
+  endif
+  if case_text contains 'vulnerable' or case_text contains 'dementia' or case_text contains 'alzheimer'
+    assign show_vulnerable = true
+  endif
+  if case_text contains 'international' or case_text contains 'abroad' or case_text contains 'travel'
+    assign show_international = true
+  endif
+%}
+
+<section class="case-helpful-guides sidebar-card" aria-label="Helpful missing-person guides">
+  <div class="case-page-card__eyebrow">Helpful guides</div>
+  <ul class="case-helpful-guides__list">
+    {% if show_child_teen %}
+      <li><a href="/pages/missing-person-advice#family-support">Child and teenager guidance</a></li>
+    {% endif %}
+    {% if show_vulnerable %}
+      <li><a href="/pages/missing-person-advice#family-support">Vulnerable adult support guide</a></li>
+    {% endif %}
+    {% if show_international %}
+      <li><a href="/pages/missing-person-advice#international-cases">International missing-person advice</a></li>
+    {% endif %}
+    <li><a href="/pages/missing-person-advice#online-sharing-safety">How to share safely</a></li>
+    <li><a href="/pages/missing-person-advice#search-and-sighting-guidance">What to do if you have a sighting</a></li>
+    <li><a href="/blogs/missing-person-advice/how-to-prepare-a-missing-person-poster">Missing-person poster guide</a></li>
+  </ul>
+</section>
+
+{% render 'related-safety-products',
+  article: article,
+  heading: 'Safety product guides for this case',
+  limit: 2
+%}

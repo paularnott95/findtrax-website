@@ -1,0 +1,397 @@
+<section class="case-page-main-file" aria-label="Main case file">
+  <div class="case-page-card case-page-card--hero">
+    <header class="case-page-title-wrap">
+      <div class="case-page-card__eyebrow">
+        {% if found_safe %}
+          FOUND SAFE
+        {% else %}
+          {{ case_status | default: case_owner_status | upcase | default: 'ACTIVE CASE' }}
+        {% endif %}
+      </div>
+      <h1 class="article-template__title">
+        {{ article.title | escape }}
+      </h1>
+
+      {% if title_show_date %}
+        <span class="circle-divider caption-with-letter-spacing">
+          {{- article.published_at | time_tag: format: 'date' -}}
+        </span>
+      {% endif %}
+
+      <span class="caption-with-letter-spacing">By MissingAlerts Team</span>
+      <div class="case-notify-hero-block">
+        <button
+          type="button"
+          class="case-notify-button case-notify-button--hero js-case-notify-button"
+          data-case-title="{{ article.title | escape }}"
+          data-case-handle="{{ article.handle | escape }}"
+          data-case-url="{{ article.url | escape }}"
+          aria-haspopup="dialog"
+          aria-controls="case-notification-modal"
+        >
+          <span class="case-notify-button__icon" aria-hidden="true">🔔</span>
+          <span class="case-notify-button__text">Notify me</span>
+        </button>
+        <div class="case-notify-count case-notify-count--hero" data-notify-count data-case-handle="{{ article.handle | escape }}">
+          0 people following updates
+        </div>
+      </div>
+    </header>
+
+    <div class="case-page-main-content">
+      {% assign extra_images = article.metafields.custom.additional_images.value %}
+      {% assign last_seen_place = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place %}
+      {% assign last_seen_area = article.metafields.custom.last_seen_area.value | default: article.metafields.custom.last_seen_area | default: article.metafields.custom.last_seen_location.value | default: article.metafields.custom.last_seen_location %}
+      {% assign display_location = article.metafields.custom.display_location.value | default: article.metafields.custom.display_location %}
+      {% assign case_city = article.metafields.custom.city_town.value | default: article.metafields.custom.city_town | default: article.metafields.custom.city.value | default: article.metafields.custom.city | strip %}
+      {% assign case_region = article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | default: article.metafields.custom.region.value | default: article.metafields.custom.region | strip %}
+      {% assign case_country = article.metafields.custom.country.value | default: article.metafields.custom.country | default: article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | strip %}
+      {% assign structured_location = case_city %}
+      {% if structured_location != blank and case_region != blank %}
+        {% assign structured_location = structured_location | append: ', ' | append: case_region %}
+      {% elsif case_region != blank %}
+        {% assign structured_location = case_region %}
+      {% endif %}
+      {% if structured_location != blank and case_country != blank %}
+        {% assign structured_location = structured_location | append: ', ' | append: case_country %}
+      {% endif %}
+      {% assign title_location = '' %}
+      {% assign normalized_title = article.title | replace: ' – ', ' - ' | replace: ' — ', ' - ' %}
+      {% if normalized_title contains ' - ' %}
+        {% assign title_parts = normalized_title | split: ' - ' %}
+        {% assign title_location = title_parts | last | strip %}
+      {% endif %}
+      {% assign article_location_clue = article.excerpt | strip_html | default: article.content | strip_html | truncatewords: 14 %}
+      {% assign page_location = display_location | default: structured_location | default: last_seen_area | default: last_seen_place | default: title_location | default: article_location_clue | default: 'Location details in case description' %}
+      {% assign case_location_slug_path = article.metafields.custom.location_slug_path.value | default: article.metafields.custom.location_slug_path | strip %}
+      {% assign case_location_exact_url = '' %}
+      {% assign case_location_region_url = '' %}
+      {% assign case_location_country_url = '' %}
+      {% if case_location_slug_path != blank %}
+        {% assign case_location_loc = case_location_slug_path | remove_first: '/missing-people/' | remove_first: 'missing-people/' %}
+        {% assign case_location_parts = case_location_loc | split: '/' %}
+        {% assign case_location_exact_url = '/pages/missing-people-location?loc=' | append: case_location_loc %}
+        {% if case_location_parts.size > 0 %}
+          {% assign case_location_country_url = '/pages/missing-people-location?loc=' | append: case_location_parts[0] %}
+        {% endif %}
+        {% if case_location_parts.size > 1 %}
+          {% assign case_location_region_url = '/pages/missing-people-location?loc=' | append: case_location_parts[0] | append: '/' | append: case_location_parts[1] %}
+        {% endif %}
+      {% elsif case_country != blank %}
+        {% assign case_country_slug = case_country | handleize %}
+        {% assign case_region_slug = case_region | handleize %}
+        {% assign case_city_slug = case_city | handleize %}
+        {% assign case_location_loc = case_country_slug %}
+        {% assign case_location_country_url = '/pages/missing-people-location?loc=' | append: case_country_slug %}
+        {% if case_region_slug != blank %}
+          {% assign case_location_region_url = '/pages/missing-people-location?loc=' | append: case_country_slug | append: '/' | append: case_region_slug %}
+          {% assign case_location_loc = case_country_slug | append: '/' | append: case_region_slug %}
+        {% endif %}
+        {% if case_city_slug != blank %}
+          {% assign case_location_loc = case_location_loc | append: '/' | append: case_city_slug %}
+        {% endif %}
+        {% assign case_location_exact_url = '/pages/missing-people-location?loc=' | append: case_location_loc %}
+      {% endif %}
+      {% assign last_seen_at = article.metafields.custom.last_seen_at.value | default: article.metafields.custom.last_seen_at %}
+      {% assign last_seen_precision = article.metafields.custom.last_seen_precision.value | default: article.metafields.custom.last_seen_precision %}
+      {% assign reported_missing_at = article.metafields.custom.reported_missing_at.value | default: article.metafields.custom.reported_missing_at %}
+      {% assign age_text = article.metafields.custom.age.value | default: article.metafields.custom.age %}
+      {% assign case_reference = article.metafields.custom.police_reference.value | default: article.metafields.custom.police_reference | default: article.metafields.custom.case_reference.value | default: article.metafields.custom.case_reference %}
+      {% assign placeholder_image = 'missing-person-silhouette.svg' | asset_url %}
+
+      <div class="case-page-main-image-shell case-main-photo-frame">
+        {% if article.image %}
+          <img
+            srcset="
+              {{ article.image | image_url: width: 400, height: 400, crop: 'center' }} 400w,
+              {{ article.image | image_url: width: 600, height: 600, crop: 'center' }} 600w,
+              {{ article.image | image_url: width: 800, height: 800, crop: 'center' }} 800w
+            "
+            sizes="(min-width: 990px) 650px, 100vw"
+            src="{{ article.image | image_url: width: 650, height: 650, crop: 'center' }}"
+            loading="eager"
+            fetchpriority="high"
+            width="650"
+            height="650"
+            alt="{{ article.image.alt | escape }}"
+            class="case-page-main-image{% if found_safe %} case-page-main-image--found-safe{% endif %}"
+          >
+        {% else %}
+          <img
+            src="{{ placeholder_image }}"
+            loading="eager"
+            fetchpriority="high"
+            width="1200"
+            height="1200"
+            alt="Missing person appeal image"
+            class="case-page-main-image{% if found_safe %} case-page-main-image--found-safe{% endif %}"
+          >
+        {% endif %}
+        {% if found_safe %}
+          <div class="case-page-image-badge">
+            <span>Found Safe</span>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="case-page-urgent-actions case-page-urgent-actions--share case-page-urgent-actions--under-photo">
+        <div class="case-page-urgent-actions__buttons">
+          {% if share_block_markup != blank %}
+            <div class="case-page-share-native">{{ share_block_markup }}</div>
+          {% endif %}
+
+          {% unless found_safe %}
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url }}" target="_blank" class="case-page-action-btn case-page-action-btn--facebook">Facebook</a>
+            <a href="https://wa.me/?text={{ article.title | url_encode }} {{ share_url | url_encode }}" target="_blank" class="case-page-action-btn case-page-action-btn--whatsapp">WhatsApp</a>
+            <a href="https://twitter.com/intent/tweet?text={{ article.title | url_encode }}&url={{ share_url | url_encode }}" target="_blank" class="case-page-action-btn case-page-action-btn--x">X</a>
+            <a href="/pages/report-update" class="case-page-action-btn case-page-action-btn--report">Report Update</a>
+            <button type="button" class="case-page-action-btn case-page-action-btn--copy" data-case-copy-link="{{ share_url }}">Copy Link</button>
+          {% else %}
+            <a href="/blogs/found-safe" class="case-page-action-btn case-page-action-btn--archive">Found Archive</a>
+          {% endunless %}
+        </div>
+      </div>
+
+      <section class="case-page-card case-page-card--padded case-page-location-links">
+        <div class="case-page-card__eyebrow">LOCAL CONTEXT</div>
+        <h2 class="case-page-card__title">LOCATION CONTEXT</h2>
+        <p class="case-page-card__copy">
+          {% if case_location_exact_url != blank %}
+            Browse verified Missing Alerts pages connected to {{ page_location | escape }}.
+          {% else %}
+            Use these guidance pages and alert tools to support this case safely.
+          {% endif %}
+        </p>
+        <div class="case-page-location-links__list">
+          {% if case_location_exact_url != blank %}
+            <a href="{{ case_location_exact_url }}">missing people in {{ case_city | default: page_location | escape }}</a>
+          {% endif %}
+          {% if case_location_region_url != blank %}
+            <a href="{{ case_location_region_url }}">missing people in {{ case_region | default: 'this region' | escape }}</a>
+          {% endif %}
+          {% if case_location_country_url != blank %}
+            <a href="{{ case_location_country_url }}">missing people in {{ case_country | default: 'this country' | escape }}</a>
+          {% endif %}
+          {% if case_location_loc != blank %}
+            <a href="/pages/missing-cases-near?loc={{ case_location_loc | escape }}">nearby missing cases around {{ page_location | escape }}</a>
+            <a href="/pages/missing-person-search-guide?loc={{ case_location_loc | escape }}">search guidance for {{ page_location | escape }}</a>
+          {% endif %}
+          <a href="/blogs/missing-person-advice/tagged/cctv-dashcam-doorbell-guidance">CCTV and dashcam advice</a>
+          <a href="/blogs/missing-person-advice/tagged/safe-social-sharing">safe sharing advice</a>
+          <a href="/pages/member-area">sign up for local alerts</a>
+        </div>
+      </section>
+
+      {% if extra_images != blank and found_safe == false %}
+        <div class="missing-images">
+          {% for image in extra_images %}
+            <img
+              src="{{ image | image_url: width: 900 }}"
+              alt="{{ article.title | escape }}"
+              class="missing-img"
+              width="{{ image.width }}"
+              height="{{ image.height }}"
+            >
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <section class="case-page-main-details">
+        <div class="case-page-card__eyebrow">Key Case Details</div>
+        <h2 class="case-page-card__title">Main case file</h2>
+        <div class="case-page-stat-list">
+          {% if case_status != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Status</span>
+              <span class="case-page-stat__value">{{ case_status | upcase }}</span>
+            </div>
+          {% endif %}
+          {% if last_seen_place != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Last Seen</span>
+              <span class="case-page-stat__value">{{ last_seen_place }}</span>
+            </div>
+          {% elsif page_location != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Location</span>
+              <span class="case-page-stat__value">{{ page_location }}</span>
+            </div>
+          {% endif %}
+          {% if last_seen_at != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Last Seen Time</span>
+              <span class="case-page-stat__value">
+                {{ last_seen_at }}
+                {% if last_seen_precision == 'date_only' %}
+                  <br>Exact time not confirmed.
+                {% endif %}
+              </span>
+            </div>
+          {% endif %}
+          {% if reported_missing_at != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Reported Missing</span>
+              <span class="case-page-stat__value">{{ reported_missing_at }}</span>
+            </div>
+          {% endif %}
+          {% if age_text != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Age</span>
+              <span class="case-page-stat__value">{{ age_text }}</span>
+            </div>
+          {% endif %}
+          {% if case_reference != blank %}
+            <div class="case-page-stat">
+              <span class="case-page-stat__label">Reference</span>
+              <span class="case-page-stat__value">{{ case_reference }}</span>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+
+      <div
+        id="case-updates-panel-{{ section.id }}"
+        class="case-updates-panel"
+        data-case-updates-panel
+        data-case-updates-json="{{ case_updates_json | strip | escape }}"
+        hidden
+      >
+        <div class="case-page-card__eyebrow">Moderated Timeline</div>
+        <h2 class="case-updates-panel__title">Case Updates</h2>
+        <p class="case-updates-panel__copy">
+          Approved moderation updates are shown here newest first. The original article body remains below for active cases.
+        </p>
+        <div class="case-updates-panel__list" data-case-updates-list></div>
+      </div>
+
+      {% if found_safe %}
+        <div class="case-found-safe-banner">
+          <div class="case-found-safe-banner__eyebrow">Found Safe</div>
+          <h2 class="case-found-safe-banner__title">This case has been resolved.</h2>
+          <p class="case-found-safe-banner__copy">
+            {% if case_found_note != blank %}
+              {{ case_found_note | escape }}
+            {% else %}
+              This article has moved into the found-safe archive. Sensitive live-case presentation is now reduced while the moderated case timeline remains visible above.
+            {% endif %}
+          </p>
+        </div>
+      {% else %}
+        <div class="case-page-case-body">
+          {{ article.content }}
+        </div>
+        <section
+          class="case-inline-fundraiser"
+          data-inline-fundraiser
+          data-api-base="https://dashboard-ui-snowy-eight.vercel.app"
+          data-case-handle="{{ article.handle | escape }}"
+          data-case-title="{{ article.title | escape }}"
+          data-owner-customer-id="{% if customer %}{{ customer.id }}{% endif %}"
+          hidden
+        >
+          <div>
+            <div class="case-inline-fundraiser__eyebrow">HELP SUPPORT THE VERIFIED FAMILY</div>
+            <div class="case-inline-fundraiser__title" data-fundraiser-raised>Raised: --</div>
+            <div class="case-inline-fundraiser__proof" data-fundraiser-donor-count></div>
+            <div class="case-inline-fundraiser__note">Family receives the contribution amount minus the transparent 7% platform fee. Family support is tracked separately from optional platform tips.</div>
+          </div>
+          <button type="button" class="case-page-primary-btn" data-fundraiser-donate>SUPPORT THIS FAMILY</button>
+          <div class="case-inline-fundraiser__feedback" data-fundraiser-feedback hidden></div>
+          <div class="case-inline-fundraiser__locked" data-fundraiser-locked hidden>Family fundraiser not active. A verified family member, parent or guardian can activate fundraising from their member area.</div>
+        </section>
+      {% endif %}
+
+      <script>
+        (function() {
+          var panel = document.getElementById('case-updates-panel-{{ section.id }}');
+          if (!panel) return;
+
+          var rawJson = panel.getAttribute('data-case-updates-json') || '';
+          var list = panel.querySelector('[data-case-updates-list]');
+
+          if (!rawJson || !rawJson.trim() || !list) {
+            panel.setAttribute('hidden', 'hidden');
+            return;
+          }
+
+          function escapeHtml(value) {
+            return String(value || '')
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#39;');
+          }
+
+          function formatDate(value) {
+            if (!value) return 'Date not available';
+            var date = new Date(value);
+            if (isNaN(date.getTime())) return 'Date not available';
+            return date.toLocaleString();
+          }
+
+          var parsed;
+
+          try {
+            parsed = JSON.parse(rawJson);
+          } catch (error) {
+            console.warn('CASE UPDATES JSON INVALID', error);
+            panel.setAttribute('hidden', 'hidden');
+            return;
+          }
+
+          if (!Array.isArray(parsed) || !parsed.length) {
+            panel.setAttribute('hidden', 'hidden');
+            return;
+          }
+
+          parsed = parsed
+            .filter(function(item) {
+              return item && typeof item === 'object';
+            })
+            .sort(function(a, b) {
+              return new Date(b.approved_at || 0).getTime() - new Date(a.approved_at || 0).getTime();
+            });
+
+          if (!parsed.length) {
+            panel.setAttribute('hidden', 'hidden');
+            return;
+          }
+
+          list.innerHTML = parsed
+            .map(function(item) {
+              var isFound = String(item.type || '').toLowerCase() === 'found';
+              var summary = item.summary || (isFound ? 'Case marked as found' : 'Case update');
+              var details = item.details || 'No further detail supplied.';
+              var label = isFound ? 'FOUND CONFIRMED' : 'CASE UPDATE';
+
+              return (
+                '<article class="case-updates-panel__card">' +
+                  '<div class="case-updates-panel__meta">' +
+                    '<div class="case-updates-panel__label">' + escapeHtml(label) + '</div>' +
+                    '<div class="case-updates-panel__date">' + escapeHtml(formatDate(item.approved_at)) + '</div>' +
+                  '</div>' +
+                  '<h3 class="case-updates-panel__summary">' + escapeHtml(summary) + '</h3>' +
+                  '<p class="case-updates-panel__details">' + escapeHtml(details) + '</p>' +
+                '</article>'
+              );
+            })
+            .join('');
+
+          panel.removeAttribute('hidden');
+        })();
+      </script>
+    </div>
+
+    {% render 'organised-search-details', article: article, blog: blog %}
+
+    {% render 'social-coverage-box', article: article, blog: blog %}
+
+    {{ comments_markup }}
+
+    <section class="case-page-ad case-page-ad--inline missing-alerts-ad-slot missing-alerts-ad-slot--mid" aria-label="Advertisement">
+      <div class="case-page-ad__label">Advertisement</div>
+      <div class="case-page-ad__body">Small post-details ad slot placed after case details and updates.</div>
+    </section>
+  </div>
+</section>

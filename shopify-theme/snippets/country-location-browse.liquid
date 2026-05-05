@@ -1,0 +1,33 @@
+{{ 'missing-alerts-location-page.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'missing-alerts-location-registry.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'missing-alerts-location-page.js' | asset_url }}" defer="defer"></script>
+
+<section class="ma-location-page" data-location-country-browse data-country-section data-country-scope="all">
+  <!-- location-hub-cache-bust-20260430 -->
+  <div class="ma-location-page__shell">
+    <div class="ma-location-page__panel ma-location-page__browse">
+      <h2>Browse missing people by location in <span data-location-browse-country>United Kingdom</span></h2>
+      <p>
+        <a href="/pages/top-missing-locations">Browse Missing Cases by Location</a>
+        <span aria-hidden="true"> | </span>
+        <a href="/pages/top-missing-locations">Explore locations across the world</a>
+      </p>
+      <div class="ma-location-page__search">
+        <label for="LocationBrowseSearch">Search region, county, city or town</label>
+        <input id="LocationBrowseSearch" type="search" data-location-search-input placeholder="Search region, county, city or town">
+      </div>
+      <details open>
+        <summary>Browse states, provinces and regions</summary>
+        <div class="ma-location-page__links" data-location-browse-regions></div>
+      </details>
+      <details>
+        <summary>Browse counties, districts and local authorities</summary>
+        <div class="ma-location-page__links" data-location-browse-counties></div>
+      </details>
+      <details>
+        <summary>Browse cities and towns</summary>
+        <div class="ma-location-page__links" data-location-browse-cities></div>
+      </details>
+    </div>
+  </div>
+</section>

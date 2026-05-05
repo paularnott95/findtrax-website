@@ -1,0 +1,228 @@
+{% liquid
+  assign source_blog = blogs['missing-persons']
+  assign now_ts = 'now' | date: '%s' | plus: 0
+  assign rendered_count = 0
+  assign placeholder_image = 'missing-person-silhouette.svg' | asset_url
+%}
+
+<section class="ma-organised-searches" data-organised-searches-section data-country-section data-country-scope="all">
+  <div class="ma-organised-searches__inner">
+    <div class="ma-organised-searches__head">
+      <div class="ma-organised-searches__eyebrow">Active local action</div>
+      <h2 class="ma-organised-searches__title" data-organised-searches-title>ORGANISED SEARCHES</h2>
+      <p class="ma-organised-searches__copy">
+        Active local search efforts matched to the country you are viewing, with details for people who can support, share or attend.
+      </p>
+    </div>
+
+    <div class="ma-organised-searches__grid" data-organised-searches-grid>
+      {% if source_blog != blank %}
+        {% for article in source_blog.articles limit: 100 %}
+          {% liquid
+            assign search_featured = article.metafields.custom.organised_search_featured.value | default: article.metafields.custom.organised_search_featured
+            assign search_live = article.metafields.custom.organised_search_live.value | default: article.metafields.custom.organised_search_live
+            assign search_title = article.metafields.custom.organised_search_title.value | default: article.metafields.custom.organised_search_title
+            assign search_summary = article.metafields.custom.organised_search_summary.value | default: article.metafields.custom.organised_search_summary
+            assign search_date = article.metafields.custom.organised_search_date.value | default: article.metafields.custom.organised_search_date
+            assign search_time = article.metafields.custom.organised_search_time.value | default: article.metafields.custom.organised_search_time
+            assign search_location = article.metafields.custom.organised_search_location.value | default: article.metafields.custom.organised_search_location | strip
+            assign search_country = article.metafields.custom.organised_search_country.value | default: article.metafields.custom.organised_search_country | strip
+            assign search_country_code = article.metafields.custom.search_country_code.value | default: article.metafields.custom.search_country_code | default: article.metafields.custom.organised_search_country_code.value | default: article.metafields.custom.organised_search_country_code | strip
+            assign search_region_id = article.metafields.custom.search_region_id.value | default: article.metafields.custom.search_region_id | strip
+            assign search_city_id = article.metafields.custom.search_city_id.value | default: article.metafields.custom.search_city_id | strip
+            assign related_case_id = article.metafields.custom.related_case_id.value | default: article.metafields.custom.related_case_id | default: article.id | strip
+            assign organiser_verified = article.metafields.custom.organiser_verified.value | default: article.metafields.custom.organiser_verified | strip
+            assign search_city = article.metafields.custom.organised_search_city.value | default: article.metafields.custom.organised_search_city | strip
+            assign case_country_metafield = article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+            assign case_region = article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | default: article.metafields.custom.region.value | default: article.metafields.custom.region | strip
+            assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | default: article.metafields.custom.status.value | default: article.metafields.custom.status | default: 'active' | downcase | strip
+            assign tags_downcase = article.tags | join: ',' | downcase
+            assign explicit_country = search_country_code | default: case_country_metafield | default: search_country | strip
+            assign explicit_country_source = ''
+            if case_country_metafield != blank
+              assign explicit_country_source = 'metafield'
+            elsif search_country != blank
+              assign explicit_country_source = 'search_metafield'
+            endif
+            for article_tag in article.tags
+              assign tag_downcase = article_tag | downcase | strip
+              if tag_downcase contains 'country:'
+                assign explicit_country = tag_downcase | split: ':' | last | strip
+                assign explicit_country_source = 'tag'
+                break
+              endif
+            endfor
+            assign country_code = explicit_country | downcase | strip
+            if country_code == 'uk' or country_code == 'united kingdom' or country_code == 'great britain' or country_code == 'gb'
+              assign country_code = 'gb'
+            elsif country_code == 'usa' or country_code == 'u.s.a.' or country_code == 'u.s.' or country_code == 'united states' or country_code == 'united states of america' or country_code == 'us'
+              assign country_code = 'us'
+            elsif country_code == 'canada' or country_code == 'ca'
+              assign country_code = 'ca'
+            elsif country_code == 'australia' or country_code == 'au'
+              assign country_code = 'au'
+            endif
+            assign fallback_country_text = ''
+            if explicit_country == blank
+              assign fallback_country_text = article.title | append: ' ' | append: article.excerpt | strip_html | append: ' ' | append: article.content | strip_html | truncate: 1200 | downcase
+            endif
+            assign search_date_ts = 0
+            if search_date != blank
+              assign search_date_ts = search_date | date: '%s' | plus: 0
+            endif
+            assign status_scope = case_status | append: ' ' | append: tags_downcase
+            assign case_is_found_or_resolved = false
+            if status_scope contains 'found' or status_scope contains 'resolved' or status_scope contains 'located' or status_scope contains 'closed'
+              assign case_is_found_or_resolved = true
+            endif
+            assign public_case_handle = article.handle | downcase
+            assign hide_public_case = false
+            if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test'
+              assign hide_public_case = true
+            endif
+            for article_tag in article.tags
+              assign public_tag_downcase = article_tag | downcase | strip
+              if public_tag_downcase == 'test' or public_tag_downcase == 'demo' or public_tag_downcase == 'debug' or public_tag_downcase contains 'test:' or public_tag_downcase contains 'demo:' or public_tag_downcase contains 'debug:'
+                assign hide_public_case = true
+              endif
+            endfor
+          %}
+
+          {% if hide_public_case %}
+            {% continue %}
+          {% endif %}
+
+          {% unless search_featured == true or search_featured == 'true' %}
+            {% continue %}
+          {% endunless %}
+
+          {% unless search_live == true or search_live == 'true' %}
+            {% continue %}
+          {% endunless %}
+
+          {% if search_date_ts > 0 and search_date_ts < now_ts %}
+            {% continue %}
+          {% endif %}
+
+          {% if explicit_country == blank and fallback_country_text == blank %}
+            {% continue %}
+          {% endif %}
+
+          {% assign rendered_count = rendered_count | plus: 1 %}
+
+          <article
+            class="ma-organised-searches__card"
+            data-organised-search-card
+            data-country="{{ explicit_country | escape }}"
+            data-country-code="{{ country_code | escape }}"
+            data-search-country-code="{{ search_country_code | default: country_code | escape }}"
+            data-search-region-id="{{ search_region_id | escape }}"
+            data-search-city-id="{{ search_city_id | escape }}"
+            data-related-case-id="{{ related_case_id | escape }}"
+            data-search-date="{{ search_date | escape }}"
+            data-organiser-verified="{{ organiser_verified | escape }}"
+            data-country-source="{{ explicit_country_source | escape }}"
+            data-country-fallback-text="{{ fallback_country_text | escape }}"
+            data-region="{{ case_region | default: search_city | escape }}"
+            data-case-status="{{ case_status | escape }}"
+            data-organised-search-active="true"
+            {% if case_is_found_or_resolved %}data-case-found-or-resolved="true"{% endif %}
+          >
+            <a class="ma-organised-searches__media" href="{{ article.url }}" aria-label="View search details for {{ article.title | escape }}">
+              {% if article.image %}
+                <img
+                  src="{{ article.image | image_url: width: 720 }}"
+                  alt="{{ article.image.alt | default: article.title | escape }}"
+                  loading="lazy"
+                  width="720"
+                  height="480"
+                >
+              {% else %}
+                <img
+                  src="{{ placeholder_image }}"
+                  alt="Missing Alerts search image"
+                  loading="lazy"
+                  width="720"
+                  height="480"
+                >
+              {% endif %}
+              <span class="ma-organised-searches__badge">ACTIVE SEARCH</span>
+            </a>
+
+            <div class="ma-organised-searches__body">
+              <div class="ma-organised-searches__country">
+                {{ search_city | default: case_region | default: search_location | default: explicit_country | escape }}
+                {% if explicit_country != blank %}<span>{{ explicit_country | escape }}</span>{% endif %}
+              </div>
+
+              <h3 class="ma-organised-searches__case">{{ article.title | escape }}</h3>
+
+              {% if search_title != blank %}
+                <p class="ma-organised-searches__search-title">{{ search_title | escape }}</p>
+              {% endif %}
+
+              <p class="ma-organised-searches__summary">
+                {{ search_summary | default: article.excerpt | strip_html | default: article.content | strip_html | truncate: 150 }}
+              </p>
+
+              <dl class="ma-organised-searches__meta">
+                {% if search_date != blank or search_time != blank %}
+                  <div>
+                    <dt>Date/time</dt>
+                    <dd>{{ search_date | date: '%d %b %Y' }}{% if search_time != blank %} at {{ search_time }}{% endif %}</dd>
+                  </div>
+                {% endif %}
+                {% if search_location != blank %}
+                  <div>
+                    <dt>Location</dt>
+                    <dd>{{ search_location | escape }}</dd>
+                  </div>
+                {% endif %}
+              </dl>
+
+              <div class="ma-organised-searches__actions">
+                <a href="{{ article.url }}" class="ma-organised-searches__button" aria-label="View search details for {{ article.title | escape }}">
+                  VIEW SEARCH DETAILS
+                </a>
+                <button
+                  type="button"
+                  class="ma-organised-searches__button ma-organised-searches__button--secondary case-share-button js-case-share-button"
+                  data-share-url="{{ shop.url }}{{ article.url }}"
+                  data-share-title="{{ article.title | escape }}"
+                  aria-label="Support or share {{ article.title | escape }}"
+                >
+                  SUPPORT OR SHARE
+                </button>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <div class="ma-organised-searches__empty" data-organised-searches-empty {% if rendered_count > 0 %}hidden{% endif %}>
+      No organised searches currently listed in <span data-organised-searches-empty-country>this country</span>.
+    </div>
+  </div>
+</section>
+
+<script src="{{ 'organise-search.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Organised Searches",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Fallback title",
+      "default": "ORGANISED SEARCHES"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Organised Searches"
+    }
+  ]
+}
+{% endschema %}

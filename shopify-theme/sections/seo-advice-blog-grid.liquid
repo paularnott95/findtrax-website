@@ -1,0 +1,302 @@
+{{ 'seo-advice-blog.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign advice_blog = blogs['missing-person-advice']
+  if advice_blog == blank
+    assign advice_blog = blogs['advice']
+  endif
+%}
+
+<section class="seo-advice-hub page-width">
+  <div class="seo-advice-hub__hero">
+    <div class="seo-advice-hub__eyebrow">Missing Alerts guidance</div>
+    <h1 class="seo-advice-hub__title">MISSING PERSON ADVICE HUB</h1>
+    <p class="seo-advice-hub__copy">Practical guidance for families, communities, and supporters. Use these guides for reporting, sharing safely, preparing appeals, and knowing what details may help.</p>
+    <div class="seo-advice-hub__actions">
+      <a class="seo-advice-button" href="#latest-advice">Latest advice</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="/blogs/missing-person-advice/how-to-prepare-a-missing-person-poster">Poster guide</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="/blogs/missing-person-advice/what-to-do-if-someone-goes-missing-in-united-kingdom">UK missing-person guide</a>
+    </div>
+
+    <div class="seo-advice-hub__filters" data-seo-advice-filters>
+      <input class="seo-advice-hub__input" type="search" placeholder="Search advice articles" data-seo-advice-search>
+      <select class="seo-advice-hub__select" data-seo-advice-country>
+        <option value="">Browse by country</option>
+        <option value="country:gb">United Kingdom</option>
+        <option value="country:us">United States</option>
+        <option value="country:ca">Canada</option>
+        <option value="country:au">Australia</option>
+        <option value="country:nz">New Zealand</option>
+        <option value="country:ie">Ireland</option>
+        <option value="global-advice">Global advice</option>
+      </select>
+      <select class="seo-advice-hub__select" data-seo-advice-topic>
+        <option value="">Browse by topic</option>
+        <option value="article-type:what-to-do">What to do first</option>
+        <option value="article-type:how-to-report">Reporting guidance</option>
+        <option value="article-type:safe-social-sharing">Online sharing safety</option>
+        <option value="article-type:sighting-guidance">Sightings and information</option>
+        <option value="article-type:family-support">Family support</option>
+        <option value="article-type:international-missing-guidance">International cases</option>
+        <option value="article-type:volunteer-search-safety">Volunteer safety</option>
+        <option value="article-type:missing-person-poster-guide">Poster guidance</option>
+      </select>
+      <select class="seo-advice-hub__select" data-seo-advice-language>
+        <option value="">Browse by language</option>
+        <option value="language:en">English</option>
+        <option value="language:es">Spanish</option>
+        <option value="language:fr">French</option>
+        <option value="language:de">German</option>
+        <option value="language:pt">Portuguese</option>
+        <option value="language:vi">Vietnamese</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="seo-advice-hub__topic-grid" aria-label="Advice categories">
+    <a class="seo-advice-hub__topic" href="#latest-advice">
+      Latest advice
+      <span>Recently published guides</span>
+    </a>
+    <a class="seo-advice-hub__topic" href="#browse-by-country">
+      Browse by country
+      <span>Country-aware guidance</span>
+    </a>
+    <a class="seo-advice-hub__topic" href="#family-support" data-seo-advice-filter-link="article-type:family-support">
+      Family support
+      <span>Calm next steps</span>
+    </a>
+    <a class="seo-advice-hub__topic" href="#reporting-guidance" data-seo-advice-filter-link="article-type:how-to-report">
+      Reporting guidance
+      <span>Information that may help</span>
+    </a>
+    <a class="seo-advice-hub__topic" href="#online-sharing-safety" data-seo-advice-filter-link="article-type:safe-social-sharing">
+      Sharing safely online
+      <span>Protect privacy and dignity</span>
+    </a>
+    <a class="seo-advice-hub__topic" href="#search-and-sighting-guidance" data-seo-advice-filter-link="article-type:sighting-guidance">
+      Search and sightings
+      <span>How to report possible information</span>
+    </a>
+    <a class="seo-advice-hub__topic" href="#international-cases" data-seo-advice-filter-link="article-type:international-missing-guidance">
+      International advice
+      <span>When a person may be abroad</span>
+    </a>
+    <a class="seo-advice-hub__topic" href="#volunteer-safety" data-seo-advice-filter-link="article-type:volunteer-search-safety">
+      Volunteer safety
+      <span>Help without increasing risk</span>
+    </a>
+  </div>
+
+  <section id="browse-by-country" class="seo-advice-section">
+    <div class="seo-advice-section__header">
+      <div>
+        <div class="seo-advice-section__eyebrow">Country filters</div>
+        <h2>Browse by country</h2>
+        <p>Country pages show matching country advice plus global guidance that applies broadly.</p>
+      </div>
+    </div>
+    <div class="seo-advice-section__actions">
+      <a class="seo-advice-button seo-advice-button--secondary" href="#latest-advice" data-seo-advice-filter-link="country:gb">United Kingdom</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="#latest-advice" data-seo-advice-filter-link="country:us">United States</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="#latest-advice" data-seo-advice-filter-link="country:ca">Canada</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="#latest-advice" data-seo-advice-filter-link="country:au">Australia</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="#latest-advice" data-seo-advice-filter-link="global-advice">Global advice</a>
+    </div>
+  </section>
+
+  <section id="browse-by-topic" class="seo-advice-section">
+    <div class="seo-advice-section__header">
+      <div>
+        <div class="seo-advice-section__eyebrow">Topic library</div>
+        <h2>Browse by topic</h2>
+      </div>
+    </div>
+    <div class="seo-advice-section__tiles">
+      <a class="seo-advice-hub__topic" href="#reporting-guidance" data-seo-advice-filter-link="article-type:how-to-report">Reporting guidance<span>What information may help</span></a>
+      <a class="seo-advice-hub__topic" href="#online-sharing-safety" data-seo-advice-filter-link="article-type:safe-social-sharing">Online sharing safety<span>Share appeals without harming privacy</span></a>
+      <a class="seo-advice-hub__topic" href="#family-support" data-seo-advice-filter-link="article-type:family-support">Family support<span>Supportive steps and preparation</span></a>
+      <a class="seo-advice-hub__topic" href="#search-and-sighting-guidance" data-seo-advice-filter-link="article-type:sighting-guidance">Sightings and search<span>Report possible information clearly</span></a>
+    </div>
+  </section>
+
+  <section id="latest-advice" class="seo-advice-section">
+    <div class="seo-advice-section__header">
+      <div>
+        <div class="seo-advice-section__eyebrow">Featured latest advice</div>
+        <h2>Latest advice</h2>
+      </div>
+      <a class="seo-advice-button seo-advice-button--secondary" href="/blogs/missing-person-advice">Open advice blog</a>
+    </div>
+
+    <div class="seo-advice-grid" data-seo-advice-grid>
+      {% if advice_blog != blank %}
+        {% paginate advice_blog.articles by 12 %}
+          {% assign rendered_advice_count = 0 %}
+          {% assign rendered_handles = '|' %}
+          {% for article in advice_blog.articles %}
+            {% assign is_advice = false %}
+            {% if article.tags contains 'seo-blog' %}
+              {% assign is_advice = true %}
+            {% endif %}
+            {% if advice_blog.handle == 'missing-person-advice' or advice_blog.handle == 'advice' %}
+              {% assign is_advice = true %}
+            {% endif %}
+            {% assign handle_token = article.handle | append: '|' | prepend: '|' %}
+            {% if is_advice and rendered_handles contains handle_token %}
+              {% assign is_advice = false %}
+            {% endif %}
+            {% if is_advice %}
+              {% assign rendered_handles = rendered_handles | append: article.handle | append: '|' %}
+              {% assign rendered_advice_count = rendered_advice_count | plus: 1 %}
+              <div data-seo-advice-item data-tags="{{ article.tags | join: ' ' | downcase | escape }}" data-title="{{ article.title | downcase | escape }}">
+                {% render 'seo-advice-blog-card', article: article %}
+              </div>
+            {% endif %}
+          {% endfor %}
+          {% if rendered_advice_count == 0 %}
+            <p class="seo-advice-empty">No advice articles are published yet.</p>
+          {% endif %}
+          {% if paginate.pages > 1 %}
+            {% render 'pagination', paginate: paginate %}
+          {% endif %}
+        {% endpaginate %}
+      {% else %}
+        <p class="seo-advice-empty">No advice blog is connected yet. Create Shopify blog handle missing-person-advice or advice.</p>
+      {% endif %}
+    </div>
+    <p class="seo-advice-empty" data-seo-advice-empty hidden>No advice articles match that filter yet. Try another country or topic.</p>
+  </section>
+
+  <section id="family-support" class="seo-advice-section">
+    <div class="seo-advice-section__eyebrow">Family support</div>
+    <h2>Support for families and close contacts</h2>
+    <p>Guides here focus on calm preparation, protecting privacy, and organising information that can help an appeal.</p>
+    <div class="seo-advice-section__actions">
+      <a class="seo-advice-button" href="#latest-advice" data-seo-advice-filter-link="article-type:family-support">View family support guides</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="/blogs/missing-person-advice/how-to-prepare-a-missing-person-poster">Prepare a missing-person poster</a>
+    </div>
+  </section>
+
+  <section id="reporting-guidance" class="seo-advice-section">
+    <div class="seo-advice-section__eyebrow">Reporting guidance</div>
+    <h2>Reporting and information guidance</h2>
+    <p>Practical advice about noting details, timelines, sightings, and updates without inventing process-specific claims.</p>
+    <div class="seo-advice-section__actions">
+      <a class="seo-advice-button" href="#latest-advice" data-seo-advice-filter-link="article-type:how-to-report">View reporting guides</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="#latest-advice" data-seo-advice-filter-link="article-type:police-report-information">Police report information</a>
+    </div>
+  </section>
+
+  <section id="online-sharing-safety" class="seo-advice-section">
+    <div class="seo-advice-section__eyebrow">Sharing safely online</div>
+    <h2>Safe public sharing</h2>
+    <p>Guidance for sharing appeals in ways that keep the missing person, family members, and possible witnesses safer.</p>
+    <div class="seo-advice-section__actions">
+      <a class="seo-advice-button" href="#latest-advice" data-seo-advice-filter-link="article-type:safe-social-sharing">View sharing safety guides</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="/blogs/missing-person-advice/how-to-prepare-a-missing-person-poster">Poster guide</a>
+    </div>
+  </section>
+
+  <section id="search-and-sighting-guidance" class="seo-advice-section">
+    <div class="seo-advice-section__eyebrow">Search and sighting guidance</div>
+    <h2>Sightings, CCTV, dashcam, and doorbell footage</h2>
+    <p>Advice about preserving useful details and passing information on without creating risk or spreading unverified claims.</p>
+    <div class="seo-advice-section__actions">
+      <a class="seo-advice-button" href="#latest-advice" data-seo-advice-filter-link="article-type:sighting-guidance">View sighting guides</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="#latest-advice" data-seo-advice-filter-link="article-type:cctv-dashcam-doorbell-guidance">CCTV and dashcam guidance</a>
+    </div>
+  </section>
+
+  <section id="international-cases" class="seo-advice-section">
+    <div class="seo-advice-section__eyebrow">International missing-person advice</div>
+    <h2>When a person may be outside their home country</h2>
+    <p>General guidance for international situations, written without invented emergency numbers, legal claims, or unsupported processes.</p>
+    <div class="seo-advice-section__actions">
+      <a class="seo-advice-button" href="#latest-advice" data-seo-advice-filter-link="article-type:international-missing-guidance">View international guides</a>
+      <a class="seo-advice-button seo-advice-button--secondary" href="#latest-advice" data-seo-advice-filter-link="article-type:travel-missing-guidance">Travel guidance</a>
+    </div>
+  </section>
+
+  <section id="volunteer-safety" class="seo-advice-section">
+    <div class="seo-advice-section__eyebrow">Volunteer safety</div>
+    <h2>Helping responsibly</h2>
+    <p>Advice for supporters who want to help with awareness, searching, or sharing while keeping the appeal focused and safe.</p>
+    <div class="seo-advice-section__actions">
+      <a class="seo-advice-button" href="#latest-advice" data-seo-advice-filter-link="article-type:volunteer-search-safety">View volunteer safety guides</a>
+    </div>
+  </section>
+</section>
+
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    var root = document.querySelector('[data-seo-advice-filters]');
+    var grid = document.querySelector('[data-seo-advice-grid]');
+    if (!root || !grid) return;
+
+    var search = root.querySelector('[data-seo-advice-search]');
+    var country = root.querySelector('[data-seo-advice-country]');
+    var topic = root.querySelector('[data-seo-advice-topic]');
+    var language = root.querySelector('[data-seo-advice-language]');
+    var empty = document.querySelector('[data-seo-advice-empty]');
+    var items = Array.prototype.slice.call(grid.querySelectorAll('[data-seo-advice-item]'));
+    var filterLinks = Array.prototype.slice.call(document.querySelectorAll('[data-seo-advice-filter-link]'));
+
+    function setSelectValue(select, value) {
+      if (!select) return false;
+      var option = Array.prototype.slice.call(select.options).find(function(item) {
+        return item.value === value;
+      });
+      if (!option) return false;
+      select.value = value;
+      return true;
+    }
+
+    function applyFilters() {
+      var q = (search && search.value || '').toLowerCase();
+      var countryValue = (country && country.value || '').toLowerCase();
+      var topicValue = (topic && topic.value || '').toLowerCase();
+      var languageValue = (language && language.value || '').toLowerCase();
+      var visibleCount = 0;
+
+      items.forEach(function(item) {
+        var haystack = [item.getAttribute('data-tags'), item.getAttribute('data-title')].join(' ').toLowerCase();
+        var visible = (!q || haystack.indexOf(q) !== -1) && (!countryValue || haystack.indexOf(countryValue) !== -1) && (!topicValue || haystack.indexOf(topicValue) !== -1) && (!languageValue || haystack.indexOf(languageValue) !== -1);
+        item.hidden = !visible;
+        if (visible) visibleCount += 1;
+      });
+
+      if (empty) empty.hidden = visibleCount !== 0;
+    }
+
+    filterLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        var value = (link.getAttribute('data-seo-advice-filter-link') || '').toLowerCase();
+        if (!value) return;
+        if (value.indexOf('country:') === 0 || value === 'global-advice') {
+          setSelectValue(country, value);
+        } else {
+          setSelectValue(topic, value);
+        }
+        if (search) search.value = '';
+        window.setTimeout(applyFilters, 0);
+      });
+    });
+
+    [search, country, topic, language].forEach(function(input) {
+      if (input) input.addEventListener('input', applyFilters);
+      if (input && input.tagName === 'SELECT') input.addEventListener('change', applyFilters);
+    });
+
+    applyFilters();
+  });
+</script>
+
+{% schema %}
+{
+  "name": "SEO advice blog grid",
+  "tag": "section",
+  "class": "section",
+  "settings": []
+}
+{% endschema %}

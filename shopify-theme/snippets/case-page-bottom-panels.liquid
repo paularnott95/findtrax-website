@@ -1,0 +1,36 @@
+<section class="case-page-bottom-panels" aria-label="Related case resources">
+  <div class="case-page-bottom-grid">
+    <section class="case-page-card case-page-card--padded case-page-card--bottom case-page-card--sponsor-strip">
+      <div class="case-page-card__eyebrow">Sponsor Strip</div>
+      <h3 class="case-page-card__title">Keep this alert visible in a premium support position</h3>
+      <p class="case-page-card__copy">Local businesses and aligned organisations can sponsor awareness while helping maintain public visibility for urgent cases.</p>
+    </section>
+
+    <section class="case-page-card case-page-card--padded case-page-card--bottom">
+      <div class="case-page-card__eyebrow">Related Cases</div>
+      <h3 class="case-page-card__title">More public appeals</h3>
+      <div class="case-page-related-grid">
+        {% assign bottom_related_count = 0 %}
+        {% for related_article in blog.articles %}
+          {% if related_article.id != article.id and bottom_related_count < 4 %}
+            <div class="case-page-related-grid__item">
+              {% render 'article-card', blog: blog, article: related_article, show_image: true, show_date: true, show_author: false, show_excerpt: false, lazy_load: true %}
+            </div>
+            {% assign bottom_related_count = bottom_related_count | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="case-page-card case-page-card--padded case-page-card--bottom">
+      <div class="case-page-card__eyebrow">Professional Directory</div>
+      <h3 class="case-page-card__title">Verified help, when case ownership is confirmed</h3>
+      <p class="case-page-card__copy">A premium professional directory teaser can live here without exposing direct contacts until case-owner verification is complete.</p>
+    </section>
+
+    <section class="case-page-ad case-page-ad--bottom missing-alerts-ad-slot missing-alerts-ad-slot--bottom" aria-label="Advertisement">
+      <div class="case-page-ad__label">Advertisement</div>
+      <div class="case-page-ad__body">Bottom-of-page ad placeholder for future approved inventory.</div>
+    </section>
+  </div>
+</section>

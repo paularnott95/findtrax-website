@@ -1,0 +1,906 @@
+{{ 'case-listing-grid.css' | asset_url | stylesheet_tag }}
+{{ 'missing-alerts-location-page.css' | asset_url | stylesheet_tag }}
+{{ 'seo-advice-blog.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign location_seo_param = ''
+  assign location_seo_query_key = ''
+  assign query_parts = request.query_string | default: '' | split: '&'
+  for query_part in query_parts
+    assign query_key = query_part | split: '=' | first
+    if query_key == 'loc' or query_key == 'region' or query_key == 'country'
+      assign location_seo_query_key = query_key
+      assign location_seo_param = query_part | remove_first: query_key | remove_first: '='
+      break
+    endif
+  endfor
+  assign location_seo_label = location_seo_param | split: '/' | last | replace: '-', ' ' | replace: '+', ' ' | replace: '%20', ' ' | capitalize
+  if location_seo_label == blank
+    assign location_seo_label = 'this location'
+  endif
+  assign location_seo_description = 'View live missing person alerts, recent cases, and updates in ' | append: location_seo_label | append: '. Stay informed and help share information.'
+  assign location_path_parts = location_seo_param | split: '/'
+  assign location_country_slug = location_path_parts[0] | default: ''
+  assign location_region_slug = ''
+  if location_path_parts.size > 1
+    assign location_region_slug = location_path_parts[1]
+  endif
+  assign location_country_label = location_country_slug | replace: '-', ' ' | replace: '+', ' ' | replace: '%20', ' ' | capitalize
+  assign location_region_label = location_region_slug | replace: '-', ' ' | replace: '+', ' ' | replace: '%20', ' ' | capitalize
+  assign location_country_loc = location_country_slug
+  assign location_region_loc = ''
+  assign location_seo_url = canonical_url
+  if location_seo_param != blank
+    assign location_seo_url = request.origin | append: request.path | append: '?' | append: location_seo_query_key | append: '=' | append: location_seo_param
+  endif
+  if location_country_slug != blank and location_region_slug != blank
+    assign location_region_loc = location_country_slug | append: '/' | append: location_region_slug
+  endif
+-%}
+<script src="{{ 'missing-alerts-location-registry.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'missing-alerts-location-seo.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'priority-locations.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'missing-alerts-location-page.js' | asset_url }}" defer="defer"></script>
+
+<section
+  class="ma-location-page"
+  data-missing-alerts-location-page
+  data-customer-id="{% if customer %}{{ customer.id | append: '' | escape }}{% endif %}"
+>
+  <script type="application/ld+json" data-location-jsonld-fallback>
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "name": "Missing People in {{ location_seo_label | escape }}",
+          "headline": "Missing People in {{ location_seo_label | escape }}",
+          "description": {{ location_seo_description | json }},
+          "url": {{ location_seo_url | json }}
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ shop.url | append: routes.root_url | json }} },
+            { "@type": "ListItem", "position": 2, "name": "{{ location_seo_label | escape }}", "item": {{ location_seo_url | json }} }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Are there missing people in {{ location_seo_label | escape }}?",
+              "acceptedAnswer": { "@type": "Answer", "text": "This page shows active Missing Alerts cases matched to {{ location_seo_label | escape }}, plus monitored nearby areas when there are no exact local cases." }
+            },
+            {
+              "@type": "Question",
+              "name": "How many missing people are reported in {{ location_seo_label | escape }}?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Missing Alerts only shows verified public appeals and local monitoring information. Official totals should be confirmed with police or the relevant public authority." }
+            },
+            {
+              "@type": "Question",
+              "name": "Where are missing people usually found in {{ location_seo_label | escape }}?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Search activity can involve transport routes, parks, shops, schools, workplaces, hospitals and nearby communities, depending on official appeal details." }
+            },
+            {
+              "@type": "Question",
+              "name": "What should I do if I see a missing person?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Do not approach if there is risk. Note the time, place and direction of travel, then contact police or the official appeal contact route." }
+            }
+          ]
+        }
+      ]
+    }
+  </script>
+  <script type="application/ld+json" data-location-jsonld></script>
+  <div class="ma-location-page__shell">
+    <header class="ma-location-page__hero">
+      <nav class="ma-location-page__breadcrumb" aria-label="Breadcrumb" data-location-breadcrumb>
+        <a href="{{ routes.root_url }}">Home</a>
+        <span>/</span>
+        <a href="/pages/missing-people-location" data-location-country-crumb><span data-location-country-name>Country</span></a>
+        <span data-location-parent-separator>/</span>
+        <a href="/pages/missing-people-location" data-location-parent-crumb hidden>Parent</a>
+        <span>/</span>
+        <span data-location-name>Location</span>
+      </nav>
+      <p class="ma-location-page__eyebrow"><span data-location-type>location</span> intelligence hub</p>
+      <h1 class="ma-location-page__heading" data-location-heading>Missing People in {{ location_seo_label | escape }}</h1>
+      <p class="ma-location-page__intro" data-location-intro>Live alerts, nearby areas, and how to help</p>
+      <p class="ma-location-page__search-intent" data-location-search-intent>Looking for missing people in {{ location_seo_label | escape }}? This page shows alerts, nearby areas, and guidance on how to help.</p>
+      {% if location_seo_param != blank %}
+        <div class="ma-location-page__quick-links" aria-label="Location hierarchy">
+          {% if location_country_loc != blank %}
+            <a href="/pages/missing-people-location?loc={{ location_country_loc | escape }}">missing people in {{ location_country_label | escape }}</a>
+          {% endif %}
+          {% if location_region_loc != blank %}
+            <a href="/pages/missing-people-location?loc={{ location_region_loc | escape }}">missing people in {{ location_region_label | escape }}</a>
+          {% endif %}
+          <a href="/pages/missing-people-location?loc={{ location_seo_param | escape }}">missing people in {{ location_seo_label | escape }}</a>
+          <a href="/pages/missing-cases-near?loc={{ location_seo_param | escape }}">nearby missing cases around {{ location_seo_label | escape }}</a>
+        </div>
+      {% endif %}
+      <div class="location-status" data-location-status>Live monitoring active in this area</div>
+      <div class="ma-location-page__hero-meta" aria-label="Location summary">
+        <span><strong data-location-case-count>0</strong> active appeals</span>
+        <span><strong data-location-nearby-active-count>0</strong> nearby active</span>
+        <span><strong data-location-resolved-count>0</strong> resolved nearby</span>
+        <span>Updated <strong data-location-last-updated>Today</strong></span>
+      </div>
+      <div class="ma-location-page__hero-actions">
+        <button class="ma-location-page__cta ma-location-page__cta--button" type="button" data-location-follow-button>Follow this area for updates</button>
+        <button class="ma-location-page__cta ma-location-page__cta--button" type="button" data-location-share-button>Share This Page</button>
+      </div>
+      <div class="ma-location-page__authority" aria-label="Missing Alerts network">
+        <span>Trusted global Missing Alerts network</span>
+        <span>Public awareness platform</span>
+        <span>Always contact police first</span>
+        <span>Covering <span data-location-country-name>{{ location_seo_label | escape }}</span> and surrounding regions</span>
+        <a href="/pages/top-missing-locations">Explore the global location hub</a>
+      </div>
+      {% if location_seo_param != blank %}
+        <div class="ma-location-page__quick-links" aria-label="Key location links">
+          <a href="/pages/missing-people-location?loc={{ location_seo_param | escape }}">missing people in {{ location_seo_label | escape }}</a>
+          <a href="/pages/missing-alerts-near-me?loc={{ location_seo_param | escape }}">alerts in {{ location_seo_label | escape }}</a>
+          <a href="/pages/missing-cases-near?loc={{ location_seo_param | escape }}">nearby missing cases</a>
+        </div>
+      {% endif %}
+      <div class="ma-location-page__language" aria-label="Location page language">
+        <a href="#" hreflang="en" data-location-language="en">English</a>
+        <a href="#" hreflang="fr" data-location-language="fr">Français</a>
+        <a href="#" hreflang="de" data-location-language="de">Deutsch</a>
+        <a href="#" hreflang="es" data-location-language="es">Español</a>
+        <a href="#" hreflang="it" data-location-language="it">Italiano</a>
+        <a href="#" hreflang="ar" data-location-language="ar">Arabic</a>
+      </div>
+      <div class="ma-location-page__search">
+        <label for="LocationSearch-{{ section.id }}">Search region, county, city or town</label>
+        <input id="LocationSearch-{{ section.id }}" type="search" data-location-search-input placeholder="Search region, county, city or town">
+      </div>
+    </header>
+
+    <div class="missing-alerts-ad-slot missing-alerts-ad-slot--top" aria-label="Advertisement"></div>
+
+    <section class="ma-location-page__panel ma-location-page__server-seo" aria-label="Server-rendered location guidance">
+      <p class="ma-location-page__eyebrow">SERVER-RENDERED LOCATION CONTEXT</p>
+      <h2>Missing people in {{ location_seo_label | escape }}</h2>
+      <p class="ma-location-page__intro">
+        {{ location_seo_description | escape }} This source-rendered section is generated from the requested location path and appears before client-side location scripts run.
+      </p>
+      {% if location_seo_param != blank %}
+        <div class="ma-location-page__links" aria-label="Server-rendered location links">
+          {% if location_country_loc != blank %}
+            <a href="/pages/missing-people-location-live?loc={{ location_country_loc | escape }}">Missing people in {{ location_country_label | escape }}</a>
+          {% endif %}
+          {% if location_region_loc != blank %}
+            <a href="/pages/missing-people-location-live?loc={{ location_region_loc | escape }}">Missing people in {{ location_region_label | escape }}</a>
+          {% endif %}
+          <a href="/pages/missing-people-location-live?loc={{ location_seo_param | escape }}">Missing people in {{ location_seo_label | escape }}</a>
+          <a href="/pages/missing-cases-near?loc={{ location_seo_param | escape }}">Nearby missing cases around {{ location_seo_label | escape }}</a>
+          <a href="/pages/missing-alerts-near-me?loc={{ location_seo_param | escape }}">Local missing person alerts for {{ location_seo_label | escape }}</a>
+        </div>
+      {% endif %}
+      <div class="ma-location-page__links" aria-label="Server-rendered advice links">
+        <a href="/blogs/missing-person-advice/tagged/first-hour-search-steps">First hour missing person steps</a>
+        <a href="/blogs/missing-person-advice/tagged/cctv-dashcam-doorbell-guidance">CCTV, dashcam and doorbell guidance</a>
+        <a href="/blogs/missing-person-advice/tagged/safe-social-sharing">Safe public sharing advice</a>
+        <a href="/blogs/missing-person-advice/tagged/witness-appeal-guidance">Witness appeal guidance</a>
+      </div>
+    </section>
+
+    <section class="ma-location-page__intent-grid" aria-label="Missing people search answers">
+      <article class="ma-location-page__answer">
+        <h2>Are there missing people in <span data-location-name>{{ location_seo_label | escape }}</span>?</h2>
+        <p data-location-answer-current>This page shows current alerts, nearby areas, and guidance on how to help in {{ location_seo_label | escape }}.</p>
+      </article>
+      <article class="ma-location-page__answer">
+        <h2>Latest missing person alerts in <span data-location-name>{{ location_seo_label | escape }}</span></h2>
+        <p data-location-answer-alerts>Live Missing Alerts case cards appear here when verified public appeals match this location or nearby areas.</p>
+      </article>
+      <article class="ma-location-page__answer">
+        <h2>What to do if someone is missing in <span data-location-name>{{ location_seo_label | escape }}</span></h2>
+        <p data-location-answer-report>Always contact local police or emergency services first, then share verified appeal information responsibly.</p>
+      </article>
+    </section>
+
+    <section class="ma-location-page__engagement" aria-label="Location engagement and freshness">
+      <span>Monitoring active in this area</span>
+      <span>Updated: <strong data-location-last-updated>Today</strong></span>
+      <span data-location-activity-indicator>Recent activity appears when verified cases match this area.</span>
+      <span data-location-follow-count>Follows are managed through member alerts.</span>
+      <span data-location-share-count>Shares tracked on this browser after sharing.</span>
+    </section>
+
+    {% if request.design_mode %}
+    <aside class="ma-location-page__debug" data-location-debug-panel hidden>
+      <h2>Location page debug</h2>
+      <p data-location-debug-summary>Debug mode is loading.</p>
+      <dl>
+        <div><dt>Selected country</dt><dd data-location-debug-country>Not set</dd></div>
+        <div><dt>Selected level</dt><dd data-location-debug-level>Not set</dd></div>
+        <div><dt>Selected location</dt><dd data-location-debug-location>Not set</dd></div>
+        <div><dt>Matched registry entry</dt><dd data-location-debug-entry>Not matched</dd></div>
+        <div><dt>Matched case count</dt><dd data-location-debug-matched-count>0</dd></div>
+        <div><dt>Found/resolved excluded count</dt><dd data-location-debug-excluded-count>0</dd></div>
+        <div><dt>Registry file loaded</dt><dd data-location-debug-registry>Unknown</dd></div>
+        <div><dt>Page template/section loaded</dt><dd data-location-debug-section>location-case-page loaded</dd></div>
+      </dl>
+      <ul data-location-debug-messages></ul>
+    </aside>
+    {% endif %}
+
+    <div class="ma-location-page__layout">
+      <main class="ma-location-page__main">
+        <section class="ma-location-page__panel ma-location-page__snapshot">
+          <h2>Area snapshot</h2>
+          <div class="ma-location-page__stats">
+            <div class="ma-location-page__stat"><strong>Country</strong><span data-location-country-name>Country</span></div>
+            <div class="ma-location-page__stat"><strong>Region/state/province</strong><span data-location-admin1>Not listed</span></div>
+            <div class="ma-location-page__stat"><strong>County/district/local authority</strong><span data-location-admin2>Not listed</span></div>
+            <div class="ma-location-page__stat"><strong>Population</strong><span data-location-population>Not listed</span></div>
+            <div class="ma-location-page__stat"><strong>Coordinates</strong><span data-location-coordinates>Not listed</span></div>
+            <div class="ma-location-page__stat"><strong>Active in this location</strong><span data-location-exact-count>0</span></div>
+            <div class="ma-location-page__stat"><strong>Nearby active appeals</strong><span data-location-nearby-active-count>0</span></div>
+            <div class="ma-location-page__stat"><strong>Recently resolved nearby</strong><span data-location-resolved-count>0</span></div>
+          </div>
+        </section>
+
+        <section class="ma-location-page__map ma-location-page__map--wide">
+          <div class="ma-location-page__map-header">
+            <h2>Location map and case intelligence</h2>
+            <p>Map markers use the selected registry location and approved case location fields where available.</p>
+          </div>
+          <iframe title="General area map with selected location pin" loading="lazy" data-location-map></iframe>
+          <a href="https://www.openstreetmap.org" target="_blank" rel="noopener" data-location-map-link>Open broad area map</a>
+          <p class="ma-location-page__map-status" data-location-map-status>This area is monitored. Nearby areas may have active alerts.</p>
+          <div class="ma-location-page__map-pins" data-location-map-pins></div>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__conversion-panel">
+          <h2>Stay updated on missing people in <span data-location-name>this location</span></h2>
+          <p>Stay informed, get alerts instantly, and help share information safely when verified public appeals are connected to this area.</p>
+          <div class="ma-location-page__trust-line">
+            <span>Always contact police first</span>
+            <span>No spam</span>
+            <span>Only important updates</span>
+          </div>
+          <div class="ma-location-page__actions ma-location-page__actions--inline">
+            <button class="ma-location-page__cta ma-location-page__cta--button" type="button" data-location-follow-button>Follow this area for updates</button>
+          </div>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__mode-panel ma-location-page__mode-panel--alert">
+          <h2>Follow this area for updates</h2>
+          <p>Follow <span data-location-name>this location</span> so this page can connect your member account to future location updates when the notification system is enabled.</p>
+          <p>If someone may be in immediate danger, contact police or emergency services first. Public sharing should support official appeals and avoid speculation.</p>
+          <div id="LocationAlertSignupForm" class="ma-location-page__signup-form ma-location-page__follow-placeholder">
+            <button class="ma-location-page__cta ma-location-page__cta--button" type="button" data-location-follow-button>Follow this area for updates</button>
+            <p class="ma-location-page__form-message" data-location-follow-status>Sign in to follow this area and receive updates.</p>
+            {% unless customer %}
+              <a class="ma-location-page__cta ma-location-page__cta--secondary" href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">Sign in to follow</a>
+            {% endunless %}
+          </div>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__mode-panel ma-location-page__mode-panel--guide">
+          <h2>Search and safety guide for <span data-location-name>this location</span></h2>
+          <p>This area guide helps residents think about geography, transport movement, urban and rural search challenges, and safe public sharing.</p>
+          <p>Useful public help can include checking the time and direction of a sighting, transport stops, shops, parks, workplace routes, CCTV and doorbell footage where relevant to an official appeal.</p>
+          <p>Do not approach someone if there is risk. Contact emergency services first, then share information through the official route listed on the appeal.</p>
+        </section>
+
+        {% render 'related-safety-products',
+          heading: 'Safety product guides for this location',
+          limit: 3
+        %}
+
+        <div class="missing-alerts-ad-slot missing-alerts-ad-slot--mid" aria-label="Advertisement"></div>
+
+        <section class="ma-location-page__panel ma-location-page__mode-panel ma-location-page__mode-panel--directory">
+          <h2>Directory links for <span data-location-name>this location</span></h2>
+          <p>Use this directory to move between the country, regional hubs, nearby cities and local alert pages without leaving verified registry paths.</p>
+          {% if location_seo_param != blank %}
+            <div class="ma-location-page__links" aria-label="Related location pages">
+              <a href="/pages/missing-alerts-near-me?loc={{ location_seo_param | escape }}">Get alerts for missing people in {{ location_seo_label | escape }}</a>
+              <a href="/pages/missing-person-search-guide?loc={{ location_seo_param | escape }}">Learn how to help find missing people in {{ location_seo_label | escape }}</a>
+              <a href="/pages/missing-cases-near?loc={{ location_seo_param | escape }}">View nearby missing cases around {{ location_seo_label | escape }}</a>
+            </div>
+          {% endif %}
+          <div class="ma-location-page__links" data-location-related-page-types></div>
+            <div class="ma-location-page__links" aria-label="Popular Missing Alerts Locations">
+            <a href="/pages/missing-people-location?loc=united-kingdom/england/london">London</a>
+            <a href="/pages/missing-people-location?loc=united-states/new-york/new-york-city">New York</a>
+            <a href="/pages/missing-people-location?loc=france/ile-de-france/paris">Paris</a>
+            <a href="/pages/missing-people-location?loc=india/maharashtra/mumbai">Mumbai</a>
+          </div>
+          <div class="ma-location-page__links ma-location-page__priority-links" data-location-priority-links aria-label="Popular Missing Alerts Locations"></div>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__mode-panel ma-location-page__mode-panel--no-case">
+          <h2>No active missing cases currently listed in <span data-location-name>this location</span></h2>
+          <p>This monitored area page remains useful when there are no active appeals listed. It gives residents a local status page, nearby active areas, parent-region navigation and alert signup.</p>
+          <p>Missing Alerts does not replace police reporting. If someone is missing now or may be at immediate risk, contact emergency services first.</p>
+          <div class="ma-location-page__links" data-location-related-page-types></div>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__mode-panel ma-location-page__mode-panel--near-me">
+          <h2>Missing people near <span data-location-name>this location</span></h2>
+          <p>This page focuses on nearby active appeals, area map context, parent locations and neighbouring towns so local users can move quickly through verified place pages.</p>
+          <p>Use the case links and map as awareness support only. Send sightings or urgent information through official reporting routes.</p>
+        </section>
+
+        <section class="ma-location-page__panel" data-location-near-you>
+          <h2>Missing people near you</h2>
+          <p>Nearby location pages help you check neighbouring areas without relying on unverified information.</p>
+          <div class="ma-location-page__links" data-location-nearby-links></div>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__mode-panel ma-location-page__mode-panel--recent">
+          <h2>Recent missing case activity in <span data-location-name>this location</span></h2>
+          <p>Recent activity combines active appeals, nearby updates and resolved case history where verified case fields connect to this area.</p>
+          <p>When no recent activity is listed, this page still provides monitoring status, nearby areas and alert signup for future verified appeals.</p>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__mode-panel ma-location-page__mode-panel--help">
+          <h2>Help find missing people in <span data-location-name>this location</span></h2>
+          <p>Useful public help can include checking recent sightings, transport routes, shops, parks, workplaces, CCTV and doorbell footage where relevant to an official appeal.</p>
+          <p>Share verified appeals carefully, avoid speculation, and contact police or emergency services first if there is immediate risk.</p>
+        </section>
+
+        <section class="ma-location-page__panel">
+          <h2>MISSING PERSON ACTIVITY IN <span data-location-name>Location</span></h2>
+          <p class="ma-location-page__intro">
+            <span data-location-case-count>0</span> active missing person appeals currently match this location or verified nearby area fields.
+          </p>
+          <div class="ma-location-page__empty" data-location-empty hidden>
+            This area is monitored. Nearby areas may have active alerts.
+          </div>
+          <div class="ma-location-page__cards" data-location-case-results>
+            {%- assign missing_blog = blogs['missing-persons'] -%}
+            {%- if missing_blog != blank -%}
+              {%- paginate missing_blog.articles by 200 -%}
+                {%- for article in missing_blog.articles -%}
+                  {%- liquid
+                    assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase | strip
+                    assign alternate_status = article.metafields.custom.status.value | default: article.metafields.custom.status | downcase | strip
+                    assign tags_downcase = article.tags | join: ',' | downcase
+                    assign status_scope = case_status | append: ' ' | append: alternate_status | append: ' ' | append: tags_downcase
+                    assign is_found_case = false
+                    if status_scope contains 'found safe' or status_scope contains 'found-safe' or status_scope contains 'resolved' or status_scope contains 'located' or status_scope contains 'closed' or status_scope contains 'found'
+                      assign is_found_case = true
+                    endif
+
+                    assign case_country_code = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | strip | downcase
+                    assign case_country_label = article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+                    for article_tag in article.tags
+                      assign tag_downcase = article_tag | downcase | strip
+                      if tag_downcase contains 'country:'
+                        assign case_country_code = tag_downcase | split: ':' | last | strip
+                        break
+                      endif
+                    endfor
+                    if case_country_code == 'uk'
+                      assign case_country_code = 'gb'
+                    endif
+                    if case_country_code == blank
+                      assign case_country_code = case_country_label | handleize
+                    endif
+                    if case_country_code == 'united-kingdom' or case_country_code == 'great-britain' or case_country_code == 'england' or case_country_code == 'scotland' or case_country_code == 'wales' or case_country_code == 'northern-ireland'
+                      assign case_country_code = 'gb'
+                    elsif case_country_code == 'united-states' or case_country_code == 'usa' or case_country_code == 'america'
+                      assign case_country_code = 'us'
+                    endif
+                    if case_country_label == blank
+                      assign case_country_label = case_country_code | upcase
+                    endif
+
+                    assign case_state = article.metafields.custom.state.value | default: article.metafields.custom.state | default: article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | strip
+                    assign case_province = article.metafields.custom.province.value | default: article.metafields.custom.province | strip
+                    assign case_region = article.metafields.custom.region.value | default: article.metafields.custom.region | default: case_state | default: case_province | strip
+                    assign case_county = article.metafields.custom.county.value | default: article.metafields.custom.county | strip
+                    assign case_district = article.metafields.custom.district.value | default: article.metafields.custom.district | strip
+                    assign case_city = article.metafields.custom.city_town.value | default: article.metafields.custom.city_town | default: article.metafields.custom.city.value | default: article.metafields.custom.city | strip
+                    assign case_town = article.metafields.custom.town.value | default: article.metafields.custom.town | strip
+                    assign custom_location = article.metafields.custom.location.value | default: article.metafields.custom.location | strip
+                    assign location_slug_path = article.metafields.custom.location_slug_path.value | default: article.metafields.custom.location_slug_path | strip
+                    assign last_seen_place = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | default: article.metafields.custom.last_seen_area.value | default: article.metafields.custom.last_seen_area | default: article.metafields.custom.last_seen_location.value | default: article.metafields.custom.last_seen_location | strip
+                    assign display_location = article.metafields.custom.display_location.value | default: article.metafields.custom.display_location | strip
+                    assign case_location = display_location | default: custom_location | default: last_seen_place | default: case_city | default: case_town | default: case_county | default: case_region
+                    assign location_search_text = article.tags | join: ' '
+                    assign location_search_text = location_search_text | append: ' ' | append: case_country_label | append: ' ' | append: case_region | append: ' ' | append: case_state | append: ' ' | append: case_province | append: ' ' | append: case_county | append: ' ' | append: case_district | append: ' ' | append: case_city | append: ' ' | append: case_town | append: ' ' | append: custom_location | append: ' ' | append: last_seen_place | append: ' ' | append: location_slug_path
+                  -%}
+                  {%- unless is_found_case -%}
+                    {% render 'case-grid-card',
+                      article: article,
+                      blog: missing_blog,
+                      status: 'missing',
+                      listing_type: 'missing',
+                      country_code: case_country_code,
+                      country_label: case_country_label,
+                      location: case_location,
+                      region: case_region,
+                      city: case_city,
+                      last_seen: last_seen_place,
+                      location_slug_path: location_slug_path,
+                      location_search_text: location_search_text
+                    %}
+                  {%- endunless -%}
+                {%- endfor -%}
+              {%- endpaginate -%}
+            {%- endif -%}
+          </div>
+          <div class="ma-location-page__case-groups" data-location-case-groups hidden>
+            <div>
+              <h3>Exact location</h3>
+              <div class="ma-location-page__cards" data-location-group="exactLocation"></div>
+            </div>
+            <div>
+              <h3>Same city or town</h3>
+              <div class="ma-location-page__cards" data-location-group="sameCity"></div>
+            </div>
+            <div>
+              <h3>Same county or district</h3>
+              <div class="ma-location-page__cards" data-location-group="sameAdmin2"></div>
+            </div>
+            <div>
+              <h3>Same region or state</h3>
+              <div class="ma-location-page__cards" data-location-group="sameAdmin1"></div>
+            </div>
+            <div>
+              <h3>Nearby locations</h3>
+              <div class="ma-location-page__cards" data-location-group="nearbyByCoordinates"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="ma-location-page__panel" data-location-activity-section>
+          <h2>Recent cases in <span data-location-name>this location</span></h2>
+          <div class="ma-location-page__activity-list" data-location-activity-list></div>
+          <p class="ma-location-page__empty" data-location-activity-empty hidden>This area is monitored. Nearby areas may have active alerts.</p>
+        </section>
+
+        <section class="ma-location-page__panel" data-location-nearby-case-section>
+          <h2>Nearby missing person cases</h2>
+          <div class="ma-location-page__compact-cases" data-location-nearby-case-list></div>
+          <p class="ma-location-page__empty" data-location-nearby-case-empty hidden>This area is monitored. Nearby areas may have active alerts.</p>
+        </section>
+
+        <section class="ma-location-page__panel" data-location-connected-section>
+          <h2>Areas connected to recent cases</h2>
+          <div class="ma-location-page__links" data-location-connected-areas></div>
+          <p class="ma-location-page__empty" data-location-connected-empty hidden>Connected areas will appear here when verified case locations are available.</p>
+        </section>
+
+        <section class="ma-location-page__panel" data-location-resolved-section hidden>
+          <h2>Recently resolved nearby</h2>
+          <p class="ma-location-page__intro">
+            <span data-location-resolved-count>0</span> resolved or found-safe cases are recorded near this location.
+          </p>
+          <div class="ma-location-page__cards" data-location-resolved-results>
+            {%- assign missing_blog = blogs['missing-persons'] -%}
+            {%- if missing_blog != blank -%}
+              {%- paginate missing_blog.articles by 200 -%}
+                {%- for article in missing_blog.articles -%}
+                  {%- liquid
+                    assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase | strip
+                    assign alternate_status = article.metafields.custom.status.value | default: article.metafields.custom.status | downcase | strip
+                    assign tags_downcase = article.tags | join: ',' | downcase
+                    assign status_scope = case_status | append: ' ' | append: alternate_status | append: ' ' | append: tags_downcase
+                    assign is_found_case = false
+                    if status_scope contains 'found safe' or status_scope contains 'found-safe' or status_scope contains 'resolved' or status_scope contains 'located' or status_scope contains 'closed' or status_scope contains 'found'
+                      assign is_found_case = true
+                    endif
+
+                    assign case_country_code = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | strip | downcase
+                    assign case_country_label = article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+                    if case_country_code == 'uk'
+                      assign case_country_code = 'gb'
+                    endif
+                    if case_country_code == blank
+                      assign case_country_code = case_country_label | handleize
+                    endif
+                    if case_country_code == 'united-kingdom' or case_country_code == 'great-britain' or case_country_code == 'england' or case_country_code == 'scotland' or case_country_code == 'wales' or case_country_code == 'northern-ireland'
+                      assign case_country_code = 'gb'
+                    elsif case_country_code == 'united-states' or case_country_code == 'usa' or case_country_code == 'america'
+                      assign case_country_code = 'us'
+                    endif
+                    if case_country_label == blank
+                      assign case_country_label = case_country_code | upcase
+                    endif
+
+                    assign case_state = article.metafields.custom.state.value | default: article.metafields.custom.state | default: article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | strip
+                    assign case_region = article.metafields.custom.region.value | default: article.metafields.custom.region | default: case_state | strip
+                    assign case_county = article.metafields.custom.county.value | default: article.metafields.custom.county | strip
+                    assign case_city = article.metafields.custom.city_town.value | default: article.metafields.custom.city_town | default: article.metafields.custom.city.value | default: article.metafields.custom.city | strip
+                    assign case_town = article.metafields.custom.town.value | default: article.metafields.custom.town | strip
+                    assign custom_location = article.metafields.custom.location.value | default: article.metafields.custom.location | strip
+                    assign location_slug_path = article.metafields.custom.location_slug_path.value | default: article.metafields.custom.location_slug_path | strip
+                    assign last_seen_place = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | default: article.metafields.custom.last_seen_area.value | default: article.metafields.custom.last_seen_area | strip
+                    assign case_location = custom_location | default: last_seen_place | default: case_city | default: case_town | default: case_county | default: case_region
+                    assign location_search_text = article.tags | join: ' '
+                    assign location_search_text = location_search_text | append: ' ' | append: case_country_label | append: ' ' | append: case_region | append: ' ' | append: case_county | append: ' ' | append: case_city | append: ' ' | append: case_town | append: ' ' | append: custom_location | append: ' ' | append: last_seen_place | append: ' ' | append: location_slug_path
+                  -%}
+                  {%- if is_found_case -%}
+                    {% render 'case-grid-card',
+                      article: article,
+                      blog: missing_blog,
+                      status: 'found',
+                      listing_type: 'found',
+                      country_code: case_country_code,
+                      country_label: case_country_label,
+                      location: case_location,
+                      region: case_region,
+                      city: case_city,
+                      last_seen: last_seen_place,
+                      location_slug_path: location_slug_path,
+                      location_search_text: location_search_text
+                    %}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endpaginate -%}
+            {%- endif -%}
+          </div>
+        </section>
+
+        <section class="ma-location-page__panel">
+          <h2>Area missing status</h2>
+          <div class="ma-location-page__stats">
+            <div class="ma-location-page__stat"><strong>Active appeals in this area</strong><span data-location-case-count>0</span></div>
+            <div class="ma-location-page__stat"><strong>Nearby appeals</strong><span data-location-nearby-active-count>0</span></div>
+            <div class="ma-location-page__stat"><strong>Recently resolved cases</strong><span data-location-resolved-count>0</span></div>
+            <div class="ma-location-page__stat"><strong>Community alerts</strong><span>Available</span></div>
+            <div class="ma-location-page__stat"><strong>Professional help</strong><span>Available where approved professionals exist</span></div>
+          </div>
+        </section>
+
+        <section class="ma-location-page__panel">
+          <h2>Area information</h2>
+          <p class="ma-location-page__intro">This page tracks missing person appeals connected to <span data-location-name>{{ location_seo_label | escape }}</span> and nearby areas.</p>
+          <p>Information may include official appeals, public updates, resolved cases and community alerts where available.</p>
+          <p>Residents can help by checking recent sightings, CCTV, transport links, local businesses, parks and public spaces where relevant to an appeal.</p>
+          {% if location_seo_param != blank %}
+            <div class="ma-location-page__links" aria-label="Server-rendered related location links">
+              {% if location_country_loc != blank %}
+                <a href="/pages/missing-people-country?country={{ location_country_loc | escape }}">missing people country hub for {{ location_country_label | escape }}</a>
+                <a href="/pages/missing-people-location?loc={{ location_country_loc | escape }}">missing people in {{ location_country_label | escape }}</a>
+              {% endif %}
+              {% if location_region_loc != blank %}
+                <a href="/pages/missing-people-region?region={{ location_region_loc | escape }}">missing people region hub for {{ location_region_label | escape }}</a>
+                <a href="/pages/missing-people-location?loc={{ location_region_loc | escape }}">missing people in {{ location_region_label | escape }}</a>
+              {% endif %}
+              <a href="/pages/missing-alerts-near-me?loc={{ location_seo_param | escape }}">report a missing person alert in {{ location_seo_label | escape }}</a>
+              <a href="/pages/missing-person-search-guide?loc={{ location_seo_param | escape }}">search guidance for missing people in {{ location_seo_label | escape }}</a>
+            </div>
+          {% endif %}
+        </section>
+
+        <section class="ma-location-page__panel">
+          <h2>How to help in this area</h2>
+          <p>If you have information connected to a public appeal, useful details include the time and date seen, exact place, direction of travel, vehicle or public transport details, clothing, and CCTV or doorbell footage.</p>
+          <p>If you see someone believed to be missing and there is immediate danger, contact emergency services first.</p>
+          <div class="ma-location-page__actions ma-location-page__actions--inline">
+            <a class="ma-location-page__cta" href="/blogs/missing-persons">View appeals</a>
+            <a class="ma-location-page__cta" href="/pages/submit-case">Submit a case</a>
+            <a class="ma-location-page__cta" href="/pages/professionals">Professional help</a>
+          </div>
+        </section>
+
+        <section class="ma-location-page__panel">
+          <h2>Follow this area</h2>
+          <p>Get Missing Alerts updates connected to <span data-location-name>this location</span> and nearby verified areas.</p>
+          {% render 'missing-alerts-signup',
+            location_slug: location_seo_param,
+            location_label: location_seo_label,
+            page_type: 'location'
+          %}
+          <div class="ma-location-page__follow-box">
+            <button class="ma-location-page__cta ma-location-page__cta--button" type="button" data-location-follow-button>Follow this area for updates</button>
+            <span data-location-follow-status>Sign in to follow this area and receive updates.</span>
+            {% unless customer %}
+              <a class="ma-location-page__cta ma-location-page__cta--secondary" href="{{ routes.account_login_url }}?return_url={{ request.path | url_encode }}">Sign in to follow</a>
+            {% endunless %}
+          </div>
+          <div class="ma-location-page__follow-suggestions" data-location-follow-suggestions hidden>
+            <h3>Nearby areas to follow</h3>
+            <div class="ma-location-page__links" data-location-nearby-links></div>
+            <h3>Parent areas to follow</h3>
+            <div class="ma-location-page__links" data-location-follow-parent-links></div>
+            <h3>Country areas to follow</h3>
+            <div class="ma-location-page__links" data-location-follow-country-links></div>
+          </div>
+          <div id="LocationUniversalAlertSignupForm" class="ma-location-page__signup-form ma-location-page__follow-placeholder">
+            <p class="ma-location-page__form-message">Follow intent is saved for members now. Klaviyo notifications will be connected later.</p>
+          </div>
+          <p class="ma-location-page__empty">If someone is at immediate risk, contact police or emergency services before using Missing Alerts.</p>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__retention-panel">
+          <h2>Keep track of important areas</h2>
+          <div class="ma-location-page__retention-grid">
+            <div>
+              <h3>Areas you follow</h3>
+              <div class="ma-location-page__links" data-location-followed-list></div>
+              <p class="ma-location-page__form-message" data-location-followed-empty>No followed areas saved on this browser yet.</p>
+            </div>
+            <div>
+              <h3>Recently viewed locations</h3>
+              <div class="ma-location-page__links" data-location-recent-list></div>
+              <p class="ma-location-page__form-message" data-location-recent-empty>Recently viewed locations will appear here.</p>
+            </div>
+            <div>
+              <h3>New alerts near you</h3>
+              <p>Check nearby missing cases and stay informed without sharing unverified information.</p>
+              <a class="ma-location-page__cta" href="/pages/missing-cases-near?loc={{ location_seo_param | escape }}">View Nearby Alerts</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__growth-panel" data-location-growth-panel>
+          <h2>Trending Missing Alerts areas</h2>
+          <p>Popular areas are based on local page views, shares, follows and priority locations. Sharing this could help someone be found.</p>
+          <div class="ma-location-page__trend-grid">
+            <div>
+              <h3>Most viewed locations</h3>
+              <div class="ma-location-page__links" data-location-trending-views></div>
+              <p class="ma-location-page__form-message" data-location-trending-views-empty>Trending views will appear as people use this browser.</p>
+            </div>
+            <div>
+              <h3>Most shared pages</h3>
+              <div class="ma-location-page__links" data-location-trending-shares></div>
+              <p class="ma-location-page__form-message" data-location-trending-shares-empty>Shared pages will appear after sharing.</p>
+            </div>
+            <div>
+              <h3>Popular areas</h3>
+              <div class="ma-location-page__links" data-location-trending-priority></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__conversion-panel">
+          <h2>Don't miss important updates in <span data-location-name>this location</span></h2>
+          <p>Follow this area for updates and return quickly when verified updates are available.</p>
+          <div class="ma-location-page__trust-line">
+            <span>Always contact police first</span>
+            <span>No spam</span>
+            <span>Only important updates</span>
+          </div>
+          <div class="ma-location-page__actions ma-location-page__actions--inline">
+            <button class="ma-location-page__cta ma-location-page__cta--button" type="button" data-location-follow-button>Follow this area for updates</button>
+          </div>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__share-panel">
+          <h2>Share this area</h2>
+          <p>Sharing this could help someone be found. Share only verified alerts, nearby areas and police-first guidance.</p>
+          <div class="ma-location-page__actions ma-location-page__actions--inline">
+            <button class="ma-location-page__cta ma-location-page__cta--button" type="button" data-location-share-button>Share This Page</button>
+            <button class="ma-location-page__cta ma-location-page__cta--button" type="button" data-location-copy-link>Copy link</button>
+            <a class="ma-location-page__cta" href="#" target="_blank" rel="noopener" data-location-facebook-share>Facebook</a>
+            <a class="ma-location-page__cta" href="#" target="_blank" rel="noopener" data-location-x-share>X</a>
+            <a class="ma-location-page__cta" href="#" target="_blank" rel="noopener" data-location-whatsapp-share>WhatsApp</a>
+          </div>
+          <p class="ma-location-page__form-message" data-location-share-status aria-live="polite"></p>
+        </section>
+
+        {% render 'adsense-slot', slot_type: 'location', position: 'below-local-guidance' %}
+
+        {% liquid
+          assign location_buy_me_a_coffee_url = settings.buy_me_a_coffee_url | default: 'https://buymeacoffee.com/missingalerts'
+          if location_buy_me_a_coffee_url == blank
+            assign location_buy_me_a_coffee_url = 'https://buymeacoffee.com/missingalerts'
+          endif
+          assign location_support_box_id = 'LocationSupportHeading-' | append: section.id
+        %}
+        {% render 'support-missing-alerts-box', support_url: location_buy_me_a_coffee_url, support_box_id: location_support_box_id %}
+
+        {% liquid
+          assign location_advice_blog = blogs['missing-person-advice']
+          if location_advice_blog == blank
+            assign location_advice_blog = blogs['advice']
+          endif
+        %}
+
+        {% if location_advice_blog != blank %}
+          <section class="ma-location-page__panel seo-location-advice" data-location-advice>
+            <div class="seo-location-advice__header">
+              <div>
+                <div class="seo-advice-section__eyebrow">Country advice</div>
+                <h2>ADVICE FOR <span data-location-country-name>THIS COUNTRY</span></h2>
+                <p>Country-specific guidance is shown with global advice that can apply in most locations.</p>
+              </div>
+              <a class="seo-advice-button seo-advice-button--secondary" href="/pages/missing-person-advice">Open advice hub</a>
+            </div>
+            <div class="seo-location-advice__grid" data-location-advice-grid>
+              {% for advice_article in location_advice_blog.articles limit: 12 %}
+                {% assign advice_tags = advice_article.tags | join: ' ' | downcase %}
+                {% if advice_article.tags contains 'seo-blog' or location_advice_blog.handle == 'missing-person-advice' or location_advice_blog.handle == 'advice' %}
+                  <a
+                    class="seo-location-advice__card"
+                    href="{{ advice_article.url }}"
+                    data-location-advice-card
+                    data-tags="{{ advice_tags | escape }}"
+                  >
+                    <h3>{{ advice_article.title | escape }}</h3>
+                    {% if advice_article.excerpt != blank %}
+                      <p>{{ advice_article.excerpt | strip_html | truncate: 120 }}</p>
+                    {% else %}
+                      <p>{{ advice_article.content | strip_html | truncate: 120 }}</p>
+                    {% endif %}
+                    <span class="seo-advice-card__cta">Read guide</span>
+                  </a>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <p class="seo-advice-empty" data-location-advice-empty hidden>No country advice is available yet. Global advice is available in the main hub.</p>
+          </section>
+        {% endif %}
+
+        <section class="ma-location-page__browse">
+          <h2>Nearby areas and location links</h2>
+          <details open>
+            <summary>Related alert and guide pages</summary>
+            <div class="ma-location-page__links" data-location-related-page-types></div>
+          </details>
+          <details open>
+            <summary>Popular Missing Alerts Locations</summary>
+            <div class="ma-location-page__links ma-location-page__priority-links" data-location-priority-links></div>
+          </details>
+          <details open>
+            <summary>Parent areas</summary>
+            <div class="ma-location-page__links" data-location-parent-links></div>
+          </details>
+          <details open>
+            <summary>Child locations</summary>
+            <div class="ma-location-page__links" data-location-child-links></div>
+          </details>
+          <details>
+            <summary>Nearby towns and cities</summary>
+            <div class="ma-location-page__links" data-location-nearby-links></div>
+          </details>
+          <details>
+            <summary>Same-region locations</summary>
+            <div class="ma-location-page__links" data-location-sibling-links></div>
+          </details>
+          <details>
+            <summary>Country locations</summary>
+            <div class="ma-location-page__links" data-location-country-links></div>
+          </details>
+          <details>
+            <summary>Region directory pages</summary>
+            <div class="ma-location-page__links" data-location-region-hub-links></div>
+          </details>
+          <details>
+            <summary>Country directory pages</summary>
+            <div class="ma-location-page__links" data-location-country-hub-links></div>
+          </details>
+        </section>
+
+        <section class="ma-location-page__panel" data-location-seo-panel>
+          <h2>Missing people appeals in <span data-location-name>this location</span></h2>
+          <p data-location-seo-copy>This location hub uses verified case fields and registry data to organise public appeals, resolved updates and nearby area links.</p>
+        </section>
+
+        <section class="ma-location-page__panel" data-location-content-engine>
+          <h2>Local missing person information for <span data-location-name>this location</span></h2>
+          <div class="ma-location-page__content-engine" data-location-content></div>
+        </section>
+
+        <section class="ma-location-page__faq">
+          <h2>FAQ</h2>
+          <details open>
+            <summary>Are there missing people in <span data-location-name>this location</span>?</summary>
+            <p>This page shows active Missing Alerts cases matched to <span data-location-name>this location</span>, plus monitored nearby areas when there are no exact local cases.</p>
+          </details>
+          <details>
+            <summary>How do I report a missing person?</summary>
+            <p>If someone is missing or may be in danger, contact police or emergency services first. Missing Alerts can help with awareness after an official report is made.</p>
+          </details>
+          <details>
+            <summary>How many missing people are reported in <span data-location-name>this location</span>?</summary>
+            <p>Missing Alerts only shows verified public appeals and local monitoring information. Official totals should be confirmed with police or the relevant public authority.</p>
+          </details>
+          <details>
+            <summary>Where are missing people usually found in <span data-location-name>this location</span>?</summary>
+            <p>Search activity can involve transport routes, parks, shops, schools, workplaces, hospitals and nearby communities, depending on official appeal details.</p>
+          </details>
+          <details>
+            <summary>What should I do if I see someone?</summary>
+            <p>Do not approach if there is risk. Note the time, place and direction of travel, then contact police or the official appeal contact route.</p>
+          </details>
+          <details>
+            <summary>Can I share a missing person appeal?</summary>
+            <p>Share verified public appeals responsibly, avoid speculation, and do not publish private details that are not part of an approved appeal.</p>
+          </details>
+          <details>
+            <summary>Why does this page include nearby areas?</summary>
+            <p>Nearby areas can help residents navigate real location paths when movement may involve transport routes, residential areas, open spaces or neighbouring communities.</p>
+          </details>
+        </section>
+        <div class="missing-alerts-ad-slot missing-alerts-ad-slot--bottom" aria-label="Advertisement"></div>
+      </main>
+
+      <aside class="ma-location-page__side">
+        <section class="ma-location-page__panel">
+          <h2>Location information</h2>
+          <div class="ma-location-page__stats">
+            <div class="ma-location-page__stat"><strong>Location name</strong><span data-location-name>Location</span></div>
+            <div class="ma-location-page__stat"><strong>Country</strong><span data-location-country-name>Country</span></div>
+            <div class="ma-location-page__stat"><strong>Type</strong><span data-location-type>Location</span></div>
+            <div class="ma-location-page__stat"><strong>State/region or parent</strong><span data-location-parent>Country</span></div>
+            <div class="ma-location-page__stat"><strong>Registry entries</strong><span data-location-registry-count>0</span></div>
+            <div class="ma-location-page__stat"><strong>Approx. population</strong><span data-location-population>Not listed</span></div>
+            <div class="ma-location-page__stat"><strong>Coordinates</strong><span data-location-coordinates>Not listed</span></div>
+            <div class="ma-location-page__stat"><strong>Visible cases</strong><span data-location-case-count>0</span></div>
+            <div class="ma-location-page__stat"><strong>Last updated</strong><span data-location-last-updated>Today</span></div>
+          </div>
+          <div class="location-last-updated" data-location-freshness>Updated: {{ 'now' | date: '%Y-%m-%dT%H:%M:%SZ' }}</div>
+          <p data-location-description></p>
+        </section>
+
+        <section class="ma-location-page__panel ma-location-page__reporting">
+          <h2>Reporting information</h2>
+          <p data-location-reporting>If someone is at immediate risk, contact local emergency services first.</p>
+        </section>
+
+        <section class="ma-location-page__panel">
+          <h2>Support this location</h2>
+          <p>Share verified appeals, submit a missing-person case, or create member alerts for this area.</p>
+          <div class="ma-location-page__actions">
+            <button class="ma-location-page__cta ma-location-page__cta--button" type="button" data-location-share-button>Share this page</button>
+            <a class="ma-location-page__cta" href="/pages/submit-case">Submit a case</a>
+            <a class="ma-location-page__cta" href="/pages/member-area">Set member alerts</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    var root = document.querySelector('[data-location-advice]');
+    if (!root) return;
+
+    var params = new URLSearchParams(window.location.search);
+    var country = (params.get('country') || params.get('country_code') || '').toLowerCase();
+    if (country === 'uk') country = 'gb';
+    if (country === 'united-kingdom') country = 'gb';
+    if (country === 'usa') country = 'us';
+
+    var countryNames = {
+      gb: 'United Kingdom',
+      us: 'United States',
+      ca: 'Canada',
+      au: 'Australia',
+      nz: 'New Zealand',
+      ie: 'Ireland'
+    };
+    if (countryNames[country]) {
+      Array.prototype.slice.call(root.querySelectorAll('[data-location-country-name]')).forEach(function(label) {
+        label.textContent = countryNames[country];
+      });
+    }
+
+    var cards = Array.prototype.slice.call(root.querySelectorAll('[data-location-advice-card]'));
+    var empty = root.querySelector('[data-location-advice-empty]');
+    var visible = 0;
+
+    cards.forEach(function(card, index) {
+      var tags = (card.getAttribute('data-tags') || '').toLowerCase();
+      var isGlobal = tags.indexOf('global-advice') !== -1 || tags.indexOf('applies-all-countries') !== -1;
+      var isCountry = country && tags.indexOf('country:' + country) !== -1;
+      var show = false;
+
+      if (!country || country === 'global') {
+        show = isGlobal || index < 6;
+      } else {
+        show = isCountry || isGlobal;
+      }
+
+      card.hidden = !show;
+      if (show) visible += 1;
+    });
+
+    if (empty) empty.hidden = visible !== 0;
+  });
+</script>

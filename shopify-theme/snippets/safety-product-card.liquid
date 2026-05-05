@@ -1,0 +1,51 @@
+{% liquid
+  assign card_title = title | default: 'Safety product guide'
+  assign card_url = url | default: '/blogs/missing-person-advice/tagged/amazon-affiliate'
+  assign card_text = text | default: 'Compare practical safety products alongside police-first Missing Alerts guidance.'
+%}
+
+<article class="ma-safety-product-card">
+  <div class="ma-safety-product-card__eyebrow">Safety product guide</div>
+  <h3 class="ma-safety-product-card__title">{{ card_title | escape }}</h3>
+  <p class="ma-safety-product-card__text">{{ card_text | escape }}</p>
+  <a class="ma-safety-product-card__link" href="{{ card_url }}">Read guide</a>
+</article>
+
+<style>
+  .ma-safety-product-card{
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:8px;
+    padding:16px;
+    background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));
+  }
+  .ma-safety-product-card__eyebrow{
+    margin:0 0 8px;
+    color:#ffd2d2;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  .ma-safety-product-card__title{
+    margin:0 0 8px;
+    color:#fff;
+    font-size:16px;
+    line-height:1.25;
+    font-weight:800;
+  }
+  .ma-safety-product-card__text{
+    margin:0 0 12px;
+    color:rgba(255,255,255,.72);
+    font-size:13px;
+    line-height:1.45;
+  }
+  .ma-safety-product-card__link{
+    display:inline-flex;
+    color:#fff;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    text-decoration:none;
+  }
+</style>

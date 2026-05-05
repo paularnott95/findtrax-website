@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "location-case-page-alert-dispatch",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

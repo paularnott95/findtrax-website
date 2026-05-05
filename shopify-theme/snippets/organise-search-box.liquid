@@ -1,0 +1,179 @@
+{% liquid
+  assign case_query = article.url | url_encode
+  assign title_query = article.title | url_encode
+  assign case_country = article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+  if case_country == blank
+    for article_tag in article.tags
+      assign tag_downcase = article_tag | downcase | strip
+      if tag_downcase contains 'country:'
+        assign case_country = article_tag | split: ':' | last | strip
+        break
+      endif
+    endfor
+  endif
+  if case_country == blank
+    assign case_country = article.metafields.custom.region.value | default: article.metafields.custom.region | strip
+  endif
+  if case_country == blank
+    assign case_country = 'Global'
+  endif
+%}
+
+{% if blog.handle == 'missing-persons' and found_safe != true %}
+  <section class="ma-organise-search sidebar-card" aria-labelledby="ma-organise-search-title-{{ article.id }}">
+    <div class="ma-organise-search__eyebrow">Local Search Planning</div>
+    <h3 id="ma-organise-search-title-{{ article.id }}" class="ma-organise-search__title">ORGANISE A SEARCH</h3>
+    <p class="ma-organise-search__copy">
+      Help coordinate a local search connected to this case. Add meeting details, search area, timing and contact information so supporters know where to go and how to help safely.
+    </p>
+    <p class="ma-organise-search__line">A planned search gives local people a safe place to help.</p>
+
+    <details class="ma-organise-search__details">
+      <summary class="ma-organise-search__summary">ORGANISE SEARCH</summary>
+
+      <div class="ma-organise-search__safety" role="note">
+        Only organise searches where it is safe and lawful to do so. If there is immediate danger or new information, contact police first.
+      </div>
+
+      <form
+        class="ma-organise-search__form"
+        data-organise-search-form
+        data-case-url="{{ article.url }}"
+        data-case-title="{{ article.title | escape }}"
+        data-case-country="{{ case_country | escape }}"
+      >
+        <input type="hidden" name="case_url" value="{{ article.url }}">
+        <input type="hidden" name="case_title" value="{{ article.title | escape }}">
+
+        <div class="ma-organise-search__grid">
+          <label class="ma-organise-search__field">
+            <span>Search title</span>
+            <input type="text" name="search_title" autocomplete="off" required>
+          </label>
+          <label class="ma-organise-search__field">
+            <span>Search date</span>
+            <input type="date" name="search_date" required>
+          </label>
+          <label class="ma-organise-search__field">
+            <span>Start time</span>
+            <input type="time" name="start_time" required>
+          </label>
+          <label class="ma-organise-search__field">
+            <span>End time optional</span>
+            <input type="time" name="end_time">
+          </label>
+          <label class="ma-organise-search__field ma-organise-search__field--wide">
+            <span>Meeting location</span>
+            <input type="text" name="meeting_location" autocomplete="street-address" required>
+          </label>
+          <label class="ma-organise-search__field ma-organise-search__field--wide">
+            <span>Search area / route</span>
+            <textarea name="search_area" rows="3" required></textarea>
+          </label>
+          <div class="ma-organise-search__field ma-organise-search__field--wide">
+            {% render 'location-selector',
+              id: 'organise-search',
+              country: case_country,
+              country_name: 'country',
+              region_name: 'region',
+              city_name: 'city'
+            %}
+          </div>
+          <label class="ma-organise-search__field">
+            <span>Contact name</span>
+            <input type="text" name="contact_name" autocomplete="name" required>
+          </label>
+          <label class="ma-organise-search__field">
+            <span>Contact phone</span>
+            <input type="tel" name="contact_phone" autocomplete="tel">
+          </label>
+          <label class="ma-organise-search__field">
+            <span>Contact email</span>
+            <input type="email" name="contact_email" autocomplete="email" required>
+          </label>
+          <label class="ma-organise-search__field ma-organise-search__field--wide">
+            <span>Safety notes</span>
+            <textarea name="safety_notes" rows="3" required></textarea>
+          </label>
+          <label class="ma-organise-search__field">
+            <span>Police aware?</span>
+            <select name="police_aware" required>
+              <option value="">Select</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </label>
+          <label class="ma-organise-search__field">
+            <span>Family approved?</span>
+            <select name="family_approved" required>
+              <option value="">Select</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </label>
+          <label class="ma-organise-search__field ma-organise-search__field--wide">
+            <span>Extra notes</span>
+            <textarea name="extra_notes" rows="3"></textarea>
+          </label>
+        </div>
+
+        <div class="ma-organise-search__options" aria-label="Organised search listing options">
+          <article class="ma-organise-search__option">
+            <h4>FREE SEARCH LISTING</h4>
+            <p>List this organised search on the case page so visitors can see where and when people are meeting.</p>
+            <ul>
+              <li>Appears on this case page</li>
+              <li>Basic search details</li>
+              <li>Country and location shown</li>
+              <li>Manual review before publishing</li>
+            </ul>
+            <a
+              href="/pages/submit-organised-search?case={{ case_query }}&case_title={{ title_query }}"
+              class="ma-organise-search__button"
+              data-submit-free-search
+              aria-label="Submit free search listing for {{ article.title | escape }}"
+            >
+              SUBMIT FREE SEARCH LISTING
+            </a>
+          </article>
+
+          <article class="ma-organise-search__option ma-organise-search__option--featured">
+            <h4>FEATURED ORGANISED SEARCH</h4>
+            <p>Give this search extra visibility by placing it in the organised searches section and adding ALERT DISPATCH where needed.</p>
+            <ul>
+              <li>Appears on this case page</li>
+              <li>Featured in homepage ORGANISED SEARCHES section</li>
+              <li>Country-specific visibility</li>
+              <li>Optional ALERT DISPATCH visibility upgrade</li>
+              <li>Urgent visibility badge</li>
+              <li>Automatically expires after the search date</li>
+            </ul>
+            <a
+              href="/products/featured-organised-search?case={{ case_query }}&case_title={{ title_query }}"
+              class="ma-organise-search__button ma-organise-search__button--featured"
+              data-submit-featured-search
+              data-featured-search-payment
+              aria-label="Feature organised search for {{ article.title | escape }}"
+            >
+              FEATURE THIS SEARCH
+            </a>
+          </article>
+        </div>
+
+        {% render 'alert-dispatch-cta',
+          article: article,
+          entity_type: 'organised_search',
+          entity_id: article.id,
+          entity_handle: article.handle,
+          entity_title: article.title
+        %}
+
+        <p class="ma-organise-search__todo">
+          Details are reviewed before anything appears publicly. Automated submission will connect to the Missing Alerts backend later.
+        </p>
+      </form>
+    </details>
+  </section>
+
+  <script src="{{ 'organise-search.js' | asset_url }}" defer></script>
+{% endif %}

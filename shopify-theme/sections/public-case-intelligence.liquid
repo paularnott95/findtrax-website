@@ -1,0 +1,302 @@
+{% comment %}
+  Community Area landing page on Shopify.
+  The actual member network lives on the public Vercel app, while this page gives the storefront a real public route.
+{% endcomment %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .case-intelligence-public-{{ section.id }} {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    color: #fff;
+  }
+
+  .case-intelligence-public__shell-{{ section.id }} {
+    overflow: hidden;
+    border-radius: 32px;
+    padding: 1.5rem;
+    background:
+      radial-gradient(circle at top left, rgba(239, 68, 68, 0.24), transparent 24%),
+      radial-gradient(circle at right top, rgba(251, 191, 36, 0.08), transparent 28%),
+      linear-gradient(180deg, #170708 0%, #090203 100%);
+    border: 1px solid rgba(255, 105, 120, 0.18);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .case-intelligence-public__hero-{{ section.id }},
+  .case-intelligence-public__card-{{ section.id }},
+  .case-intelligence-public__note-{{ section.id }} {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #180809 0%, #0b0203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .case-intelligence-public__hero-{{ section.id }} {
+    border-radius: 28px;
+    padding: 2rem;
+  }
+
+  .case-intelligence-public__eyebrow-{{ section.id }} {
+    margin: 0 0 0.55rem;
+    color: #f4b8bf;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .case-intelligence-public__heading-{{ section.id }} {
+    margin: 0;
+    font-size: clamp(3rem, 5vw, 5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .case-intelligence-public__intro-{{ section.id }} {
+    max-width: 64rem;
+    margin: 1rem 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.22rem;
+    line-height: 1.7;
+  }
+
+  .case-intelligence-public__actions-{{ section.id }},
+  .case-intelligence-public__chips-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.4rem;
+  }
+
+  .case-intelligence-public__button-{{ section.id }},
+  .case-intelligence-public__button-secondary-{{ section.id }},
+  .case-intelligence-public__chip-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.4rem;
+    padding: 0 1.3rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .case-intelligence-public__button-{{ section.id }} {
+    background: linear-gradient(180deg, #ff3b3b 0%, #d61f1f 100%);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(173, 17, 17, 0.22);
+  }
+
+  .case-intelligence-public__button-secondary-{{ section.id }} {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+  }
+
+  .case-intelligence-public__chip-{{ section.id }} {
+    min-height: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.92rem;
+  }
+
+  .case-intelligence-public__grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .case-intelligence-public__card-{{ section.id }} {
+    border-radius: 24px;
+    padding: 1.5rem;
+  }
+
+  .case-intelligence-public__label-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .case-intelligence-public__title-{{ section.id }} {
+    margin: 0.6rem 0 0;
+    font-size: 1.65rem;
+    text-transform: uppercase;
+  }
+
+  .case-intelligence-public__copy-{{ section.id }} {
+    margin: 0.8rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .case-intelligence-public__note-{{ section.id }} {
+    margin-top: 1.5rem;
+    border-radius: 22px;
+    padding: 1rem 1.15rem;
+    color: #fde68a;
+    line-height: 1.6;
+    border-color: rgba(251, 191, 36, 0.18);
+    background:
+      linear-gradient(180deg, rgba(251, 191, 36, 0.12), rgba(251, 191, 36, 0.07)),
+      linear-gradient(180deg, #181103 0%, #0f0902 100%);
+  }
+
+  @media screen and (max-width: 989px) {
+    .case-intelligence-public__grid-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .case-intelligence-public__shell-{{ section.id }} {
+      padding: 1rem;
+      border-radius: 24px;
+    }
+
+    .case-intelligence-public__hero-{{ section.id }},
+    .case-intelligence-public__card-{{ section.id }},
+    .case-intelligence-public__note-{{ section.id }} {
+      padding: 1.2rem;
+      border-radius: 20px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="case-intelligence-public-{{ section.id }} section-{{ section.id }}-padding">
+  <div class="case-intelligence-public__shell-{{ section.id }}">
+    <div class="case-intelligence-public__hero-{{ section.id }}">
+      <p class="case-intelligence-public__eyebrow-{{ section.id }}">Missing Alerts Community</p>
+      <h1 class="case-intelligence-public__heading-{{ section.id }}">{{ section.settings.heading | default: 'COMMUNITY AREA' }}</h1>
+      <div class="case-intelligence-public__intro-{{ section.id }}">{{ section.settings.intro | default: '<p>General missing-person awareness, safety advice, volunteer guidance, family support, platform updates, and country community awareness.</p>' }}</div>
+
+      <div class="case-intelligence-public__actions-{{ section.id }}">
+        <a href="/pages/member-area#case-intelligence-network" class="case-intelligence-public__button-{{ section.id }}">Browse Community Area</a>
+
+        {% if customer %}
+          <a href="/pages/member-area#case-intelligence-network" class="case-intelligence-public__button-secondary-{{ section.id }}">Open Community Area</a>
+        {% else %}
+          <a href="/account/login" class="case-intelligence-public__button-secondary-{{ section.id }}">Log In / Join Free</a>
+        {% endif %}
+
+        <a href="{{ section.settings.professionals_link }}" class="case-intelligence-public__button-secondary-{{ section.id }}">Professionals Apply</a>
+      </div>
+
+      <div class="case-intelligence-public__chips-{{ section.id }}">
+        <span class="case-intelligence-public__chip-{{ section.id }}">Family Support</span>
+        <span class="case-intelligence-public__chip-{{ section.id }}">Safe Sharing Online</span>
+        <span class="case-intelligence-public__chip-{{ section.id }}">Volunteer Search Advice</span>
+        <span class="case-intelligence-public__chip-{{ section.id }}">Country Community Alerts</span>
+      </div>
+    </div>
+
+    <div class="case-intelligence-public__grid-{{ section.id }}">
+      <article class="case-intelligence-public__card-{{ section.id }}">
+        <div class="case-intelligence-public__label-{{ section.id }}">Family support</div>
+        <h2 class="case-intelligence-public__title-{{ section.id }}">General Discussions Only</h2>
+        <p class="case-intelligence-public__copy-{{ section.id }}">
+          Community discussions are for general support, awareness, and practical guidance. Specific case information belongs in comments on that case page.
+        </p>
+      </article>
+
+      <article class="case-intelligence-public__card-{{ section.id }}">
+        <div class="case-intelligence-public__label-{{ section.id }}">Safe sharing online</div>
+        <h2 class="case-intelligence-public__title-{{ section.id }}">No Accusations Or Speculation</h2>
+        <p class="case-intelligence-public__copy-{{ section.id }}">
+          Do not name unverified people, make accusations, speculate, or post private contact details.
+        </p>
+      </article>
+
+      <article class="case-intelligence-public__card-{{ section.id }}">
+        <div class="case-intelligence-public__label-{{ section.id }}">Volunteer search advice</div>
+        <h2 class="case-intelligence-public__title-{{ section.id }}">Help Safely And Responsibly</h2>
+        <p class="case-intelligence-public__copy-{{ section.id }}">
+          Discuss safe search preparation, prevention and awareness, questions and guidance, and country-level community alerts.
+        </p>
+      </article>
+    </div>
+
+    <div class="case-intelligence-public__note-{{ section.id }}">
+      General discussions only. Case-specific information belongs in comments on that case page. Urgent sightings should go to police or local emergency services first.
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Community Area",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "COMMUNITY AREA"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro",
+      "default": "<p>General missing-person awareness, safety advice, volunteer guidance, family support, platform updates, and country community awareness.</p>"
+    },
+    {
+      "type": "url",
+      "id": "discussions_link",
+      "label": "Browse discussions link"
+    },
+    {
+      "type": "url",
+      "id": "network_link",
+      "label": "Open community area link"
+    },
+    {
+      "type": "url",
+      "id": "professionals_link",
+      "label": "Professionals apply link"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

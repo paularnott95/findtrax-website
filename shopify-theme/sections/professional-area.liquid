@@ -1,0 +1,1413 @@
+{% assign professional_login_return_separator = '?' %}
+{% assign professional_register_return_separator = '?' %}
+{% if routes.account_login_url contains '?' %}
+  {% assign professional_login_return_separator = '&' %}
+{% endif %}
+{% if routes.account_register_url contains '?' %}
+  {% assign professional_register_return_separator = '&' %}
+{% endif %}
+{% assign professional_login_url = routes.account_login_url | append: professional_login_return_separator | append: 'return_url=/pages/professional-area' %}
+{% assign professional_register_url = routes.account_register_url | append: professional_register_return_separator | append: 'return_url=/pages/professional-area' %}
+{% assign current_professional_tags = '' %}
+{% assign professional_metafield_status = '' %}
+{% assign professional_metafield_account_type = '' %}
+{% assign membership_tier_meta = '' %}
+{% if customer %}
+  {% assign current_professional_tags = customer.tags | join: ',' | downcase %}
+  {% assign professional_metafield_status = customer.metafields.custom.professional_verification_status.value | default: customer.metafields.custom.professional_verification_status | default: customer.metafields.custom.professional_status.value | default: customer.metafields.custom.professional_status | default: customer.metafields.missingalerts.professional_verification_status.value | default: customer.metafields.missingalerts.professional_verification_status | default: customer.metafields.missingalerts.professional_status.value | default: customer.metafields.missingalerts.professional_status | append: '' | downcase %}
+  {% assign professional_metafield_account_type = customer.metafields.custom.account_type.value | default: customer.metafields.custom.account_type | default: customer.metafields.missingalerts.account_type.value | default: customer.metafields.missingalerts.account_type | append: '' | downcase %}
+  {% assign membership_tier_meta = customer.metafields.custom.membership_tier.value | default: customer.metafields.custom.membership_tier | default: customer.metafields.custom.membership_type.value | default: customer.metafields.custom.membership_type | default: customer.metafields.missingalerts.membership_tier.value | default: customer.metafields.missingalerts.membership_tier | default: customer.metafields.missingalerts.membership_type.value | default: customer.metafields.missingalerts.membership_type | append: '' | downcase %}
+{% endif %}
+
+{% assign has_professional_tag = false %}
+{% assign has_paid_professional_tier = false %}
+{% assign professional_verified = false %}
+{% assign professional_inbox_allowed = false %}
+{% assign detected_professional_tier = 'COMMUNITY' %}
+{% assign professional_contact_limit_label = 'LOCKED' %}
+
+{% if customer %}
+  {% for customer_tag in customer.tags %}
+    {% assign normalized_customer_tag = customer_tag | downcase | strip %}
+    {% if normalized_customer_tag == 'professional'
+      or normalized_customer_tag == 'pro'
+      or normalized_customer_tag == 'professional_pending'
+      or normalized_customer_tag == 'professional_premium'
+      or normalized_customer_tag == 'professional_enterprise'
+      or normalized_customer_tag == 'professional_access'
+      or normalized_customer_tag == 'professional_plus'
+      or normalized_customer_tag == 'professional_elite'
+      or normalized_customer_tag == 'professional_pending_verification'
+      or normalized_customer_tag == 'professional_verified'
+    %}
+      {% assign has_professional_tag = true %}
+    {% endif %}
+    {% if normalized_customer_tag == 'professional_access'
+      or normalized_customer_tag == 'professional_plus'
+      or normalized_customer_tag == 'professional_elite'
+      or normalized_customer_tag == 'professional_premium'
+      or normalized_customer_tag == 'professional_enterprise'
+    %}
+      {% assign has_paid_professional_tier = true %}
+    {% endif %}
+    {% if normalized_customer_tag == 'professional_verified'
+      or normalized_customer_tag == 'verified-professional'
+      or normalized_customer_tag == 'approved-professional'
+    %}
+      {% assign professional_verified = true %}
+    {% endif %}
+    {% if normalized_customer_tag == 'professional_inbox_enabled'
+      or normalized_customer_tag == 'professional_messaging_enabled'
+      or normalized_customer_tag == 'direct_inbox_enabled'
+    %}
+      {% assign professional_inbox_allowed = true %}
+    {% endif %}
+  {% endfor %}
+
+  {% if professional_metafield_status contains 'professional' or professional_metafield_account_type contains 'professional' %}
+    {% assign has_professional_tag = true %}
+  {% endif %}
+  {% if membership_tier_meta contains 'professional_access'
+    or membership_tier_meta contains 'professional_plus'
+    or membership_tier_meta contains 'professional_elite'
+    or membership_tier_meta contains 'professional_premium'
+    or membership_tier_meta contains 'professional_enterprise'
+  %}
+    {% assign has_paid_professional_tier = true %}
+  {% endif %}
+  {% if professional_metafield_status contains 'approved' or professional_metafield_status contains 'verified' %}
+    {% assign professional_verified = true %}
+  {% endif %}
+  {% if current_professional_tags contains 'professional_inbox_enabled'
+    or current_professional_tags contains 'professional_messaging_enabled'
+    or current_professional_tags contains 'direct_inbox_enabled'
+    or professional_metafield_status contains 'inbox_enabled'
+  %}
+    {% assign professional_inbox_allowed = true %}
+  {% endif %}
+
+  {% if current_professional_tags contains 'professional_premium' or membership_tier_meta contains 'professional_premium' %}
+    {% assign detected_professional_tier = 'PROFESSIONAL PREMIUM' %}
+    {% assign professional_contact_limit_label = 'Unlimited family contacts' %}
+  {% elsif current_professional_tags contains 'professional_elite' or membership_tier_meta contains 'professional_elite' %}
+    {% assign detected_professional_tier = 'PROFESSIONAL ELITE' %}
+    {% assign professional_contact_limit_label = 'Unlimited family contacts' %}
+  {% elsif current_professional_tags contains 'professional_plus' or membership_tier_meta contains 'professional_plus' or current_professional_tags contains 'professional_medium' or membership_tier_meta contains 'professional_medium' %}
+    {% assign detected_professional_tier = 'PROFESSIONAL PLUS' %}
+    {% assign professional_contact_limit_label = '3 family contacts per day' %}
+  {% elsif current_professional_tags contains 'professional_access' or membership_tier_meta contains 'professional_access' or current_professional_tags contains 'professional_enterprise' or membership_tier_meta contains 'professional_enterprise' %}
+    {% assign detected_professional_tier = 'PROFESSIONAL ACCESS' %}
+    {% assign professional_contact_limit_label = '3 family contacts per day' %}
+  {% endif %}
+{% endif %}
+
+{% assign professional_area_state = 'logged_out' %}
+{% if customer %}
+  {% assign professional_area_state = 'upgrade_required' %}
+  {% if has_paid_professional_tier == true and professional_verified == false %}
+    {% assign professional_area_state = 'pending_verification' %}
+  {% endif %}
+  {% if has_paid_professional_tier == true and professional_verified == true %}
+    {% assign professional_area_state = 'approved_dashboard' %}
+  {% endif %}
+{% endif %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .professional-area-{{ section.id }} {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    color: #fff;
+  }
+
+  .professional-area__shell-{{ section.id }} {
+    overflow: hidden;
+    border-radius: 32px;
+    padding: 1.35rem;
+    background:
+      radial-gradient(circle at top left, rgba(255, 49, 86, 0.2), transparent 28%),
+      radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.06), transparent 20%),
+      linear-gradient(180deg, #0b0c10 0%, #050608 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+
+  .professional-area__hero-{{ section.id }},
+  .professional-area__section-{{ section.id }},
+  .professional-area__state-{{ section.id }},
+  .professional-area__summary-{{ section.id }},
+  .professional-area__card-{{ section.id }} {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
+      linear-gradient(180deg, #15161a 0%, #0a0b0e 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.24);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 24px;
+  }
+
+  .professional-area__hero-{{ section.id }},
+  .professional-area__section-{{ section.id }},
+  .professional-area__state-{{ section.id }},
+  .professional-area__summary-{{ section.id }} {
+    padding: 1.45rem;
+  }
+
+  .professional-area__eyebrow-{{ section.id }},
+  .professional-area__label-{{ section.id }} {
+    margin: 0 0 0.45rem;
+    color: #ffb4bf;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .professional-area__heading-{{ section.id }},
+  .professional-area__title-{{ section.id }},
+  .professional-area__card-title-{{ section.id }} {
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .professional-area__heading-{{ section.id }} {
+    font-size: clamp(2.8rem, 5vw, 4.8rem);
+    line-height: 0.95;
+  }
+
+  .professional-area__intro-{{ section.id }},
+  .professional-area__copy-{{ section.id }},
+  .professional-area__section-copy-{{ section.id }} {
+    color: rgba(255,255,255,0.74);
+    line-height: 1.7;
+  }
+
+  .professional-area__hero-{{ section.id }} {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .professional-area__actions-{{ section.id }},
+  .professional-area__tabs-{{ section.id }},
+  .professional-area__cta-row-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+  }
+
+  .professional-area__button-{{ section.id }},
+  .professional-area__button-secondary-{{ section.id }},
+  .professional-area__tab-{{ section.id }},
+  .professional-area__disabled-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.35rem;
+    padding: 0 1.25rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .professional-area__button-{{ section.id }} {
+    color: #fff;
+    background: linear-gradient(135deg, #ff2f43 0%, #d90429 58%, #8f0016 100%);
+    box-shadow: 0 14px 28px rgba(217,4,41,0.28);
+  }
+
+  .professional-area__button-secondary-{{ section.id }},
+  .professional-area__tab-{{ section.id }},
+  .professional-area__disabled-{{ section.id }} {
+    color: #fff;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .professional-area__tab-{{ section.id }}.is-active {
+    background: rgba(255, 43, 43, 0.2);
+    border-color: rgba(255, 43, 43, 0.35);
+  }
+
+  .professional-area__disabled-{{ section.id }} {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .professional-area__summary-grid-{{ section.id }},
+  .professional-area__card-grid-{{ section.id }},
+  .professional-area__profile-grid-{{ section.id }} {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .professional-area__summary-grid-{{ section.id }} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 1rem;
+  }
+
+  .professional-area__card-grid-{{ section.id }},
+  .professional-area__profile-grid-{{ section.id }} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 1rem;
+  }
+
+  .professional-area__summary-card-{{ section.id }},
+  .professional-area__card-{{ section.id }} {
+    padding: 1.2rem;
+  }
+
+  .professional-area__summary-card-{{ section.id }} {
+    border-radius: 20px;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .professional-area__summary-value-{{ section.id }} {
+    margin-top: 0.55rem;
+    font-size: clamp(1.6rem, 2.3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    word-break: break-word;
+  }
+
+  .professional-area__summary-note-{{ section.id }} {
+    margin-top: 0.5rem;
+    color: rgba(255,255,255,0.58);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .professional-area__help-list-{{ section.id }} {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .professional-area__help-filters-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .professional-area__help-filters-{{ section.id }} input,
+  .professional-area__help-filters-{{ section.id }} select {
+    min-height: 44px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    background: rgba(0,0,0,0.24);
+    color: #fff;
+    padding: 0 0.85rem;
+  }
+
+  .professional-area__help-card-{{ section.id }} {
+    display: grid;
+    gap: 0.9rem;
+    padding: 1rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.09);
+  }
+
+  .professional-area__help-meta-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    color: rgba(255,255,255,0.66);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .professional-area__help-form-{{ section.id }} {
+    display: none;
+    gap: 0.75rem;
+  }
+
+  .professional-area__help-form-{{ section.id }}.is-active {
+    display: grid;
+  }
+
+  .professional-area__help-form-{{ section.id }} textarea {
+    width: 100%;
+    min-height: 7rem;
+    resize: vertical;
+    border-radius: 14px;
+    padding: 0.85rem;
+    color: #fff;
+    background: rgba(0,0,0,0.34);
+    border: 1px solid rgba(255,255,255,0.14);
+  }
+
+  .professional-area__help-form-{{ section.id }} select {
+    width: 100%;
+    min-height: 3.3rem;
+    border-radius: 14px;
+    padding: 0 0.85rem;
+    color: #fff;
+    background: rgba(0,0,0,0.34);
+    border: 1px solid rgba(255,255,255,0.14);
+  }
+
+  .professional-area__modal-{{ section.id }} {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    padding: 1.2rem;
+    background: rgba(0,0,0,0.72);
+  }
+
+  .professional-area__modal-dialog-{{ section.id }} {
+    width: min(100%, 680px);
+    display: grid;
+    gap: 1rem;
+    border-radius: 22px;
+    padding: 1.35rem;
+    background: linear-gradient(180deg, #17191f 0%, #090a0d 100%);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.46);
+  }
+
+  .professional-area__status-line-{{ section.id }} {
+    margin-top: 1rem;
+    color: rgba(255,255,255,0.68);
+    line-height: 1.6;
+  }
+
+  .professional-area__section-{{ section.id }} {
+    margin-top: 1rem;
+  }
+
+  .professional-area__section-head-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: end;
+  }
+
+  .professional-area__card-{{ section.id }} {
+    border-radius: 22px;
+  }
+
+  .professional-area__badge-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.1rem;
+    padding: 0 0.8rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.88);
+    font-size: 0.84rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .professional-area__dashboard [data-professional-tab-panel] {
+    display: none;
+  }
+
+  .professional-area__dashboard [data-professional-tab-panel].is-active {
+    display: block;
+  }
+
+  .professional-area__state-{{ section.id }} {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .professional-area__state-badge-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 2.3rem;
+    padding: 0 0.9rem;
+    border-radius: 999px;
+    background: rgba(251,191,36,0.12);
+    border: 1px solid rgba(251,191,36,0.2);
+    color: #fde68a;
+    font-size: 0.84rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ma-program-panel,
+  .ma-control-card,
+  .ma-control-stat,
+  .ma-control-list,
+  .ma-control-empty {
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    border-radius: 20px;
+    box-shadow:
+      0 20px 45px rgba(15, 23, 42, 0.10),
+      0 2px 6px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  .ma-control-shell {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 1.4rem;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 1.2rem;
+    background: #eef1f5;
+    border-radius: 28px;
+  }
+
+  .ma-control-sidebar {
+    position: sticky;
+    top: 1.6rem;
+    align-self: start;
+    padding: 1rem;
+  }
+
+  .ma-control-main {
+    min-width: 0;
+  }
+
+  .ma-program-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    padding: 1rem 1.15rem;
+    color: #111827;
+  }
+
+  .ma-program-toolbar__title,
+  .ma-control-sidebar__brand {
+    color: #111827;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .ma-program-toolbar__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    color: #64748b;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .ma-program-status-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+    background: #16a34a;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
+  }
+
+  .ma-control-sidebar__nav {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: 1.1rem;
+  }
+
+  .ma-control-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 3.6rem;
+    padding: 0 0.85rem;
+    border-radius: 14px;
+    color: #475569;
+    font-size: 1rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .ma-control-sidebar__link.is-active {
+    background: rgba(220, 38, 38, 0.08);
+    color: #991b1b;
+  }
+
+  .ma-control-sidebar__icon {
+    width: 1.55rem;
+    color: #94a3b8;
+    text-align: center;
+  }
+
+  .professional-area-{{ section.id }} {
+    max-width: none;
+    background: #eef1f5;
+    color: #111827;
+  }
+
+  .professional-area__shell-{{ section.id }} {
+    overflow: visible;
+    color: #111827;
+  }
+
+  .professional-area__main-{{ section.id }} {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .professional-area__hero-{{ section.id }},
+  .professional-area__section-{{ section.id }},
+  .professional-area__state-{{ section.id }},
+  .professional-area__summary-{{ section.id }},
+  .professional-area__summary-card-{{ section.id }},
+  .professional-area__card-{{ section.id }},
+  .professional-area__help-card-{{ section.id }},
+  .ma-owner-inbox,
+  .ma-owner-inbox__list,
+  .professional-area__modal-dialog-{{ section.id }} {
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    color: #111827;
+    box-shadow:
+      0 20px 45px rgba(15, 23, 42, 0.10),
+      0 2px 6px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  .professional-area__eyebrow-{{ section.id }},
+  .professional-area__label-{{ section.id }},
+  .professional-area__summary-note-{{ section.id }},
+  .professional-area__help-meta-{{ section.id }},
+  .professional-area__section-copy-{{ section.id }},
+  .professional-area__status-line-{{ section.id }} {
+    color: #64748b;
+  }
+
+  .professional-area__heading-{{ section.id }},
+  .professional-area__title-{{ section.id }},
+  .professional-area__card-title-{{ section.id }},
+  .professional-area__summary-value-{{ section.id }} {
+    color: #111827;
+  }
+
+  .professional-area__intro-{{ section.id }},
+  .professional-area__copy-{{ section.id }} {
+    color: #475569;
+  }
+
+  .professional-area__button-{{ section.id }} {
+    background: #b91c1c;
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(185, 28, 28, 0.18);
+  }
+
+  .professional-area__button-secondary-{{ section.id }},
+  .professional-area__tab-{{ section.id }},
+  .professional-area__disabled-{{ section.id }} {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    color: #334155;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  }
+
+  .professional-area__tab-{{ section.id }}.is-active {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.20);
+    color: #991b1b;
+    box-shadow: none;
+  }
+
+  .professional-area__help-filters-{{ section.id }} input,
+  .professional-area__help-filters-{{ section.id }} select,
+  .professional-area__help-form-{{ section.id }} textarea,
+  .professional-area__help-form-{{ section.id }} select {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    color: #111827;
+  }
+
+  @media screen and (max-width: 989px) {
+    .professional-area__summary-grid-{{ section.id }},
+    .professional-area__card-grid-{{ section.id }},
+    .professional-area__profile-grid-{{ section.id }} {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ma-control-shell {
+      display: block;
+      padding: 1rem;
+      border-radius: 24px;
+    }
+
+    .ma-control-sidebar {
+      position: static;
+      margin-bottom: 1rem;
+    }
+
+    .ma-control-sidebar__nav {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .professional-area__main-{{ section.id }} {
+      grid-column: auto;
+    }
+
+    .professional-area-{{ section.id }} {
+      padding: 0 1rem;
+    }
+
+    .professional-area__shell-{{ section.id }} {
+      padding: 1rem;
+      border-radius: 24px;
+    }
+
+    .professional-area__hero-{{ section.id }},
+    .professional-area__section-{{ section.id }},
+    .professional-area__state-{{ section.id }},
+    .professional-area__summary-{{ section.id }} {
+      padding: 1.2rem;
+      border-radius: 20px;
+    }
+
+    .professional-area__summary-grid-{{ section.id }},
+    .professional-area__card-grid-{{ section.id }},
+    .professional-area__profile-grid-{{ section.id }},
+    .professional-area__help-filters-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .professional-area__button-{{ section.id }},
+    .professional-area__button-secondary-{{ section.id }},
+    .professional-area__tab-{{ section.id }},
+    .professional-area__disabled-{{ section.id }} {
+      width: 100%;
+    }
+  }
+{%- endstyle -%}
+
+<section class="professional-area-{{ section.id }} section-{{ section.id }}-padding">
+  <div class="professional-area__shell-{{ section.id }} ma-control-shell ma-program-panel"
+       data-professional-help-root
+       data-customer-id="{% if customer %}{{ customer.id | append: '' | escape }}{% endif %}"
+       data-customer-email="{% if customer %}{{ customer.email | escape }}{% endif %}">
+    <aside class="ma-control-sidebar ma-program-panel" aria-label="Professional area navigation">
+      <div class="ma-control-sidebar__brand">Missing Alerts Pro</div>
+      <nav class="ma-control-sidebar__nav">
+        <a class="ma-control-sidebar__link is-active" href="#professional-area-{{ section.id }}"><span class="ma-control-sidebar__icon">01</span>Status</a>
+        <a class="ma-control-sidebar__link" href="#professional-families-{{ section.id }}"><span class="ma-control-sidebar__icon">02</span>Families</a>
+        <a class="ma-control-sidebar__link" href="#professional-inbox-{{ section.id }}"><span class="ma-control-sidebar__icon">03</span>Inbox</a>
+        <a class="ma-control-sidebar__link" href="#professional-profile-{{ section.id }}"><span class="ma-control-sidebar__icon">04</span>Profile</a>
+        <a class="ma-control-sidebar__link" href="/pages/professional-membership"><span class="ma-control-sidebar__icon">05</span>Upgrade</a>
+      </nav>
+    </aside>
+    <div class="professional-area__main-{{ section.id }} ma-control-main" id="professional-area-{{ section.id }}">
+    <div class="ma-program-toolbar ma-program-panel">
+      <div class="ma-program-toolbar__title">Missing Alerts Control Centre</div>
+      <div class="ma-program-toolbar__meta">
+        <span class="ma-program-status-dot" aria-hidden="true"></span>
+        <span>{{ detected_professional_tier }}</span>
+        <span>Last updated now</span>
+      </div>
+    </div>
+    <div class="professional-area__hero-{{ section.id }}">
+      <div>
+        <p class="professional-area__eyebrow-{{ section.id }}">PROFESSIONAL CONTROL ROOM</p>
+        <h1 class="professional-area__heading-{{ section.id }}">PROFESSIONAL AREA</h1>
+      </div>
+
+      {% if professional_area_state == 'logged_out' %}
+        <p class="professional-area__intro-{{ section.id }}">Log in with your normal website account, then apply for professional access if you have not already started the verification path.</p>
+        <div class="professional-area__actions-{{ section.id }}">
+          <a href="{{ professional_login_url }}" class="professional-area__button-{{ section.id }}">LOG IN AS PROFESSIONAL</a>
+          <a href="{{ professional_register_url }}" class="professional-area__button-secondary-{{ section.id }}">CREATE PROFESSIONAL ACCOUNT</a>
+          <a href="/pages/professional-membership" class="professional-area__button-secondary-{{ section.id }}">JOIN AS A PROFESSIONAL</a>
+          <a href="/pages/professionals" class="professional-area__button-secondary-{{ section.id }}">VIEW DIRECTORY</a>
+        </div>
+      {% elsif professional_area_state == 'upgrade_required' %}
+        <div class="professional-area__state-{{ section.id }}">
+          <div class="professional-area__state-badge-{{ section.id }}">UPGRADE REQUIRED</div>
+          <p class="professional-area__intro-{{ section.id }}">
+            {% if has_professional_tag %}
+              This account already carries a professional marker, but paid professional membership is not active yet.
+            {% else %}
+              This logged-in account does not have a professional marker or a paid professional tier yet.
+            {% endif %}
+            Professional tools stay locked until `PROFESSIONAL ACCESS`, `PROFESSIONAL PLUS`, or `PROFESSIONAL ELITE` is active.
+          </p>
+          <div class="professional-area__actions-{{ section.id }}">
+            <a href="/pages/professional-membership" class="professional-area__button-{{ section.id }}">VIEW PROFESSIONAL MEMBERSHIP</a>
+            <a href="/pages/member-area" class="professional-area__button-secondary-{{ section.id }}">RETURN TO MEMBER AREA</a>
+            <a href="/pages/professionals" class="professional-area__button-secondary-{{ section.id }}">VIEW DIRECTORY</a>
+          </div>
+          <article class="professional-area__card-{{ section.id }}" data-help-locked-card>
+            <span class="professional-area__badge-{{ section.id }}">LOCKED</span>
+            <h3 class="professional-area__card-title-{{ section.id }}">Families asking for professional help</h3>
+            <p class="professional-area__copy-{{ section.id }}"><span data-help-waiting-count>0</span> people need help.</p>
+            <p class="professional-area__copy-{{ section.id }}">Families are actively asking for verified professional support. Upgrade to contact families directly through Missing Alerts.</p>
+            <a href="/pages/professional-membership" class="professional-area__button-{{ section.id }}">Upgrade Professional Access</a>
+          </article>
+        </div>
+      {% elsif professional_area_state == 'pending_verification' %}
+        <div class="professional-area__state-{{ section.id }}">
+          <div class="professional-area__state-badge-{{ section.id }}">VERIFICATION PENDING</div>
+          <p class="professional-area__intro-{{ section.id }}">This account has {{ detected_professional_tier }}, but the professional dashboard stays limited until `professional_verified` is present or the matching verification metafield is approved.</p>
+          <div class="professional-area__actions-{{ section.id }}">
+            <a href="/pages/professional-membership" class="professional-area__button-{{ section.id }}">REVIEW PROFESSIONAL MEMBERSHIP</a>
+            <a href="/pages/professionals" class="professional-area__button-secondary-{{ section.id }}">VIEW DIRECTORY</a>
+            <a href="{{ routes.account_url }}" class="professional-area__button-secondary-{{ section.id }}">MANAGE ACCOUNT</a>
+          </div>
+          <article class="professional-area__card-{{ section.id }}" data-help-locked-card>
+            <span class="professional-area__badge-{{ section.id }}">LOCKED</span>
+            <h3 class="professional-area__card-title-{{ section.id }}">Families asking for professional help</h3>
+            <p class="professional-area__copy-{{ section.id }}"><span data-help-waiting-count>0</span> people need help.</p>
+            <p class="professional-area__copy-{{ section.id }}">Families are actively asking for verified professional support. Upgrade to contact families directly through Missing Alerts.</p>
+            <a href="/pages/professional-membership" class="professional-area__button-{{ section.id }}">Upgrade Professional Access</a>
+          </article>
+        </div>
+      {% else %}
+        <p class="professional-area__intro-{{ section.id }}">Paid professional access and verification are both active. This dashboard keeps directory, account, enquiry, and safe-contact status in one professional account space.</p>
+        <div class="professional-area__actions-{{ section.id }}">
+          <a href="/pages/professionals" class="professional-area__button-{{ section.id }}">VIEW DIRECTORY</a>
+          <a href="/pages/professional-membership" class="professional-area__button-secondary-{{ section.id }}">UPGRADE TIER</a>
+          <a href="/pages/member-area" class="professional-area__button-secondary-{{ section.id }}">MEMBER AREA</a>
+        </div>
+        <div class="professional-area__tabs-{{ section.id }}">
+          <button type="button" class="professional-area__tab-{{ section.id }}" data-professional-tab-trigger="overview">OVERVIEW</button>
+          <button type="button" class="professional-area__tab-{{ section.id }}" data-professional-tab-trigger="families">FAMILIES NEEDING HELP</button>
+          <button type="button" class="professional-area__tab-{{ section.id }}" data-professional-tab-trigger="enquiries">ENQUIRIES</button>
+          <button type="button" class="professional-area__tab-{{ section.id }}" data-professional-tab-trigger="profile">PROFILE</button>
+          <button type="button" class="professional-area__tab-{{ section.id }}" data-professional-tab-trigger="directory">DIRECTORY</button>
+          <button type="button" class="professional-area__tab-{{ section.id }}" data-professional-tab-trigger="messaging">MESSAGING</button>
+          <button type="button" class="professional-area__tab-{{ section.id }}" data-professional-tab-trigger="account">ACCOUNT</button>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if customer %}
+      {% render 'member-alert-location-card' %}
+    {% endif %}
+
+    {% if professional_area_state == 'approved_dashboard' %}
+      <section class="professional-area__summary-{{ section.id }}">
+        <div class="professional-area__summary-grid-{{ section.id }}">
+          <article class="professional-area__summary-card-{{ section.id }}">
+            <div class="professional-area__label-{{ section.id }}">TIER</div>
+            <div class="professional-area__summary-value-{{ section.id }}">{{ detected_professional_tier }}</div>
+            <div class="professional-area__summary-note-{{ section.id }}">PAID PROFESSIONAL MEMBERSHIP DETECTED.</div>
+          </article>
+          <article class="professional-area__summary-card-{{ section.id }}">
+            <div class="professional-area__label-{{ section.id }}">VERIFICATION</div>
+            <div class="professional-area__summary-value-{{ section.id }}">APPROVED</div>
+            <div class="professional-area__summary-note-{{ section.id }}">`professional_verified` IS ACTIVE.</div>
+          </article>
+          <article class="professional-area__summary-card-{{ section.id }}">
+            <div class="professional-area__label-{{ section.id }}">DIRECTORY</div>
+            <div class="professional-area__summary-value-{{ section.id }}">VISIBLE</div>
+            <div class="professional-area__summary-note-{{ section.id }}">PUBLIC-SAFE PROFILE ROUTING STAYS AVAILABLE.</div>
+          </article>
+          <article class="professional-area__summary-card-{{ section.id }}">
+            <div class="professional-area__label-{{ section.id }}">MESSAGING</div>
+            <div class="professional-area__summary-value-{{ section.id }}">{% if professional_inbox_allowed %}ENABLED{% else %}LOCKED{% endif %}</div>
+            <div class="professional-area__summary-note-{{ section.id }}">SAFE CONTACT REQUIRES VERIFICATION AND EXPLICIT PERMISSION.</div>
+          </article>
+          <article class="professional-area__summary-card-{{ section.id }}">
+            <div class="professional-area__label-{{ section.id }}">FAMILY CONTACTS</div>
+            <div class="professional-area__summary-value-{{ section.id }}">{{ professional_contact_limit_label }}</div>
+            <div class="professional-area__summary-note-{{ section.id }}">PROFESSIONAL HELP REQUEST ACCESS IS SERVER CHECKED.</div>
+          </article>
+        </div>
+      </section>
+
+      <section
+        id="professional-inbox-{{ section.id }}"
+        class="ma-owner-inbox"
+        data-professional-notifications
+        data-professional-recipient-id="{% if customer %}{{ customer.id | append: '' | escape }}{% endif %}"
+        data-professional-recipient-type="professional"
+      >
+        <div class="ma-owner-inbox__header">
+          <h2>PROFESSIONAL INBOX</h2>
+          <span class="ma-owner-inbox__count" data-professional-notifications-count></span>
+        </div>
+
+        <div class="ma-owner-inbox__list" data-professional-notifications-list>
+          <p class="ma-owner-inbox__empty">No professional notifications yet.</p>
+        </div>
+      </section>
+
+      <div class="professional-area__dashboard">
+        <section class="professional-area__section-{{ section.id }} is-active" data-professional-tab-panel="overview">
+          <div class="professional-area__section-head-{{ section.id }}">
+            <div>
+              <p class="professional-area__eyebrow-{{ section.id }}">OVERVIEW</p>
+              <h2 class="professional-area__title-{{ section.id }}">PROFESSIONAL OVERVIEW</h2>
+            </div>
+            <p class="professional-area__section-copy-{{ section.id }}">Your active professional tier, verification state, and fastest next routes without exposing any unsafe contact path.</p>
+          </div>
+          <div class="professional-area__card-grid-{{ section.id }}">
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">STATUS</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">APPROVED PROFESSIONAL</h3>
+              <p class="professional-area__copy-{{ section.id }}">This account has both a paid professional tier and approved verification.</p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">COUNTRY COVERAGE</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">PROFILE PLACEHOLDER</h3>
+              <p class="professional-area__copy-{{ section.id }}">Country coverage, regions, and worldwide support can be surfaced here once storefront profile fields are exposed.</p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">QUICK ACTIONS</span>
+              <div class="professional-area__cta-row-{{ section.id }}" style="margin-top: 1rem;">
+                <a href="/pages/professionals" class="professional-area__button-{{ section.id }}">VIEW DIRECTORY</a>
+                <a href="/pages/professional-membership" class="professional-area__button-secondary-{{ section.id }}">UPGRADE TIER</a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="professional-area__section-{{ section.id }}" data-professional-tab-panel="families" id="professional-families-{{ section.id }}">
+          <div class="professional-area__section-head-{{ section.id }}">
+            <div>
+              <p class="professional-area__eyebrow-{{ section.id }}">PROFESSIONAL HELP REQUESTS</p>
+              <h2 class="professional-area__title-{{ section.id }}">FAMILIES NEEDING HELP</h2>
+            </div>
+            <p class="professional-area__section-copy-{{ section.id }}">{{ professional_contact_limit_label }}. Family email and phone details are never printed into this page.</p>
+          </div>
+          <form class="professional-area__help-filters-{{ section.id }}" data-help-filters>
+            {% render 'location-selector',
+              id: 'professional-help-filter',
+              required: false,
+              country_name: 'country',
+              region_name: 'region',
+              city_name: 'city'
+            %}
+            <select name="service_type">
+              <option value="">Service type</option>
+              <option value="search">Search</option>
+              <option value="investigation">Investigation</option>
+              <option value="legal">Legal</option>
+              <option value="support">Support</option>
+            </select>
+            <select name="urgency">
+              <option value="">Newest first</option>
+              <option value="open">Open</option>
+              <option value="contacted">Contacted</option>
+            </select>
+          </form>
+          <p class="professional-area__status-line-{{ section.id }}" data-help-status>Loading professional help requests...</p>
+          <div class="professional-area__help-list-{{ section.id }}" data-help-list></div>
+        </section>
+
+        <section class="professional-area__section-{{ section.id }}" data-professional-tab-panel="enquiries">
+          <div class="professional-area__section-head-{{ section.id }}">
+            <div>
+              <p class="professional-area__eyebrow-{{ section.id }}">ENQUIRIES</p>
+              <h2 class="professional-area__title-{{ section.id }}">SAFE ENQUIRIES</h2>
+            </div>
+            <p class="professional-area__section-copy-{{ section.id }}">Public visitors still cannot message families directly. Any future lead flow must route through reviewed case-owner permissions.</p>
+          </div>
+          <div class="professional-area__card-grid-{{ section.id }}">
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">AVAILABILITY</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">CONTROLLED ENQUIRIES ONLY</h3>
+              <p class="professional-area__copy-{{ section.id }}">Only verified case owners or approved safe-contact flows should reach professionals through the storefront.</p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">NEXT STEP</span>
+              <div class="professional-area__cta-row-{{ section.id }}" style="margin-top: 1rem;">
+                <a href="/pages/member-area" class="professional-area__button-secondary-{{ section.id }}">OPEN MEMBER AREA</a>
+              </div>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">AUTOMATION</span>
+              <span class="professional-area__disabled-{{ section.id }}" style="margin-top: 1rem;">COMING SOON</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="professional-area__section-{{ section.id }}" data-professional-tab-panel="profile" id="professional-profile-{{ section.id }}">
+          <div class="professional-area__section-head-{{ section.id }}">
+            <div>
+              <p class="professional-area__eyebrow-{{ section.id }}">PROFILE</p>
+              <h2 class="professional-area__title-{{ section.id }}">PROFILE STATUS</h2>
+            </div>
+            <p class="professional-area__section-copy-{{ section.id }}">A clean summary of the professional profile data that matters most on the public directory.</p>
+          </div>
+          <div class="professional-area__profile-grid-{{ section.id }}">
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">SERVICES</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">SERVICES PLACEHOLDER</h3>
+              <p class="professional-area__copy-{{ section.id }}">Private investigator, search support, safeguarding, legal support, and related services can render here once profile fields are available.</p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">WORLDWIDE</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">WORLDWIDE OPTION</h3>
+              <p class="professional-area__copy-{{ section.id }}">Worldwide support remains a profile-level setting, not a public permission to bypass safe contact rules.</p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">PROFILE ACTION</span>
+              <div class="professional-area__cta-row-{{ section.id }}" style="margin-top: 1rem;">
+                <a href="/pages/professionals" class="professional-area__button-secondary-{{ section.id }}">VIEW DIRECTORY CARD</a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="professional-area__section-{{ section.id }}" data-professional-tab-panel="directory">
+          <div class="professional-area__section-head-{{ section.id }}">
+            <div>
+              <p class="professional-area__eyebrow-{{ section.id }}">DIRECTORY</p>
+              <h2 class="professional-area__title-{{ section.id }}">DIRECTORY PRESENCE</h2>
+            </div>
+            <p class="professional-area__section-copy-{{ section.id }}">Public listing remains safe-summary only, with country coverage and tier badges but no exposed private contact details.</p>
+          </div>
+          <div class="professional-area__card-grid-{{ section.id }}">
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">VISIBILITY</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">PUBLIC-SAFE CARD</h3>
+              <p class="professional-area__copy-{{ section.id }}">Directory cards can stay visible for approved profiles without exposing phone numbers or personal email addresses.</p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">TIER IMPACT</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">{{ detected_professional_tier }}</h3>
+              <p class="professional-area__copy-{{ section.id }}">Higher professional tiers can support better listing priority and stronger visibility around relevant cases.</p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">DIRECTORY ACTION</span>
+              <div class="professional-area__cta-row-{{ section.id }}" style="margin-top: 1rem;">
+                <a href="/pages/professionals" class="professional-area__button-{{ section.id }}">OPEN DIRECTORY</a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="professional-area__section-{{ section.id }}" data-professional-tab-panel="messaging">
+          <div class="professional-area__section-head-{{ section.id }}">
+            <div>
+              <p class="professional-area__eyebrow-{{ section.id }}">MESSAGING</p>
+              <h2 class="professional-area__title-{{ section.id }}">SAFE MESSAGING</h2>
+            </div>
+            <p class="professional-area__section-copy-{{ section.id }}">Messaging stays locked unless paid, verified, and explicitly allowed. This page never creates an open-DM loophole.</p>
+          </div>
+          <div class="professional-area__card-grid-{{ section.id }}">
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">STATUS</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">{% if professional_inbox_allowed %}SAFE INBOX ENABLED{% else %}SAFE INBOX LOCKED{% endif %}</h3>
+              <p class="professional-area__copy-{{ section.id }}">
+                {% if professional_inbox_allowed %}
+                  This account has explicit inbox permission markers, so reviewed contact routing can be attached here later.
+                {% else %}
+                  Verification is active, but direct messaging still remains blocked until an explicit inbox-allowed signal is present.
+                {% endif %}
+              </p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">ACTION</span>
+              <div class="professional-area__cta-row-{{ section.id }}" style="margin-top: 1rem;">
+                {% if professional_inbox_allowed %}
+                  <a href="/pages/member-area" class="professional-area__button-{{ section.id }}">OPEN SAFE INBOX AREA</a>
+                {% else %}
+                  <span class="professional-area__disabled-{{ section.id }}">COMING SOON</span>
+                {% endif %}
+              </div>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">TRUST RULE</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">CASE-OWNER PROTECTION FIRST</h3>
+              <p class="professional-area__copy-{{ section.id }}">Any future professional message routing must still respect verified-family and case-owner permission settings.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="professional-area__section-{{ section.id }}" data-professional-tab-panel="account">
+          <div class="professional-area__section-head-{{ section.id }}">
+            <div>
+              <p class="professional-area__eyebrow-{{ section.id }}">ACCOUNT</p>
+              <h2 class="professional-area__title-{{ section.id }}">ACCOUNT CONTROL</h2>
+            </div>
+            <p class="professional-area__section-copy-{{ section.id }}">Account actions, tier review, and professional account routes for the currently logged-in professional.</p>
+          </div>
+          <div class="professional-area__card-grid-{{ section.id }}">
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">ACCOUNT EMAIL</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">{{ customer.email | default: 'NO EMAIL FOUND' }}</h3>
+              <p class="professional-area__copy-{{ section.id }}">SIGNED IN PROFESSIONAL ACCOUNT.</p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">TIER</span>
+              <h3 class="professional-area__card-title-{{ section.id }}">{{ detected_professional_tier }}</h3>
+              <p class="professional-area__copy-{{ section.id }}">PAID PROFESSIONAL ACCESS REMAINS ACTIVE WHILE TAGS AND VERIFICATION STAY IN PLACE.</p>
+            </article>
+            <article class="professional-area__card-{{ section.id }}">
+              <span class="professional-area__badge-{{ section.id }}">ACTIONS</span>
+              <div class="professional-area__cta-row-{{ section.id }}" style="margin-top: 1rem;">
+                <a href="{{ routes.account_url }}" class="professional-area__button-{{ section.id }}">MANAGE ACCOUNT</a>
+                <a href="{{ routes.account_logout_url }}" class="professional-area__button-secondary-{{ section.id }}">LOG OUT</a>
+                <a href="/pages/professional-membership" class="professional-area__button-secondary-{{ section.id }}">UPGRADE TIER</a>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    {% endif %}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    var root = document.querySelector('[data-professional-help-root]');
+    if (!root) return;
+
+    var apiBase = String(window.MISSING_ALERTS_API_BASE || 'https://project-155fd.vercel.app').replace(/\/+$/, '');
+    var triggers = root.querySelectorAll('[data-professional-tab-trigger]');
+    var panels = root.querySelectorAll('[data-professional-tab-panel]');
+    var helpStatus = root.querySelector('[data-help-status]');
+    var helpList = root.querySelector('[data-help-list]');
+    var helpFilters = root.querySelector('[data-help-filters]');
+    var waitingCountNodes = root.querySelectorAll('[data-help-waiting-count]');
+    var customerId = root.getAttribute('data-customer-id') || '';
+    var customerEmail = root.getAttribute('data-customer-email') || '';
+    var helpRequestsLoaded = false;
+    var activeHelpCase = null;
+
+    function escapeText(value) {
+      return String(value || '').replace(/[&<>"']/g, function(character) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[character];
+      });
+    }
+
+    function setHelpStatus(message) {
+      if (helpStatus) helpStatus.textContent = message;
+    }
+
+    function buildCaseLink(handle) {
+      if (!handle) return '';
+      return '/blogs/missing-persons/' + encodeURIComponent(handle);
+    }
+
+    function formatDate(value) {
+      var date = value ? new Date(value) : null;
+      if (!date || isNaN(date.getTime())) return 'Recently enabled';
+      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function updateWaitingCount(count) {
+      Array.prototype.forEach.call(waitingCountNodes, function(node) {
+        node.textContent = String(Number(count || 0));
+      });
+    }
+
+    function renderHelpRequests(payload) {
+      var liveCount = payload.live_count || payload.total_waiting_count || 0;
+      updateWaitingCount(liveCount);
+      if (!helpList) return;
+
+      if (payload.locked) {
+        setHelpStatus(liveCount + ' people need help.');
+        helpList.innerHTML = [
+          '<article class="professional-area__help-card-{{ section.id }}">',
+          '<span class="professional-area__badge-{{ section.id }}">LOCKED</span>',
+          '<h3 class="professional-area__card-title-{{ section.id }}">Families asking for professional help</h3>',
+          '<p class="professional-area__copy-{{ section.id }}">' + escapeText(liveCount) + ' people need help.</p>',
+          '<p class="professional-area__copy-{{ section.id }}">Families are actively asking for verified professional support. Upgrade to contact families directly through Missing Alerts.</p>',
+          '<a class="professional-area__button-{{ section.id }}" href="/pages/professional-membership">Upgrade Professional Access</a>',
+          '</article>'
+        ].join('');
+        return;
+      }
+
+      var requests = Array.isArray(payload.leads) ? payload.leads : (Array.isArray(payload.cases) ? payload.cases : []);
+      setHelpStatus(requests.length ? liveCount + ' approved professional help requests available.' : 'No approved professional help requests are available right now.');
+
+      helpList.innerHTML = requests.map(function(item) {
+        var location = [item.city, item.region, item.country].filter(Boolean).join(' / ');
+        var summary = String(item.summary || item.short_summary || '').slice(0, 220);
+        var caseLink = item.case_url || buildCaseLink(item.case_handle || '');
+
+        return [
+          '<article class="professional-area__help-card-{{ section.id }}" data-help-case data-lead-id="' + escapeText(item.id || '') + '" data-case-id="' + escapeText(item.case_id || '') + '" data-case-handle="' + escapeText(item.case_handle || '') + '" data-case-title="' + escapeText(item.professional_help_type || item.case_title || 'Professional help request') + '">',
+          '<span class="professional-area__badge-{{ section.id }}">' + escapeText(item.status || 'approved') + '</span>',
+          '<h3 class="professional-area__card-title-{{ section.id }}">' + escapeText(item.professional_help_type || item.case_title || 'Professional help request') + '</h3>',
+          '<div class="professional-area__help-meta-{{ section.id }}">',
+          location ? '<span>' + escapeText(location) + '</span>' : '',
+          '<span>' + escapeText(formatDate(item.created_at || item.help_enabled_at)) + '</span>',
+          '<span>Secure inbox only</span>',
+          '</div>',
+          '<p class="professional-area__copy-{{ section.id }}">' + escapeText(summary || 'Professional help requested.') + '</p>',
+          '<div class="professional-area__cta-row-{{ section.id }}">',
+          caseLink ? '<a class="professional-area__button-secondary-{{ section.id }}" href="' + escapeText(caseLink) + '">VIEW CASE</a>' : '',
+          '<button type="button" class="professional-area__button-{{ section.id }}" data-open-help-contact>Contact through Missing Alerts Inbox</button>',
+          '</div>',
+          '</article>'
+        ].join('');
+      }).join('');
+    }
+
+    function openMessageModal(caseData) {
+      closeMessageModal();
+      activeHelpCase = caseData;
+      var modal = document.createElement('div');
+      modal.className = 'professional-area__modal-{{ section.id }}';
+      modal.setAttribute('data-help-message-modal', '');
+      modal.innerHTML = [
+        '<section class="professional-area__modal-dialog-{{ section.id }}" role="dialog" aria-modal="true" aria-labelledby="professional-help-message-title-{{ section.id }}">',
+        '<div>',
+        '<p class="professional-area__eyebrow-{{ section.id }}">PROTECTED CONTACT</p>',
+        '<h3 id="professional-help-message-title-{{ section.id }}" class="professional-area__card-title-{{ section.id }}">CONTACT FAMILY</h3>',
+        '<p class="professional-area__copy-{{ section.id }}">' + escapeText(caseData.caseTitle || 'Selected case') + '</p>',
+        '</div>',
+        '<form class="professional-area__help-form-{{ section.id }} is-active" data-help-contact-form>',
+        '<select name="service_type" required>',
+        '<option value="">Service type</option>',
+        '<option value="search_advice">Search advice</option>',
+        '<option value="investigation_help">Investigation help</option>',
+        '<option value="legal_guidance">Legal guidance</option>',
+        '<option value="practical_services">Practical services</option>',
+        '<option value="support">Support</option>',
+        '</select>',
+        '<textarea name="message_body" placeholder="Write a private message to this family request." required></textarea>',
+        '<input type="hidden" name="contact_reason" value="professional_help_requests">',
+        '<div class="professional-area__cta-row-{{ section.id }}">',
+        '<button type="submit" class="professional-area__button-{{ section.id }}">SEND MESSAGE</button>',
+        '<button type="button" class="professional-area__button-secondary-{{ section.id }}" data-close-help-message>CANCEL</button>',
+        '</div>',
+        '</form>',
+        '</section>'
+      ].join('');
+      document.body.appendChild(modal);
+    }
+
+    function closeMessageModal() {
+      var modal = document.querySelector('[data-help-message-modal]');
+      if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+    }
+
+    async function loadHelpRequests() {
+      if (helpRequestsLoaded) return;
+      helpRequestsLoaded = true;
+      setHelpStatus('Loading professional help requests...');
+
+      try {
+        if (!helpList) {
+          var countResponse = await fetch(apiBase + '/api/pro-help/count', {
+            method: 'GET',
+            credentials: 'omit'
+          });
+          var countPayload = await countResponse.json();
+          if (!countResponse.ok || !countPayload.ok) {
+            throw new Error(countPayload.error || 'Unable to load professional help count.');
+          }
+          updateWaitingCount(countPayload.live_count || 0);
+          return;
+        }
+        var params = new URLSearchParams({
+          customer_id: customerId,
+          customer_email: customerEmail
+        });
+        if (helpFilters) {
+          var formData = new FormData(helpFilters);
+          ['country', 'region', 'service_type', 'urgency'].forEach(function(key) {
+            var value = String(formData.get(key) || '').trim();
+            if (value) params.set(key, value);
+          });
+        }
+        var response = await fetch(apiBase + '/api/pro-help/leads?' + params.toString(), {
+          method: 'GET',
+          credentials: 'omit'
+        });
+        var payload = await response.json();
+
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || 'Unable to load professional help requests.');
+        }
+
+        renderHelpRequests(payload);
+      } catch (error) {
+        setHelpStatus(error.message || 'Unable to load professional help requests.');
+      }
+    }
+
+    if (helpList) {
+      helpList.addEventListener('click', function(event) {
+        var button = event.target.closest('[data-open-help-contact]');
+        if (!button) return;
+
+        var card = button.closest('[data-help-case]');
+        openMessageModal({
+          leadId: card ? card.getAttribute('data-lead-id') : '',
+          caseId: card ? card.getAttribute('data-case-id') : '',
+          caseHandle: card ? card.getAttribute('data-case-handle') : '',
+          caseTitle: card ? card.getAttribute('data-case-title') : ''
+        });
+      });
+    }
+
+    if (helpFilters) {
+      helpFilters.addEventListener('input', function() {
+        helpRequestsLoaded = false;
+        loadHelpRequests();
+      });
+      helpFilters.addEventListener('change', function() {
+        helpRequestsLoaded = false;
+        loadHelpRequests();
+      });
+    }
+
+    document.addEventListener('click', function(event) {
+      var closeButton = event.target.closest('[data-close-help-message]');
+      if (closeButton || event.target.matches('[data-help-message-modal]')) {
+        event.preventDefault();
+        closeMessageModal();
+      }
+    });
+
+    document.addEventListener('submit', async function(event) {
+      var form = event.target.closest('[data-help-contact-form]');
+      if (!form) return;
+      event.preventDefault();
+
+        var serviceType = form.querySelector('select[name="service_type"]');
+        var textarea = form.querySelector('textarea[name="message_body"]');
+        var contactReason = form.querySelector('input[name="contact_reason"]');
+        var messageBody = textarea ? textarea.value : '';
+        var submitButton = form.querySelector('button[type="submit"]');
+
+        if (submitButton) submitButton.disabled = true;
+        setHelpStatus('Sending private contact message...');
+
+        try {
+          var response = await fetch(apiBase + '/api/pro-help/contact', {
+            method: 'POST',
+            credentials: 'omit',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              pro_customer_id: customerId,
+              pro_customer_email: customerEmail,
+              lead_id: activeHelpCase ? activeHelpCase.leadId : '',
+              case_id: activeHelpCase ? activeHelpCase.caseId : '',
+              case_handle: activeHelpCase ? activeHelpCase.caseHandle : '',
+              message: messageBody,
+              service_type: serviceType ? serviceType.value : '',
+              contact_reason: contactReason ? contactReason.value : 'professional_help_requests'
+            })
+          });
+          var payload = await response.json();
+
+          if (!response.ok || !payload.ok) {
+            throw new Error(payload.error || 'Unable to contact this family.');
+          }
+
+          setHelpStatus('Contact attempt logged. The help request remains visible unless it is closed.');
+          if (textarea) textarea.value = '';
+          closeMessageModal();
+          helpRequestsLoaded = false;
+          loadHelpRequests();
+        } catch (error) {
+          setHelpStatus(error.message || 'Unable to contact this family.');
+        } finally {
+          if (submitButton) submitButton.disabled = false;
+        }
+    });
+
+    function activateTab(tabName) {
+      if (!tabName) return;
+
+      Array.prototype.forEach.call(triggers, function(trigger) {
+        var isActive = trigger.getAttribute('data-professional-tab-trigger') === tabName;
+        trigger.classList.toggle('is-active', isActive);
+        trigger.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+
+      Array.prototype.forEach.call(panels, function(panel) {
+        var isActive = panel.getAttribute('data-professional-tab-panel') === tabName;
+        panel.classList.toggle('is-active', isActive);
+      });
+
+      if (tabName === 'families') {
+        loadHelpRequests();
+      }
+    }
+
+    Array.prototype.forEach.call(triggers, function(trigger) {
+      trigger.addEventListener('click', function() {
+        activateTab(trigger.getAttribute('data-professional-tab-trigger'));
+      });
+    });
+
+    if (triggers.length) {
+      var requestedTab = '';
+      try {
+        requestedTab = new URLSearchParams(window.location.search).get('tab') || '';
+      } catch (error) {
+        requestedTab = '';
+      }
+      if (requestedTab === 'inbox') requestedTab = 'messaging';
+      activateTab(requestedTab || 'overview');
+    }
+    if (waitingCountNodes.length && !helpList) {
+      loadHelpRequests();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Professional Area",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Professional Area"
+    }
+  ]
+}
+{% endschema %}

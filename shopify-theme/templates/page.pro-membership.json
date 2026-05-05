@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "professional-membership",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

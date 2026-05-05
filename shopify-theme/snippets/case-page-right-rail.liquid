@@ -1,0 +1,440 @@
+{% if mode == 'actions' %}
+  {% assign assigned_country = article.metafields.custom.country.value | default: article.metafields.custom.country | strip %}
+  {% assign assigned_country_tag = '' %}
+  {% if assigned_country == blank %}
+    {% for article_tag in article.tags %}
+      {% assign tag_downcase = article_tag | downcase | strip %}
+      {% if tag_downcase contains 'country:' %}
+        {% assign assigned_country_tag = article_tag | split: ':' | last | strip %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if assigned_country == blank and assigned_country_tag != blank %}
+    {% assign assigned_country = assigned_country_tag %}
+  {% endif %}
+  {% if assigned_country == blank %}
+    {% assign assigned_country = article.metafields.custom.region.value | default: article.metafields.custom.region | strip %}
+  {% endif %}
+  {% if assigned_country == blank %}
+    {% assign assigned_country = article.metafields.custom.city.value | default: article.metafields.custom.city | strip %}
+  {% endif %}
+  {% if assigned_country == blank %}
+    {% assign assigned_country = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | strip %}
+  {% endif %}
+  {% if assigned_country == blank %}
+    {% assign assigned_country = 'Global' %}
+  {% endif %}
+  {% assign product_24h = all_products['boost-appeal-24-hours'] %}
+  {% assign product_3d = all_products['boost-appeal-3-day-visibility'] %}
+  {% assign product_7d = all_products['boost-appeal-7-day-visibility'] %}
+  {% assign product_14d = all_products['boost-appeal-14-day-visibility'] %}
+  {% assign product_30d = all_products['boost-appeal-30-day-visibility'] %}
+
+  {% assign variant_24h_id = product_24h.selected_or_first_available_variant.id | default: '' %}
+  {% assign variant_3d_id = product_3d.selected_or_first_available_variant.id | default: '' %}
+  {% assign variant_7d_id = product_7d.selected_or_first_available_variant.id | default: '' %}
+  {% assign variant_14d_id = product_14d.selected_or_first_available_variant.id | default: '' %}
+  {% assign variant_30d_id = product_30d.selected_or_first_available_variant.id | default: '' %}
+  {% assign boost_checkout_configured = false %}
+  {% if variant_24h_id != blank or variant_3d_id != blank or variant_7d_id != blank or variant_14d_id != blank or variant_30d_id != blank %}
+    {% assign boost_checkout_configured = true %}
+  {% endif %}
+
+  <aside class="case-page-rail case-page-rail--right case-page-rail--actions case-page-right-sidebar ma-case-sidebar-right ma-case-action-stack" data-case-right-sidebar aria-label="Case support actions">
+    {% unless found_safe %}
+      {% if blog.handle == 'missing-persons' %}
+        <section class="case-page-card case-page-card--padded case-page-card--spotlight sidebar-card">
+          <div class="case-page-card__visual case-page-card__visual--spotlight" aria-hidden="true">
+            <svg viewBox="0 0 160 90" class="case-page-card__visual-svg" focusable="false">
+              <defs>
+                <linearGradient id="spotlightBeam" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ff8b8b"/>
+                  <stop offset="55%" stop-color="#ff2f43"/>
+                  <stop offset="100%" stop-color="#2a0b10"/>
+                </linearGradient>
+              </defs>
+              <rect width="160" height="90" rx="18" fill="#12070a"/>
+              <path d="M34 72 L68 22 L92 22 L58 72 Z" fill="url(#spotlightBeam)" opacity="0.95"/>
+              <path d="M78 72 L108 30 L124 30 L95 72 Z" fill="#ff4e4e" opacity="0.38"/>
+              <circle cx="40" cy="28" r="10" fill="#ffe7e7" opacity="0.9"/>
+              <rect x="26" y="38" width="28" height="6" rx="3" fill="#ffd2d2" opacity="0.82"/>
+              <rect x="112" y="18" width="20" height="52" rx="10" fill="#2a1115" opacity="0.88"/>
+            </svg>
+          </div>
+          <div class="case-page-card__eyebrow">Spotlight Placement</div>
+          <h3 class="case-page-card__title">PUT CASE IN SPOTLIGHT</h3>
+          <p class="case-page-card__copy">Give this case premium homepage visibility and stronger visitor attention through the existing Spotlight system.</p>
+          <div class="case-page-spotlight-sidebar-cta">
+            {% render 'spotlight-trigger-button', article: article %}
+          </div>
+        </section>
+      {% endif %}
+
+      <section id="boost-this-appeal" class="case-page-card case-page-card--padded case-page-card--boost sidebar-card">
+        <div class="case-page-card__visual case-page-card__visual--boost" aria-hidden="true">
+          <svg viewBox="0 0 160 90" class="case-page-card__visual-svg" focusable="false">
+            <defs>
+              <linearGradient id="boostArrow" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0%" stop-color="#671018"/>
+                <stop offset="60%" stop-color="#ff3448"/>
+                <stop offset="100%" stop-color="#ffc0c0"/>
+              </linearGradient>
+            </defs>
+            <rect width="160" height="90" rx="18" fill="#100809"/>
+            <path d="M34 62 L72 62 L72 50 L110 50 L110 38 L132 57 L110 76 L110 64 L34 64 Z" fill="url(#boostArrow)"/>
+            <rect x="28" y="24" width="12" height="40" rx="6" fill="#2e0f13"/>
+            <rect x="46" y="32" width="12" height="32" rx="6" fill="#52131a"/>
+            <rect x="64" y="20" width="12" height="44" rx="6" fill="#82151d"/>
+          </svg>
+        </div>
+        <div class="case-page-card__eyebrow">Boost This Case</div>
+        <h3 class="case-page-card__title">BOOST A CASE</h3>
+        <p class="case-page-card__copy">Help increase visibility for this case across the website while the main appeal remains public and shareable.</p>
+
+        <div class="case-page-chip-row">
+          <div class="case-page-chip">BOOST LIVE: {{ article.metafields.custom.boost_live.value | default: false }}</div>
+          <div class="case-page-chip">TOTAL BOOSTS: {{ article.metafields.custom.total_boosts.value | default: 0 }}</div>
+          <div class="case-page-chip">BOOST POINTS: {{ article.metafields.custom.boost_points.value | default: 0 }}</div>
+        </div>
+
+        <div class="case-page-boost-note">{{ article.metafields.custom.total_boosts.value | default: 0 }} supporters have helped increase visibility</div>
+
+        {% if boost_checkout_configured %}
+        <form method="post" action="/cart/add" class="case-page-boost-form">
+          <label for="boost-level-{{ article.id }}" class="case-page-form-label">Choose boost level</label>
+          <input type="range" min="0" max="4" step="1" value="0" id="boost-level-{{ article.id }}" class="case-page-range">
+
+          <div id="boost-plan-box-{{ article.id }}" class="case-page-plan-box">
+            <div id="boost-plan-name-{{ article.id }}">24 HOURS</div>
+            <div id="boost-plan-price-{{ article.id }}">£9.99</div>
+          </div>
+
+          <div id="boost-plan-text-{{ article.id }}" class="case-page-plan-text">Increased visibility today across the platform.</div>
+
+          <input type="hidden" name="id" id="boost-variant-id-{{ article.id }}" value="{{ variant_24h_id }}">
+          <input type="hidden" name="properties[ArticleGID]" value="gid://shopify/Article/{{ article.id }}">
+          <input type="hidden" name="properties[ArticleID]" value="{{ article.id }}">
+          <input type="hidden" name="properties[CaseTitle]" value="{{ article.title | escape }}">
+          <input type="hidden" name="properties[CaseURL]" value="{{ request.origin }}{{ article.url }}">
+          <input type="hidden" name="properties[Country]" value="{{ assigned_country | escape }}">
+
+          <button type="submit" class="case-page-primary-btn">BOOST THIS CASE</button>
+        </form>
+
+        <script>
+          (function() {
+            var slider = document.getElementById('boost-level-{{ article.id }}');
+            var nameBox = document.getElementById('boost-plan-name-{{ article.id }}');
+            var priceBox = document.getElementById('boost-plan-price-{{ article.id }}');
+            var textBox = document.getElementById('boost-plan-text-{{ article.id }}');
+            var variantInput = document.getElementById('boost-variant-id-{{ article.id }}');
+
+            var plans = [
+              {
+                name: '24 HOURS',
+                price: '£9.99',
+                text: 'Increased visibility today across the platform.',
+                id: '{{ variant_24h_id }}'
+              },
+              {
+                name: '3 DAYS',
+                price: '£19.99',
+                text: 'Extended visibility over the next 3 days.',
+                id: '{{ variant_3d_id }}'
+              },
+              {
+                name: '7 DAYS',
+                price: '£34.99',
+                text: 'Strong week-long visibility support for this case.',
+                id: '{{ variant_7d_id }}'
+              },
+              {
+                name: '14 DAYS',
+                price: '£59.99',
+                text: 'Longer high-visibility support across the website.',
+                id: '{{ variant_14d_id }}'
+              },
+              {
+                name: '30 DAYS',
+                price: '£89.99',
+                text: 'Extended priority visibility for ongoing support.',
+                id: '{{ variant_30d_id }}'
+              }
+            ];
+
+            function updateBoostPlan() {
+              var plan = plans[parseInt(slider.value, 10)];
+              if (!plan) return;
+              nameBox.textContent = plan.name;
+              priceBox.textContent = plan.price;
+              textBox.textContent = plan.text;
+              variantInput.value = plan.id;
+            }
+
+            if (slider) {
+              slider.addEventListener('input', updateBoostPlan);
+              updateBoostPlan();
+            }
+          })();
+        </script>
+        {% else %}
+          <div class="case-page-boost-config-note">
+            Boost checkout is being configured. This case can still be shared using the public appeal link.
+          </div>
+        {% endif %}
+      </section>
+
+      {% render 'alert-dispatch-cta',
+        article: article,
+        entity_type: 'case',
+        entity_id: article.id,
+        entity_handle: article.handle,
+        entity_title: article.title
+      %}
+
+      <section class="case-page-card case-page-card--padded sidebar-card ma-support-mini-card">
+        <div class="ma-support-mini-card__title">SUPPORT THIS PLATFORM</div>
+        <p class="ma-support-mini-card__text">
+          Missing Alerts is built by a small team working to keep urgent cases visible. If this platform helps, you can support the work behind it.
+        </p>
+        <a href="https://buymeacoffee.com/missingalerts" target="_blank" rel="noopener noreferrer" class="ma-support-mini-card__button">
+          Support the Platform
+        </a>
+      </section>
+
+      {% render 'case-helpful-guides', article: article, blog: blog %}
+
+      <section class="case-page-card case-page-card--padded sidebar-card sidebar-card--family-guidance">
+        <div class="case-page-card__eyebrow">Family Updates</div>
+        <h3 class="case-page-card__title">SUPPORT THE FAMILY SAFELY</h3>
+        <p class="case-page-card__copy">
+          {% assign family_statement = article.metafields.custom.family_statement.value | default: article.metafields.custom.family_statement %}
+          {% if family_statement != blank %}
+            {{ family_statement | strip_html }}
+          {% else %}
+            Information should be sent through the official source or police contact listed on the appeal. Missing Alerts does not publish private family contact details.
+          {% endif %}
+        </p>
+        <div class="case-page-chip-row">
+          <div class="case-page-chip">PUBLIC UPDATES ONLY</div>
+          <div class="case-page-chip">NO PRIVATE CONTACT DETAILS</div>
+        </div>
+      </section>
+
+      <section
+        class="case-page-card case-page-card--padded sidebar-card sidebar-card--family-support"
+        data-case-fundraiser
+        data-api-base="https://dashboard-ui-snowy-eight.vercel.app"
+        data-case-handle="{{ article.handle | escape }}"
+        data-case-title="{{ article.title | escape }}"
+        data-owner-customer-id="{% if customer %}{{ customer.id }}{% endif %}"
+        hidden
+      >
+        <div class="ma-fundraiser-verified-strip">VERIFIED FAMILY FUNDRAISER</div>
+        <div class="case-page-card__eyebrow">Family Support</div>
+        <h3 class="case-page-card__title">SUPPORT THE FAMILY</h3>
+        <p class="case-page-card__copy">
+          Contributions support the verified family or guardian connected to this case.
+        </p>
+        <p class="ma-fundraiser-trust-line">Only active for verified family, parent or guardian case owners.</p>
+        <div class="case-fundraiser-live" data-fundraiser-live hidden>
+          <div class="case-fundraiser-urgent" data-fundraiser-urgent hidden>URGENT SUPPORT NEEDED</div>
+          <div class="case-fundraiser-meter" aria-label="Fundraiser progress">
+            <div class="case-fundraiser-progress-text" data-fundraiser-progress-text></div>
+            <div class="case-fundraiser-meter__track">
+              <div class="case-fundraiser-meter__bar" data-fundraiser-progress></div>
+            </div>
+            <div class="case-fundraiser-meter__row">
+              <span data-fundraiser-raised>Raised: --</span>
+              <span data-fundraiser-goal></span>
+            </div>
+          </div>
+          <div class="case-fundraiser-proof">
+            <span data-fundraiser-donor-count>0 people have contributed</span>
+            <span data-fundraiser-last-donation></span>
+          </div>
+          <div class="ma-fundraiser-trust-row">
+            <span>VERIFIED FAMILY</span>
+            <span>SECURE STRIPE CHECKOUT</span>
+            <span>CLEAR FEES</span>
+          </div>
+          <div class="case-fundraiser-amounts" role="group" aria-label="Family support amount">
+            <button type="button" class="case-fundraiser-amount" data-donation-amount="500">£5</button>
+            <button type="button" class="case-fundraiser-amount is-active" data-donation-amount="1000">£10 <span>MOST COMMON</span></button>
+            <button type="button" class="case-fundraiser-amount" data-donation-amount="2500">£25</button>
+            <button type="button" class="case-fundraiser-amount" data-donation-amount="5000">£50</button>
+          </div>
+          <label class="case-fundraiser-custom">
+            <span>Custom amount</span>
+            <input type="number" min="1" step="1" inputmode="decimal" data-donation-custom placeholder="£">
+          </label>
+          <div class="ma-fundraiser-tip-panel">
+            <div>
+              <strong>HELP KEEP MISSING ALERTS RUNNING</strong>
+              <p>You can add an optional tip to help keep Missing Alerts running. This is separate from the family contribution.</p>
+            </div>
+            <div class="ma-fundraiser-tip-options" role="group" aria-label="Optional tip amount">
+              <button type="button" data-tip-amount="0">£0</button>
+              <button type="button" data-tip-amount="100">£1</button>
+              <button type="button" data-tip-amount="200">£2</button>
+              <button type="button" class="is-active" data-tip-percent="10">10%</button>
+            </div>
+            <label class="case-fundraiser-custom ma-fundraiser-tip-custom">
+              <span>Custom tip</span>
+              <input type="number" min="0" step="1" inputmode="decimal" data-tip-custom placeholder="£">
+            </label>
+          </div>
+          <div class="ma-donation-summary" aria-live="polite">
+            <div><span>Family contribution</span><strong data-summary-donation>--</strong></div>
+            <div><span>Platform fee (7%)</span><strong data-summary-platform-fee>--</strong></div>
+            <div><span>Optional Missing Alerts tip</span><strong data-summary-tip>--</strong></div>
+            <div><span>Total today</span><strong data-summary-total>--</strong></div>
+            <div><span>Family receives contribution minus 7%</span><strong data-summary-family-net>--</strong></div>
+          </div>
+          <button type="button" class="case-page-primary-btn ma-donation-cta" data-fundraiser-donate>SUPPORT THIS FAMILY</button>
+          <button type="button" class="ma-donation-copy-link" data-fundraiser-copy-link>COPY SUPPORT LINK</button>
+          <div class="case-page-lock-copy" data-fundraiser-feedback hidden></div>
+          <p class="case-fundraiser-disclaimer">
+            Secure checkout powered by Stripe. Missing Alerts retains a 7% platform fee to help cover payment processing, safety checks and platform operations. Optional tips go to Missing Alerts and do not reduce family balance.
+          </p>
+          <p class="case-fundraiser-disclaimer">
+            Funds are sent to the verified family member or guardian associated with this case. Missing Alerts does not verify how funds are used.
+          </p>
+        </div>
+        <div class="case-page-lock-copy" data-fundraiser-locked hidden>
+          <strong>FAMILY FUNDRAISER NOT ACTIVE</strong>
+          <span>A verified family member, parent or guardian can activate fundraising from their member area.</span>
+          <a href="/pages/member-area" data-fundraiser-owner-settings hidden>OPEN FUNDRAISER SETTINGS</a>
+        </div>
+      </section>
+      <script src="{{ 'fundraiser.js' | asset_url }}" defer></script>
+
+      {% render 'social-amplify-box', article: article, blog: blog, found_safe: found_safe %}
+
+      <section class="case-page-card case-page-card--padded case-page-card--sponsor sidebar-card">
+        <div class="case-page-card__visual case-page-card__visual--sponsor" aria-hidden="true">
+          <svg viewBox="0 0 160 90" class="case-page-card__visual-svg" focusable="false">
+            <rect width="160" height="90" rx="18" fill="#110809"/>
+            <rect x="20" y="26" width="120" height="42" rx="12" fill="#2a0f13" stroke="#ff4a4a" stroke-opacity="0.4"/>
+            <rect x="30" y="34" width="34" height="26" rx="8" fill="#491419"/>
+            <rect x="72" y="34" width="58" height="8" rx="4" fill="#ffb0b0" opacity="0.92"/>
+            <rect x="72" y="48" width="44" height="6" rx="3" fill="#ffd0d0" opacity="0.68"/>
+            <circle cx="46" cy="47" r="8" fill="#ff4d4d"/>
+          </svg>
+        </div>
+        <div class="case-page-card__eyebrow">Sponsor This Page</div>
+        <h3 class="case-page-card__title">YOUR BUSINESS HERE</h3>
+        <p class="case-page-card__copy">Sponsor this page and help keep public alerts visible. Your business can support missing-person awareness while appearing beside this case.</p>
+        <a href="/pages/contact" class="case-page-primary-btn case-page-primary-btn--secondary">Sponsor This Page</a>
+      </section>
+    {% endunless %}
+
+    <section class="case-page-card case-page-card--padded case-page-card--professionals sidebar-card">
+      <div class="case-page-card__eyebrow">Professionals In This Country</div>
+      <h3 class="case-page-card__title">Country support directory</h3>
+      <p class="case-page-card__copy">Country-specific professional support appears here as verified providers become available.</p>
+
+      <div class="case-page-professionals" data-case-professionals>
+        <article class="case-page-professionals__card">
+          <div class="case-page-professionals__avatar" aria-hidden="true">
+            <span class="case-page-professionals__avatar-text">SSA</span>
+          </div>
+          <div class="case-page-professionals__topline">
+            <span class="case-page-professionals__type">Missing person support</span>
+            <span class="case-page-professionals__badge">Test Listing</span>
+          </div>
+          <h4 class="case-page-professionals__name">Search Support Advisor</h4>
+          <p class="case-page-professionals__country">{{ assigned_country }}</p>
+          <a href="/pages/professionals" class="case-page-professionals__cta">View Profile</a>
+        </article>
+
+        <article class="case-page-professionals__card">
+          <div class="case-page-professionals__avatar" aria-hidden="true">
+            <span class="case-page-professionals__avatar-text">FLS</span>
+          </div>
+          <div class="case-page-professionals__topline">
+            <span class="case-page-professionals__type">Family guidance</span>
+            <span class="case-page-professionals__badge">Test Listing</span>
+          </div>
+          <h4 class="case-page-professionals__name">Family Liaison Specialist</h4>
+          <p class="case-page-professionals__country">{{ assigned_country }}</p>
+          <a href="/pages/professionals" class="case-page-professionals__cta">View Profile</a>
+        </article>
+
+        <article class="case-page-professionals__card">
+          <div class="case-page-professionals__avatar" aria-hidden="true">
+            <span class="case-page-professionals__avatar-text">LSC</span>
+          </div>
+          <div class="case-page-professionals__topline">
+            <span class="case-page-professionals__type">Search planning</span>
+            <span class="case-page-professionals__badge">Test Listing</span>
+          </div>
+          <h4 class="case-page-professionals__name">Local Search Coordinator</h4>
+          <p class="case-page-professionals__country">{{ assigned_country }}</p>
+          <a href="/pages/professionals" class="case-page-professionals__cta">View Profile</a>
+        </article>
+      </div>
+    </section>
+  </aside>
+{% elsif mode == 'support' %}
+  <aside class="case-page-rail case-page-rail--right case-page-rail--support case-page-right-sidebar ma-case-sidebar-right" data-case-right-sidebar aria-label="Professional and local support">
+    <section class="case-page-card case-page-card--padded sidebar-card">
+      <div class="case-page-card__eyebrow">Professional Help</div>
+      <h3 class="case-page-card__title">Verified owner access only</h3>
+      <p class="case-page-card__copy">Direct professional contact is available only to verified case owners.</p>
+      <div class="case-page-lock-copy">Lock maintained until verified case-ownership logic grants access.</div>
+    </section>
+
+    <section class="case-page-card case-page-card--padded sidebar-card">
+      <div class="case-page-card__eyebrow">Local Help and Authorities</div>
+      <h3 class="case-page-card__title">Route information responsibly</h3>
+      <p class="case-page-card__copy">If you have urgent information, use the report flow or contact local authorities immediately. Avoid posting sensitive leads publicly in comment threads.</p>
+      <a href="/pages/report-update" class="case-page-primary-btn case-page-primary-btn--secondary">Report a Sighting</a>
+    </section>
+
+    <section class="case-page-card case-page-card--padded sidebar-card">
+      <div class="case-page-card__eyebrow">Alert Signup</div>
+      <h3 class="case-page-card__title">Get future case alerts</h3>
+      {% form 'customer', class: 'case-page-alert-form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter,missing-alerts-case-page">
+        <div class="field">
+          <input
+            id="CaseAlertEmail-{{ section.id }}-{{ mode }}"
+            type="email"
+            name="contact[email]"
+            class="field__input"
+            value="{{ form.email }}"
+            autocorrect="off"
+            autocapitalize="off"
+            autocomplete="email"
+            {% if form.errors %}
+              aria-invalid="true"
+              aria-describedby="CaseAlertError-{{ section.id }}-{{ mode }}"
+            {% elsif form.posted_successfully? %}
+              aria-describedby="CaseAlertSuccess-{{ section.id }}-{{ mode }}"
+            {% endif %}
+            placeholder="Email address"
+            required
+          >
+          <label class="field__label" for="CaseAlertEmail-{{ section.id }}-{{ mode }}">Email address</label>
+        </div>
+        <button type="submit" class="case-page-primary-btn">Sign Up for Alerts</button>
+        {%- if form.errors -%}
+          <small id="CaseAlertError-{{ section.id }}-{{ mode }}" class="case-page-form-message">
+            {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+          </small>
+        {%- elsif form.posted_successfully? -%}
+          <small id="CaseAlertSuccess-{{ section.id }}-{{ mode }}" class="case-page-form-message case-page-form-message--success">
+            Alerts signup saved.
+          </small>
+        {%- endif -%}
+      {% endform %}
+    </section>
+
+    <section class="case-page-ad sidebar-card" aria-label="Advertisement">
+      <div class="case-page-ad__label">Advertisement</div>
+      <div class="case-page-ad__body">Compact right-rail ad slot reserved for approved network or sponsor inventory.</div>
+    </section>
+  </aside>
+{% endif %}

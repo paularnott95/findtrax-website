@@ -1,0 +1,137 @@
+.ma-signup {
+  margin: 1.25rem 0;
+  padding: 1rem;
+  border: 1px solid rgba(120, 20, 32, 0.16);
+  border-radius: 8px;
+  background: #fff;
+  color: #201416;
+}
+
+.ma-signup__head {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+}
+
+.ma-signup__eyebrow,
+.ma-signup__copy,
+.ma-signup__status,
+.ma-signup__nearby h3 {
+  margin: 0;
+}
+
+.ma-signup__eyebrow {
+  color: #8a1023;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.ma-signup__title {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.8vw, 1.85rem);
+  line-height: 1.15;
+}
+
+.ma-signup__copy,
+.ma-signup__status {
+  color: #5f5356;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.ma-signup__form,
+.ma-signup__pro {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.ma-signup__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ma-signup__field {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.ma-signup__field input,
+.ma-signup__field select,
+.ma-signup__field textarea {
+  width: 100%;
+  min-height: 2.75rem;
+  border: 1px solid #d8cfd1;
+  border-radius: 6px;
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+}
+
+.ma-signup__field textarea {
+  resize: vertical;
+}
+
+.ma-signup__check {
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+  font-weight: 700;
+}
+
+.ma-signup__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.ma-signup__button,
+.ma-signup__nearby-list a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  border-radius: 6px;
+  border: 0;
+  padding: 0 1rem;
+  background: #b00020;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ma-signup__button[disabled] {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.ma-signup__nearby {
+  margin-top: 1rem;
+}
+
+.ma-signup__nearby-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+}
+
+.ma-signup__nearby-list a {
+  background: #2b2224;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 749px) {
+  .ma-signup__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ma-signup__actions,
+  .ma-signup__button {
+    width: 100%;
+  }
+}

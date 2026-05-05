@@ -1,0 +1,1092 @@
+<link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
+<link
+  rel="stylesheet"
+  href="{{ 'component-cart-notification.css' | asset_url }}"
+  media="print"
+  onload="this.media='all'"
+>
+
+{%- if settings.predictive_search_enabled -%}
+  <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- endif -%}
+
+{%- if section.settings.menu_type_desktop == 'mega' -%}
+  <link rel="stylesheet" href="{{ 'component-mega-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- endif -%}
+
+<style>
+  .mpa-header-wrap {
+    width: 100%;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    z-index: 1000;
+  }
+
+  .mpa-header-wrap a,
+  .mpa-header-wrap a:visited {
+    color: inherit;
+  }
+
+  .mpa-top-alert {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 18%),
+      linear-gradient(90deg, #ff173d 0%, #d90429 55%, #7f0018 100%);
+    color: #ffffff;
+    text-align: center;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.35px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.18),
+      inset 0 -1px 0 rgba(0,0,0,0.20);
+  }
+
+  .mpa-main-header {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 14%),
+      linear-gradient(180deg, #17181c 0%, #0c0c0e 55%, #080809 100%);
+    color: #ffffff;
+    padding: 8px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    box-shadow:
+      0 8px 24px rgba(0,0,0,0.22),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  .mpa-main-header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mpa-menu-trigger {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 28%),
+      linear-gradient(180deg, #2a2d33 0%, #111318 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow:
+      0 8px 20px rgba(0,0,0,0.28),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  }
+
+  .mpa-menu-trigger:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 12px 24px rgba(0,0,0,0.34),
+      inset 0 1px 0 rgba(255,255,255,0.10);
+    filter: brightness(1.05);
+  }
+
+  .mpa-menu-trigger span,
+  .mpa-menu-trigger span::before,
+  .mpa-menu-trigger span::after {
+    display: block;
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: #ffffff;
+    position: relative;
+    content: "";
+  }
+
+  .mpa-menu-trigger span::before {
+    position: absolute;
+    top: -6px;
+  }
+
+  .mpa-menu-trigger span::after {
+    position: absolute;
+    top: 6px;
+  }
+
+  .mpa-logo {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    white-space: nowrap;
+    color: #ffffff !important;
+    line-height: 1;
+    text-transform: uppercase;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.05);
+    text-decoration: none;
+  }
+
+  .mpa-brand-block {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .ma-header-controls-stack {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .ma-selected-country-label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 16px;
+    color: rgba(255,255,255,0.64);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    text-transform: none;
+    white-space: normal;
+  }
+
+  .mpa-menu {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .mpa-menu a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #ffffff !important;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.15px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 6px 14px rgba(0,0,0,0.12);
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  }
+
+  .mpa-menu a:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.20);
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .mpa-tools-menu {
+    position: relative;
+  }
+
+  .mpa-tools-menu summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.15px;
+    list-style: none;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 6px 14px rgba(0,0,0,0.12);
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  }
+
+  .mpa-tools-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mpa-tools-menu summary::after {
+    content: "v";
+    color: rgba(255,255,255,0.72);
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .mpa-tools-menu[open] summary,
+  .mpa-tools-menu summary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.20);
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .mpa-tools-menu__panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 245px;
+    padding: 8px;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at top left, rgba(217,31,38,0.18), transparent 40%),
+      linear-gradient(180deg, rgba(24,25,30,0.98), rgba(9,10,12,0.98));
+    box-shadow: 0 18px 40px rgba(0,0,0,0.36);
+    z-index: 10010;
+  }
+
+  .mpa-menu .mpa-tools-menu__panel a {
+    width: 100%;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    color: rgba(255,255,255,0.86) !important;
+    font-size: 12px;
+    font-weight: 750;
+  }
+
+  .mpa-menu .mpa-tools-menu__panel a:hover {
+    transform: none;
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.08);
+    box-shadow: none;
+    color: #ffffff !important;
+  }
+
+  .mpa-side-tools {
+    margin-top: 4px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.035);
+  }
+
+  .mpa-side-tools__title {
+    margin: 0 0 8px;
+    color: rgba(255,255,255,0.58);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .mpa-side-links .mpa-side-tools a {
+    margin-top: 8px;
+  }
+
+  .mpa-menu .mpa-support-link,
+  .mpa-menu .mpa-member-link,
+  .mpa-menu .mpa-network-link {
+    padding: 8px 15px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 22%),
+      linear-gradient(180deg, #d91f26 0%, #8f1116 100%);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #ffffff;
+    font-weight: 800;
+    box-shadow:
+      0 8px 20px rgba(0,0,0,0.24),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .mpa-menu .mpa-support-link {
+    animation: mpaSupportPulse 1.8s ease-in-out infinite;
+  }
+
+  .mpa-menu .mpa-network-link {
+    letter-spacing: 0.35px;
+  }
+
+  .mpa-menu .mpa-professional-link,
+  .mpa-menu .mpa-directory-link {
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow:
+      0 8px 20px rgba(0,0,0,0.24),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .mpa-menu .mpa-professional-link {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
+    color: rgba(255,255,255,0.84);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 7px 11px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 4px 10px rgba(0,0,0,0.10);
+  }
+
+  .mpa-menu .mpa-directory-link {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
+    color: #eff6ff;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 7px 11px;
+  }
+
+  .mpa-account-stack {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .mpa-menu .mpa-account-stack .mpa-pro-text-link {
+    padding: 0;
+    min-height: auto;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: rgba(255,255,255,0.76) !important;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    text-decoration: underline;
+  }
+
+  .mpa-menu .mpa-account-stack .mpa-pro-text-link:hover {
+    transform: none;
+    background: none;
+    border-color: transparent;
+    box-shadow: none;
+    color: #ffffff !important;
+  }
+
+  .mpa-side-account-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mpa-side-account-stack .mpa-side-pro-text-link {
+    padding: 0 2px;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    color: rgba(255,255,255,0.76) !important;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .mpa-side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    max-width: 86vw;
+    height: 100vh;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 12%),
+      linear-gradient(180deg, #17181d 0%, #0b0c0f 100%);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 20px 0 40px rgba(0,0,0,0.42);
+    padding: 20px 16px 24px;
+    transform: translateX(-102%);
+    transition: transform .28s ease;
+    z-index: 10002;
+    overflow-y: auto;
+  }
+
+  .mpa-side-menu.open {
+    transform: translateX(0);
+  }
+
+  .mpa-side-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+
+  .mpa-side-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .mpa-side-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mpa-side-links a {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 12px;
+    color: #fff !important;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  .mpa-side-links a:hover {
+    background: rgba(255,255,255,0.09);
+  }
+
+  .mpa-side-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.52);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
+    z-index: 10001;
+  }
+
+  .mpa-side-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @keyframes mpaSupportPulse {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.24), 0 0 0 0 rgba(217,31,38,0.30), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    50% {
+      transform: scale(1.04);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.30), 0 0 0 8px rgba(217,31,38,0.08), inset 0 1px 0 rgba(255,255,255,0.10);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.24), 0 0 0 0 rgba(217,31,38,0), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+  }
+
+  @media (max-width: 980px) {
+    .mpa-main-header-inner {
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+    }
+
+    .mpa-menu {
+      grid-column: 1 / -1;
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .mpa-main-header {
+      padding: 7px 12px;
+    }
+
+    .mpa-logo {
+      font-size: 16px;
+    }
+
+    .ma-header-controls-stack {
+      width: 100%;
+    }
+
+    .ma-selected-country-label {
+      font-size: 10px;
+      white-space: normal;
+    }
+
+    .mpa-menu {
+      gap: 8px;
+    }
+
+    .mpa-menu a {
+      font-size: 12px;
+      padding: 8px 12px;
+    }
+
+    .mpa-side-menu {
+      width: 86vw;
+    }
+  }
+</style>
+
+{%- style -%}
+  .header {
+    padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 3rem {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px 3rem;
+  }
+
+  .section-header {
+    position: sticky; /* This is for fixing a Safari z-index issue. PR #2147 */
+    z-index: 30;
+    margin-bottom: {{ section.settings.margin_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  .header-wrapper {
+    position: relative;
+    z-index: 30;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-header {
+      margin-bottom: {{ section.settings.margin_bottom }}px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .header {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign header_customer_tags = ''
+  assign header_professional_verified = false
+  assign header_paid_professional = false
+
+  if customer
+    assign header_customer_tags = customer.tags | join: ',' | downcase
+
+    if header_customer_tags contains 'professional_access' or header_customer_tags contains 'professional_plus' or header_customer_tags contains 'professional_elite'
+      assign header_paid_professional = true
+    endif
+
+    if header_customer_tags contains 'professional_verified'
+      assign header_professional_verified = true
+    endif
+  endif
+
+  assign header_show_pro_area = false
+  if header_paid_professional and header_professional_verified
+    assign header_show_pro_area = true
+  endif
+-%}
+
+{%- liquid
+  for block in section.blocks
+    if block.type == '@app'
+      assign has_app_block = true
+    endif
+  endfor
+-%}
+
+{% liquid
+  assign header_tag = 'div'
+
+  if section.settings.sticky_header_type != 'none'
+    assign header_tag = 'sticky-header'
+  endif
+%}
+
+<{{ header_tag }}
+  {% if header_tag == 'sticky-header' %}
+    data-sticky-type="{{ section.settings.sticky_header_type }}"
+  {% endif %}
+  class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}"
+>
+  {%- liquid
+    assign social_links = false
+    assign localization_forms = false
+
+    if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank
+      assign social_links = true
+    endif
+
+    if localization.available_countries.size > 1 and section.settings.enable_country_selector or section.settings.enable_language_selector and localization.available_languages.size > 1
+      assign localization_forms = true
+    endif
+  -%}
+  <header>
+    <div class="mpa-header-wrap">
+      <div class="mpa-top-alert">
+        ⚠️ LIVE MISSING ALERTS — PLEASE SHARE ACTIVE CASES
+      </div>
+
+      <div class="mpa-main-header">
+        <div class="mpa-main-header-inner">
+          <button
+            class="mpa-menu-trigger"
+            type="button"
+            aria-label="Open menu"
+            onclick="document.getElementById('mpaSideMenu').classList.add('open'); document.getElementById('mpaSideOverlay').classList.add('open');"
+          >
+            <span></span>
+          </button>
+
+          <div class="mpa-brand-block">
+            <a href="{{ routes.root_url }}" class="mpa-logo">MISSINGALERTS.COM</a>
+            <div class="ma-header-controls-stack">
+              {% render 'country-top-bar', mode: 'compact' %}
+              <span class="ma-selected-country-label" data-selected-country-label>
+                Viewing: Global
+              </span>
+            </div>
+          </div>
+
+          <nav class="mpa-menu" aria-label="Primary">
+            <a href="/">Home</a>
+            <a href="/blogs/missing-persons">Missing</a>
+            <a href="/blogs/found-safe">Found Safe</a>
+            <a href="/pages/missing-person-advice">ADVICE HUB</a>
+            <details class="mpa-tools-menu">
+              <summary>TOOLS</summary>
+              <div class="mpa-tools-menu__panel">
+                <a href="/pages/tools">Tools overview</a>
+                <a href="/pages/findtrax">FindTrax</a>
+                <a href="/pages/intelpro">IntelPro</a>
+                <a href="/pages/mediareach">MediaReach</a>
+              </div>
+            </details>
+            {%- unless customer -%}
+              <a href="/account/login?return_url=/pages/member-area" class="mpa-member-link" rel="nofollow">Member Login</a>
+            {%- endunless -%}
+            <a href="/pages/professional-membership" class="mpa-professional-link">Become a Professional</a>
+            <a href="/pages/donate" class="mpa-support-link">Support</a>
+            {%- if shop.customer_accounts_enabled and customer -%}
+              <a href="/pages/member-area" class="mpa-member-link" rel="nofollow">Member Area</a>
+              <div class="mpa-account-stack">
+                <a href="{{ routes.account_logout_url }}" rel="nofollow">Log Out</a>
+                {%- if header_show_pro_area -%}
+                  <a href="/pages/professional-area" class="mpa-pro-text-link">PRO AREA</a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </nav>
+        </div>
+      </div>
+
+      <div
+        class="mpa-side-overlay"
+        id="mpaSideOverlay"
+        onclick="document.getElementById('mpaSideMenu').classList.remove('open'); document.getElementById('mpaSideOverlay').classList.remove('open');"
+      ></div>
+
+      <aside class="mpa-side-menu" id="mpaSideMenu">
+        <button
+          class="mpa-side-close"
+          type="button"
+          aria-label="Close menu"
+          onclick="document.getElementById('mpaSideMenu').classList.remove('open'); document.getElementById('mpaSideOverlay').classList.remove('open');"
+        >
+          ×
+        </button>
+        <div class="mpa-side-title">MENU</div>
+        <div class="mpa-side-links">
+          <a href="/blogs/missing-persons">⚠️ View Missing Cases</a>
+          <a href="/blogs/found-safe">✅ Found Safe Updates</a>
+          <div class="mpa-side-tools">
+            <p class="mpa-side-tools__title">Tools</p>
+            <a href="/pages/tools">Tools overview</a>
+            <a href="/pages/findtrax">FindTrax</a>
+            <a href="/pages/intelpro">IntelPro</a>
+            <a href="/pages/mediareach">MediaReach</a>
+          </div>
+          {%- unless customer -%}
+            <a href="/account/login?return_url=/pages/member-area" rel="nofollow">🔐 Member Login</a>
+          {%- endunless -%}
+          <a href="/pages/professional-membership">🧩 Become a Professional</a>
+          <a href="/pages/donate">Support</a>
+          <a href="/pages/missing-person-advice">MISSING PERSON ADVICE</a>
+          <a href="/collections/affiliate-products">🛒 Recommended Products</a>
+          <a href="/pages/contact">✉️ Contact</a>
+          {%- if shop.customer_accounts_enabled and customer -%}
+            <a href="/pages/member-area" rel="nofollow">📂 Member Area</a>
+            <div class="mpa-side-account-stack">
+              <a href="{{ routes.account_logout_url }}" rel="nofollow">↪️ Log Out</a>
+              {%- if header_show_pro_area -%}
+                <a href="/pages/professional-area" class="mpa-side-pro-text-link">PRO AREA</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </aside>
+    </div>
+  </header>
+</{{ header_tag }}>
+
+{%- if settings.cart_type == 'notification' -%}
+  {%- render 'cart-notification',
+    color_scheme: section.settings.color_scheme,
+    desktop_menu_type: section.settings.menu_type_desktop
+  -%}
+{%- endif -%}
+
+{% javascript %}
+  class StickyHeader extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.header = document.querySelector('.section-header');
+      this.headerIsAlwaysSticky =
+        this.getAttribute('data-sticky-type') === 'always' ||
+        this.getAttribute('data-sticky-type') === 'reduce-logo-size';
+      this.headerBounds = {};
+
+      this.setHeaderHeight();
+
+      window.matchMedia('(max-width: 990px)').addEventListener('change', this.setHeaderHeight.bind(this));
+
+      if (this.headerIsAlwaysSticky) {
+        this.header.classList.add('shopify-section-header-sticky');
+      }
+
+      this.currentScrollTop = 0;
+      this.preventReveal = false;
+      this.predictiveSearch = this.querySelector('predictive-search');
+
+      this.onScrollHandler = this.onScroll.bind(this);
+      this.hideHeaderOnScrollUp = () => (this.preventReveal = true);
+
+      this.addEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
+      window.addEventListener('scroll', this.onScrollHandler, false);
+
+      this.createObserver();
+    }
+
+    setHeaderHeight() {
+      document.documentElement.style.setProperty('--header-height', `${this.header.offsetHeight}px`);
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
+      window.removeEventListener('scroll', this.onScrollHandler);
+    }
+
+    createObserver() {
+      let observer = new IntersectionObserver((entries, observer) => {
+        this.headerBounds = entries[0].intersectionRect;
+        observer.disconnect();
+      });
+
+      observer.observe(this.header);
+    }
+
+    onScroll() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (this.predictiveSearch && this.predictiveSearch.isOpen) return;
+
+      if (scrollTop > this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        this.header.classList.add('scrolled-past-header');
+        if (this.preventHide) return;
+        requestAnimationFrame(this.hide.bind(this));
+      } else if (scrollTop < this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        this.header.classList.add('scrolled-past-header');
+        if (!this.preventReveal) {
+          requestAnimationFrame(this.reveal.bind(this));
+        } else {
+          window.clearTimeout(this.isScrolling);
+
+          this.isScrolling = setTimeout(() => {
+            this.preventReveal = false;
+          }, 66);
+
+          requestAnimationFrame(this.hide.bind(this));
+        }
+      } else if (scrollTop <= this.headerBounds.top) {
+        this.header.classList.remove('scrolled-past-header');
+        requestAnimationFrame(this.reset.bind(this));
+      }
+
+      this.currentScrollTop = scrollTop;
+    }
+
+    hide() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.add('shopify-section-header-hidden', 'shopify-section-header-sticky');
+      this.closeMenuDisclosure();
+      this.closeSearchModal();
+    }
+
+    reveal() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.add('shopify-section-header-sticky', 'animate');
+      this.header.classList.remove('shopify-section-header-hidden');
+    }
+
+    reset() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.remove('shopify-section-header-hidden', 'shopify-section-header-sticky', 'animate');
+    }
+
+    closeMenuDisclosure() {
+      this.disclosures = this.disclosures || this.header.querySelectorAll('header-menu');
+      this.disclosures.forEach((disclosure) => disclosure.close());
+    }
+
+    closeSearchModal() {
+      this.searchModal = this.searchModal || this.header.querySelector('details-modal');
+      this.searchModal.close(false);
+    }
+  }
+
+  customElements.define('sticky-header', StickyHeader);
+{% endjavascript %}
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if settings.logo %}
+      "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+    {% endif %}
+    "sameAs": [
+      {{ settings.social_twitter_link | json }},
+      {{ settings.social_facebook_link | json }},
+      {{ settings.social_pinterest_link | json }},
+      {{ settings.social_instagram_link | json }},
+      {{ settings.social_tiktok_link | json }},
+      {{ settings.social_tumblr_link | json }},
+      {{ settings.social_snapchat_link | json }},
+      {{ settings.social_youtube_link | json }},
+      {{ settings.social_vimeo_link | json }}
+    ],
+    "url": {{ request.origin | append: page.url | json }}
+  }
+</script>
+
+{%- if request.page_type == 'index' -%}
+  {% assign potential_action_target = request.origin | append: routes.search_url | append: '?q={search_term_string}' %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ request.origin | append: page.url | json }}
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "class": "section-header",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "select",
+      "id": "logo_position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "t:sections.header.settings.logo_position.options__2.label"
+        },
+        {
+          "value": "top-center",
+          "label": "t:sections.header.settings.logo_position.options__3.label"
+        },
+        {
+          "value": "middle-left",
+          "label": "t:sections.header.settings.logo_position.options__1.label"
+        },
+        {
+          "value": "middle-center",
+          "label": "t:sections.header.settings.logo_position.options__4.label"
+        }
+      ],
+      "default": "middle-left",
+      "label": "t:sections.header.settings.logo_position.label",
+      "info": "t:sections.header.settings.logo_help.content"
+    },
+    {
+      "type": "select",
+      "id": "mobile_logo_position",
+      "options": [
+        {
+          "value": "center",
+          "label": "t:sections.header.settings.mobile_logo_position.options__1.label"
+        },
+        {
+          "value": "left",
+          "label": "t:sections.header.settings.mobile_logo_position.options__2.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.header.settings.mobile_logo_position.label"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "t:sections.header.settings.menu.label"
+    },
+    {
+      "type": "select",
+      "id": "menu_type_desktop",
+      "options": [
+        {
+          "value": "dropdown",
+          "label": "t:sections.header.settings.menu_type_desktop.options__1.label"
+        },
+        {
+          "value": "mega",
+          "label": "t:sections.header.settings.menu_type_desktop.options__2.label"
+        },
+        {
+          "value": "drawer",
+          "label": "t:sections.header.settings.menu_type_desktop.options__3.label"
+        }
+      ],
+      "default": "dropdown",
+      "label": "t:sections.header.settings.menu_type_desktop.label"
+    },
+    {
+      "type": "select",
+      "id": "sticky_header_type",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.header.settings.sticky_header_type.options__1.label"
+        },
+        {
+          "value": "on-scroll-up",
+          "label": "t:sections.header.settings.sticky_header_type.options__2.label"
+        },
+        {
+          "value": "always",
+          "label": "t:sections.header.settings.sticky_header_type.options__3.label"
+        },
+        {
+          "value": "reduce-logo-size",
+          "label": "t:sections.header.settings.sticky_header_type.options__4.label"
+        }
+      ],
+      "default": "on-scroll-up",
+      "label": "t:sections.header.settings.sticky_header_type.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_line_separator",
+      "default": true,
+      "label": "t:sections.header.settings.show_line_separator.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header__1.content"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "menu_color_scheme",
+      "label": "t:sections.header.settings.menu_color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header__utilities.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "default": true,
+      "label": "t:sections.header.settings.enable_country_selector.label",
+      "info": "t:sections.header.settings.enable_country_selector.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "default": true,
+      "label": "t:sections.header.settings.enable_language_selector.label",
+      "info": "t:sections.header.settings.enable_language_selector.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_customer_avatar",
+      "default": true,
+      "label": "t:sections.header.settings.enable_customer_avatar.label",
+      "info": "t:sections.header.settings.enable_customer_avatar.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.header.settings.margin_bottom.label",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 36,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 36,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

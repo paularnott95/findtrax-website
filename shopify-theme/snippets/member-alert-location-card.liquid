@@ -1,0 +1,72 @@
+{{ 'member-alert-location.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'member-alert-location.js' | asset_url }}" defer="defer"></script>
+
+{% assign alert_country = customer.metafields.custom.alert_country.value | default: customer.metafields.custom.alert_country | strip %}
+{% assign alert_region = customer.metafields.custom.alert_region.value | default: customer.metafields.custom.alert_region | strip %}
+{% assign alert_county = customer.metafields.custom.alert_county.value | default: customer.metafields.custom.alert_county | strip %}
+{% assign alert_city = customer.metafields.custom.alert_city.value | default: customer.metafields.custom.alert_city | strip %}
+{% assign alert_postcode = customer.metafields.custom.alert_postcode.value | default: customer.metafields.custom.alert_postcode | strip %}
+{% assign alert_display_location = customer.metafields.custom.alert_location_full_path.value | default: customer.metafields.custom.alert_location_full_path | strip %}
+{% if alert_display_location == blank %}
+  {% capture alert_display_location %}
+    {% if alert_city != blank %}{{ alert_city }}{% endif %}
+    {% if alert_county != blank %}
+      {% if alert_city != blank %}, {% endif %}{{ alert_county }}
+    {% elsif alert_region != blank %}
+      {% if alert_city != blank %}, {% endif %}{{ alert_region }}
+    {% endif %}
+    {% if alert_country != blank %}
+      {% if alert_city != blank or alert_county != blank or alert_region != blank %}, {% endif %}{{ alert_country }}
+    {% endif %}
+  {% endcapture %}
+  {% assign alert_display_location = alert_display_location | strip %}
+{% endif %}
+
+<section
+  class="ma-alert-location-card"
+  data-member-alert-location
+  data-customer-id="{{ customer.id | append: '' | escape }}"
+  data-customer-email="{{ customer.email | escape }}"
+>
+  <div class="ma-alert-location-card__head">
+    <div>
+      <p class="ma-alert-location-card__eyebrow">MEMBER AREA SETTINGS</p>
+      <h2>ALERT LOCATION</h2>
+    </div>
+    <span class="ma-alert-location-card__status{% if alert_display_location != blank %} is-saved{% endif %}" data-location-save-status>
+      {% if alert_display_location != blank %}SAVED{% else %}NOT SAVED{% endif %}
+    </span>
+  </div>
+
+  <p class="ma-alert-location-card__copy">
+    Choose the area where you want to receive local missing person alerts. This is not your exact home address.
+  </p>
+  <p class="ma-alert-location-card__saved" data-location-saved-summary{% if alert_display_location == blank %} hidden{% endif %}>
+    Your alert area: <strong data-location-saved-display>{{ alert_display_location | escape }}</strong>
+  </p>
+
+  <form class="ma-alert-location-card__form" data-member-alert-location-form>
+    {% render 'location-selector',
+      id: 'member-alert-location',
+      country: alert_country,
+      region: alert_region,
+      county: alert_county,
+      city: alert_city,
+      mode: 'smart-search',
+      country_name: 'country',
+      region_name: 'region',
+      city_name: 'city'
+    %}
+
+    <details class="ma-alert-location-card__optional">
+      <summary>Add postcode/ZIP (optional)</summary>
+      <label>
+        <span>Optional postcode/ZIP</span>
+        <input name="postcode" type="text" value="{{ alert_postcode | escape }}" autocomplete="postal-code">
+      </label>
+    </details>
+
+    <button type="submit">SAVE ALERT LOCATION</button>
+    <p class="ma-alert-location-card__message" data-location-save-message></p>
+  </form>
+</section>

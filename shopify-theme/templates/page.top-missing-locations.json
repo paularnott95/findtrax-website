@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "top-missing-locations",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

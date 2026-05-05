@@ -1,0 +1,32 @@
+<section class="case-comments-card sidebar-card" data-case-comments-card>
+  <div class="case-comments-card__eyebrow">COMMUNITY COMMENTS</div>
+  <p class="case-comments-card__subtitle">Share helpful information, support, or confirmed local context.</p>
+  <p class="case-comments-card__subtitle">Have information about this case? Leave a comment here or contact police directly if urgent.</p>
+  <p class="case-comments-card__subtitle">Comments are not emergency reports and only approved comments are shown publicly.</p>
+
+  <div class="case-comments-card__feedback" data-case-comments-feedback hidden></div>
+  <div class="case-comments-card__list" data-case-comments-list>
+    <div class="case-comments-card__empty">LEAVE A COMMENT</div>
+  </div>
+
+  {% if customer %}
+    <form class="case-comments-card__form" data-case-comments-form>
+      <textarea
+        class="case-comments-card__textarea"
+        name="comment_body"
+        rows="4"
+        maxlength="2000"
+        placeholder="Write a helpful comment..."
+        required
+      ></textarea>
+      <button type="submit" class="case-comments-card__button">SUBMIT COMMENT</button>
+    </form>
+  {% else %}
+    <div class="case-comments-card__disabled">
+      <p>You must be signed in to leave a comment.</p>
+      <a href="{{ routes.account_login_url }}" class="case-comments-card__button case-comments-card__button--link">SIGN IN TO COMMENT</a>
+    </div>
+  {% endif %}
+
+  <div class="case-comments-card__pro-message" data-case-comments-pro-message hidden></div>
+</section>

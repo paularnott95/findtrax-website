@@ -1,0 +1,4182 @@
+{% assign account_login_return_separator = '?' %}
+{% assign account_register_return_separator = '?' %}
+{% if routes.account_login_url contains '?' %}
+  {% assign account_login_return_separator = '&' %}
+{% endif %}
+{% if routes.account_register_url contains '?' %}
+  {% assign account_register_return_separator = '&' %}
+{% endif %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .account-my-cases-{{ section.id }} {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    color: #ffffff;
+  }
+
+  .account-my-cases__shell-{{ section.id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: 32px;
+    padding: 1.5rem;
+    background:
+      radial-gradient(circle at top, rgba(220, 40, 60, 0.18), transparent 22%),
+      radial-gradient(circle at right top, rgba(255, 95, 120, 0.08), transparent 26%),
+      linear-gradient(180deg, #160608 0%, #090203 100%);
+    border: 1px solid rgba(255, 105, 120, 0.18);
+    box-shadow:
+      0 24px 80px rgba(0, 0, 0, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .account-my-cases__shell-{{ section.id }}::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 32%),
+      linear-gradient(315deg, rgba(223, 64, 83, 0.06), transparent 30%);
+    pointer-events: none;
+  }
+
+  .account-my-cases__content-{{ section.id }} {
+    position: relative;
+    z-index: 1;
+  }
+
+  .account-my-cases__eyebrow-{{ section.id }} {
+    margin: 0 0 0.55rem;
+    color: #e3aeb5;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__hero-{{ section.id }} {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(28rem, 0.8fr);
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+
+  .account-my-cases__hero-panel-{{ section.id }},
+  .account-my-cases__hero-side-{{ section.id }},
+  .account-my-cases__section-{{ section.id }},
+  .account-my-cases__membership-card-{{ section.id }},
+  .account-my-cases__info-card-{{ section.id }},
+  .account-my-cases__stat-card-{{ section.id }},
+  .account-my-cases__card-{{ section.id }},
+  .account-my-cases__modal-shell-{{ section.id }},
+  .account-my-cases__login-panel-{{ section.id }} {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #170709 0%, #0b0203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .account-my-cases__hero-panel-{{ section.id }},
+  .account-my-cases__hero-side-{{ section.id }} {
+    border-radius: 28px;
+    padding: 1.7rem;
+  }
+
+  .account-my-cases__heading-{{ section.id }} {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(3.2rem, 5vw, 5.2rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__intro-{{ section.id }} {
+    max-width: 66rem;
+    margin: 1rem 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.55rem;
+    line-height: 1.7;
+  }
+
+  .account-my-cases__hero-actions-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.6rem;
+  }
+
+  .account-my-cases__portal-grid-{{ section.id }} {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .account-my-cases__portal-nav-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+  }
+
+  .account-my-cases__portal-chip-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4rem;
+    padding: 0 1.4rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__side-kicker-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__side-title-{{ section.id }} {
+    margin: 0.8rem 0 0;
+    font-size: 2rem;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__side-copy-{{ section.id }} {
+    margin: 0.8rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .account-my-cases__section-{{ section.id }} {
+    border-radius: 28px;
+    padding: 1.45rem;
+  }
+
+  .account-my-cases__section-head-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: end;
+    margin-bottom: 1.5rem;
+  }
+
+  .account-my-cases__section-title-{{ section.id }} {
+    margin: 0.45rem 0 0;
+    font-size: clamp(2.2rem, 3.4vw, 3rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__section-copy-{{ section.id }} {
+    max-width: 68rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.74);
+    line-height: 1.65;
+  }
+
+  .account-my-cases__stats-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .account-my-cases__stat-card-{{ section.id }} {
+    border-radius: 22px;
+    padding: 1.15rem;
+  }
+
+  .account-my-cases__stat-label-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__stat-value-{{ section.id }} {
+    margin-top: 0.7rem;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__stat-note-{{ section.id }} {
+    margin-top: 0.55rem;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  .account-my-cases__overview-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .account-my-cases__info-card-{{ section.id }} {
+    border-radius: 22px;
+    padding: 1.5rem;
+  }
+
+  .account-my-cases__info-title-{{ section.id }} {
+    margin: 0;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__info-copy-{{ section.id }} {
+    margin: 0.75rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .account-my-cases__checklist-{{ section.id }} {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .account-my-cases__checklist-item-{{ section.id }} {
+    display: flex;
+    gap: 0.8rem;
+    align-items: start;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.55;
+  }
+
+  .account-my-cases__checklist-dot-{{ section.id }} {
+    flex: 0 0 0.8rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    margin-top: 0.45rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #df4053 0%, #8f1421 100%);
+    box-shadow: 0 0 16px rgba(223, 64, 83, 0.45);
+  }
+
+  .account-my-cases__grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .account-my-cases__card-{{ section.id }} {
+    overflow: hidden;
+    border-radius: 22px;
+  }
+
+  .account-my-cases__image-wrap-{{ section.id }} {
+    position: relative;
+    height: 220px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .account-my-cases__image-{{ section.id }},
+  .account-my-cases__image-placeholder-{{ section.id }} {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .account-my-cases__image-{{ section.id }}.is-found {
+    filter: blur(22px) saturate(0.88) brightness(0.78) contrast(0.9);
+    transform: scale(1.1);
+    transform-origin: center center;
+    opacity: 0.78;
+  }
+
+  .account-my-cases__found-overlay-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, rgba(5, 12, 8, 0.28) 0%, rgba(5, 12, 8, 0.72) 100%);
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__image-placeholder-{{ section.id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.2rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__body-{{ section.id }} {
+    padding: 1.5rem;
+  }
+
+  .account-my-cases__title-{{ section.id }} {
+    margin: 0 0 1rem;
+    color: #ffffff;
+    font-size: 2rem;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__meta-{{ section.id }} {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .account-my-cases__meta-label-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__meta-value-{{ section.id }} {
+    color: #ffffff;
+    font-size: 1.4rem;
+    line-height: 1.4;
+  }
+
+  .account-my-cases__badge-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(22, 163, 74, 0.18);
+    border: 1px solid rgba(74, 222, 128, 0.35);
+    color: #dcfce7;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__resolved-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.4rem;
+    padding: 0 1.8rem;
+    border-radius: 999px;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    background: linear-gradient(180deg, rgba(22, 163, 74, 0.24), rgba(20, 83, 45, 0.3));
+    color: #dcfce7;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__button-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.4rem;
+    padding: 0 1.8rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #df4053 0%, #8f1421 100%);
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 14px 28px rgba(124, 19, 29, 0.24);
+    cursor: pointer;
+  }
+
+  .account-my-cases__button-secondary-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.4rem;
+    padding: 0 1.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #2a2527 0%, #161113 100%);
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+  }
+
+  .account-my-cases__actions-{{ section.id }},
+  .account-my-cases__cta-row-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+
+  .account-my-cases__actions-{{ section.id }} .account-my-cases__button-{{ section.id }},
+  .account-my-cases__actions-{{ section.id }} .account-my-cases__button-secondary-{{ section.id }},
+  .account-my-cases__cta-row-{{ section.id }} .account-my-cases__button-{{ section.id }},
+  .account-my-cases__cta-row-{{ section.id }} .account-my-cases__button-secondary-{{ section.id }} {
+    flex: 1 1 18rem;
+  }
+
+  .account-my-cases__membership-grid-{{ section.id }},
+  .account-my-cases__request-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .account-my-cases__request-grid-{{ section.id }} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .account-my-cases__membership-card-{{ section.id }},
+  .account-my-cases__request-card-{{ section.id }} {
+    border-radius: 22px;
+    padding: 1.5rem;
+  }
+
+  .account-my-cases__membership-tier-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3rem;
+    padding: 0 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(223, 64, 83, 0.18);
+    background: rgba(223, 64, 83, 0.08);
+    color: #f4d6d9;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__membership-name-{{ section.id }},
+  .account-my-cases__request-title-{{ section.id }} {
+    margin: 1rem 0 0;
+    font-size: 1.75rem;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__membership-copy-{{ section.id }},
+  .account-my-cases__request-copy-{{ section.id }} {
+    margin: 0.8rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .account-my-cases__membership-foot-{{ section.id }} {
+    margin-top: 1.2rem;
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__request-card-{{ section.id }} {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #170709 0%, #0b0203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .member-account-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .ma-support-mini-card {
+    border-color: rgba(255, 55, 55, 0.24);
+    background:
+      linear-gradient(180deg, rgba(20, 20, 20, 0.9), rgba(8, 8, 8, 0.96));
+  }
+
+  .ma-support-mini-card__title {
+    margin: 0;
+    color: #f5d4d7;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .ma-support-mini-card__text {
+    margin: 0.8rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .ma-support-mini-card__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.2rem;
+    margin-top: 1.2rem;
+    padding: 0 1.6rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #df4053 0%, #8f1421 100%);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__request-status-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .pending-card {
+    border-radius: 22px;
+    padding: 1.5rem;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #170709 0%, #0b0203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .pending-card strong {
+    display: block;
+    margin: 0;
+    font-size: 1.75rem;
+    text-transform: uppercase;
+  }
+
+  .pending-card p {
+    margin: 0.8rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .account-my-cases__empty-{{ section.id }} {
+    margin-top: 1rem;
+    border-radius: 22px;
+    padding: 1.75rem;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #1a090b 0%, #0c0304 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+  }
+
+  .account-my-cases__empty-title-{{ section.id }} {
+    margin: 0 0 0.7rem;
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__login-wrap-{{ section.id }} {
+    min-height: 56rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .account-my-cases__login-panel-{{ section.id }} {
+    width: min(68rem, 100%);
+    border-radius: 30px;
+    padding: 2.4rem;
+    text-align: center;
+  }
+
+  .account-my-cases__lock-badge-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.2rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(223, 64, 83, 0.18);
+    background: rgba(223, 64, 83, 0.08);
+    color: #f4d6d9;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__login-heading-{{ section.id }} {
+    margin: 1.3rem 0 0;
+    font-size: clamp(3rem, 5vw, 4.6rem);
+    line-height: 0.98;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__login-copy-{{ section.id }} {
+    max-width: 52rem;
+    margin: 1rem auto 0;
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 1.55rem;
+    line-height: 1.7;
+  }
+
+  .account-my-cases__login-actions-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.8rem;
+  }
+
+  .account-my-cases__locked-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.75rem;
+  }
+
+  .account-my-cases__locked-card-{{ section.id }} {
+    border-radius: 22px;
+    padding: 1.4rem;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, #150607 0%, #080203 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .account-my-cases__locked-title-{{ section.id }} {
+    margin: 0;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__locked-copy-{{ section.id }} {
+    margin: 0.7rem 0 0;
+    color: rgba(255, 255, 255, 0.62);
+    line-height: 1.55;
+  }
+
+  .account-my-cases__modal-{{ section.id }} {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+  }
+
+  .account-my-cases__modal-{{ section.id }}.is-open {
+    display: block;
+  }
+
+  #global-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.96);
+    z-index: 9998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  #global-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .account-my-cases__modal-backdrop-{{ section.id }} {
+    display: none;
+  }
+
+  .account-my-cases__modal-dialog-{{ section.id }} {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    width: min(960px, 94vw);
+    max-height: 90vh;
+    overflow: hidden;
+  }
+
+  .account-my-cases__modal-shell-{{ section.id }} {
+    position: relative;
+    max-height: calc(90vh - 40px);
+    overflow-y: auto;
+    border-radius: 28px;
+    padding: 2rem 2rem 24px;
+  }
+
+  .account-my-cases__modal-close-{{ section.id }} {
+    position: absolute;
+    top: 1.4rem;
+    right: 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.2rem;
+    height: 4.2rem;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    background: linear-gradient(180deg, rgba(42, 15, 18, 0.96), rgba(18, 7, 8, 0.96));
+    color: #ffffff;
+    font-size: 2.6rem;
+    line-height: 1;
+  }
+
+  .account-my-cases__modal-kicker-{{ section.id }} {
+    margin: 0 0 0.6rem;
+    color: #e3aeb5;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__modal-heading-{{ section.id }} {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(2.6rem, 4vw, 3.8rem);
+    line-height: 1.04;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__modal-copy-{{ section.id }} {
+    margin: 1rem 0 0;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+  }
+
+  .account-my-cases__modal-selected-{{ section.id }} {
+    margin: 1.8rem 0;
+    padding: 1.6rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .account-my-cases__selected-label-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__selected-title-{{ section.id }} {
+    margin-top: 0.6rem;
+    color: #ffffff;
+    font-size: 2rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__review-note-{{ section.id }} {
+    margin: 0 0 1.8rem;
+    padding: 1.4rem 1.6rem;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(223, 64, 83, 0.12), rgba(223, 64, 83, 0.04));
+    border: 1px solid rgba(223, 64, 83, 0.16);
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.6;
+  }
+
+  .account-my-cases__panel-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 0 0 1.8rem;
+  }
+
+  .account-my-cases__panel-card-{{ section.id }} {
+    padding: 1.35rem 1.5rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .account-my-cases__panel-card-{{ section.id }}.is-wide {
+    grid-column: 1 / -1;
+  }
+
+  .account-my-cases__panel-label-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__panel-value-{{ section.id }} {
+    margin-top: 0.65rem;
+    color: #ffffff;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    word-break: break-word;
+  }
+
+  .account-my-cases__panel-section-{{ section.id }} + .account-my-cases__panel-section-{{ section.id }} {
+    margin-top: 1.8rem;
+    padding-top: 1.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .account-my-cases__panel-title-{{ section.id }} {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.9rem;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__panel-copy-{{ section.id }} {
+    margin: 0.75rem 0 0;
+    color: rgba(255, 255, 255, 0.74);
+    line-height: 1.6;
+  }
+
+  .account-my-cases__form-{{ section.id }} {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .account-my-cases__field-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .account-my-cases__field-{{ section.id }} label {
+    color: #f4d6d9;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-my-cases__field-{{ section.id }} input,
+  .account-my-cases__field-{{ section.id }} textarea {
+    width: 100%;
+    min-height: 5rem;
+    padding: 1.4rem 1.6rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    color: #ffffff;
+    font-size: 1.4rem;
+  }
+
+  .account-my-cases__field-{{ section.id }} textarea {
+    min-height: auto;
+    resize: vertical;
+  }
+
+  .account-my-cases__modal-actions-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.4rem;
+  }
+
+  .ma-fundraiser-list-{{ section.id }} {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .ma-fundraiser-overview-{{ section.id }} {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.4rem;
+    margin-bottom: 1.4rem;
+    border-radius: 22px;
+    padding: 1.2rem;
+    background:
+      radial-gradient(circle at top left, rgba(92, 255, 159, 0.18), transparent 42%),
+      linear-gradient(180deg, rgba(18, 80, 44, 0.34), rgba(7, 16, 10, 0.96));
+    border: 1px solid rgba(118, 255, 178, 0.24);
+  }
+
+  .ma-fundraiser-overview__locked-{{ section.id }},
+  .ma-fundraiser-overview__copy-{{ section.id }},
+  .ma-fundraiser-overview-card__fee-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .ma-fundraiser-overview__head-{{ section.id }} {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .ma-fundraiser-overview__title-{{ section.id }} {
+    margin: 0.25rem 0 0;
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 950;
+  }
+
+  .ma-fundraiser-overview-card-{{ section.id }} {
+    display: grid;
+    gap: 1rem;
+    border-radius: 18px;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .ma-fundraiser-overview-card-{{ section.id }} h4 {
+    margin: 0.25rem 0;
+    color: #ffffff;
+    font-size: 1.45rem;
+    font-weight: 950;
+  }
+
+  .ma-fundraiser-overview-card-{{ section.id }} p {
+    margin: 0;
+  }
+
+  .ma-fundraiser-overview-card__status-{{ section.id }} {
+    width: fit-content;
+    border-radius: 999px;
+    padding: 0.45rem 0.7rem;
+    background: rgba(118, 255, 178, 0.14);
+    color: #d8ffe8;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ma-fundraiser-overview-card__metrics-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .ma-fundraiser-overview-card__metrics-{{ section.id }} span {
+    border-radius: 14px;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.045);
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .ma-fundraiser-overview-card__metrics-{{ section.id }} strong {
+    display: block;
+    margin-top: 0.25rem;
+    color: #ffffff;
+    font-size: 1.2rem;
+  }
+
+  .ma-fundraiser-overview-card__actions-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  .ma-fundraiser-card-{{ section.id }} {
+    border-radius: 22px;
+    padding: 1.15rem;
+    background:
+      linear-gradient(180deg, rgba(18, 80, 44, 0.32), rgba(255, 255, 255, 0.02)),
+      linear-gradient(180deg, #120607 0%, #090203 100%);
+    border: 1px solid rgba(118, 255, 178, 0.2);
+  }
+
+  .ma-fundraiser-card__grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .ma-fundraiser-card__metric-{{ section.id }} {
+    border-radius: 16px;
+    padding: 0.9rem;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .ma-fundraiser-card__label-{{ section.id }} {
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ma-fundraiser-card__value-{{ section.id }} {
+    margin-top: 0.45rem;
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 900;
+  }
+
+  .ma-fundraiser-card__controls-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1rem;
+  }
+
+  .ma-fundraiser-card__goal-{{ section.id }} {
+    min-height: 4rem;
+    width: 13rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.24);
+    color: #ffffff;
+    padding: 0 1rem;
+  }
+
+  .ma-member-inbox {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .ma-member-inbox__stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .ma-member-inbox-stat {
+    border-radius: 18px;
+    padding: 1.2rem;
+    border: 1px solid rgba(255, 89, 99, 0.16);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+      linear-gradient(180deg, #190709 0%, #0b0203 100%);
+  }
+
+  .ma-member-inbox-stat__label {
+    color: rgba(255, 210, 214, 0.72);
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ma-member-inbox-stat__value {
+    margin-top: 0.65rem;
+    color: #ffffff;
+    font-size: 2.7rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .ma-member-inbox__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .ma-member-inbox-filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.8rem;
+    padding: 0 1.2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .ma-member-inbox-filter.is-active {
+    border-color: rgba(255, 96, 108, 0.48);
+    background: linear-gradient(180deg, rgba(223, 64, 83, 0.42), rgba(143, 20, 33, 0.52));
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(223, 64, 83, 0.18);
+  }
+
+  .ma-member-inbox__list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .ma-member-inbox-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: start;
+    border-radius: 20px;
+    padding: 1.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background:
+      radial-gradient(circle at top left, rgba(223, 64, 83, 0.12), transparent 32%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.016)),
+      linear-gradient(180deg, #160608 0%, #090203 100%);
+  }
+
+  .ma-member-inbox-card:has(.ma-member-inbox-card__media) {
+    grid-template-columns: 96px minmax(0, 1fr) auto;
+  }
+
+  .ma-member-inbox-card__media {
+    width: 96px;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .ma-member-inbox-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ma-member-inbox-card.is-unread {
+    border-color: rgba(255, 81, 95, 0.38);
+    box-shadow: 0 0 24px rgba(223, 64, 83, 0.14);
+  }
+
+  .ma-member-inbox-card.is-urgent {
+    border-color: rgba(255, 44, 44, 0.58);
+  }
+
+  .ma-member-inbox-card__top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .ma-member-inbox-card__badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.4rem;
+    padding: 0 0.8rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 90, 105, 0.26);
+    background: rgba(223, 64, 83, 0.14);
+    color: #ffd1d6;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ma-member-inbox-card__time {
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .ma-member-inbox-card__title {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .ma-member-inbox-card__message,
+  .ma-member-inbox-card__case {
+    margin: 0.7rem 0 0;
+    color: rgba(255, 255, 255, 0.76);
+    line-height: 1.55;
+  }
+
+  .ma-member-inbox-card__case {
+    color: #ffd7db;
+    font-weight: 800;
+  }
+
+  .ma-member-inbox-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.65rem;
+  }
+
+  .ma-member-inbox-card__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.8rem;
+    padding: 0 1.1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(180deg, #df4053 0%, #8f1421 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .ma-member-inbox-card__button--secondary {
+    background: linear-gradient(180deg, #2a2527 0%, #161113 100%);
+  }
+
+  .ma-member-inbox__empty {
+    border-radius: 22px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.016));
+    text-align: center;
+  }
+
+  .ma-member-inbox__empty h3 {
+    margin: 0 0 0.8rem;
+    color: #ffffff;
+    font-size: 1.9rem;
+    text-transform: uppercase;
+  }
+
+  .ma-member-inbox__empty p {
+    max-width: 58rem;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
+  }
+
+  .ma-professional-help-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.4rem;
+    align-items: center;
+    margin: 1.4rem 0;
+    border-radius: 18px;
+    padding: 1.6rem;
+    background:
+      linear-gradient(135deg, rgba(154, 20, 33, 0.62), rgba(15, 4, 6, 0.98) 58%),
+      linear-gradient(180deg, #170608 0%, #060203 100%);
+    border: 1px solid rgba(255, 88, 107, 0.34);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.24);
+  }
+
+  .ma-professional-help-card.is-highlighted {
+    border-color: rgba(255, 210, 218, 0.86);
+    box-shadow: 0 0 0 3px rgba(255, 67, 88, 0.22), 0 24px 54px rgba(0, 0, 0, 0.3);
+  }
+
+  .ma-professional-help-card__eyebrow,
+  .ma-professional-help-modal__eyebrow {
+    color: #ffb8c0;
+    font-size: 0.92rem;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .ma-professional-help-card__title,
+  .ma-professional-help-modal__title {
+    margin: 0.35rem 0 0.7rem;
+    color: #ffffff;
+    font-weight: 950;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .ma-professional-help-card__title {
+    font-size: clamp(2rem, 2.7vw, 3.2rem);
+  }
+
+  .ma-professional-help-card__message,
+  .ma-professional-help-card__support,
+  .ma-professional-help-card__note,
+  .ma-professional-help-card__case,
+  .ma-professional-help-modal__message,
+  .ma-professional-help-modal__case {
+    margin: 0.5rem 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .ma-professional-help-card__note,
+  .ma-professional-help-card__case,
+  .ma-professional-help-modal__case {
+    color: #ffe1e5;
+  }
+
+  .ma-professional-help-card__actions,
+  .ma-professional-help-modal__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.8rem;
+  }
+
+  .ma-professional-help-card__button,
+  .ma-professional-help-modal__button {
+    min-height: 4.4rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 0 1.6rem;
+    background: linear-gradient(180deg, #ff4358 0%, #a40f20 100%);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .ma-professional-help-modal__button--secondary {
+    background: linear-gradient(180deg, #292124 0%, #110b0d 100%);
+  }
+
+  .ma-professional-help-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 4.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    padding: 0 1.05rem;
+    background: rgba(0, 0, 0, 0.32);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 950;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .ma-professional-help-card__selector {
+    min-height: 4.4rem;
+    max-width: 24rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    padding: 0 1.2rem;
+    background: rgba(0, 0, 0, 0.34);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 850;
+  }
+
+  .ma-professional-help-switch__track {
+    position: relative;
+    display: inline-flex;
+    width: 4.8rem;
+    height: 2.55rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .ma-professional-help-switch__knob {
+    position: absolute;
+    top: 0.35rem;
+    left: 0.38rem;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 999px;
+    background: #ffffff;
+    transition: transform 160ms ease;
+  }
+
+  .ma-professional-help-switch.is-on .ma-professional-help-switch__track {
+    background: #d92036;
+  }
+
+  .ma-professional-help-switch.is-on .ma-professional-help-switch__knob {
+    transform: translateX(2.15rem);
+  }
+
+  .ma-professional-help-card__status,
+  .ma-professional-help-modal__status {
+    margin: 0.8rem 0 0;
+    color: #ffd8dd;
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .ma-professional-help-card__status.is-error,
+  .ma-professional-help-modal__status.is-error {
+    color: #ff8f9c;
+  }
+
+  .ma-professional-help-card__status-text {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.8rem;
+    border-radius: 999px;
+    padding: 0 0.9rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffd8dd;
+    font-size: 0.95rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ma-professional-help-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    padding: 1.6rem;
+  }
+
+  .ma-professional-help-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+  }
+
+  .ma-professional-help-modal__dialog {
+    position: relative;
+    width: min(58rem, 100%);
+    border-radius: 22px;
+    padding: 2.2rem;
+    background:
+      linear-gradient(135deg, rgba(132, 13, 26, 0.72), rgba(9, 2, 3, 0.98) 62%),
+      #0a0304;
+    border: 1px solid rgba(255, 88, 107, 0.34);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.48);
+  }
+
+  .ma-professional-help-modal__title {
+    font-size: clamp(2.2rem, 4vw, 4rem);
+  }
+
+  @media screen and (max-width: 1199px) {
+    .account-my-cases__hero-{{ section.id }},
+    .account-my-cases__overview-grid-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .account-my-cases__stats-{{ section.id }} {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ma-member-inbox__stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .account-my-cases__grid-{{ section.id }},
+    .account-my-cases__membership-grid-{{ section.id }},
+    .member-account-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .account-my-cases__request-grid-{{ section.id }},
+    .account-my-cases__locked-grid-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ma-program-panel,
+  .ma-control-card,
+  .ma-control-stat,
+  .ma-control-list,
+  .ma-control-empty {
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    border-radius: 20px;
+    box-shadow:
+      0 20px 45px rgba(15, 23, 42, 0.10),
+      0 2px 6px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  .ma-control-empty {
+    color: #64748b;
+    text-align: center;
+  }
+
+  .ma-control-shell {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 1.4rem;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 1.2rem;
+    background: #eef1f5;
+    border-radius: 28px;
+  }
+
+  .ma-control-sidebar {
+    position: sticky;
+    top: 1.6rem;
+    align-self: start;
+    padding: 1rem;
+  }
+
+  .ma-control-main {
+    min-width: 0;
+  }
+
+  .ma-program-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    padding: 1rem 1.15rem;
+    color: #111827;
+  }
+
+  .ma-program-toolbar__title,
+  .ma-control-sidebar__brand {
+    color: #111827;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .ma-program-toolbar__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    color: #64748b;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .ma-program-status-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+    background: #16a34a;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
+  }
+
+  .ma-control-sidebar__nav {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: 1.1rem;
+  }
+
+  .ma-control-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 3.6rem;
+    padding: 0 0.85rem;
+    border-radius: 14px;
+    color: #475569;
+    font-size: 1rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .ma-control-sidebar__link.is-active {
+    background: rgba(220, 38, 38, 0.08);
+    color: #991b1b;
+  }
+
+  .ma-control-sidebar__icon {
+    width: 1.55rem;
+    color: #94a3b8;
+    text-align: center;
+  }
+
+  .account-my-cases-{{ section.id }} {
+    max-width: none;
+    background: #eef1f5;
+    color: #111827;
+  }
+
+  .account-my-cases__shell-{{ section.id }} {
+    overflow: visible;
+    color: #111827;
+  }
+
+  .account-my-cases__shell-{{ section.id }}::before {
+    display: none;
+  }
+
+  .account-my-cases__content-{{ section.id }} {
+    grid-column: 2;
+  }
+
+  .account-my-cases__hero-{{ section.id }} {
+    grid-template-columns: minmax(0, 1.35fr) minmax(25rem, 0.65fr);
+  }
+
+  .account-my-cases__hero-panel-{{ section.id }},
+  .account-my-cases__hero-side-{{ section.id }},
+  .account-my-cases__section-{{ section.id }},
+  .account-my-cases__membership-card-{{ section.id }},
+  .account-my-cases__info-card-{{ section.id }},
+  .account-my-cases__stat-card-{{ section.id }},
+  .account-my-cases__card-{{ section.id }},
+  .account-my-cases__login-panel-{{ section.id }},
+  .account-my-cases__request-card-{{ section.id }},
+  .pending-card,
+  .member-summary-strip,
+  .ma-member-inbox-stat,
+  .ma-member-inbox-card,
+  .ma-member-inbox__empty,
+  .ma-professional-help-card,
+  .ma-fundraiser-card-{{ section.id }},
+  .ma-fundraiser-overview-{{ section.id }} {
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    color: #111827;
+    box-shadow:
+      0 20px 45px rgba(15, 23, 42, 0.10),
+      0 2px 6px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  .account-my-cases__eyebrow-{{ section.id }},
+  .account-my-cases__side-kicker-{{ section.id }},
+  .account-my-cases__stat-label-{{ section.id }},
+  .account-my-cases__meta-label-{{ section.id }},
+  .account-my-cases__request-status-{{ section.id }},
+  .member-summary-strip__label,
+  .ma-member-inbox-stat__label,
+  .ma-member-inbox-card__time {
+    color: #64748b;
+  }
+
+  .account-my-cases__heading-{{ section.id }},
+  .account-my-cases__section-title-{{ section.id }},
+  .account-my-cases__title-{{ section.id }},
+  .account-my-cases__side-title-{{ section.id }},
+  .account-my-cases__info-title-{{ section.id }},
+  .account-my-cases__membership-name-{{ section.id }},
+  .account-my-cases__request-title-{{ section.id }},
+  .account-my-cases__empty-title-{{ section.id }},
+  .account-my-cases__login-heading-{{ section.id }},
+  .pending-card strong,
+  .ma-member-inbox-card__title,
+  .ma-member-inbox__empty h3,
+  .member-summary-strip__value,
+  .ma-member-inbox-stat__value {
+    color: #111827;
+  }
+
+  .account-my-cases__intro-{{ section.id }},
+  .account-my-cases__section-copy-{{ section.id }},
+  .account-my-cases__side-copy-{{ section.id }},
+  .account-my-cases__info-copy-{{ section.id }},
+  .account-my-cases__membership-copy-{{ section.id }},
+  .account-my-cases__request-copy-{{ section.id }},
+  .account-my-cases__stat-note-{{ section.id }},
+  .pending-card p,
+  .ma-member-inbox-card__message,
+  .ma-member-inbox-card__case,
+  .ma-member-inbox__empty p,
+  .account-my-cases__login-copy-{{ section.id }} {
+    color: #475569;
+  }
+
+  .account-my-cases__portal-chip-{{ section.id }},
+  .ma-member-inbox-filter,
+  .account-my-cases__button-secondary-{{ section.id }},
+  .ma-member-inbox-card__button--secondary {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    color: #334155;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  }
+
+  .account-my-cases__portal-chip-{{ section.id }}.is-active,
+  .ma-member-inbox-filter.is-active {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.20);
+    color: #991b1b;
+    box-shadow: none;
+  }
+
+  .account-my-cases__button-{{ section.id }},
+  .ma-support-mini-card__button,
+  .ma-member-inbox-card__button,
+  .ma-professional-help-card__button,
+  .ma-professional-help-modal__button {
+    background: #b91c1c;
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(185, 28, 28, 0.18);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ma-control-shell {
+      display: block;
+      padding: 1rem;
+      border-radius: 24px;
+    }
+
+    .ma-control-sidebar {
+      position: static;
+      margin-bottom: 1rem;
+    }
+
+    .ma-control-sidebar__nav {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .account-my-cases__content-{{ section.id }} {
+      grid-column: auto;
+    }
+
+    .account-my-cases-{{ section.id }} {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .account-my-cases__shell-{{ section.id }},
+    .account-my-cases__section-{{ section.id }},
+    .account-my-cases__hero-panel-{{ section.id }},
+    .account-my-cases__hero-side-{{ section.id }},
+    .account-my-cases__login-panel-{{ section.id }} {
+      padding: 1.4rem;
+      border-radius: 24px;
+    }
+
+    .account-my-cases__stats-{{ section.id }},
+    .account-my-cases__grid-{{ section.id }},
+    .account-my-cases__membership-grid-{{ section.id }},
+    .account-my-cases__locked-grid-{{ section.id }},
+    .member-account-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .account-my-cases__actions-{{ section.id }},
+    .account-my-cases__cta-row-{{ section.id }},
+    .account-my-cases__login-actions-{{ section.id }},
+    .account-my-cases__modal-actions-{{ section.id }} {
+      flex-direction: column;
+    }
+
+    .account-my-cases__button-{{ section.id }},
+    .account-my-cases__button-secondary-{{ section.id }} {
+      width: 100%;
+    }
+
+    .ma-member-inbox__stats,
+    .ma-professional-help-card,
+    .ma-member-inbox-card,
+    .ma-fundraiser-overview-card__metrics-{{ section.id }},
+    .ma-fundraiser-card__grid-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ma-fundraiser-overview__head-{{ section.id }} {
+      display: grid;
+    }
+
+    .ma-member-inbox-card__actions,
+    .ma-professional-help-card__actions,
+    .ma-professional-help-modal__actions,
+    .ma-member-inbox-card__button {
+      width: 100%;
+      justify-content: stretch;
+    }
+
+    .ma-professional-help-card__button,
+    .ma-professional-help-modal__button,
+    .ma-professional-help-switch {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .account-my-cases__modal-dialog-{{ section.id }} {
+      width: min(95vw, 900px);
+    }
+
+    .account-my-cases__modal-shell-{{ section.id }} {
+      padding: 1.8rem 1.4rem;
+      border-radius: 22px;
+    }
+
+    .account-my-cases__panel-grid-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .account-my-cases__panel-card-{{ section.id }}.is-wide {
+      grid-column: auto;
+    }
+  }
+{%- endstyle -%}
+
+<div class="account-my-cases-{{ section.id }} section-{{ section.id }}-padding member-area-page">
+  <section class="account-my-cases__login-panel-{{ section.id }}" style="margin-bottom: 1.5rem;">
+    <div class="account-my-cases__lock-badge-{{ section.id }}">MEMBER AREA</div>
+    <h1 class="account-my-cases__login-heading-{{ section.id }} member-title">MEMBER AREA</h1>
+    <p class="account-my-cases__login-copy-{{ section.id }} member-subtitle">
+      CONTROL YOUR CASES, MEMBERSHIP ACCESS, FOLLOWED ALERTS, AND PROFESSIONAL ROUTING FROM THE STOREFRONT MEMBER AREA.
+    </p>
+  </section>
+
+  {% if customer %}
+    {% assign current_customer_id = customer.id | append: '' %}
+    {% assign current_customer_email = customer.email | downcase | strip %}
+    {% assign current_customer_tags = customer.tags | join: ',' | downcase %}
+    {% assign professional_metafield_status = customer.metafields.custom.professional_verification_status.value | default: customer.metafields.custom.professional_verification_status | default: customer.metafields.custom.professional_status.value | default: customer.metafields.custom.professional_status | default: customer.metafields.missingalerts.professional_verification_status.value | default: customer.metafields.missingalerts.professional_verification_status | default: customer.metafields.missingalerts.professional_status.value | default: customer.metafields.missingalerts.professional_status | append: '' | downcase %}
+    {% assign professional_metafield_account_type = customer.metafields.custom.account_type.value | default: customer.metafields.custom.account_type | default: customer.metafields.missingalerts.account_type.value | default: customer.metafields.missingalerts.account_type | append: '' | downcase %}
+    {% assign membership_tier_meta = customer.metafields.custom.membership_tier.value | default: customer.metafields.custom.membership_tier | default: customer.metafields.custom.membership_type.value | default: customer.metafields.custom.membership_type | default: customer.metafields.missingalerts.membership_tier.value | default: customer.metafields.missingalerts.membership_tier | default: customer.metafields.missingalerts.membership_type.value | default: customer.metafields.missingalerts.membership_type | append: '' | downcase %}
+    {% assign has_professional_tools = false %}
+    {% assign has_member_access = false %}
+    {% assign has_paid_professional_tier = false %}
+    {% assign professional_verified = false %}
+    {% assign professional_pending = false %}
+    {% assign detected_tier = 'COMMUNITY' %}
+    {% for customer_tag in customer.tags %}
+      {% assign normalized_customer_tag = customer_tag | downcase | strip %}
+      {% if normalized_customer_tag == 'professional' or normalized_customer_tag == 'pro' or normalized_customer_tag == 'professional_pending' or normalized_customer_tag == 'professional_premium' or normalized_customer_tag == 'professional_enterprise' or normalized_customer_tag == 'professional_access' or normalized_customer_tag == 'professional_plus' or normalized_customer_tag == 'professional_elite' or normalized_customer_tag == 'professional_pending_verification' or normalized_customer_tag == 'professional_verified' %}
+        {% assign has_professional_tools = true %}
+      {% endif %}
+    {% endfor %}
+    {% if professional_metafield_status contains 'professional' or professional_metafield_account_type contains 'professional' %}
+      {% assign has_professional_tools = true %}
+    {% endif %}
+    {% if current_customer_tags contains 'professional_verified' or professional_metafield_status contains 'approved' or professional_metafield_status contains 'verified' %}
+      {% assign professional_verified = true %}
+    {% endif %}
+    {% if current_customer_tags contains 'professional_pending_verification' or professional_metafield_status contains 'pending' %}
+      {% assign professional_pending = true %}
+    {% endif %}
+    {% if current_customer_tags contains 'professional_elite' or membership_tier_meta contains 'professional_elite' %}
+      {% assign detected_tier = 'PROFESSIONAL ELITE' %}
+      {% assign has_member_access = true %}
+      {% assign has_paid_professional_tier = true %}
+      {% assign has_professional_tools = true %}
+    {% elsif current_customer_tags contains 'professional_plus' or membership_tier_meta contains 'professional_plus' %}
+      {% assign detected_tier = 'PROFESSIONAL PLUS' %}
+      {% assign has_member_access = true %}
+      {% assign has_paid_professional_tier = true %}
+      {% assign has_professional_tools = true %}
+    {% elsif current_customer_tags contains 'professional_access' or membership_tier_meta contains 'professional_access' %}
+      {% assign detected_tier = 'PROFESSIONAL ACCESS' %}
+      {% assign has_member_access = true %}
+      {% assign has_paid_professional_tier = true %}
+      {% assign has_professional_tools = true %}
+    {% elsif current_customer_tags contains 'community_pro' or membership_tier_meta contains 'community_pro' %}
+      {% assign detected_tier = 'COMMUNITY PRO' %}
+      {% assign has_member_access = true %}
+    {% elsif current_customer_tags contains 'community_plus' or membership_tier_meta contains 'community_plus' %}
+      {% assign detected_tier = 'COMMUNITY+' %}
+      {% assign has_member_access = true %}
+    {% elsif current_customer_tags contains 'professional_verified' %}
+      {% assign detected_tier = 'PROFESSIONAL VERIFIED' %}
+      {% assign has_member_access = true %}
+      {% assign has_professional_tools = true %}
+    {% endif %}
+    {% assign member_area_unlocked = has_member_access %}
+    {% assign professional_access_status = 'Pending approval' %}
+    {% assign professional_access_note = 'Professional tools stay locked behind approval, verification, and safe inbox rules.' %}
+    {% if detected_tier == 'PROFESSIONAL ELITE' %}
+      {% assign professional_access_status = 'Professional elite' %}
+      {% assign professional_access_note = 'Elite professional access is present, but directory visibility and messaging stay locked until verification is approved.' %}
+    {% elsif detected_tier == 'PROFESSIONAL PLUS' %}
+      {% assign professional_access_status = 'Professional plus' %}
+      {% assign professional_access_note = 'Professional Plus is active, but inbox and verified family contact remain locked until approval is complete.' %}
+    {% elsif detected_tier == 'PROFESSIONAL ACCESS' %}
+      {% assign professional_access_status = 'Professional access' %}
+      {% assign professional_access_note = 'Professional Access is active, but direct contact and public listing still require verification approval.' %}
+    {% elsif professional_pending %}
+      {% assign professional_access_status = 'Professional pending' %}
+      {% assign professional_access_note = 'This professional account is waiting for approval before public listing and direct contact access.' %}
+    {% elsif professional_verified %}
+      {% assign professional_access_status = 'Professional access detected' %}
+      {% assign professional_access_note = 'Professional storefront tools are available here, but direct family contact stays locked until approval and verification checks pass.' %}
+    {% endif %}
+    {% assign owned_case_count = 0 %}
+    {% assign active_case_count = 0 %}
+    {% assign resolved_case_count = 0 %}
+    {% assign pending_claim_count = 0 %}
+    {% assign submitted_case_count = 0 %}
+    {% assign pending_submission_count = 0 %}
+    {% assign claims_storefront_exposed = false %}
+    {% assign submissions_storefront_exposed = false %}
+    {% assign member_verification_status = 'Upgrade required' %}
+    {% assign member_verification_note = 'This logged-in customer does not yet have an active paid community or professional membership tag for the protected member area.' %}
+    {% if current_customer_tags contains 'suspended' or current_customer_tags contains 'rejected' %}
+      {% assign member_verification_status = 'Restricted' %}
+      {% assign member_verification_note = 'This member account requires support review before protected features can be expanded.' %}
+    {% elsif professional_verified %}
+      {% assign member_verification_status = 'Approved' %}
+      {% assign member_verification_note = 'Protected member features can route through moderated review and safe contact gates.' %}
+    {% elsif member_area_unlocked %}
+      {% assign member_verification_status = 'Active membership' %}
+      {% assign member_verification_note = 'Protected storefront member access is active for this account.' %}
+    {% endif %}
+    {% capture submitted_case_cards_markup %}
+      {% assign storefront_submissions = shop.metaobjects.missingalerts_case_submission.values %}
+      {% if storefront_submissions != blank %}
+        {% assign submissions_storefront_exposed = true %}
+        {% for submission in storefront_submissions %}
+          {% assign submission_email = submission.submitter_email.value | default: submission.submitter_email | downcase | strip %}
+          {% assign submission_status = submission.status.value | default: submission.status | downcase %}
+          {% assign submission_person_name = submission.person_name.value | default: submission.person_name %}
+          {% assign submission_country = submission.country.value | default: submission.country %}
+          {% assign submission_region = submission.state_region.value | default: submission.state_region %}
+          {% assign submission_city = submission.city_town.value | default: submission.city_town %}
+          {% assign submission_visibility = submission.visibility_option.value | default: submission.visibility_option %}
+          {% if submission_email == current_customer_email %}
+            {% assign submitted_case_count = submitted_case_count | plus: 1 %}
+            {% if submission_status == 'submitted' or submission_status == 'pending' %}
+              {% assign pending_submission_count = pending_submission_count | plus: 1 %}
+            {% endif %}
+            <article class="account-my-cases__request-card-{{ section.id }}">
+              <div class="account-my-cases__request-status-{{ section.id }}">
+                {% if submission_status != blank %}
+                  {{ submission_status }}
+                {% else %}
+                  submitted
+                {% endif %}
+              </div>
+              <h3 class="account-my-cases__request-title-{{ section.id }}">
+                {% if submission_person_name != blank %}
+                  {{ submission_person_name }}
+                {% else %}
+                  Submitted case
+                {% endif %}
+              </h3>
+              <p class="account-my-cases__request-copy-{{ section.id }}">
+                {% if submission_city != blank %}{{ submission_city }}{% endif %}
+                {% if submission_region != blank %}
+                  {% if submission_city != blank %}, {% endif %}{{ submission_region }}
+                {% endif %}
+                {% if submission_country != blank %}
+                  {% if submission_city != blank or submission_region != blank %}, {% endif %}{{ submission_country }}
+                {% endif %}
+              </p>
+              <p class="account-my-cases__request-copy-{{ section.id }}">
+                Visibility:
+                {% if submission_visibility != blank %}
+                  {{ submission_visibility }}
+                {% else %}
+                  free
+                {% endif %}
+              </p>
+            </article>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endcapture %}
+    {% capture pending_claim_cards_markup %}
+      {% assign storefront_claims = shop.metaobjects.missingalerts_case_claim.values %}
+      {% if storefront_claims != blank %}
+        {% assign claims_storefront_exposed = true %}
+        {% for claim in storefront_claims %}
+          {% assign claim_customer_id = claim.claimant_customer_id.value | default: claim.claimant_customer_id | append: '' %}
+          {% assign claim_status = claim.status.value | default: claim.status | downcase %}
+          {% assign claim_person_name = claim.person_name.value | default: claim.person_name %}
+          {% assign claim_linked_case_handle = claim.linked_case_handle.value | default: claim.linked_case_handle %}
+          {% assign claim_submitted_at = claim.submitted_at.value | default: claim.submitted_at %}
+          {% if claim_customer_id == current_customer_id and claim_status == 'pending' %}
+            {% assign pending_claim_count = pending_claim_count | plus: 1 %}
+            <article class="account-my-cases__request-card-{{ section.id }}">
+              <div class="account-my-cases__request-status-{{ section.id }}">Pending Review</div>
+              <h3 class="account-my-cases__request-title-{{ section.id }}">
+                {% if claim_person_name != blank %}
+                  {{ claim_person_name }}
+                {% else %}
+                  Claim Request
+                {% endif %}
+              </h3>
+              <p class="account-my-cases__request-copy-{{ section.id }}">
+                linked_case_handle:
+                {% if claim_linked_case_handle != blank %}
+                  {{ claim_linked_case_handle }}
+                {% else %}
+                  not saved yet
+                {% endif %}
+              </p>
+              <p class="account-my-cases__request-copy-{{ section.id }}">
+                status:
+                {% if claim_status != blank %}
+                  {{ claim_status }}
+                {% else %}
+                  pending
+                {% endif %}
+              </p>
+              <p class="account-my-cases__request-copy-{{ section.id }}">
+                submitted:
+                {% if claim_submitted_at != blank %}
+                  {{ claim_submitted_at | date: '%d %b %Y %H:%M' }}
+                {% else %}
+                  not available
+                {% endif %}
+              </p>
+              <div class="account-my-cases__badge-{{ section.id }}">PENDING REVIEW</div>
+            </article>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endcapture %}
+    {% assign pending_visible_count = pending_claim_count %}
+    {% assign pending_count_uses_submission_fallback = false %}
+    {% if claims_storefront_exposed == false and submissions_storefront_exposed and pending_submission_count > pending_visible_count %}
+      {% assign pending_visible_count = pending_submission_count %}
+      {% assign pending_count_uses_submission_fallback = true %}
+    {% endif %}
+    {% capture case_cards_markup %}
+      {% for article in blogs['missing-persons'].articles %}
+        {% assign assigned_member_id = article.metafields.custom.assigned_member_id.value | default: article.metafields.custom.assigned_member_id | append: '' %}
+        {% assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status %}
+        {% assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase %}
+        {% assign case_country = article.metafields.custom.country.value | default: article.metafields.custom.country %}
+        {% assign case_region = article.metafields.custom.state_region.value | default: article.metafields.custom.state_region %}
+        {% assign case_city = article.metafields.custom.city_town.value | default: article.metafields.custom.city_town %}
+        {% assign found_safe = false %}
+        {% if case_status == 'found' %}
+          {% assign found_safe = true %}
+        {% endif %}
+        {% assign member_case_title = article.title %}
+        {% assign member_case_summary = article.excerpt_or_content | strip_html | strip | truncate: 220 %}
+        {% capture member_case_location %}
+          {% if case_city != blank %}{{ case_city }}{% endif %}
+          {% if case_region != blank %}
+            {% if case_city != blank %}, {% endif %}{{ case_region }}
+          {% endif %}
+          {% if case_country != blank %}
+            {% if case_city != blank or case_region != blank %}, {% endif %}{{ case_country }}
+          {% endif %}
+        {% endcapture %}
+        {% assign member_case_location = member_case_location | strip %}
+        {% if found_safe %}
+          {% assign title_parts = article.title | split: '-' %}
+          {% assign title_left = title_parts.first | strip %}
+          {% assign title_right = title_parts.last | strip %}
+          {% assign first_name = title_left | split: ' ' | first | strip %}
+          {% if title_parts.size > 1 and title_right != blank %}
+            {% assign member_case_title = first_name | append: ' - ' | append: title_right %}
+          {% else %}
+            {% assign member_case_title = first_name %}
+          {% endif %}
+        {% endif %}
+
+        {% if assigned_member_id == current_customer_id %}
+          {% assign owned_case_count = owned_case_count | plus: 1 %}
+          {% if found_safe %}
+            {% assign resolved_case_count = resolved_case_count | plus: 1 %}
+          {% else %}
+            {% assign active_case_count = active_case_count | plus: 1 %}
+          {% endif %}
+          <article class="account-my-cases__card-{{ section.id }}">
+            <div class="account-my-cases__image-wrap-{{ section.id }}">
+              {% if article.image %}
+                <img
+                  src="{{ article.image | image_url: width: 720 }}"
+                  alt="{{ member_case_title | escape }}"
+                  class="account-my-cases__image-{{ section.id }}{% if found_safe %} is-found{% endif %}"
+                  width="{{ article.image.width }}"
+                  height="{{ article.image.height }}"
+                >
+                {% if found_safe %}
+                  <div class="account-my-cases__found-overlay-{{ section.id }}">FOUND SAFE</div>
+                {% endif %}
+              {% else %}
+                <div class="account-my-cases__image-placeholder-{{ section.id }}">No Image</div>
+              {% endif %}
+            </div>
+
+            <div class="account-my-cases__body-{{ section.id }}">
+              {% if found_safe %}
+                <div class="account-my-cases__badge-{{ section.id }}">FOUND SAFE</div>
+              {% endif %}
+              <h3 class="account-my-cases__title-{{ section.id }}">{{ member_case_title }}</h3>
+
+              <div class="account-my-cases__meta-{{ section.id }}">
+                <span class="account-my-cases__meta-label-{{ section.id }}">
+                  {% if found_safe %}
+                    Case Status
+                  {% else %}
+                    Owner Status
+                  {% endif %}
+                </span>
+                <span class="account-my-cases__meta-value-{{ section.id }}">
+                  {% if found_safe %}
+                    CASE RESOLVED
+                  {% elsif owner_status != blank %}
+                    {{ owner_status }}
+                  {% else %}
+                    Not set
+                  {% endif %}
+                </span>
+              </div>
+
+              <div class="account-my-cases__actions-{{ section.id }}">
+                <a href="{{ article.url }}" class="account-my-cases__button-secondary-{{ section.id }}">
+                  View Case
+                </a>
+                {% if found_safe %}
+                  <div class="account-my-cases__resolved-{{ section.id }}">CASE RESOLVED</div>
+                {% else %}
+                  <button
+                    type="button"
+                    class="account-my-cases__button-{{ section.id }}"
+                    data-open-case-panel
+                    data-panel-target="update"
+                    data-case-title="{{ article.title | escape }}"
+                    data-case-handle="{{ article.handle | escape }}"
+                    data-requester-customer-id="{{ current_customer_id | escape }}"
+                    data-requester-name="{{ customer.name | escape }}"
+                    data-requester-email="{{ customer.email | escape }}"
+                    data-case-status="{% if owner_status != blank %}{{ owner_status | escape }}{% else %}Active{% endif %}"
+                    data-case-location="{{ member_case_location | escape }}"
+                    data-case-summary="{{ member_case_summary | escape }}"
+                  >
+                    UPDATE THIS CASE
+                  </button>
+                  <button
+                    type="button"
+                    class="account-my-cases__button-secondary-{{ section.id }}"
+                    data-open-case-panel
+                    data-panel-target="found"
+                    data-case-title="{{ article.title | escape }}"
+                    data-case-handle="{{ article.handle | escape }}"
+                    data-requester-customer-id="{{ current_customer_id | escape }}"
+                    data-requester-name="{{ customer.name | escape }}"
+                    data-requester-email="{{ customer.email | escape }}"
+                    data-case-status="{% if owner_status != blank %}{{ owner_status | escape }}{% else %}Active{% endif %}"
+                    data-case-location="{{ member_case_location | escape }}"
+                    data-case-summary="{{ member_case_summary | escape }}"
+                  >
+                    MARK CASE AS FOUND
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        {% endif %}
+      {% endfor %}
+    {% endcapture %}
+
+    {% if member_area_unlocked %}
+    <section class="account-my-cases__shell-{{ section.id }} member-card ma-control-shell ma-program-panel">
+      <aside class="ma-control-sidebar ma-program-panel" aria-label="Member area navigation">
+        <div class="ma-control-sidebar__brand">Missing Alerts</div>
+        <nav class="ma-control-sidebar__nav">
+          <a class="ma-control-sidebar__link is-active" href="#member-tab-overview-{{ section.id }}"><span class="ma-control-sidebar__icon">01</span>Overview</a>
+          <a class="ma-control-sidebar__link" href="#member-portal-cases-{{ section.id }}"><span class="ma-control-sidebar__icon">02</span>Cases</a>
+          <a class="ma-control-sidebar__link" href="#member-portal-inbox-{{ section.id }}"><span class="ma-control-sidebar__icon">03</span>Following</a>
+          <a class="ma-control-sidebar__link" href="#member-portal-member-inbox-{{ section.id }}"><span class="ma-control-sidebar__icon">04</span>Inbox</a>
+          <a class="ma-control-sidebar__link" href="#member-portal-settings-{{ section.id }}"><span class="ma-control-sidebar__icon">05</span>Settings</a>
+          <a class="ma-control-sidebar__link" href="#member-portal-account-{{ section.id }}"><span class="ma-control-sidebar__icon">06</span>Account</a>
+        </nav>
+      </aside>
+      <div class="account-my-cases__content-{{ section.id }} ma-control-main">
+        <div class="ma-program-toolbar ma-program-panel">
+          <div class="ma-program-toolbar__title">Missing Alerts Control Centre</div>
+          <div class="ma-program-toolbar__meta">
+            <span class="ma-program-status-dot" aria-hidden="true"></span>
+            <span>{{ detected_tier }}</span>
+            <span>Last updated now</span>
+          </div>
+        </div>
+        <div class="account-my-cases__hero-{{ section.id }} member-main-layout">
+          <div class="account-my-cases__hero-panel-{{ section.id }} member-card member-header">
+            <p class="account-my-cases__eyebrow-{{ section.id }}">Member Status</p>
+            <h1 class="account-my-cases__heading-{{ section.id }} member-title">
+              {% if customer.first_name != blank %}
+                {{ customer.first_name | escape }}'S DASHBOARD
+              {% else %}
+                MEMBER AREA
+              {% endif %}
+            </h1>
+            <p class="account-my-cases__intro-{{ section.id }} member-subtitle">
+              A clean storefront dashboard for followed cases, alerts, submissions, and protected account tools.
+            </p>
+            <div class="account-my-cases__hero-actions-{{ section.id }}">
+              <a href="/blogs/missing-persons" class="account-my-cases__button-{{ section.id }}">BROWSE MISSING CASES</a>
+              <a href="/pages/submit-a-case" class="account-my-cases__button-secondary-{{ section.id }}">SUBMIT A CASE</a>
+            </div>
+            <div class="account-my-cases__portal-nav-{{ section.id }} member-tabs">
+              <button type="button" class="account-my-cases__portal-chip-{{ section.id }}" data-member-tab-trigger="overview" aria-controls="member-tab-overview-{{ section.id }}">OVERVIEW</button>
+              <button type="button" class="account-my-cases__portal-chip-{{ section.id }}" data-member-tab-trigger="my-cases" aria-controls="member-portal-cases-{{ section.id }}">MEMBER AREA</button>
+              <button type="button" class="account-my-cases__portal-chip-{{ section.id }}" data-member-tab-trigger="following" aria-controls="member-portal-inbox-{{ section.id }}">FOLLOWING</button>
+              <button type="button" class="account-my-cases__portal-chip-{{ section.id }}" data-member-tab-trigger="inbox" aria-controls="member-portal-member-inbox-{{ section.id }}">INBOX <span data-member-inbox-count></span></button>
+              <button type="button" class="account-my-cases__portal-chip-{{ section.id }}" data-member-tab-trigger="settings" aria-controls="member-portal-settings-{{ section.id }}">SETTINGS</button>
+              <button type="button" class="account-my-cases__portal-chip-{{ section.id }}" data-member-tab-trigger="account" aria-controls="member-portal-account-{{ section.id }}">ACCOUNT</button>
+            </div>
+          </div>
+
+          <div class="account-my-cases__hero-side-{{ section.id }} member-card member-side-panel">
+            <div class="account-my-cases__side-kicker-{{ section.id }}">Portal Status</div>
+            <h2 class="account-my-cases__side-title-{{ section.id }}">LIVE STORE MEMBER ACCESS</h2>
+            <p class="account-my-cases__side-copy-{{ section.id }}">
+              Your claimed-case ownership is checked directly against `article.metafields.custom.assigned_member_id`
+              and your current `customer.id`, so only cases linked to your login are shown here.
+            </p>
+            <div class="account-my-cases__checklist-{{ section.id }}">
+              <div class="account-my-cases__checklist-item-{{ section.id }}">
+                <span class="account-my-cases__checklist-dot-{{ section.id }}"></span>
+                <span>Claimed-case ownership remains filtered exactly as built.</span>
+              </div>
+              <div class="account-my-cases__checklist-item-{{ section.id }}">
+                <span class="account-my-cases__checklist-dot-{{ section.id }}"></span>
+                <span>Update and found request submissions still use the existing live request endpoint.</span>
+              </div>
+              <div class="account-my-cases__checklist-item-{{ section.id }}">
+                <span class="account-my-cases__checklist-dot-{{ section.id }}"></span>
+                <span>Followed case alerts stay on this device until live account syncing is ready.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="member-divider"></div>
+
+        <section class="member-summary-strip member-card">
+          <article class="member-summary-strip__item">
+            <div class="member-summary-strip__label">MEMBERSHIP TIER</div>
+            <div class="member-summary-strip__value">{{ detected_tier }}</div>
+          </article>
+          <article class="member-summary-strip__item">
+            <div class="member-summary-strip__label">FOLLOWED CASES</div>
+            <div class="member-summary-strip__value" data-followed-count-value>0</div>
+          </article>
+          <article class="member-summary-strip__item">
+            <div class="member-summary-strip__label">ALERT STATUS</div>
+            <div class="member-summary-strip__value">DEVICE SYNC</div>
+          </article>
+          <article class="member-summary-strip__item">
+            <div class="member-summary-strip__label">ACCOUNT EMAIL</div>
+            <div class="member-summary-strip__value">{{ customer.email | escape }}</div>
+          </article>
+        </section>
+
+        <div class="account-my-cases__portal-grid-{{ section.id }} member-dashboard-panels">
+          <div class="member-dashboard-panel is-active" id="member-tab-overview-{{ section.id }}" data-member-tab-panel="overview">
+          <section class="account-my-cases__section-{{ section.id }} member-card" id="member-portal-overview-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">OVERVIEW</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">MEMBER OVERVIEW</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Quick status, live access, and the fastest paths back into the missing-person network.
+              </p>
+            </div>
+
+            <div class="account-my-cases__stats-{{ section.id }} member-dashboard-grid">
+              <div class="account-my-cases__stat-card-{{ section.id }} member-card stat">
+                <div class="account-my-cases__stat-label-{{ section.id }} member-stat-label">Total Claimed Cases</div>
+                <div class="account-my-cases__stat-value-{{ section.id }} member-stat">{{ owned_case_count }}</div>
+                <div class="account-my-cases__stat-note-{{ section.id }}">Cases linked to your current customer account.</div>
+              </div>
+              <div class="account-my-cases__stat-card-{{ section.id }} member-card stat">
+                <div class="account-my-cases__stat-label-{{ section.id }} member-stat-label">Active Cases</div>
+                <div class="account-my-cases__stat-value-{{ section.id }} member-stat">{{ active_case_count }}</div>
+                <div class="account-my-cases__stat-note-{{ section.id }}">Cases that can still receive updates or found-safe requests.</div>
+              </div>
+              <div class="account-my-cases__stat-card-{{ section.id }} member-card stat">
+                <div class="account-my-cases__stat-label-{{ section.id }} member-stat-label">Resolved Cases</div>
+                <div class="account-my-cases__stat-value-{{ section.id }} member-stat">{{ resolved_case_count }}</div>
+                <div class="account-my-cases__stat-note-{{ section.id }}">Found-safe cases retained in your member portal view.</div>
+              </div>
+              <div class="account-my-cases__stat-card-{{ section.id }} member-card stat">
+                <div class="account-my-cases__stat-label-{{ section.id }} member-stat-label">Pending Requests</div>
+                <div
+                  class="account-my-cases__stat-value-{{ section.id }} member-stat"
+                  data-pending-requests-value
+                  data-base-pending-count="{{ pending_visible_count }}"
+                  data-claims-storefront-exposed="{% if claims_storefront_exposed %}true{% else %}false{% endif %}"
+                >
+                  {% if claims_storefront_exposed or submissions_storefront_exposed %}
+                    {{ pending_visible_count }}
+                  {% else %}
+                    --
+                  {% endif %}
+                </div>
+                <div class="account-my-cases__stat-note-{{ section.id }}">
+                  {% if claims_storefront_exposed %}
+                    Pending visible claim and submission records linked to your current account details.
+                  {% elsif pending_count_uses_submission_fallback %}
+                    Pending count is currently using visible submission records until claim metaobjects are storefront-exposed.
+                  {% elsif submissions_storefront_exposed %}
+                    Pending visible submission records linked to your current account details.
+                  {% else %}
+                    Pending claim and submission records are not storefront-exposed in Liquid yet.
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="professional-help-section"
+              data-professional-help-section
+              data-professional-help-recommendation
+              data-member-customer-id="{{ customer.id | escape }}"
+              data-member-customer-email="{{ customer.email | escape }}"
+              hidden
+            ></div>
+
+            <div
+              class="ma-fundraiser-overview-{{ section.id }}"
+              data-member-fundraisers-overview
+              data-api-base="https://dashboard-ui-snowy-eight.vercel.app"
+            >
+              <div class="ma-fundraiser-overview__locked-{{ section.id }}">
+                Fundraisers become available when you are verified as a family member, parent or guardian for an approved case.
+              </div>
+            </div>
+
+            <div class="account-my-cases__overview-grid-{{ section.id }}">
+              <div class="account-my-cases__info-card-{{ section.id }}">
+                <h3 class="account-my-cases__info-title-{{ section.id }}">
+                  {% if customer.name != blank %}
+                    Welcome back, {{ customer.name | escape }}
+                  {% elsif customer.first_name != blank %}
+                    Welcome back, {{ customer.first_name | escape }}
+                  {% else %}
+                    Welcome to your member portal
+                  {% endif %}
+                </h3>
+                <p class="account-my-cases__info-copy-{{ section.id }}">
+                  Your member area keeps followed cases, protected update actions, and account access in one storefront dashboard.
+                </p>
+                <div class="member-quick-actions">
+                  <a href="/blogs/missing-persons" class="account-my-cases__button-{{ section.id }}">BROWSE MISSING CASES</a>
+                  <a href="/pages/submit-a-case" class="account-my-cases__button-secondary-{{ section.id }}">SUBMIT A CASE</a>
+                  <a href="/pages/community-membership" class="account-my-cases__button-secondary-{{ section.id }}">UPGRADE MEMBERSHIP</a>
+                  <a href="/pages/professional-area" class="account-my-cases__button-secondary-{{ section.id }}">PROFESSIONAL ACCESS</a>
+                </div>
+              </div>
+              <div class="account-my-cases__info-card-{{ section.id }}">
+                <h3 class="account-my-cases__info-title-{{ section.id }}">ALERT STATUS</h3>
+                <p class="account-my-cases__info-copy-{{ section.id }}">
+                  Followed case alerts are still saved on this device. The live account sync layer can be added later without replacing your current storage.
+                </p>
+              </div>
+            </div>
+          </section>
+          </div>
+
+          <section
+            class="account-my-cases__section-{{ section.id }}"
+            data-member-tab-panel="inbox"
+            id="member-portal-member-inbox-{{ section.id }}"
+            data-member-inbox
+            data-member-customer-id="{{ customer.id | escape }}"
+            data-member-customer-email="{{ customer.email | escape }}"
+          >
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">INBOX</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">MEMBERS INBOX</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                All updates connected to your cases, followed appeals, searches and account activity will appear here.
+              </p>
+            </div>
+
+            <div class="ma-member-inbox">
+              <div class="ma-member-inbox__stats">
+                <article class="ma-member-inbox-stat">
+                  <div class="ma-member-inbox-stat__label">Unread</div>
+                  <div class="ma-member-inbox-stat__value" data-member-inbox-unread-count>0</div>
+                </article>
+                <article class="ma-member-inbox-stat">
+                  <div class="ma-member-inbox-stat__label">Case updates</div>
+                  <div class="ma-member-inbox-stat__value" data-member-inbox-case-count>0</div>
+                </article>
+                <article class="ma-member-inbox-stat">
+                  <div class="ma-member-inbox-stat__label">Searches</div>
+                  <div class="ma-member-inbox-stat__value" data-member-inbox-search-count>0</div>
+                </article>
+                <article class="ma-member-inbox-stat">
+                  <div class="ma-member-inbox-stat__label">Social activity</div>
+                  <div class="ma-member-inbox-stat__value" data-member-inbox-social-count>0</div>
+                </article>
+              </div>
+
+              <div class="ma-member-inbox__filters" aria-label="Member inbox filters">
+                <button type="button" class="ma-member-inbox-filter is-active" data-member-inbox-filter="all">All</button>
+                <button type="button" class="ma-member-inbox-filter" data-member-inbox-filter="unread">Unread</button>
+                <button type="button" class="ma-member-inbox-filter" data-member-inbox-filter="my-cases">My cases</button>
+                <button type="button" class="ma-member-inbox-filter" data-member-inbox-filter="following">Following</button>
+                <button type="button" class="ma-member-inbox-filter" data-member-inbox-filter="searches">Searches</button>
+                <button type="button" class="ma-member-inbox-filter" data-member-inbox-filter="social">Social</button>
+                <button type="button" class="ma-member-inbox-filter" data-member-inbox-filter="system">System</button>
+              </div>
+
+              <div class="ma-member-inbox__list" data-member-inbox-list></div>
+
+              <div class="ma-member-inbox__empty" data-member-inbox-empty hidden>
+                <h3>NO INBOX UPDATES YET</h3>
+                <p>When there are updates about your cases, followed appeals, organised searches or social activity, they will appear here.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }} member-account-panel" data-member-tab-panel="account" id="member-portal-account-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">ACCOUNT</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">ACCOUNT CONTROL</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Membership status, account links, and storefront upgrade paths stay here without touching your protected case logic.
+              </p>
+            </div>
+
+            <div class="member-account-grid">
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">ACCOUNT EMAIL</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">{{ customer.email | escape }}</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">CURRENT TIER: {{ detected_tier }}</p>
+                <div class="account-my-cases__cta-row-{{ section.id }}">
+                  <a href="{{ routes.account_url }}" class="account-my-cases__button-{{ section.id }}">MANAGE ACCOUNT</a>
+                  <a href="{{ routes.account_logout_url }}" class="account-my-cases__button-secondary-{{ section.id }}">LOG OUT</a>
+                </div>
+              </article>
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">UPGRADE</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">MEMBERSHIP OPTIONS</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">Upgrade community access or move into professional membership without leaving the storefront.</p>
+                <div class="account-my-cases__cta-row-{{ section.id }}">
+                  <a href="/pages/community-membership" class="account-my-cases__button-{{ section.id }}">UPGRADE MEMBERSHIP</a>
+                  <a href="/pages/professional-membership" class="account-my-cases__button-secondary-{{ section.id }}">PROFESSIONAL MEMBERSHIP</a>
+                </div>
+              </article>
+              <article class="account-my-cases__request-card-{{ section.id }} ma-support-mini-card">
+                <h3 class="ma-support-mini-card__title">SUPPORT MISSING ALERTS</h3>
+                <p class="ma-support-mini-card__text">
+                  Help keep alerts running, improve tools, and support the small team behind the platform.
+                </p>
+                <a href="https://buymeacoffee.com/missingalerts" target="_blank" rel="noopener noreferrer" class="ma-support-mini-card__button">
+                  Support the Platform
+                </a>
+              </article>
+            </div>
+          </section>
+
+          {% if has_professional_tools %}
+            <section
+              class="ma-owner-inbox"
+              data-professional-notifications
+              data-professional-recipient-id="{{ current_customer_id | escape }}"
+              data-professional-recipient-type="professional"
+            >
+              <div class="ma-owner-inbox__header">
+                <h2>PROFESSIONAL INBOX</h2>
+                <span class="ma-owner-inbox__count" data-professional-notifications-count></span>
+              </div>
+
+              <div class="ma-owner-inbox__list" data-professional-notifications-list>
+                <p class="ma-owner-inbox__empty">No professional notifications yet.</p>
+              </div>
+            </section>
+
+            <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="account" id="member-portal-professional-tools-{{ section.id }}">
+              <div class="account-my-cases__section-head-{{ section.id }}">
+                <div>
+                  <p class="account-my-cases__eyebrow-{{ section.id }}">Professional Tools</p>
+                  <h2 class="account-my-cases__section-title-{{ section.id }}">Professional Tools</h2>
+                </div>
+                <p class="account-my-cases__section-copy-{{ section.id }}">
+                  This customer account carries a professional tag, so the normal member portal can also expose professional placeholders and approval-gated tools.
+                </p>
+              </div>
+
+              <div class="account-my-cases__request-grid-{{ section.id }}">
+                <article class="account-my-cases__request-card-{{ section.id }}">
+                  <div class="account-my-cases__request-status-{{ section.id }}">{{ professional_access_status }}</div>
+                  <h3 class="account-my-cases__request-title-{{ section.id }}">Verification Status Placeholder</h3>
+                  <p class="account-my-cases__request-copy-{{ section.id }}">
+                    {{ professional_access_note }}
+                  </p>
+                  <div class="account-my-cases__cta-row-{{ section.id }}">
+                    <a href="/pages/professional-area" class="account-my-cases__button-{{ section.id }}">PROFESSIONAL ACCESS</a>
+                  </div>
+                </article>
+                <article class="account-my-cases__request-card-{{ section.id }}">
+                  <div class="account-my-cases__request-status-{{ section.id }}">Coverage Placeholder</div>
+                  <h3 class="account-my-cases__request-title-{{ section.id }}">Country Coverage Placeholder</h3>
+                  <p class="account-my-cases__request-copy-{{ section.id }}">
+                    Country coverage and approval-based operating regions will appear here for professional-tagged customers once those storefront fields are exposed.
+                  </p>
+                </article>
+                <article class="account-my-cases__request-card-{{ section.id }}">
+                  <div class="account-my-cases__request-status-{{ section.id }}">Services Placeholder</div>
+                  <h3 class="account-my-cases__request-title-{{ section.id }}">Services Offered Placeholder</h3>
+                  <p class="account-my-cases__request-copy-{{ section.id }}">
+                    Services offered, case support types, and specialist coverage will appear here after professional profile fields are exposed on the storefront.
+                  </p>
+                  <div class="account-my-cases__cta-row-{{ section.id }}">
+                    <a href="/pages/professionals" class="account-my-cases__button-secondary-{{ section.id }}">VIEW PROFESSIONALS DIRECTORY</a>
+                  </div>
+                </article>
+                <article class="account-my-cases__request-card-{{ section.id }}">
+                  <div class="account-my-cases__request-status-{{ section.id }}">Safe Inbox Placeholder</div>
+                  <h3 class="account-my-cases__request-title-{{ section.id }}">Safe Inbox Placeholder</h3>
+                  <p class="account-my-cases__request-copy-{{ section.id }}">
+                    Safe inbox routing will appear here only for approved workflows. Public users and unapproved accounts do not get direct case-owner contact.
+                  </p>
+                </article>
+                <article class="account-my-cases__request-card-{{ section.id }}">
+                  <div class="account-my-cases__request-status-{{ section.id }}">Approval Gate</div>
+                  <h3 class="account-my-cases__request-title-{{ section.id }}">Direct Family Contact Locked Until Approval</h3>
+                  <p class="account-my-cases__request-copy-{{ section.id }}">
+                    Approved premium or enterprise professionals may later communicate with verified families through safe inbox routing only. Public direct contact stays blocked.
+                  </p>
+                </article>
+                <article class="account-my-cases__request-card-{{ section.id }}">
+                  <div class="account-my-cases__request-status-{{ section.id }}">Premium Benefits</div>
+                  <h3 class="account-my-cases__request-title-{{ section.id }}">Premium Upgrade Benefits</h3>
+                  <p class="account-my-cases__request-copy-{{ section.id }}">
+                    Premium tools can include stronger listing priority, approved inbox access, wider country coverage, and future featured professional visibility.
+                  </p>
+                </article>
+              </div>
+            </section>
+          {% endif %}
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="account" id="member-portal-verification-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">Verification Status</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">Protected Member Access</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Public member access now lives on the storefront. Verification still controls which protected support and contact paths can be unlocked.
+              </p>
+            </div>
+
+            <div class="account-my-cases__request-grid-{{ section.id }}">
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">{{ member_verification_status }}</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">Member Verification</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">{{ member_verification_note }}</p>
+                <div class="account-my-cases__badge-{{ section.id }}">SAFE ACCESS</div>
+              </article>
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">Case Owner Controls</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">Live Case Editing Stays Locked</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  Members can submit updates, evidence, and found requests for review, but live case content remains protected until moderation approval.
+                </p>
+              </article>
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">Professional Contact</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">Safe Contact Only</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  Direct professional contact remains locked until verification and future inbox gating rules explicitly allow it.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="following" id="member-portal-inbox-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">🔔 CASE ALERT INBOX</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">CASES YOU ARE FOLLOWING</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Live account syncing is being prepared. For now, followed cases are saved on this device.
+              </p>
+            </div>
+
+            <div class="case-alert-inbox-shell" data-case-alert-inbox>
+              <div
+                class="case-alert-inbox-list"
+                data-followed-cases-list
+                data-empty-message="You are not following any cases yet. Tap the bell on any missing-person case to receive updates here."
+              ></div>
+
+              <div class="case-alert-inbox-empty" data-followed-cases-empty hidden>
+                <div class="case-alert-inbox-empty__eyebrow">NO FOLLOWED CASES YET</div>
+                <h3 class="case-alert-inbox-empty__title">YOUR CASE ALERT INBOX IS EMPTY</h3>
+                <p class="case-alert-inbox-empty__copy">
+                  You are not following any cases yet. Tap the bell on any missing-person case to receive updates here.
+                </p>
+                <a href="/blogs/missing-persons" class="case-alert-inbox-empty__button">BROWSE MISSING CASES</a>
+              </div>
+            </div>
+
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="settings" id="member-portal-settings-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">SETTINGS</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">ALERT SETTINGS</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Manage the area used for local missing person alerts. This does not expose an exact private address.
+              </p>
+            </div>
+            {% render 'missing-alerts-signup',
+              location_slug: customer.metafields.custom.alert_location_full_path.value,
+              location_label: customer.metafields.custom.alert_location_full_path.value | default: 'your saved area',
+              page_type: 'member_area'
+            %}
+            {% render 'member-alert-location-card' %}
+            {% render 'member-alert-preferences-card' %}
+            {% render 'member-local-alert-map' %}
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="settings" id="member-portal-pro-inbox-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">Professional Help Inbox</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">Safe Professional Messages</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Professional contact stays inside Missing Alerts. Your private email and phone are not shown publicly or to professionals.
+              </p>
+            </div>
+            <div
+              class="case-alert-inbox-shell"
+              data-member-pro-inbox
+              data-customer-email="{% if customer %}{{ customer.email | escape }}{% endif %}"
+            >
+              <div class="case-alert-inbox-list" data-member-pro-inbox-list></div>
+              <div class="case-alert-inbox-empty" data-member-pro-inbox-empty>
+                <div class="case-alert-inbox-empty__eyebrow">NO PROFESSIONAL MESSAGES</div>
+                <h3 class="case-alert-inbox-empty__title">NO SAFE INBOX MESSAGES YET</h3>
+                <p class="case-alert-inbox-empty__copy">If you request professional help, approved conversations will appear here after moderation.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="following" id="member-portal-alerts-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">ALERTS</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">ALERT PREFERENCES</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Choose the alert routes you want to use now and see clearly which member alert tools are still coming soon.
+              </p>
+            </div>
+
+            <div class="case-alert-promo">
+              <div class="case-alert-promo__head">
+                <div>
+                  <p class="case-alert-promo__eyebrow">📍 LOCAL AREA ALERTS</p>
+                  <h3 class="case-alert-promo__title">LOCAL AREA ALERTS</h3>
+                </div>
+                <p class="case-alert-promo__copy">
+                  Get alerts when someone goes missing near your chosen area, county, state, or region.
+                </p>
+              </div>
+
+              <div class="case-alert-promo__grid">
+                <article class="case-alert-tier-card">
+                  <div class="case-alert-tier-card__label">LOCAL AREA ALERTS</div>
+                  <h4 class="case-alert-tier-card__title">FOLLOW CASES INTO YOUR MEMBER INBOX</h4>
+                  <p class="case-alert-tier-card__copy">
+                    Use the bell on any case to track updates here inside your member area with no extra setup.
+                  </p>
+                  <div class="case-alert-tier-card__actions">
+                    <a href="/blogs/missing-persons" class="case-alert-tier-card__button case-alert-tier-card__button--ghost">BROWSE MISSING CASES</a>
+                  </div>
+                </article>
+
+                <article class="case-alert-tier-card">
+                  <div class="case-alert-tier-card__label">CASE UPDATE ALERTS</div>
+                  <h4 class="case-alert-tier-card__title">ENABLE CASE UPDATE EMAILS</h4>
+                  <p class="case-alert-tier-card__copy">
+                    Use your member inbox today, and upgrade into broader community alert routing from the membership page.
+                  </p>
+                  <div class="case-alert-tier-card__actions">
+                    <a href="/pages/community-membership" class="case-alert-tier-card__button case-alert-tier-card__button--ghost">EMAIL ALERT OPTIONS</a>
+                  </div>
+                </article>
+
+                <article class="case-alert-tier-card case-alert-tier-card--featured">
+                  <div class="case-alert-tier-card__label">MOBILE / SMS</div>
+                  <h4 class="case-alert-tier-card__title">COMING SOON</h4>
+                  <p class="case-alert-tier-card__copy">
+                    Mobile and SMS alert routing is reserved for a later release once the subscriber and consent layer is live.
+                  </p>
+                  <div class="case-alert-tier-card__actions">
+                    <span class="case-alert-tier-card__button is-disabled" aria-disabled="true">COMING SOON</span>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="following" id="case-intelligence-network">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">Member Area</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">COMMUNITY AREA</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                View general missing-person awareness, safety advice, volunteer guidance, family support, platform updates, and country community alerts inside the member area.
+              </p>
+            </div>
+
+            <div class="account-my-cases__request-grid-{{ section.id }}">
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">Member access route</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">Community Support Area</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  This member-area placeholder is for general community discussions only. Case-specific information belongs in comments on the individual case page.
+                </p>
+                <div class="account-my-cases__cta-row-{{ section.id }}">
+                  <a href="{{ routes.account_login_url }}" class="account-my-cases__button-{{ section.id }}">Join / Log In</a>
+                  <a href="/blogs/missing-persons" class="account-my-cases__button-secondary-{{ section.id }}">Back to cases</a>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="my-cases" id="member-portal-submission-actions-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">SUBMISSIONS</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">CASE ACTIONS</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Use the live storefront routes that already exist for new submissions, claims, and moderated case updates.
+              </p>
+            </div>
+
+            <div class="member-quick-actions member-quick-actions--stacked">
+              <a href="/pages/submit-a-case" class="account-my-cases__button-{{ section.id }}">SUBMIT A CASE</a>
+              <a href="/pages/submit-a-case" class="account-my-cases__button-secondary-{{ section.id }}">CLAIM A CASE</a>
+              <a href="/pages/report-update" class="account-my-cases__button-secondary-{{ section.id }}">CASE UPDATE</a>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="my-cases" id="member-portal-submitted-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">Submitted Cases</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">My Submitted Cases</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                These are your case submissions matched through the existing `submitter_email` field when submission metaobjects are storefront-exposed.
+              </p>
+            </div>
+
+            {% if submissions_storefront_exposed %}
+              {% if submitted_case_count > 0 %}
+                <div class="account-my-cases__request-grid-{{ section.id }}">
+                  {{ submitted_case_cards_markup }}
+                </div>
+              {% else %}
+                <div class="account-my-cases__empty-{{ section.id }}">
+                  <h3 class="account-my-cases__empty-title-{{ section.id }}">No Submitted Cases Found</h3>
+                  <p>No storefront-exposed case submissions currently match your logged-in email address.</p>
+                </div>
+              {% endif %}
+            {% else %}
+              <div class="account-my-cases__empty-{{ section.id }}">
+                <h3 class="account-my-cases__empty-title-{{ section.id }}">Submitted Cases Are Awaiting Review</h3>
+                <p>Your submitted ownership or new-case records are not storefront-exposed in Liquid yet, so this portal cannot list them directly until Shopify exposes that metaobject type.</p>
+              </div>
+            {% endif %}
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="my-cases" id="member-portal-pending-claims-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">Pending Claims</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">Pending Claim Requests</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                This block shows claim requests for the current logged-in customer when the claim metaobject type is storefront-exposed in Liquid.
+              </p>
+            </div>
+
+            <div
+              id="pending-claims-list"
+              class="account-my-cases__request-grid-{{ section.id }}"
+              data-api-pending-enabled="{% if claims_storefront_exposed == false %}true{% else %}false{% endif %}"
+            ></div>
+
+            {% if claims_storefront_exposed %}
+              {% if pending_claim_count > 0 %}
+                <div class="account-my-cases__request-grid-{{ section.id }}">
+                  {{ pending_claim_cards_markup }}
+                </div>
+              {% else %}
+                <div class="account-my-cases__empty-{{ section.id }}">
+                  <h3 class="account-my-cases__empty-title-{{ section.id }}">No Pending Claim Requests</h3>
+                  <p>No pending claim requests are currently linked to this customer account.</p>
+                </div>
+              {% endif %}
+            {% elsif pending_count_uses_submission_fallback and pending_visible_count > 0 %}
+              <div class="account-my-cases__request-grid-{{ section.id }}">
+                <article class="account-my-cases__request-card-{{ section.id }}">
+                  <div class="account-my-cases__request-status-{{ section.id }}">Pending Visibility Fallback</div>
+                  <h3 class="account-my-cases__request-title-{{ section.id }}">Pending Requests Detected Before Approval</h3>
+                  <p class="account-my-cases__request-copy-{{ section.id }}">
+                    {{ pending_visible_count }}
+                    pending request{% if pending_visible_count != 1 %}s{% endif %}
+                    are currently visible via your storefront-exposed submission records.
+                  </p>
+                  <p class="account-my-cases__request-copy-{{ section.id }}">
+                    Claim metaobjects are not storefront-exposed on this storefront yet, so the exact claim cards cannot render here until Shopify exposes that type.
+                  </p>
+                  <div class="account-my-cases__badge-{{ section.id }}">PENDING REVIEW</div>
+                </article>
+              </div>
+            {% else %}
+              <div class="account-my-cases__empty-{{ section.id }}">
+                <h3 class="account-my-cases__empty-title-{{ section.id }}">Claim Records Not Storefront-Exposed Yet</h3>
+                <p>Your pending ownership requests are awaiting review in the moderation system. Claim records cannot render here until Shopify exposes that metaobject type to the storefront.</p>
+              </div>
+            {% endif %}
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="my-cases" id="member-portal-cases-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">My Cases</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">Claimed Case Control</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                These cards preserve the existing claimed-case ownership match, image behavior, resolved-state handling,
+                and live request actions already built into the project.
+              </p>
+            </div>
+
+            {% if owned_case_count > 0 %}
+              <div class="account-my-cases__grid-{{ section.id }}">
+                {{ case_cards_markup }}
+              </div>
+            {% else %}
+              <div class="account-my-cases__empty-{{ section.id }}">
+                <h3 class="account-my-cases__empty-title-{{ section.id }}">No Cases Assigned</h3>
+                <p>No live missing-person cases are currently assigned to this account.</p>
+              </div>
+            {% endif %}
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="my-cases" id="member-portal-fundraisers-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">FUNDRAISER</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">Family Fundraisers</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Families receive the contribution amount minus the 7% platform fee. Optional supporter tips go to Missing Alerts and do not reduce the family balance.
+              </p>
+            </div>
+
+            <div
+              class="ma-fundraiser-list-{{ section.id }}"
+              data-member-fundraisers
+              data-api-base="https://dashboard-ui-snowy-eight.vercel.app"
+            >
+              <div class="account-my-cases__empty-{{ section.id }}">
+                <h3 class="account-my-cases__empty-title-{{ section.id }}">Loading Fundraisers</h3>
+                <p>Checking verified family fundraiser records for this account.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="account" id="member-portal-membership-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">Membership</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">Portal Tiers</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Placeholder membership UI for future rollout. These cards are visual only and do not introduce subscription backend logic.
+              </p>
+            </div>
+
+            <div class="account-my-cases__membership-grid-{{ section.id }}">
+              <article class="account-my-cases__membership-card-{{ section.id }}">
+                <div class="account-my-cases__membership-tier-{{ section.id }}">COMMUNITY</div>
+                <h3 class="account-my-cases__membership-name-{{ section.id }}">COMMUNITY ACCESS</h3>
+                <p class="account-my-cases__membership-copy-{{ section.id }}">
+                  Follow missing cases, save updates, and keep core storefront access active from one account.
+                </p>
+                <div class="account-my-cases__membership-foot-{{ section.id }}">
+                  <a href="/pages/community-membership" class="account-my-cases__button-secondary-{{ section.id }}">VIEW COMMUNITY PLANS</a>
+                </div>
+              </article>
+              <article class="account-my-cases__membership-card-{{ section.id }}">
+                <div class="account-my-cases__membership-tier-{{ section.id }}">COMMUNITY+</div>
+                <h3 class="account-my-cases__membership-name-{{ section.id }}">COMMUNITY PLUS</h3>
+                <p class="account-my-cases__membership-copy-{{ section.id }}">
+                  Add stronger alerts, clearer support status, and a faster route into member account tools.
+                </p>
+                <div class="account-my-cases__membership-foot-{{ section.id }}">
+                  <a href="/pages/community-membership" class="account-my-cases__button-{{ section.id }}">UPGRADE COMMUNITY</a>
+                </div>
+              </article>
+              <article class="account-my-cases__membership-card-{{ section.id }}">
+                <div class="account-my-cases__membership-tier-{{ section.id }}">PRO</div>
+                <h3 class="account-my-cases__membership-name-{{ section.id }}">PROFESSIONAL ACCESS</h3>
+                <p class="account-my-cases__membership-copy-{{ section.id }}">
+                  Move into verified professional tools, protected directory placement, and future safe-contact eligibility.
+                </p>
+                <div class="account-my-cases__membership-foot-{{ section.id }}">
+                  <a href="/pages/professional-membership" class="account-my-cases__button-secondary-{{ section.id }}">PROFESSIONAL OPTIONS</a>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="my-cases" id="member-portal-visibility-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">Boost + Spotlight</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">Visibility Upgrades</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Existing boost and spotlight purchase flows stay on live case pages. This portal explains the options without rewriting those working systems.
+              </p>
+            </div>
+
+            <div class="account-my-cases__request-grid-{{ section.id }}">
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">Boost case</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">Increase Visibility</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  Boost options remain available on live case pages and can raise placement across the site without changing your existing checkout flow.
+                </p>
+                <div class="account-my-cases__cta-row-{{ section.id }}">
+                  <a href="/blogs/missing-persons" class="account-my-cases__button-{{ section.id }}">VIEW LIVE CASES</a>
+                </div>
+              </article>
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">Spotlight case</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">Premium Homepage Placement</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  Spotlight options stay attached to the live case experience so premium homepage visibility remains tied to the current working storefront system.
+                </p>
+                <div class="account-my-cases__cta-row-{{ section.id }}">
+                  <a href="/blogs/missing-persons" class="account-my-cases__button-secondary-{{ section.id }}">OPEN CASE TOOLS</a>
+                </div>
+              </article>
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">Moderated change path</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">Update Before Purchase</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  If the case details need correction before visibility upgrades, use the member update panel first so reviewed information stays in sync.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="my-cases" id="member-portal-updates-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">Update Requests</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">Submit Case Updates</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                Use the existing update request flow already connected to the live moderation endpoint. No duplicate request system is created here.
+              </p>
+            </div>
+
+            <div id="member-update-requests-list-{{ section.id }}" class="account-my-cases__request-grid-{{ section.id }}"></div>
+
+            <div class="account-my-cases__request-grid-{{ section.id }}">
+              <article class="account-my-cases__request-card-{{ section.id }}" data-update-request-fallback>
+                <div class="account-my-cases__request-status-{{ section.id }}">Current Visibility</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">No previous update requests shown yet</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  Historic request records are not rendered in Liquid yet. Use your case action buttons to submit an update for review.
+                </p>
+                <div class="account-my-cases__cta-row-{{ section.id }}">
+                  <button type="button" class="account-my-cases__button-{{ section.id }}" data-open-first-case-panel data-panel-target="update">
+                    OPEN FIRST CASE PANEL
+                  </button>
+                </div>
+              </article>
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">Review Flow</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">Moderated Before Publishing</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  Submitted updates are reviewed before live case changes are applied. This keeps the storefront member portal aligned with the moderation workflow already built.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section class="account-my-cases__section-{{ section.id }}" data-member-tab-panel="my-cases" id="member-portal-found-{{ section.id }}">
+            <div class="account-my-cases__section-head-{{ section.id }}">
+              <div>
+                <p class="account-my-cases__eyebrow-{{ section.id }}">Found Requests</p>
+                <h2 class="account-my-cases__section-title-{{ section.id }}">Found / Resolved Actions</h2>
+              </div>
+              <p class="account-my-cases__section-copy-{{ section.id }}">
+                This block reuses the existing found request submission path. It does not create duplicate forms or a separate backend.
+              </p>
+            </div>
+
+            <div id="member-found-requests-list-{{ section.id }}" class="account-my-cases__request-grid-{{ section.id }}"></div>
+
+            <div class="account-my-cases__request-grid-{{ section.id }}">
+              <article class="account-my-cases__request-card-{{ section.id }}" data-found-request-fallback>
+                <div class="account-my-cases__request-status-{{ section.id }}">Current Visibility</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">No previous found requests shown yet</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  Historic found-request records are not available in Liquid yet. Use your case action buttons to send a found or resolved request for review.
+                </p>
+                <div class="account-my-cases__cta-row-{{ section.id }}">
+                  <button type="button" class="account-my-cases__button-{{ section.id }}" data-open-first-case-panel data-panel-target="found">
+                    OPEN FOUND ACTIONS
+                  </button>
+                </div>
+              </article>
+              <article class="account-my-cases__request-card-{{ section.id }}">
+                <div class="account-my-cases__request-status-{{ section.id }}">Resolved Flow</div>
+                <h3 class="account-my-cases__request-title-{{ section.id }}">Case Resolution Stays Controlled</h3>
+                <p class="account-my-cases__request-copy-{{ section.id }}">
+                  Resolved cases remain visible in your portal with blur and restricted actions, preserving the current found-safe handling already in place.
+                </p>
+              </article>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <div class="account-my-cases__modal-{{ section.id }}" id="account-my-cases-panel-{{ section.id }}" aria-hidden="true">
+      <div class="account-my-cases__modal-backdrop-{{ section.id }}" data-case-modal-overlay data-close-case-panel></div>
+      <div class="account-my-cases__modal-dialog-{{ section.id }}">
+        <div class="account-my-cases__modal-shell-{{ section.id }}">
+          <button
+            type="button"
+            class="account-my-cases__modal-close-{{ section.id }}"
+            data-close-case-panel
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+          <p class="account-my-cases__modal-kicker-{{ section.id }}">Case Panel</p>
+          <h3 class="account-my-cases__modal-heading-{{ section.id }}">EDIT THIS CASE</h3>
+          <p class="account-my-cases__modal-copy-{{ section.id }}">
+            Review the current storefront details for this case, then submit either an update request or a found-safe request.
+            Nothing changes live until the review team approves it.
+          </p>
+
+          <div class="account-my-cases__modal-selected-{{ section.id }}">
+            <div class="account-my-cases__selected-label-{{ section.id }}">Selected Case</div>
+            <div class="account-my-cases__selected-title-{{ section.id }}" data-panel-case-title>No case selected</div>
+          </div>
+
+          <div class="account-my-cases__panel-grid-{{ section.id }}">
+            <div class="account-my-cases__panel-card-{{ section.id }}">
+              <div class="account-my-cases__panel-label-{{ section.id }}">Case Handle</div>
+              <div class="account-my-cases__panel-value-{{ section.id }}" data-panel-case-handle>Not set</div>
+            </div>
+            <div class="account-my-cases__panel-card-{{ section.id }}">
+              <div class="account-my-cases__panel-label-{{ section.id }}">Current Status</div>
+              <div class="account-my-cases__panel-value-{{ section.id }}" data-panel-case-status>Not set</div>
+            </div>
+            <div class="account-my-cases__panel-card-{{ section.id }}">
+              <div class="account-my-cases__panel-label-{{ section.id }}">Visible Location</div>
+              <div class="account-my-cases__panel-value-{{ section.id }}" data-panel-case-location>Not available</div>
+            </div>
+            <div class="account-my-cases__panel-card-{{ section.id }} is-wide">
+              <div class="account-my-cases__panel-label-{{ section.id }}">Visible Summary</div>
+              <div class="account-my-cases__panel-value-{{ section.id }}" data-panel-case-summary>Not available</div>
+            </div>
+          </div>
+
+          <div class="account-my-cases__review-note-{{ section.id }}">
+            All submissions from this panel stay inside the existing moderated owner-request workflow. Members can request changes here,
+            but live article content and found status remain protected until admin approval.
+          </div>
+
+          <div class="account-my-cases__panel-section-{{ section.id }}">
+            <h4 class="account-my-cases__panel-title-{{ section.id }}">SUBMIT A CASE UPDATE</h4>
+            <p class="account-my-cases__panel-copy-{{ section.id }}">
+              Send corrected or newly relevant case information for review. Use the corrected location/details field if current storefront details need to be amended.
+            </p>
+
+            <form class="account-my-cases__form-{{ section.id }}" data-update-form>
+              <div class="account-my-cases__field-{{ section.id }}">
+                <label for="account-my-cases-update-summary-{{ section.id }}">Update Summary</label>
+                <input
+                  id="account-my-cases-update-summary-{{ section.id }}"
+                  name="update_summary"
+                  type="text"
+                  placeholder="Short summary of the change"
+                  required
+                >
+              </div>
+
+              <div class="account-my-cases__field-{{ section.id }}">
+                <label for="account-my-cases-update-details-{{ section.id }}">Update Details</label>
+                <textarea
+                  id="account-my-cases-update-details-{{ section.id }}"
+                  name="update_details"
+                  rows="6"
+                  placeholder="Explain the update clearly so it can be reviewed."
+                  required
+                ></textarea>
+              </div>
+
+              <div class="account-my-cases__field-{{ section.id }}">
+                <label>Corrected Official Location</label>
+                {% render 'location-selector',
+                  id: 'member-case-update-location',
+                  country_name: 'corrected_country',
+                  region_name: 'corrected_state_region',
+                  city_name: 'corrected_city_town'
+                %}
+              </div>
+
+              <div class="account-my-cases__field-{{ section.id }}">
+                <label for="account-my-cases-corrected-details-{{ section.id }}">Last Seen Details / Visible Case Notes</label>
+                <textarea
+                  id="account-my-cases-corrected-details-{{ section.id }}"
+                  name="corrected_details"
+                  rows="4"
+                  placeholder="Optional street, landmark, station, route, or visible case details for review."
+                ></textarea>
+              </div>
+
+              <div class="account-my-cases__field-{{ section.id }}">
+                <label for="account-my-cases-contact-note-{{ section.id }}">Optional Contact Note</label>
+                <textarea
+                  id="account-my-cases-contact-note-{{ section.id }}"
+                  name="contact_note"
+                  rows="3"
+                  placeholder="Optional note for the review team."
+                ></textarea>
+              </div>
+
+              <div class="account-my-cases__modal-actions-{{ section.id }}">
+                <button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-close-case-panel>
+                  Cancel
+                </button>
+                <button type="submit" class="account-my-cases__button-{{ section.id }}">
+                  Submit Update For Review
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="account-my-cases__panel-section-{{ section.id }}">
+            <h4 class="account-my-cases__panel-title-{{ section.id }}">MARK CASE AS FOUND</h4>
+            <p class="account-my-cases__panel-copy-{{ section.id }}">
+              Request a found or resolved review from the same case panel. This does not mark the live case as found immediately.
+            </p>
+
+            <form class="account-my-cases__form-{{ section.id }}" data-found-form>
+              <div class="account-my-cases__field-{{ section.id }}">
+                <label for="account-my-cases-found-confirmation-{{ section.id }}">Confirmation Message</label>
+                <textarea
+                  id="account-my-cases-found-confirmation-{{ section.id }}"
+                  name="found_confirmation"
+                  rows="4"
+                  placeholder="Confirm that this case should be reviewed as found or resolved."
+                  required
+                ></textarea>
+              </div>
+
+              <div class="account-my-cases__field-{{ section.id }}">
+                <label for="account-my-cases-found-note-{{ section.id }}">Optional Note</label>
+                <textarea
+                  id="account-my-cases-found-note-{{ section.id }}"
+                  name="found_note"
+                  rows="3"
+                  placeholder="Optional note for the review team."
+                ></textarea>
+              </div>
+
+              <div class="account-my-cases__modal-actions-{{ section.id }}">
+                <button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-close-case-panel>
+                  Cancel
+                </button>
+                <button type="submit" class="account-my-cases__button-{{ section.id }}">
+                  Submit Found Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% elsif has_paid_professional_tier and professional_verified == false %}
+      <section class="account-my-cases__login-panel-{{ section.id }} member-card member-header">
+        <div class="account-my-cases__lock-badge-{{ section.id }}">VERIFICATION PENDING</div>
+        <h1 class="account-my-cases__login-heading-{{ section.id }} member-title">PROFESSIONAL ACCESS IS PENDING APPROVAL</h1>
+        <p class="account-my-cases__login-copy-{{ section.id }} member-subtitle">
+          THIS ACCOUNT HAS {{ detected_tier }}, BUT THE MEMBER DASHBOARD STAYS LOCKED UNTIL PROFESSIONAL VERIFICATION IS APPROVED.
+        </p>
+        <div class="account-my-cases__login-actions-{{ section.id }}">
+          <a href="/pages/professional-area" class="account-my-cases__button-{{ section.id }}">OPEN PROFESSIONAL AREA</a>
+          <a href="/pages/professional-membership" class="account-my-cases__button-secondary-{{ section.id }}">REVIEW PROFESSIONAL MEMBERSHIP</a>
+        </div>
+      </section>
+    {% else %}
+      <section class="account-my-cases__login-panel-{{ section.id }} member-card member-header">
+        <div class="account-my-cases__lock-badge-{{ section.id }}">UPGRADE REQUIRED</div>
+        <h1 class="account-my-cases__login-heading-{{ section.id }} member-title">PROTECTED MEMBER ACCESS IS NOT ACTIVE</h1>
+        <p class="account-my-cases__login-copy-{{ section.id }} member-subtitle">
+          LOG IN IS WORKING, BUT THIS ACCOUNT NEEDS COMMUNITY+, COMMUNITY PRO, OR AN ELIGIBLE PROFESSIONAL TIER TO UNLOCK THE MEMBER AREA.
+        </p>
+        <div class="account-my-cases__login-actions-{{ section.id }}">
+          <a href="/pages/community-membership" class="account-my-cases__button-{{ section.id }}">VIEW COMMUNITY MEMBERSHIP</a>
+          <a href="/pages/professional-membership" class="account-my-cases__button-secondary-{{ section.id }}">VIEW PROFESSIONAL MEMBERSHIP</a>
+        </div>
+      </section>
+    {% endif %}
+  {% else %}
+    <div class="account-my-cases__login-wrap-{{ section.id }}">
+      <section class="account-my-cases__login-panel-{{ section.id }} member-card member-header">
+        <div class="account-my-cases__lock-badge-{{ section.id }}">Member Portal Locked</div>
+        <h1 class="account-my-cases__login-heading-{{ section.id }} member-title">ACCESS THE MISSING ALERTS MEMBER PORTAL</h1>
+        <p class="account-my-cases__login-copy-{{ section.id }} member-subtitle">
+          Sign in to reach your live member dashboard, view cases assigned to your account, and submit moderated update or found requests from the storefront.
+        </p>
+        <div class="account-my-cases__login-actions-{{ section.id }}">
+          <a href="{{ routes.account_login_url }}{{ account_login_return_separator }}return_url=/pages/member-area" class="account-my-cases__button-{{ section.id }}">MEMBER LOGIN</a>
+          <a href="{{ routes.account_register_url }}{{ account_register_return_separator }}return_url=/pages/member-area" class="account-my-cases__button-secondary-{{ section.id }}">CREATE ACCOUNT</a>
+        </div>
+        <p class="account-my-cases__login-copy-{{ section.id }}" style="margin-top: 1rem; margin-bottom: 0.75rem;">
+          Are you a professional?
+        </p>
+        <div class="account-my-cases__login-actions-{{ section.id }}">
+          <a href="/pages/professional-area" class="account-my-cases__button-secondary-{{ section.id }}">PROFESSIONAL ACCESS</a>
+        </div>
+        <section class="account-my-cases__section-{{ section.id }}" id="case-intelligence-network" style="margin-top: 1.25rem;">
+          <div class="account-my-cases__section-head-{{ section.id }}">
+            <div>
+              <p class="account-my-cases__eyebrow-{{ section.id }}">Member Area</p>
+              <h2 class="account-my-cases__section-title-{{ section.id }}">CASE INTELLIGENCE NETWORK</h2>
+            </div>
+            <p class="account-my-cases__section-copy-{{ section.id }}">
+              View local discussions, possible sightings, safety notes, search updates, and verified support tools inside the member area.
+            </p>
+          </div>
+          <div class="account-my-cases__login-actions-{{ section.id }}">
+            <a href="{{ routes.account_login_url }}" class="account-my-cases__button-{{ section.id }}">Join / Log In</a>
+            <a href="/blogs/missing-persons" class="account-my-cases__button-secondary-{{ section.id }}">Back to cases</a>
+          </div>
+        </section>
+        <div class="account-my-cases__locked-grid-{{ section.id }}">
+          <article class="account-my-cases__locked-card-{{ section.id }}">
+            <h3 class="account-my-cases__locked-title-{{ section.id }}">Claimed Case Access</h3>
+            <p class="account-my-cases__locked-copy-{{ section.id }}">
+              Only cases linked to your account are shown after login using the existing ownership check.
+            </p>
+          </article>
+          <article class="account-my-cases__locked-card-{{ section.id }}">
+            <h3 class="account-my-cases__locked-title-{{ section.id }}">Moderated Requests</h3>
+            <p class="account-my-cases__locked-copy-{{ section.id }}">
+              Update and found-safe submissions stay reviewed before any live case changes are published.
+            </p>
+          </article>
+          <article class="account-my-cases__locked-card-{{ section.id }}">
+            <h3 class="account-my-cases__locked-title-{{ section.id }}">Future Membership</h3>
+            <p class="account-my-cases__locked-copy-{{ section.id }}">
+              The portal is structured for future Free, Paid, and Super member experiences without new systems today.
+            </p>
+          </article>
+        </div>
+      </section>
+    </div>
+  {% endif %}
+</div>
+
+{% if customer %}
+<script>
+  (function() {
+    var sectionId = {{ section.id | json }};
+    var requestUrl = 'https://project-155fd.vercel.app/api/case-owner-request';
+    var shell = document.querySelector('.account-my-cases-' + sectionId);
+    if (!shell) return;
+
+    var casePanel = document.getElementById('account-my-cases-panel-' + sectionId);
+    var panelCaseTitle = casePanel ? casePanel.querySelector('[data-panel-case-title]') : null;
+    var panelCaseHandle = casePanel ? casePanel.querySelector('[data-panel-case-handle]') : null;
+    var panelCaseStatus = casePanel ? casePanel.querySelector('[data-panel-case-status]') : null;
+    var panelCaseLocation = casePanel ? casePanel.querySelector('[data-panel-case-location]') : null;
+    var panelCaseSummary = casePanel ? casePanel.querySelector('[data-panel-case-summary]') : null;
+    var updateForm = casePanel ? casePanel.querySelector('[data-update-form]') : null;
+    var foundForm = casePanel ? casePanel.querySelector('[data-found-form]') : null;
+    var pendingClaimsList = shell.querySelector('#pending-claims-list');
+    var pendingUpdateRequestsList = shell.querySelector('#member-update-requests-list-' + sectionId);
+    var pendingFoundRequestsList = shell.querySelector('#member-found-requests-list-' + sectionId);
+    var pendingRequestsValue = shell.querySelector('[data-pending-requests-value]');
+    var memberFundraisersList = shell.querySelector('[data-member-fundraisers]');
+    var memberFundraisersOverview = shell.querySelector('[data-member-fundraisers-overview]');
+    var updateRequestFallback = shell.querySelector('[data-update-request-fallback]');
+    var foundRequestFallback = shell.querySelector('[data-found-request-fallback]');
+    var customerId = {{ customer.id | append: '' | json }};
+    var customerEmail = {{ customer.email | downcase | strip | json }};
+    var tabTriggers = shell.querySelectorAll('[data-member-tab-trigger]');
+    var tabPanels = shell.querySelectorAll('[data-member-tab-panel]');
+    var followedCountValue = shell.querySelector('[data-followed-count-value]');
+    var overlay = document.getElementById('hard-overlay');
+
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'hard-overlay';
+      document.body.appendChild(overlay);
+    }
+
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.96)';
+    overlay.style.zIndex = '9998';
+    overlay.style.display = 'none';
+
+    if (casePanel && casePanel.parentNode !== document.body) {
+      document.body.appendChild(casePanel);
+    }
+
+    if (casePanel) {
+      casePanel.style.zIndex = '9999';
+    }
+
+    if (overlay && !overlay.hasAttribute('data-overlay-bound')) {
+      overlay.setAttribute('data-overlay-bound', 'true');
+      overlay.addEventListener('click', function() {
+        closeModal(casePanel);
+      });
+    }
+
+    function showOverlay() {
+      overlay.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideOverlay() {
+      overlay.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function activateMemberTab(tabName) {
+      if (!tabName) return;
+
+      Array.prototype.forEach.call(tabTriggers, function(trigger) {
+        var isActive = trigger.getAttribute('data-member-tab-trigger') === tabName;
+        trigger.classList.toggle('is-active', isActive);
+        trigger.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+
+      Array.prototype.forEach.call(tabPanels, function(panel) {
+        var isActive = panel.getAttribute('data-member-tab-panel') === tabName;
+        panel.classList.toggle('is-active', isActive);
+        panel.hidden = !isActive;
+      });
+    }
+
+    function updateFollowedCount() {
+      if (!followedCountValue) return;
+
+      try {
+        var followedCases = JSON.parse(window.localStorage.getItem('missingAlertsFollowedCases') || '{}');
+        var keys = {};
+
+        if (Array.isArray(followedCases)) {
+          followedCases.forEach(function(item) {
+            var entry = item && typeof item === 'object' ? item : {};
+            var entryKey = String(entry.handle || entry.url || entry.title || '').toLowerCase().trim();
+            if (entryKey) {
+              keys[entryKey] = true;
+            }
+          });
+        } else if (followedCases && typeof followedCases === 'object') {
+          Object.keys(followedCases).forEach(function(key) {
+            var entry = followedCases[key] || {};
+            var entryKey = String(entry.handle || entry.url || entry.title || key || '').toLowerCase().trim();
+            if (entryKey) {
+              keys[entryKey] = true;
+            }
+          });
+        }
+
+        followedCountValue.textContent = String(Object.keys(keys).length);
+      } catch (error) {
+        followedCountValue.textContent = '0';
+      }
+    }
+
+    function getCaseData(button) {
+      return {
+        caseTitle: button.getAttribute('data-case-title') || '',
+        caseHandle: button.getAttribute('data-case-handle') || '',
+        requesterCustomerId: button.getAttribute('data-requester-customer-id') || '',
+        requesterName: button.getAttribute('data-requester-name') || '',
+        requesterEmail: button.getAttribute('data-requester-email') || '',
+        caseStatus: button.getAttribute('data-case-status') || 'Active',
+        caseLocation: button.getAttribute('data-case-location') || 'Not available',
+        caseSummary: button.getAttribute('data-case-summary') || 'Not available'
+      };
+    }
+
+    function setPanelCaseData(data) {
+      [updateForm, foundForm].forEach(function(form) {
+        if (!form) return;
+        form.setAttribute('data-case-title', data.caseTitle || '');
+        form.setAttribute('data-case-handle', data.caseHandle || '');
+        form.setAttribute('data-requester-customer-id', data.requesterCustomerId || '');
+        form.setAttribute('data-requester-name', data.requesterName || '');
+        form.setAttribute('data-requester-email', data.requesterEmail || '');
+      });
+
+      if (panelCaseTitle) panelCaseTitle.textContent = data.caseTitle || 'Selected case';
+      if (panelCaseHandle) panelCaseHandle.textContent = data.caseHandle || 'Not set';
+      if (panelCaseStatus) panelCaseStatus.textContent = data.caseStatus || 'Not set';
+      if (panelCaseLocation) panelCaseLocation.textContent = data.caseLocation || 'Not available';
+      if (panelCaseSummary) panelCaseSummary.textContent = data.caseSummary || 'Not available';
+    }
+
+    function getFormCaseData(form) {
+      return {
+        caseTitle: form.getAttribute('data-case-title') || '',
+        caseHandle: form.getAttribute('data-case-handle') || '',
+        requesterCustomerId: form.getAttribute('data-requester-customer-id') || '',
+        requesterName: form.getAttribute('data-requester-name') || '',
+        requesterEmail: form.getAttribute('data-requester-email') || ''
+      };
+    }
+
+    function setSubmitting(form, isSubmitting) {
+      if (!form) return;
+      var submitButton = form.querySelector('button[type="submit"]');
+      if (!submitButton) return;
+
+      if (!submitButton.hasAttribute('data-default-label')) {
+        submitButton.setAttribute('data-default-label', submitButton.textContent);
+      }
+
+      submitButton.disabled = isSubmitting;
+      submitButton.setAttribute('aria-disabled', isSubmitting ? 'true' : 'false');
+      submitButton.textContent = isSubmitting ? 'Submitting...' : submitButton.getAttribute('data-default-label');
+    }
+
+    async function submitOwnerRequest(payload) {
+      console.log('CASE OWNER REQUEST URL', requestUrl);
+      console.log('CASE OWNER REQUEST PAYLOAD', payload);
+      const res = await fetch(requestUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      const rawText = await res.text();
+      console.log('CASE OWNER RESPONSE STATUS', res.status);
+      console.log('CASE OWNER RAW RESPONSE', rawText);
+      let data;
+      try {
+        data = JSON.parse(rawText);
+      } catch (e) {
+        alert('NON-JSON RESPONSE: ' + rawText.slice(0, 300));
+        throw new Error('Endpoint returned non-JSON response');
+      }
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'Request failed');
+      }
+      return data;
+    }
+
+    function getOwnerRequestSubmitMessage(error) {
+      var message = error && error.message ? String(error.message) : 'Unable to submit request right now.';
+
+      if (message.indexOf('Manual Shopify setup required:') !== -1) {
+        return 'Owner request system is not yet bootstrapped in Shopify admin.';
+      }
+
+      return message;
+    }
+
+    function openModal(modal) {
+      if (!modal) return;
+      showOverlay();
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.documentElement.style.overflow = 'hidden';
+    }
+
+    function closeModal(modal) {
+      if (!modal) return;
+      hideOverlay();
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.documentElement.style.overflow = '';
+    }
+
+    function resetPanelForms() {
+      if (updateForm) updateForm.reset();
+      if (foundForm) foundForm.reset();
+    }
+
+    function openCasePanel(button, preferredTarget) {
+      var caseData = getCaseData(button);
+      resetPanelForms();
+      setPanelCaseData(caseData);
+      openModal(casePanel);
+
+      window.setTimeout(function() {
+        if (preferredTarget === 'found' && foundForm && foundForm.elements.found_confirmation) {
+          foundForm.elements.found_confirmation.focus();
+          return;
+        }
+        if (updateForm && updateForm.elements.update_summary) {
+          updateForm.elements.update_summary.focus();
+        }
+      }, 60);
+    }
+
+    function openCasePanelByHandle(caseHandle, preferredTarget) {
+      if (!caseHandle) return false;
+
+      var targetButton = null;
+      shell.querySelectorAll('[data-open-case-panel]').forEach(function(button) {
+        if (targetButton) return;
+        if ((button.getAttribute('data-case-handle') || '') === caseHandle) {
+          targetButton = button;
+        }
+      });
+
+      if (!targetButton) return false;
+
+      openCasePanel(targetButton, preferredTarget || targetButton.getAttribute('data-panel-target') || 'update');
+      return true;
+    }
+
+    async function loadPendingClaims() {
+      if (!pendingClaimsList) return;
+      if (pendingClaimsList.getAttribute('data-api-pending-enabled') !== 'true') return;
+
+      try {
+        var res = await fetch('https://project-155fd.vercel.app/api/claims');
+        var data = await res.json();
+        var claims = Array.isArray(data) ? data : Array.isArray(data.claims) ? data.claims : [];
+
+        var pending = claims.filter(function(claim) {
+          return (
+            String(claim.status || '').toLowerCase() === 'pending' &&
+            String(claim.claimant_customer_id || '') === String(customerId)
+          );
+        });
+
+        if (pending.length === 0) {
+          pendingClaimsList.innerHTML = '<p>No pending claims</p>';
+          return;
+        }
+
+        pendingClaimsList.innerHTML = pending
+          .map(function(claim) {
+            var submittedAt = claim.submitted_at ? new Date(claim.submitted_at) : null;
+            var submittedLabel =
+              submittedAt && !isNaN(submittedAt.getTime())
+                ? submittedAt.toLocaleString()
+                : 'Not available';
+            return (
+              '<div class="pending-card">' +
+              '<strong>' + (claim.person_name || 'Claim Request') + '</strong>' +
+              '<p>Handle: ' + (claim.linked_case_handle || 'Not available') + '</p>' +
+              '<p>Status: Pending</p>' +
+              '<p>Submitted: ' + submittedLabel + '</p>' +
+              '</div>'
+            );
+          })
+          .join('');
+
+        if (pendingRequestsValue) {
+          var baseCount = Number(pendingRequestsValue.getAttribute('data-base-pending-count') || '0');
+          var claimsStorefrontExposed =
+            pendingRequestsValue.getAttribute('data-claims-storefront-exposed') === 'true';
+          pendingRequestsValue.textContent = String(claimsStorefrontExposed ? baseCount : baseCount + pending.length);
+        }
+      } catch (e) {
+        console.error('Pending claims fetch failed', e);
+      }
+    }
+
+    Array.prototype.forEach.call(tabTriggers, function(trigger) {
+      trigger.addEventListener('click', function() {
+        activateMemberTab(trigger.getAttribute('data-member-tab-trigger'));
+      });
+    });
+
+    document.addEventListener('missingalerts:followed-cases-updated', function(event) {
+      if (event && event.detail && typeof event.detail.count !== 'undefined' && followedCountValue) {
+        followedCountValue.textContent = String(event.detail.count);
+        return;
+      }
+
+      updateFollowedCount();
+    });
+
+    shell.querySelectorAll('[data-open-case-panel]').forEach(function(button) {
+      button.addEventListener('click', function() {
+        openCasePanel(button, button.getAttribute('data-panel-target') || 'update');
+      });
+    });
+
+    shell.querySelectorAll('[data-open-first-case-panel]').forEach(function(button) {
+      button.addEventListener('click', function() {
+        var firstPanelButton = shell.querySelector('[data-open-case-panel]');
+        if (firstPanelButton) {
+          openCasePanel(firstPanelButton, button.getAttribute('data-panel-target') || 'update');
+        } else {
+          var casesSection = document.getElementById('member-portal-cases-' + sectionId);
+          if (casesSection) {
+            casesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+
+    if (casePanel) {
+      casePanel.querySelectorAll('[data-close-case-panel]').forEach(function(button) {
+        button.addEventListener('click', function() {
+          closeModal(casePanel);
+        });
+      });
+    }
+
+    [casePanel].forEach(function(modal) {
+      if (!modal) return;
+      modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+          closeModal(modal);
+        }
+      });
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeModal(casePanel);
+      }
+    });
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var editHandle = urlParams.get('edit');
+    var panelTarget = urlParams.get('panel') || 'update';
+    var requestedMemberTab = urlParams.get('tab') || '';
+    var fundraiserConnect = urlParams.get('fundraiser_connect');
+    var fundraiserIdParam = urlParams.get('fundraiser_id');
+    var fundraiserCustomerIdParam = urlParams.get('customer_id') || customerId;
+
+    if (fundraiserConnect === 'return' && fundraiserIdParam) {
+      postFundraiser('/api/fundraisers/connect/return', {
+        fundraiserId: fundraiserIdParam,
+        customerId: fundraiserCustomerIdParam
+      })
+        .then(loadFundraisers)
+        .catch(function(error) {
+          alert(error && error.message ? error.message : 'Unable to confirm payout setup.');
+        });
+    }
+
+    if (editHandle) {
+      window.setTimeout(function() {
+        openCasePanelByHandle(editHandle, panelTarget);
+      }, 60);
+    }
+
+    activateMemberTab(requestedMemberTab === 'inbox' ? 'inbox' : requestedMemberTab === 'settings' ? 'settings' : 'overview');
+    updateFollowedCount();
+
+    function buildUpdateDetails(form) {
+      var updateDetails = form.elements.update_details.value;
+      var correctedDetails = form.elements.corrected_details.value;
+      var locationBits = [
+        form.elements.location_full_path && form.elements.location_full_path.value,
+        form.elements.location_slug_path && form.elements.location_slug_path.value,
+        form.elements.location_lat && form.elements.location_lat.value,
+        form.elements.location_lng && form.elements.location_lng.value
+      ].filter(function(value) {
+        return value && String(value).trim();
+      });
+
+      if (!locationBits.length && (!correctedDetails || !String(correctedDetails).trim())) {
+        return updateDetails;
+      }
+
+      var output = updateDetails;
+      if (locationBits.length) output += '\n\nCorrected official location:\n' + locationBits.join('\n');
+      if (correctedDetails && String(correctedDetails).trim()) output += '\n\nLast seen details / visible case notes:\n' + correctedDetails;
+      return output;
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatSubmittedAt(value) {
+      if (!value) return 'Not available';
+      var date = new Date(value);
+      if (isNaN(date.getTime())) return 'Not available';
+      return date.toLocaleString();
+    }
+
+    function renderOwnerRequests(listEl, items, emptyTitle, emptyCopy, badgeLabel) {
+      if (!listEl) return;
+
+      if (!items.length) {
+        listEl.innerHTML =
+          '<div class="account-my-cases__empty-{{ section.id }}">' +
+          '<h3 class="account-my-cases__empty-title-{{ section.id }}">' + escapeHtml(emptyTitle) + '</h3>' +
+          '<p>' + escapeHtml(emptyCopy) + '</p>' +
+          '</div>';
+        return;
+      }
+
+      listEl.innerHTML = items.map(function(item) {
+        return (
+          '<article class="account-my-cases__request-card-{{ section.id }}">' +
+            '<div class="account-my-cases__request-status-{{ section.id }}">' + escapeHtml(item.status || 'pending') + '</div>' +
+            '<h3 class="account-my-cases__request-title-{{ section.id }}">' + escapeHtml(item.case_title || item.linked_case_handle || 'Member request') + '</h3>' +
+            '<p class="account-my-cases__request-copy-{{ section.id }}">Handle: ' + escapeHtml(item.linked_case_handle || 'Not available') + '</p>' +
+            '<p class="account-my-cases__request-copy-{{ section.id }}">' + escapeHtml(item.request_summary || item.request_details || 'No details supplied.') + '</p>' +
+            '<p class="account-my-cases__request-copy-{{ section.id }}">Submitted: ' + escapeHtml(formatSubmittedAt(item.submitted_at)) + '</p>' +
+            '<div class="account-my-cases__badge-{{ section.id }}">' + escapeHtml(badgeLabel) + '</div>' +
+          '</article>'
+        );
+      }).join('');
+    }
+
+    function formatMoney(value, currency) {
+      var amount = (Number(value) || 0) / 100;
+      try {
+        return new Intl.NumberFormat('en-GB', { style: 'currency', currency: currency || 'GBP' }).format(amount);
+      } catch (error) {
+        return '£' + amount.toFixed(2);
+      }
+    }
+
+    function fundraiserValue(item, camel, snake, fallback) {
+      if (item && item[camel] !== undefined && item[camel] !== null) return item[camel];
+      if (item && item[snake] !== undefined && item[snake] !== null) return item[snake];
+      return fallback;
+    }
+
+    function fundraiserId(item) {
+      return fundraiserValue(item, 'id', 'fundraiser_id', '');
+    }
+
+    function fundraiserCaseTitle(item) {
+      return fundraiserValue(item, 'caseTitle', 'case_title', '') || fundraiserValue(item, 'caseHandle', 'case_handle', '') || 'Case fundraiser';
+    }
+
+    function renderFundraiserOverview(items) {
+      if (!memberFundraisersOverview) return;
+      if (!items.length) {
+        memberFundraisersOverview.innerHTML =
+          '<div class="ma-fundraiser-overview__locked-{{ section.id }}">' +
+          'Fundraisers become available when you are verified as a family member, parent or guardian for an approved case.' +
+          '</div>';
+        return;
+      }
+      var topItems = items.slice(0, 3);
+      memberFundraisersOverview.innerHTML =
+        '<div class="ma-fundraiser-overview__head-{{ section.id }}">' +
+          '<div><p class="account-my-cases__eyebrow-{{ section.id }}">FAMILY FUNDRAISER</p>' +
+          '<h3 class="ma-fundraiser-overview__title-{{ section.id }}">FAMILY FUNDRAISER</h3></div>' +
+          '<p class="ma-fundraiser-overview__copy-{{ section.id }}">Only verified family members, parents, guardians or approved family representatives can use fundraisers.</p>' +
+        '</div>' +
+        topItems.map(function(item) {
+          var itemId = fundraiserId(item);
+          var caseTitle = fundraiserCaseTitle(item);
+          var caseHandle = fundraiserValue(item, 'caseHandle', 'case_handle', '');
+          var currency = item.currency || 'GBP';
+          var available = fundraiserValue(item, 'netAmountAvailable', 'net_amount_available', 0);
+          var donationPath = fundraiserValue(item, 'donationUrl', 'donation_url', '') || ('/blogs/missing-persons/' + encodeURIComponent(caseHandle || ''));
+          return (
+            '<article class="ma-fundraiser-overview-card-{{ section.id }}">' +
+              '<div><div class="ma-fundraiser-overview-card__status-{{ section.id }}">' + escapeHtml(item.status || 'inactive') + '</div>' +
+              '<h4>' + escapeHtml(caseTitle) + '</h4>' +
+              '<p>Your family fundraiser is ' + escapeHtml(item.status || 'inactive') + ' for this case.</p></div>' +
+              '<div class="ma-fundraiser-overview-card__metrics-{{ section.id }}">' +
+                '<span>Total raised <strong>' + escapeHtml(formatMoney(fundraiserValue(item, 'totalRaisedGross', 'total_raised_gross', 0), currency)) + '</strong></span>' +
+                '<span>Donors <strong>' + escapeHtml(fundraiserValue(item, 'donorCount', 'donor_count', 0)) + '</strong></span>' +
+                '<span>Available <strong>' + escapeHtml(formatMoney(available, currency)) + '</strong></span>' +
+                '<span>Bank <strong>' + escapeHtml(fundraiserValue(item, 'bankingStatus', 'banking_status', 'not_started')) + '</strong></span>' +
+              '</div>' +
+              '<p class="ma-fundraiser-overview-card__fee-{{ section.id }}">Families receive the contribution amount minus the 7% platform fee. Optional supporter tips go to Missing Alerts and do not reduce the family balance.</p>' +
+              '<div class="ma-fundraiser-overview-card__actions-{{ section.id }}">' +
+                (item.can_turn_on ? '<button type="button" class="account-my-cases__button-{{ section.id }}" data-fundraiser-action="activate" data-fundraiser-id="' + escapeHtml(itemId) + '">Turn ON</button>' : '') +
+                (item.can_pause ? '<button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-fundraiser-action="pause" data-fundraiser-id="' + escapeHtml(itemId) + '">Turn OFF / Pause</button>' : '') +
+                '<a class="account-my-cases__button-secondary-{{ section.id }}" href="' + escapeHtml(donationPath) + '">VIEW CASE</a>' +
+                '<button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-copy-fundraiser-link="' + escapeHtml(donationPath) + '">COPY SUPPORT LINK</button>' +
+                '<button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-member-tab-trigger="my-cases">FUNDRAISER CONTROLS</button>' +
+                (item.can_request_payout ? '<button type="button" class="account-my-cases__button-{{ section.id }}" data-fundraiser-payout data-fundraiser-id="' + escapeHtml(itemId) + '" data-available="' + escapeHtml(available || 0) + '">CLAIM AVAILABLE FUNDS</button>' : '') +
+              '</div>' +
+            '</article>'
+          );
+        }).join('') +
+        (items.length > 3 ? '<button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-member-tab-trigger="my-cases">VIEW ALL FUNDRAISERS</button>' : '');
+      bindFundraiserControls();
+    }
+
+    function renderFundraisers(items) {
+      renderFundraiserOverview(items);
+      if (!memberFundraisersList) return;
+      if (!items.length) {
+        memberFundraisersList.innerHTML =
+          '<div class="account-my-cases__empty-{{ section.id }}">' +
+          '<h3 class="account-my-cases__empty-title-{{ section.id }}">No Active Family Fundraisers</h3>' +
+          '<p>Fundraisers only appear after a case owner is verified as a parent, guardian, close family member or approved family representative.</p>' +
+          '</div>';
+        return;
+      }
+
+      memberFundraisersList.innerHTML = items.map(function(item) {
+        var itemId = fundraiserId(item);
+        var caseHandle = fundraiserValue(item, 'caseHandle', 'case_handle', '');
+        var donationPath = fundraiserValue(item, 'donationUrl', 'donation_url', '') || ('/blogs/missing-persons/' + encodeURIComponent(caseHandle || ''));
+        var currency = item.currency || 'GBP';
+        var available = fundraiserValue(item, 'netAmountAvailable', 'net_amount_available', 0);
+        return (
+          '<article class="ma-fundraiser-card-{{ section.id }}">' +
+            '<div class="account-my-cases__request-status-{{ section.id }}">' + escapeHtml(item.status || 'inactive') + '</div>' +
+            '<h3 class="account-my-cases__request-title-{{ section.id }}">' + escapeHtml(fundraiserCaseTitle(item)) + '</h3>' +
+            '<p class="account-my-cases__request-copy-{{ section.id }}">Your fundraiser is only available because you are listed as a verified family member, parent or guardian for this case.</p>' +
+            '<div class="ma-fundraiser-card__grid-{{ section.id }}">' +
+              '<div class="ma-fundraiser-card__metric-{{ section.id }}"><div class="ma-fundraiser-card__label-{{ section.id }}">Total raised</div><div class="ma-fundraiser-card__value-{{ section.id }}">' + escapeHtml(formatMoney(fundraiserValue(item, 'totalRaisedGross', 'total_raised_gross', 0), currency)) + '</div></div>' +
+              '<div class="ma-fundraiser-card__metric-{{ section.id }}"><div class="ma-fundraiser-card__label-{{ section.id }}">7% platform fee</div><div class="ma-fundraiser-card__value-{{ section.id }}">' + escapeHtml(formatMoney(fundraiserValue(item, 'platformFeeGrossTotal', 'platform_fee_gross_total', fundraiserValue(item, 'platformFeeTotal', 'platform_fee_total', 0)), currency)) + '</div></div>' +
+              '<div class="ma-fundraiser-card__metric-{{ section.id }}"><div class="ma-fundraiser-card__label-{{ section.id }}">Optional tips</div><div class="ma-fundraiser-card__value-{{ section.id }}">' + escapeHtml(formatMoney(fundraiserValue(item, 'optionalTipTotal', 'optional_tip_total', 0), currency)) + '</div></div>' +
+              '<div class="ma-fundraiser-card__metric-{{ section.id }}"><div class="ma-fundraiser-card__label-{{ section.id }}">Available</div><div class="ma-fundraiser-card__value-{{ section.id }}">' + escapeHtml(formatMoney(available, currency)) + '</div></div>' +
+              '<div class="ma-fundraiser-card__metric-{{ section.id }}"><div class="ma-fundraiser-card__label-{{ section.id }}">Bank setup</div><div class="ma-fundraiser-card__value-{{ section.id }}">' + escapeHtml(fundraiserValue(item, 'bankingStatus', 'banking_status', 'not_started')) + '</div></div>' +
+            '</div>' +
+            '<div class="ma-fundraiser-card__controls-{{ section.id }}">' +
+              '<button type="button" class="account-my-cases__button-{{ section.id }}" data-fundraiser-action="activate" data-fundraiser-id="' + escapeHtml(itemId) + '">Turn ON</button>' +
+              '<button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-fundraiser-action="pause" data-fundraiser-id="' + escapeHtml(itemId) + '">Turn OFF / Pause</button>' +
+              '<input class="ma-fundraiser-card__goal-{{ section.id }}" type="number" min="0" step="1" placeholder="Goal amount" value="' + escapeHtml(Math.round(Number(fundraiserValue(item, 'goalAmount', 'goal_amount', 0)) / 100) || '') + '" data-fundraiser-goal-input data-fundraiser-id="' + escapeHtml(itemId) + '">' +
+              '<button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-fundraiser-action="set_goal" data-fundraiser-id="' + escapeHtml(itemId) + '">Set Goal</button>' +
+              '<button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-fundraiser-connect data-fundraiser-id="' + escapeHtml(itemId) + '">Add / Update Banking</button>' +
+              '<button type="button" class="account-my-cases__button-{{ section.id }}" data-fundraiser-payout data-fundraiser-id="' + escapeHtml(itemId) + '" data-available="' + escapeHtml(available || 0) + '">CLAIM AVAILABLE FUNDS</button>' +
+              '<a class="account-my-cases__button-secondary-{{ section.id }}" href="' + donationPath + '">VIEW CASE</a>' +
+              '<button type="button" class="account-my-cases__button-secondary-{{ section.id }}" data-copy-fundraiser-link="' + escapeHtml(donationPath) + '">COPY SUPPORT LINK</button>' +
+            '</div>' +
+            '<p class="account-my-cases__request-copy-{{ section.id }}">Families receive the contribution amount minus the 7% platform fee. Optional supporter tips go to Missing Alerts and do not reduce the family balance. Set up secure payout details before requesting funds.</p>' +
+          '</article>'
+        );
+      }).join('');
+
+      bindFundraiserControls();
+    }
+
+    async function loadFundraisers() {
+      if ((!memberFundraisersList && !memberFundraisersOverview) || (!customerId && !customerEmail)) return;
+      var apiBase = (memberFundraisersList || memberFundraisersOverview).getAttribute('data-api-base') || '';
+      try {
+        var response = await fetch(apiBase + '/api/fundraisers/member?customerId=' + encodeURIComponent(customerId) + '&customerEmail=' + encodeURIComponent(customerEmail), {
+          headers: { Accept: 'application/json' }
+        });
+        var data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || 'Failed to load fundraisers');
+        renderFundraisers(Array.isArray(data.fundraisers) ? data.fundraisers : []);
+      } catch (error) {
+        memberFundraisersList.innerHTML =
+          '<div class="account-my-cases__empty-{{ section.id }}">' +
+          '<h3 class="account-my-cases__empty-title-{{ section.id }}">Fundraiser Status Unavailable</h3>' +
+          '<p>' + escapeHtml(error && error.message ? error.message : 'Unable to load fundraiser records.') + '</p>' +
+          '</div>';
+      }
+    }
+
+    async function postFundraiser(path, payload) {
+      var apiBase = (memberFundraisersList || memberFundraisersOverview) ? (memberFundraisersList || memberFundraisersOverview).getAttribute('data-api-base') || '' : '';
+      var response = await fetch(apiBase + path, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      var data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Fundraiser request failed');
+      return data;
+    }
+
+    function bindFundraiserControls() {
+      shell.querySelectorAll('[data-fundraiser-action]').forEach(function(button) {
+        if (button.getAttribute('data-fundraiser-bound') === 'true') return;
+        button.setAttribute('data-fundraiser-bound', 'true');
+        button.addEventListener('click', async function() {
+          var action = button.getAttribute('data-fundraiser-action') || '';
+          var fundraiserId = button.getAttribute('data-fundraiser-id') || '';
+          var payload = { action: action, fundraiserId: fundraiserId, customerId: customerId };
+          if (action === 'set_goal') {
+            var input = shell.querySelector('[data-fundraiser-goal-input][data-fundraiser-id="' + fundraiserId + '"]');
+            payload.goalAmount = Math.round(Number(input && input.value ? input.value : 0) * 100);
+          }
+          try {
+            await postFundraiser('/api/fundraisers/member', payload);
+            await loadFundraisers();
+          } catch (error) {
+            alert(error && error.message ? error.message : 'Fundraiser update failed.');
+          }
+        });
+      });
+
+      shell.querySelectorAll('[data-fundraiser-connect]').forEach(function(button) {
+        if (button.getAttribute('data-fundraiser-bound') === 'true') return;
+        button.setAttribute('data-fundraiser-bound', 'true');
+        button.addEventListener('click', async function() {
+          try {
+            var data = await postFundraiser('/api/fundraisers/connect/start', {
+              fundraiserId: button.getAttribute('data-fundraiser-id') || '',
+              customerId: customerId
+            });
+            if (data.url) window.location.href = data.url;
+          } catch (error) {
+            alert(error && error.message ? error.message : 'Bank payouts are not active yet. Please contact support.');
+          }
+        });
+      });
+
+      shell.querySelectorAll('[data-fundraiser-payout]').forEach(function(button) {
+        if (button.getAttribute('data-fundraiser-bound') === 'true') return;
+        button.setAttribute('data-fundraiser-bound', 'true');
+        button.addEventListener('click', async function() {
+          try {
+            await postFundraiser('/api/fundraisers/payout-request', {
+              fundraiserId: button.getAttribute('data-fundraiser-id') || '',
+              customerId: customerId,
+              amountRequested: Number(button.getAttribute('data-available') || '0')
+            });
+            alert('Payout request submitted for review.');
+            await loadFundraisers();
+          } catch (error) {
+            alert(error && error.message ? error.message : 'Payout request failed.');
+          }
+        });
+      });
+
+      shell.querySelectorAll('[data-copy-fundraiser-link]').forEach(function(button) {
+        if (button.getAttribute('data-fundraiser-bound') === 'true') return;
+        button.setAttribute('data-fundraiser-bound', 'true');
+        button.addEventListener('click', function() {
+          var path = button.getAttribute('data-copy-fundraiser-link') || '';
+          var url = window.location.origin + path;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function() {
+              button.textContent = 'COPIED';
+              setTimeout(function() { button.textContent = 'COPY SUPPORT LINK'; }, 1600);
+            });
+          } else {
+            window.prompt('Support link', url);
+          }
+        });
+      });
+    }
+
+    async function loadOwnerRequests() {
+      if (!customerId) return;
+
+      try {
+        var res = await fetch(
+          requestUrl + '?customerId=' + encodeURIComponent(customerId) + '&status=pending',
+          { headers: { 'Accept': 'application/json' } }
+        );
+        var rawText = await res.text();
+        var data;
+
+        try {
+          data = JSON.parse(rawText);
+        } catch (error) {
+          console.error('OWNER REQUEST LIST NON_JSON', rawText);
+          throw new Error('Owner request list returned non-JSON response');
+        }
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || 'Failed to load owner requests');
+        }
+
+        var ownerRequests = Array.isArray(data.ownerRequests) ? data.ownerRequests : [];
+        var updateItems = ownerRequests.filter(function(item) {
+          return String(item.request_type || '').toLowerCase() === 'update';
+        });
+        var foundItems = ownerRequests.filter(function(item) {
+          return String(item.request_type || '').toLowerCase() === 'found';
+        });
+
+        renderOwnerRequests(
+          pendingUpdateRequestsList,
+          updateItems,
+          'No Pending Update Requests',
+          'No update requests are currently awaiting moderation for this member account.',
+          'UPDATE PENDING'
+        );
+
+        renderOwnerRequests(
+          pendingFoundRequestsList,
+          foundItems,
+          'No Pending Found Requests',
+          'No found or resolved requests are currently awaiting moderation for this member account.',
+          'FOUND PENDING'
+        );
+
+        if (updateRequestFallback) {
+          updateRequestFallback.style.display = updateItems.length ? 'none' : '';
+        }
+
+        if (foundRequestFallback) {
+          foundRequestFallback.style.display = foundItems.length ? 'none' : '';
+        }
+
+        if (pendingRequestsValue) {
+          var baseCount = Number(pendingRequestsValue.getAttribute('data-base-pending-count') || '0');
+          var claimsStorefrontExposed =
+            pendingRequestsValue.getAttribute('data-claims-storefront-exposed') === 'true';
+          var ownerRequestCount = updateItems.length + foundItems.length;
+          pendingRequestsValue.textContent = String((claimsStorefrontExposed ? baseCount : baseCount) + ownerRequestCount);
+        }
+      } catch (error) {
+        console.error('Owner requests fetch failed', error);
+      }
+    }
+
+    if (updateForm) {
+      updateForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        if (updateForm.getAttribute('data-submitting') === 'true') return;
+
+        var caseData = getFormCaseData(updateForm);
+
+        updateForm.setAttribute('data-submitting', 'true');
+        setSubmitting(updateForm, true);
+
+        try {
+          await submitOwnerRequest({
+            request_type: 'update',
+            linked_case_handle: caseData.caseHandle,
+            case_title: caseData.caseTitle,
+            requester_customer_id: caseData.requesterCustomerId,
+            requester_name: caseData.requesterName,
+            requester_email: caseData.requesterEmail,
+            request_summary: updateForm.elements.update_summary.value,
+            request_details: buildUpdateDetails(updateForm),
+            contact_note: updateForm.elements.contact_note.value
+          });
+
+          alert('Your case update has been submitted for review. It will be checked before any live changes are made.');
+          updateForm.reset();
+          closeModal(casePanel);
+          Promise.all([loadOwnerRequests(), loadPendingClaims()]);
+        } catch (error) {
+          alert(getOwnerRequestSubmitMessage(error));
+        } finally {
+          updateForm.setAttribute('data-submitting', 'false');
+          setSubmitting(updateForm, false);
+        }
+      });
+    }
+
+    if (foundForm) {
+      foundForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        if (foundForm.getAttribute('data-submitting') === 'true') return;
+
+        var caseData = getFormCaseData(foundForm);
+
+        foundForm.setAttribute('data-submitting', 'true');
+        setSubmitting(foundForm, true);
+
+        try {
+          await submitOwnerRequest({
+            request_type: 'found',
+            linked_case_handle: caseData.caseHandle,
+            case_title: caseData.caseTitle,
+            requester_customer_id: caseData.requesterCustomerId,
+            requester_name: caseData.requesterName,
+            requester_email: caseData.requesterEmail,
+            request_summary: 'Case marked as found request',
+            request_details: foundForm.elements.found_confirmation.value,
+            contact_note: foundForm.elements.found_note.value
+          });
+
+          alert('Your found-case request has been submitted for review. The live case will only change after review.');
+          foundForm.reset();
+          closeModal(casePanel);
+          Promise.all([loadOwnerRequests(), loadPendingClaims()]);
+        } catch (error) {
+          alert(getOwnerRequestSubmitMessage(error));
+        } finally {
+          foundForm.setAttribute('data-submitting', 'false');
+          setSubmitting(foundForm, false);
+        }
+      });
+    }
+
+    loadPendingClaims();
+    loadOwnerRequests();
+    loadFundraisers();
+  })();
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Account My Cases",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Account My Cases"
+    }
+  ]
+}
+{% endschema %}

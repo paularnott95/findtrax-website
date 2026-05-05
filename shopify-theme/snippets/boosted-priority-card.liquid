@@ -1,0 +1,421 @@
+{% assign boost_live_new = article.metafields.custom.boost_live.value %}
+{% assign boost_live_old = article.metafields.custom.boost_active.value %}
+{% assign points_new = article.metafields.custom.boost_points.value | default: 0 | plus: 0 %}
+{% assign points_old = article.metafields.custom.priority_score.value | default: 0 | plus: 0 %}
+{% assign total_boosts_new = article.metafields.custom.total_boosts.value | default: 0 | plus: 0 %}
+{% assign total_boosts_old = article.metafields.custom.support_count.value | default: 0 | plus: 0 %}
+{% assign total_boosts = total_boosts_new %}
+{% if total_boosts == 0 and total_boosts_old > 0 %}
+  {% assign total_boosts = total_boosts_old %}
+{% endif %}
+
+{% assign boost_end_raw = article.metafields.custom.boost_ends.value %}
+{% assign last_seen_place = article.metafields.custom.last_seen_place.value %}
+{% assign fallback_mode = fallback_mode | default: false %}
+{% assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase %}
+{% assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase %}
+{% assign blog_handle = article.blog.handle | default: '' | downcase %}
+{% assign is_found_safe_case = false %}
+{% if blog_handle == 'found-safe' or case_status == 'found' or case_status == 'resolved' or owner_status == 'resolved' %}
+  {% assign is_found_safe_case = true %}
+{% endif %}
+{% assign country_scope = 'all' %}
+{% assign placeholder_image = 'missing-person-silhouette.svg' | asset_url %}
+{% assign case_handle_prefix = article.blog.handle | default: 'missing-persons' %}
+{% assign notify_case_handle = case_handle_prefix | append: '/' | append: article.handle %}
+{% assign public_case_handle = article.handle | downcase %}
+{% assign public_case_title = article.title | downcase %}
+{% assign hide_public_case = false %}
+{% if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test' %}
+  {% assign hide_public_case = true %}
+{% endif %}
+{% if public_case_handle contains 'pablo' or public_case_handle contains 'esobar' or public_case_handle contains 'escobar' or public_case_handle contains 'miss-123' or public_case_handle contains 'automatic-fallback' %}
+  {% assign hide_public_case = true %}
+{% endif %}
+{% if public_case_title contains 'pablo' or public_case_title contains 'esobar' or public_case_title contains 'escobar' or public_case_title contains 'miss, 123' or public_case_title contains 'miss 123' or public_case_title contains 'automatic fallback' %}
+  {% assign hide_public_case = true %}
+{% endif %}
+{% if public_case_title contains 'automatic' and public_case_title contains 'fallback' %}
+  {% assign hide_public_case = true %}
+{% endif %}
+{% if public_case_title contains 'miss' and public_case_title contains '123' %}
+  {% assign hide_public_case = true %}
+{% endif %}
+{% for article_tag in article.tags %}
+  {% assign tag_downcase = article_tag | downcase | strip %}
+  {% if tag_downcase == 'test' or tag_downcase == 'demo' or tag_downcase == 'debug' or tag_downcase == 'fake' or tag_downcase == 'dummy' or tag_downcase == 'fallback' or tag_downcase == 'placeholder' or tag_downcase contains 'test:' or tag_downcase contains 'demo:' or tag_downcase contains 'debug:' %}
+    {% assign hide_public_case = true %}
+  {% endif %}
+  {% if tag_downcase contains 'country:' %}
+    {% assign country_scope = tag_downcase | split: ':' | last | strip %}
+    {% if country_scope == 'uk' %}
+      {% assign country_scope = 'gb' %}
+    {% endif %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% assign boost_live = false %}
+{% if boost_live_new == true or boost_live_old == true %}
+  {% assign boost_live = true %}
+{% endif %}
+
+{% assign points = points_new %}
+{% if points == 0 and points_old > 0 %}
+  {% assign points = points_old %}
+{% endif %}
+
+{% assign badge_text = 'BOOSTED' %}
+{% if fallback_mode == true %}
+  {% assign badge_text = 'FEATURED CASE' %}
+{% elsif points >= 120 %}
+  {% assign badge_text = 'ULTRA PRIORITY' %}
+{% elsif points >= 80 %}
+  {% assign badge_text = 'HIGH PRIORITY' %}
+{% elsif points >= 50 %}
+  {% assign badge_text = 'BOOSTED' %}
+{% else %}
+  {% assign badge_text = 'BOOSTED' %}
+{% endif %}
+
+{% unless hide_public_case %}
+<div class="bp-card-shell" data-country-scope="{{ country_scope }}">
+  <a href="{{ article.url }}" class="bp-card{% if fallback_mode == true %} bp-card--featured{% endif %}">
+    <div class="bp-card__media">
+    {% if article.image %}
+      <img
+        src="{{ article.image | image_url: width: 700, height: 700, crop: 'center' }}"
+        alt="{{ article.title | escape }}"
+        loading="lazy"
+        width="700"
+        height="700"
+        class="bp-card__image{% if is_found_safe_case %} bp-card__image--found-safe{% endif %}"
+      >
+    {% else %}
+      <img
+        src="{{ placeholder_image }}"
+        alt="Missing person appeal image"
+        loading="lazy"
+        width="1200"
+        height="1200"
+        class="bp-card__image{% if is_found_safe_case %} bp-card__image--found-safe{% endif %}"
+      >
+    {% endif %}
+
+    {% if is_found_safe_case %}
+      <div class="bp-card__privacy-overlay">FOUND SAFE</div>
+    {% endif %}
+
+    <div class="bp-card__overlay-top">
+      <span class="bp-card__badge">{{ badge_text }}</span>
+
+      {% if fallback_mode != true and points > 0 %}
+        <span class="bp-card__bp-wrap">
+          <span class="bp-card__points">🔥 {{ points }} BP</span>
+          <span class="bp-card__tooltip">
+            Boost points increase visibility. This case currently has {{ points }} boost points.
+          </span>
+        </span>
+      {% endif %}
+    </div>
+
+    </div>
+
+    <div class="bp-card__body">
+      <h3 class="bp-card__title">{{ article.title }}</h3>
+
+      {% if last_seen_place != blank %}
+        <div class="bp-card__meta">LAST SEEN: {{ last_seen_place }}</div>
+      {% endif %}
+
+      <div class="bp-card__stats">
+        {% if fallback_mode == true %}
+          <span class="bp-card__pill">FEATURED</span>
+        {% else %}
+          {% if total_boosts > 0 %}
+            <span class="bp-card__pill">{{ total_boosts }} BOOSTS</span>
+          {% endif %}
+          {% assign boost_end_new = article.metafields.custom.boost_ends.value %}
+{% assign boost_end_old = article.metafields.custom.boost_end_date.value %}
+
+{% assign boost_end_final = boost_end_new %}
+
+{% if boost_end_final == blank and boost_end_old != blank %}
+  {% assign boost_end_final = boost_end_old %}
+{% endif %}
+{% assign boost_end_new = article.metafields.custom.boost_ends.value %}
+{% assign boost_end_old = article.metafields.custom.boost_end_date.value %}
+
+{% assign boost_end_final = boost_end_new %}
+
+{% if boost_end_old != blank and boost_end_new != blank %}
+  {% if boost_end_old < boost_end_new %}
+    {% assign boost_end_final = boost_end_old %}
+  {% endif %}
+{% elsif boost_end_final == blank %}
+  {% assign boost_end_final = boost_end_old %}
+{% endif %}
+
+{% if boost_end_final != blank %}
+    <span class="bp-card__pill">
+      BOOSTED UNTIL {{ boost_end_final | date: "%d %b" }}
+    </span>
+{% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </a>
+  <div class="case-card__footer-row case-card__footer-row--boosted case-card-footer-actions boosted-card-actions">
+    <div class="case-notify-count case-notify-count--card" data-notify-count data-case-handle="{{ notify_case_handle | escape }}">
+      0 people following updates
+    </div>
+    <div class="case-card__actions case-card-actions case-card__actions--boosted case-card-action-row case-card-action-buttons boost-card-action-buttons">
+      <button
+        type="button"
+        class="case-card__follow case-notify-button js-case-notify-button"
+        data-default-follow-label="Follow"
+        data-case-title="{{ article.title | escape }}"
+        data-case-handle="{{ notify_case_handle | escape }}"
+        data-case-url="{{ article.url }}"
+        data-case-id="{{ article.id }}"
+        data-case-image="{% if article.image %}{{ article.image | image_url: width: 600 }}{% endif %}"
+      >
+        <span class="case-card__follow-icon" aria-hidden="true">🔔</span>
+        <span class="case-card__follow-label case-notify-button__text">Follow</span>
+      </button>
+      <button
+        type="button"
+        class="case-card__share case-share-button js-case-share-button"
+        data-default-share-label="Share"
+        data-share-title="{{ article.title | escape }}"
+        data-share-url="{{ shop.url }}{{ article.url }}"
+      >
+        <span class="case-card__share-label">Share</span>
+      </button>
+    </div>
+  </div>
+</div>
+{% endunless %}
+
+<style>
+  .bp-card {
+    display: block;
+    background: linear-gradient(180deg, #171717 0%, #0d0d0d 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.26);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, filter 0.25s ease;
+    position: relative;
+  }
+
+  .bp-card:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at top center, rgba(255,65,65,0.12), transparent 45%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .bp-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 22px 40px rgba(0,0,0,0.34), 0 0 24px rgba(255, 45, 45, 0.16);
+    border-color: rgba(255, 85, 85, 0.32);
+    filter: brightness(1.04);
+  }
+
+  .bp-card:hover:before {
+    opacity: 1;
+  }
+
+  .bp-card--featured {
+    opacity: 0.9;
+    filter: saturate(0.92);
+  }
+
+  .bp-card__media {
+    position: relative;
+    overflow: hidden;
+    background: #0b0b0b;
+  }
+
+  .bp-card__image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.38s ease, filter 0.38s ease;
+  }
+
+  .bp-card__image--found-safe {
+    filter: blur(22px) saturate(0.88) brightness(0.78) contrast(0.9);
+    transform: scale(1.1);
+    transform-origin: center center;
+    opacity: 0.78;
+  }
+
+  .bp-card:hover .bp-card__image {
+    transform: scale(1.06);
+    filter: brightness(1.06);
+  }
+
+  .bp-card:hover .bp-card__image--found-safe {
+    transform: scale(1.12);
+    filter: blur(22px) saturate(0.88) brightness(0.78) contrast(0.9);
+  }
+
+  .bp-card__privacy-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, rgba(5, 12, 8, 0.28) 0%, rgba(5, 12, 8, 0.74) 100%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .bp-card__overlay-top {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .bp-card__badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(217, 4, 41, 0.94);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.18);
+  }
+
+  .bp-card__bp-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .bp-card__points {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.76);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.08);
+    cursor: help;
+  }
+
+  .bp-card__tooltip {
+    position: absolute;
+    top: 38px;
+    right: 0;
+    width: 220px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(12, 12, 12, 0.96);
+    color: rgba(255,255,255,0.88);
+    font-size: 11px;
+    line-height: 1.4;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 14px 26px rgba(0,0,0,0.28);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 20;
+  }
+
+  .bp-card__bp-wrap:hover .bp-card__tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .bp-card__overlay-bottom {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255,59,59,0.97) 0%, rgba(214,31,31,0.97) 100%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.22);
+  }
+
+  .bp-card__body {
+    padding: 14px 14px 15px;
+  }
+
+  .bp-card__title {
+    margin: 0 0 8px;
+    color: #fff;
+    font-size: 18px;
+    line-height: 1.15;
+    font-weight: 900;
+  }
+
+  .bp-card__meta {
+    margin-bottom: 10px;
+    color: #ffb2b2;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .bp-card__stats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .bp-card__pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+</style>

@@ -1,0 +1,42 @@
+{{ 'support-missing-alerts-box.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign support_missing_alerts_url = support_url | default: settings.buy_me_a_coffee_url | default: 'https://buymeacoffee.com/missingalerts'
+  if support_missing_alerts_url == blank
+    assign support_missing_alerts_url = 'https://buymeacoffee.com/missingalerts'
+  endif
+  assign support_missing_alerts_id = support_box_id | default: 'SupportMissingAlertsBox'
+%}
+
+<section class="support-missing-alerts-box" aria-labelledby="{{ support_missing_alerts_id }}">
+  <img
+    src="{{ 'support-team-coffee-banner.png' | asset_url }}"
+    alt="Support the Missing Alerts team"
+    width="1200"
+    height="675"
+    loading="lazy"
+    decoding="async"
+    class="support-banner"
+    onerror="this.hidden=true"
+  >
+
+  <div class="support-missing-alerts-box__content">
+    <p class="support-missing-alerts-box__badge">SUPPORT MISSING ALERTS</p>
+    <h2 id="{{ support_missing_alerts_id }}">Help Keep Missing Alerts Running 24/7</h2>
+    <p class="support-missing-alerts-box__body">Support the team working behind every alert, helping missing people information stay visible, updated, and accessible worldwide.</p>
+    <p class="support-missing-alerts-box__trust">Safe • Trusted • Public awareness platform</p>
+
+    <ul class="support-missing-alerts-box__features" aria-label="How support helps Missing Alerts">
+      <li>Real-time alert visibility</li>
+      <li>Small team, global impact</li>
+      <li>Every contribution helps reach more people</li>
+    </ul>
+
+    <a class="support-missing-alerts-box__button" href="{{ support_missing_alerts_url }}" target="_blank" rel="noopener noreferrer">
+      <span>Support the Platform</span>
+      <small>Help keep alerts live →</small>
+    </a>
+
+    <p class="support-missing-alerts-box__footnote">Built independently • Supported by the community</p>
+  </div>
+</section>
