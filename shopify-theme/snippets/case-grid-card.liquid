@@ -49,6 +49,28 @@
   if case_country == 'uk'
     assign case_country = 'gb'
   endif
+  assign case_country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | default: ''
+  if case_country_slug == blank
+    if case_country == 'gb'
+      assign case_country_slug = 'united-kingdom'
+    elsif case_country == 'us'
+      assign case_country_slug = 'united-states'
+    elsif case_country == 'ca'
+      assign case_country_slug = 'canada'
+    elsif case_country == 'au'
+      assign case_country_slug = 'australia'
+    elsif case_country == 'nz'
+      assign case_country_slug = 'new-zealand'
+    elsif case_country == 'ie'
+      assign case_country_slug = 'ireland'
+    elsif case_country == 'sg'
+      assign case_country_slug = 'singapore'
+    elsif case_country == 'za'
+      assign case_country_slug = 'south-africa'
+    else
+      assign case_country_slug = case_country
+    endif
+  endif
   assign case_country_label = country_label | default: article.metafields.custom.country.value | default: article.metafields.custom.country_name.value | default: article.metafields.custom.country | default: article.metafields.custom.country_name | default: case_country | upcase
   assign case_location = location | default: ''
   assign case_location_slug_path = location_slug_path | default: article.metafields.custom.location_slug_path.value | default: article.metafields.custom.location_slug_path | default: ''
@@ -117,12 +139,18 @@
   assign verification_status_value = verification_status | default: 'unknown' | downcase
   assign help_keyword_value = help_keyword_text | default: help_type_value
   assign scanner_imported_case = false
+  assign source_verified_case = false
   for article_tag in article.tags
     assign scanner_tag_downcase = article_tag | downcase | strip
     if scanner_tag_downcase == 'scanner-imported'
       assign scanner_imported_case = true
     endif
+    if scanner_tag_downcase == 'source-verified' or scanner_tag_downcase == 'official-source' or scanner_tag_downcase == 'scanner-imported'
+      assign source_verified_case = true
+    endif
   endfor
+  assign card_boost_live = article.metafields.custom.boost_live.value | default: article.metafields.custom.boost_active.value | default: false
+  assign card_boost_score = article.metafields.custom.boost_points.value | default: article.metafields.custom.priority_score.value | default: 0 | plus: 0
 -%}
 
 {% if should_render_card %}
@@ -131,6 +159,8 @@
   data-case-card
   data-country="{{ case_country | escape }}"
   data-country-code="{{ case_country | escape }}"
+  data-country-slug="{{ case_country_slug | escape }}"
+  data-country-name="{{ case_country_label | escape }}"
   data-region="{{ case_region | escape }}"
   data-admin1="{{ case_admin1 | escape }}"
   data-admin2="{{ case_admin2 | escape }}"
@@ -148,6 +178,9 @@
   data-location-slug-path="{{ case_location_slug_path | escape }}"
   data-status="{{ status_label | escape }}"
   data-case-status="{{ status_label | escape }}"
+  data-boost-active="{% if card_boost_live == true or card_boost_live == 'true' %}true{% else %}false{% endif %}"
+  data-boost-score="{{ card_boost_score }}"
+  data-source-verified="{% if source_verified_case %}true{% else %}false{% endif %}"
   data-is-found="{% if card_is_found_status %}true{% else %}false{% endif %}"
   data-is-advice="false"
   data-age="{{ case_age | escape }}"

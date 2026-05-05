@@ -10,504 +10,423 @@
   }
 
   var countries = config.countries || {};
-  var languages = config.languages || {};
   var storageKey = config.storageKey || 'missingAlertsCountry';
   var currencyStorageKey = config.currencyStorageKey || 'missingAlertsCurrency';
   var languageStorageKey = config.languageStorageKey || 'missingAlertsLanguage';
-  var defaultCountry = countries.global ? 'global' : (config.defaultCountry || 'global');
   var defaultCurrency = config.defaultCurrency || 'GBP';
   var defaultLanguage = config.defaultLanguage || 'en';
   var html = document.documentElement;
   var body = document.body;
   var popup = document.getElementById('missing-alerts-country-popup');
-  var popupTitle = popup ? popup.querySelector('.missing-alerts-country-popup__title') : null;
-  var popupSaveButton = popup ? popup.querySelector('[data-country-save]') : null;
-  var popupGlobalButton = popup ? popup.querySelector('[data-country-select-global]') : null;
+  var topbar = document.getElementById('missing-alerts-country-top-bar');
+  var saveButton = popup ? popup.querySelector('[data-country-save]') : null;
+  var selectedText = popup ? popup.querySelector('[data-country-wheel-selected]') : null;
+  var wheelViewport = popup ? popup.querySelector('[data-country-wheel-viewport]') : null;
+  var wheelTrack = popup ? popup.querySelector('[data-country-wheel-track]') : null;
+  var prevButton = popup ? popup.querySelector('[data-country-wheel-prev]') : null;
+  var nextButton = popup ? popup.querySelector('[data-country-wheel-next]') : null;
+  var changeButtons = document.querySelectorAll('[data-country-change]');
+  var topbarText = document.querySelector('[data-country-topbar-text]');
+  var topbarIntelligence = document.querySelector('[data-country-topbar-intelligence]');
+  var countryIntelligenceLinks = document.querySelectorAll('[data-country-intelligence-link]');
+  var cookieMaxAge = 60 * 60 * 24 * 180;
+  var selectedCountryCode = null;
+  var lastFocused = null;
 
-  var countryAliases = {
-    gb: ['gb', 'uk'],
-    uk: ['gb', 'uk']
-  };
+  var selectorCountries = [
+    { code: 'gb', slug: 'united-kingdom', flag: '🇬🇧', name: 'United Kingdom', status: 'Live appeals', aliases: ['gb', 'uk', 'united kingdom', 'united-kingdom', 'england', 'scotland', 'wales', 'northern ireland'] },
+    { code: 'us', slug: 'united-states', flag: '🇺🇸', name: 'United States', status: 'Live appeals', aliases: ['us', 'usa', 'united states', 'united-states', 'united states of america'] },
+    { code: 'ca', slug: 'canada', flag: '🇨🇦', name: 'Canada', status: 'Live appeals', aliases: ['ca', 'canada'] },
+    { code: 'au', slug: 'australia', flag: '🇦🇺', name: 'Australia', status: 'Live appeals', aliases: ['au', 'australia'] },
+    { code: 'nz', slug: 'new-zealand', flag: '🇳🇿', name: 'New Zealand', status: 'Live appeals', aliases: ['nz', 'new zealand', 'new-zealand'] },
+    { code: 'ie', slug: 'ireland', flag: '🇮🇪', name: 'Ireland', status: 'Country intelligence ready', aliases: ['ie', 'ireland'] },
+    { code: 'sg', slug: 'singapore', flag: '🇸🇬', name: 'Singapore', status: 'Source coverage building', aliases: ['sg', 'singapore'] },
+    { code: 'za', slug: 'south-africa', flag: '🇿🇦', name: 'South Africa', status: 'Being enriched', aliases: ['za', 'south africa', 'south-africa'], enabledInSelector: false }
+  ];
 
-  var dictionary = {
-    en: {
-      selectYourCountry: 'SELECT YOUR COUNTRY',
-      continueLabel: 'Continue',
-      stayGlobal: 'Stay Global'
-    }
-  };
-
-  function translate(key, languageCode) {
-    var locale = dictionary[languageCode] || dictionary.en;
-    return locale[key] || dictionary.en[key] || '';
+  function normalize(value) {
+    return String(value || '').toLowerCase().trim().replace(/_/g, '-');
   }
 
   function canonicalizeCountry(value) {
-    var normalized = String(value || '').toLowerCase();
-    if (normalized === 'uk') return 'gb';
+    var normalized = normalize(value);
+    if (!normalized) return '';
+    if (normalized === 'uk' || normalized === 'england' || normalized === 'scotland' || normalized === 'wales' || normalized === 'northern-ireland' || normalized === 'northern ireland') return 'gb';
+    if (normalized === 'usa' || normalized === 'united-states-of-america' || normalized === 'united states of america') return 'us';
+    var match = selectorCountries.find(function(country) {
+      return country.aliases.some(function(alias) {
+        return normalize(alias) === normalized;
+      }) || country.code === normalized || country.slug === normalized;
+    });
+    if (match) return match.code;
+    if (countries[normalized]) return normalized;
     return normalized;
   }
 
-  function normalizeCountry(value) {
-    var normalized = canonicalizeCountry(value);
-    if (countries[normalized]) return normalized;
-    return defaultCountry;
+  function getSelectorCountry(code) {
+    var canonical = canonicalizeCountry(code);
+    return selectorCountries.find(function(country) {
+      return country.code === canonical;
+    }) || null;
   }
 
-  function normalizeLanguage(value) {
-    var normalized = String(value || '').toLowerCase();
-    if (languages[normalized]) return normalized;
-    return defaultLanguage;
-  }
-
-  function getCountryData(countryCode) {
-    return countries[normalizeCountry(countryCode)] || countries[defaultCountry];
-  }
-
-  function getLanguageData(languageCode) {
-    return languages[normalizeLanguage(languageCode)] || languages[defaultLanguage];
-  }
-
-  function getLanguageForCountry(countryCode) {
-    return getCountryData(countryCode).language || defaultLanguage;
-  }
-
-  function getCurrencyForCountry(countryCode) {
-    return getCountryData(countryCode).currency || defaultCurrency;
-  }
-
-  function getCurrentCountry() {
-    return normalizeCountry(html.getAttribute('data-country') || window.localStorage.getItem(storageKey) || defaultCountry);
-  }
-
-  function getCurrentLanguage() {
-    return normalizeLanguage(html.getAttribute('data-language') || window.localStorage.getItem(languageStorageKey) || getLanguageForCountry(getCurrentCountry()));
-  }
-
-  function getCurrentCurrency() {
-    return html.getAttribute('data-currency') || window.localStorage.getItem(currencyStorageKey) || getCurrencyForCountry(getCurrentCountry());
-  }
-
-  function setHtmlAttributes(countryCode, currencyCode, languageCode) {
-    html.setAttribute('data-country', countryCode);
-    html.setAttribute('data-currency', currencyCode);
-    html.setAttribute('data-language', languageCode);
-  }
-
-  function formatCountryLabel(countryCode) {
-    var country = getCountryData(countryCode);
-    return (country.flag ? country.flag + ' ' : '') + country.label;
-  }
-
-  function formatLanguageLabel(languageCode) {
-    return getLanguageData(languageCode).label;
-  }
-
-  function updateSelectedCountryLabels() {
-    var country = getCountryData(getCurrentCountry());
-    var text = 'Viewing: ' + (country && country.label ? country.label : 'Global');
-    document.querySelectorAll('[data-selected-country-label]').forEach(function(node) {
-      node.textContent = text;
-    });
-  }
-
-  function getScopeAliases(value) {
-    var normalized = canonicalizeCountry(value);
-    return countryAliases[normalized] || [normalized];
-  }
-
-  function shouldShowScope(scope, selectedCountry) {
-    var normalizedScope = String(scope || 'all').toLowerCase();
-    if (!normalizedScope || normalizedScope === 'all') return true;
-    if (selectedCountry === 'global') return normalizedScope !== 'hidden';
-    if (normalizedScope === 'global') return false;
-
-    var validCountries = getScopeAliases(selectedCountry);
-    return normalizedScope.split(',').map(function(item) {
-      return canonicalizeCountry(item.trim());
-    }).some(function(item) {
-      return validCountries.indexOf(item) !== -1;
-    });
-  }
-
-  function applyCountryScope() {
-    var selectedCountry = getCurrentCountry();
-    document.querySelectorAll('[data-country-scope]').forEach(function(node) {
-      var show = shouldShowScope(node.getAttribute('data-country-scope'), selectedCountry);
-      node.hidden = !show;
-      node.classList.toggle('country-mode-hidden', !show);
-    });
-  }
-
-  function applyCountryPrices() {
-    var currency = String(getCurrentCurrency() || '').toLowerCase();
-    var attributeMap = {
-      gbp: 'data-currency-price-gbp',
-      usd: 'data-currency-price-usd',
-      cad: 'data-currency-price-cad',
-      aud: 'data-currency-price-aud'
+  function getCountryData(code) {
+    var selectorCountry = getSelectorCountry(code);
+    if (selectorCountry) return selectorCountry;
+    var canonical = canonicalizeCountry(code);
+    var themeCountry = countries[canonical];
+    if (!themeCountry) return null;
+    return {
+      code: canonical,
+      slug: themeCountry.slug || canonical,
+      flag: themeCountry.flag || '',
+      name: themeCountry.label || canonical.toUpperCase(),
+      status: 'Country intelligence ready',
+      aliases: [canonical, themeCountry.label || '']
     };
+  }
 
-    document.querySelectorAll('[data-country-price]').forEach(function(node) {
-      var attributeName = attributeMap[currency] || attributeMap.gbp;
-      var priceValue = node.getAttribute(attributeName) || node.getAttribute(attributeMap.gbp);
-      if (priceValue) node.textContent = priceValue;
+  function parseStoredCountry() {
+    var raw = '';
+    try {
+      raw = window.localStorage.getItem(storageKey) || '';
+    } catch (error) {
+      raw = '';
+    }
+    if (!raw) return null;
+    try {
+      var parsed = JSON.parse(raw);
+      if (parsed && (parsed.code || parsed.slug || parsed.name)) return getCountryData(parsed.code || parsed.slug || parsed.name);
+    } catch (error) {
+      return getCountryData(raw);
+    }
+    return getCountryData(raw);
+  }
+
+  function getQueryCountry() {
+    var params = new URLSearchParams(window.location.search || '');
+    var value = params.get('country');
+    if (!value) return null;
+    var country = getCountryData(value);
+    if (!country || country.code === 'global') return null;
+    return country;
+  }
+
+  function writeCookie(country) {
+    document.cookie = 'missing_alerts_country=' + encodeURIComponent(country.code.toUpperCase()) + '; Max-Age=' + cookieMaxAge + '; Path=/; SameSite=Lax';
+  }
+
+  function getCurrencyForCountry(code) {
+    var canonical = canonicalizeCountry(code);
+    return (countries[canonical] && countries[canonical].currency) || defaultCurrency;
+  }
+
+  function getLanguageForCountry(code) {
+    var canonical = canonicalizeCountry(code);
+    return (countries[canonical] && countries[canonical].language) || defaultLanguage;
+  }
+
+  function countryStoragePayload(country) {
+    return {
+      code: country.code.toUpperCase(),
+      slug: country.slug,
+      name: country.name
+    };
+  }
+
+  function persistCountry(country) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(countryStoragePayload(country)));
+      window.localStorage.setItem(currencyStorageKey, getCurrencyForCountry(country.code));
+      window.localStorage.setItem(languageStorageKey, getLanguageForCountry(country.code));
+    } catch (error) {
+      // Storage can fail in private browsing; cookie still gives the server/client a lightweight country hint.
+    }
+    writeCookie(country);
+  }
+
+  function countryMatches(selected, node) {
+    if (!selected) return true;
+    var values = [
+      node.getAttribute('data-country-code'),
+      node.getAttribute('data-country-slug'),
+      node.getAttribute('data-country-name'),
+      node.getAttribute('data-country'),
+      node.getAttribute('data-country-scope'),
+      node.getAttribute('data-region'),
+      node.getAttribute('data-admin1'),
+      node.getAttribute('data-location'),
+      node.getAttribute('data-search-text')
+    ].filter(Boolean).join(' ').toLowerCase();
+
+    if (!values) return false;
+    return selected.aliases.some(function(alias) {
+      return values.indexOf(normalize(alias).replace(/-/g, ' ')) !== -1 || values.indexOf(normalize(alias)) !== -1;
     });
   }
 
-  function clearGeneratedTestCases(container) {
-    if (!container) return;
-    container.querySelectorAll('[data-generated-test-case]').forEach(function(node) {
-      node.remove();
-    });
+  function isCaseLike(node) {
+    if (!node) return false;
+    if (node.hasAttribute('data-country-card') || node.closest('.missing-alerts-country-popup')) return false;
+    if (node.hasAttribute('data-country-section')) return false;
+    if (node.hasAttribute('data-country-surface')) return false;
+    return node.matches('[data-case-card], .ma-case-grid-card, .boosted-card, .bp-card-shell, .spotlight-card, .ma-spotlight-card, .mpa-case-card, .article-card, [data-country-code], [data-country-slug]');
   }
 
-  function ensureEmptyState(container) {
-    if (!container) return null;
-    var existing = container.querySelector('.country-mode-empty-state');
+  function shouldShowCountryScope(node, selected) {
+    if (!node || !selected) return true;
+    if (!isCaseLike(node)) return true;
+    if (node.getAttribute('data-card-type') === 'empty') return false;
+    return countryMatches(selected, node);
+  }
+
+  function ensureEmptyState(container, selected) {
+    var existing = container.querySelector(':scope > .country-mode-empty-state');
     if (existing) return existing;
     var node = document.createElement('div');
     node.className = 'country-mode-empty-state';
     node.hidden = true;
-    node.textContent = 'No active missing-person cases are currently listed for this country.';
     container.appendChild(node);
     return node;
   }
 
-  function getVisibleScopedItems(container) {
-    if (!container) return [];
-    return Array.prototype.filter.call(
-      container.querySelectorAll('[data-country-scope]'),
-      function(node) {
-        if (node.closest('.country-mode-empty-state')) return false;
-        if (node.hasAttribute('data-generated-test-case')) return false;
-        return !node.hidden && !node.classList.contains('country-mode-hidden');
-      }
-    );
+  function updateEmptyState(container, selected) {
+    if (!container || !selected) return;
+    var cards = Array.prototype.slice.call(container.querySelectorAll('.ma-case-grid-card, .boosted-card, .bp-card-shell, .spotlight-card, .ma-spotlight-card, .mpa-case-card, [data-case-card]')).filter(function(card) {
+      return !card.classList.contains('country-mode-empty-state') && card.getAttribute('data-card-type') !== 'empty';
+    });
+    if (!cards.length) return;
+    var visible = cards.filter(function(card) {
+      return !card.hidden && !card.classList.contains('country-mode-hidden');
+    });
+    var empty = ensureEmptyState(container, selected);
+    empty.innerHTML = 'No active public appeals are currently listed for ' + selected.name + '. <a href="/pages/country-intelligence#' + selected.slug + '">View ' + selected.name + ' intelligence</a>.';
+    empty.hidden = visible.length !== 0;
   }
 
-  function applyCountryTestSurfaces() {
-    var selectedCountry = getCurrentCountry();
-
-    document.querySelectorAll('[data-country-surface],[data-country-test-surface]').forEach(function(container) {
-      var surfaceType = container.getAttribute('data-country-surface') || container.getAttribute('data-country-test-surface') || 'mpa-grid';
-      var emptyState = ensureEmptyState(container);
-      var spotlightStage = surfaceType === 'spotlight' ? container.closest('.spotlight-system').querySelector('.spotlight-stage') : null;
-      var liveContainer = spotlightStage || container;
-
-      clearGeneratedTestCases(container);
-      if (emptyState) emptyState.hidden = true;
-      if (spotlightStage) spotlightStage.hidden = false;
-      if (surfaceType === 'spotlight') container.hidden = true;
-
-      var visibleItems = getVisibleScopedItems(liveContainer);
-      if (visibleItems.length > 0 || selectedCountry === 'global') {
-        return;
-      }
-
-      if (emptyState) emptyState.hidden = false;
-      if (spotlightStage) spotlightStage.hidden = true;
-      if (surfaceType === 'spotlight') container.hidden = false;
+  function filterHomepage(selected) {
+    document.querySelectorAll('[data-country-scope], [data-country-code], [data-country-slug], [data-case-card], .ma-case-grid-card, .boosted-card, .bp-card-shell, .spotlight-card, .ma-spotlight-card, .mpa-case-card').forEach(function(node) {
+      if (!isCaseLike(node)) return;
+      var show = shouldShowCountryScope(node, selected);
+      node.hidden = !show;
+      node.classList.toggle('country-mode-hidden', !show);
     });
+
+    document.querySelectorAll('[data-country-surface], .mpa-cases-grid, .boosted-track, .spotlight-stage, .ma-spotlight-bar__grid, .blog-articles').forEach(function(container) {
+      updateEmptyState(container, selected);
+    });
+
+    document.querySelectorAll('[data-country-heading]').forEach(function(heading) {
+      var template = heading.getAttribute('data-country-heading') || 'Latest Missing Alerts in {country}';
+      heading.textContent = template.replace('{country}', selected.name);
+    });
+  }
+
+  function updateTopbar(country) {
+    if (topbar) topbar.hidden = false;
+    if (topbarText) topbarText.textContent = 'Showing Missing Alerts for ' + country.name;
+    if (topbarIntelligence) {
+      topbarIntelligence.textContent = 'View ' + country.name + ' intelligence';
+      topbarIntelligence.href = '/pages/country-intelligence#' + country.slug;
+    }
+    document.querySelectorAll('[data-selected-country-label]').forEach(function(label) {
+      label.textContent = 'Viewing: ' + country.name;
+    });
+    countryIntelligenceLinks.forEach(function(link) {
+      link.href = '/pages/country-intelligence#' + country.slug;
+    });
+  }
+
+  function updateDocumentCountry(country) {
+    html.setAttribute('data-country', country.code);
+    html.setAttribute('data-country-code', country.code.toUpperCase());
+    html.setAttribute('data-country-slug', country.slug);
+    html.setAttribute('data-currency', getCurrencyForCountry(country.code));
+    html.setAttribute('data-language', getLanguageForCountry(country.code));
+    if (body) {
+      body.setAttribute('data-country-mode-ready', 'true');
+      body.setAttribute('data-selected-country', country.code);
+      body.setAttribute('data-selected-country-slug', country.slug);
+    }
+  }
+
+  function updateWheelSelection(country, center) {
+    if (!wheelTrack) return;
+    wheelTrack.querySelectorAll('[data-country-card]').forEach(function(card) {
+      var selected = card.getAttribute('data-country-code') === country.code;
+      card.classList.toggle('is-selected', selected);
+      card.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      var selectedNode = card.querySelector('.missing-alerts-country-card__selected');
+      if (selectedNode) selectedNode.textContent = selected ? 'Selected' : '';
+      if (selected && center !== false) {
+        window.requestAnimationFrame(function() {
+          card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        });
+      }
+    });
+    if (selectedText) selectedText.textContent = country.name + ' selected. Homepage sections will show only ' + country.name + ' appeals.';
+  }
+
+  function setCountry(country, options) {
+    if (!country) return;
+    selectedCountryCode = country.code;
+    persistCountry(country);
+    updateDocumentCountry(country);
+    updateTopbar(country);
+    updateWheelSelection(country, !(options && options.noCenter));
+    filterHomepage(country);
+    var detail = {
+        country: country.code,
+        countryCode: country.code.toUpperCase(),
+        countrySlug: country.slug,
+        countryName: country.name,
+        currency: getCurrencyForCountry(country.code),
+        language: getLanguageForCountry(country.code)
+      };
+    window.dispatchEvent(new CustomEvent('missing-alerts:country-change', { detail: detail }));
+    document.dispatchEvent(new CustomEvent('country-mode:change', { detail: detail }));
   }
 
   function closePopup() {
     if (!popup) return;
     popup.hidden = true;
     popup.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('missing-alerts-country-popup-open');
+    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
   }
 
   function openPopup() {
     if (!popup) return;
+    lastFocused = document.activeElement;
     popup.hidden = false;
     popup.setAttribute('aria-hidden', 'false');
-    syncContextFromCurrent(popupContext);
+    document.body.classList.add('missing-alerts-country-popup-open');
+    var country = getCountryData(selectedCountryCode) || getSelectorCountry('gb');
+    updateWheelSelection(country);
+    var selectedButton = popup.querySelector('.missing-alerts-country-card.is-selected');
+    window.setTimeout(function() {
+      (selectedButton || wheelViewport || popup).focus();
+    }, 40);
   }
 
-  function saveState(countryCode, languageCode) {
-    var normalizedCountry = normalizeCountry(countryCode);
-    var normalizedLanguage = normalizeLanguage(languageCode || getLanguageForCountry(normalizedCountry));
-    var normalizedCurrency = getCurrencyForCountry(normalizedCountry);
-
-    window.localStorage.setItem(storageKey, normalizedCountry);
-    window.localStorage.setItem(currencyStorageKey, normalizedCurrency);
-    window.localStorage.setItem(languageStorageKey, normalizedLanguage);
-
-    setHtmlAttributes(normalizedCountry, normalizedCurrency, normalizedLanguage);
-    refresh();
-  }
-
-  function refreshPopupLabels() {
-    var languageCode = getCurrentLanguage();
-    if (popupTitle) popupTitle.textContent = translate('selectYourCountry', languageCode);
-    if (popupSaveButton) popupSaveButton.textContent = translate('continueLabel', languageCode);
-    if (popupGlobalButton) popupGlobalButton.textContent = translate('stayGlobal', languageCode);
-  }
-
-  function filterItems(items, query) {
-    var normalizedQuery = String(query || '').toLowerCase().trim();
-    if (!normalizedQuery) return items.slice(0, 30);
-    return items.filter(function(item) {
-      return item.search.indexOf(normalizedQuery) !== -1;
-    }).slice(0, 30);
-  }
-
-  function closeAllLists(exceptContext, exceptType) {
-    [topbarContext, popupContext].forEach(function(context) {
-      ['country', 'language'].forEach(function(type) {
-        if (context === exceptContext && type === exceptType) return;
-        closeList(context[type]);
-      });
-    });
-  }
-
-  function closeList(control) {
-    if (!control || !control.list) return;
-    control.list.hidden = true;
-    control.activeIndex = -1;
-  }
-
-  function openList(control) {
-    if (!control || !control.list) return;
-    control.list.hidden = false;
-  }
-
-  function renderList(context, type) {
-    var control = context[type];
-    if (!control) return;
-
-    var items = type === 'country' ? countryOptions : languageOptions;
-    var filtered = filterItems(items, control.input.value);
-    control.filteredItems = filtered;
-    control.list.innerHTML = '';
-
-    if (!filtered.length) {
-      closeList(control);
-      return;
-    }
-
-    filtered.forEach(function(item, index) {
+  function buildWheel() {
+    if (!wheelTrack) return;
+    wheelTrack.innerHTML = '';
+    selectorCountries.filter(function(country) {
+      return country.enabledInSelector !== false;
+    }).forEach(function(country) {
       var button = document.createElement('button');
       button.type = 'button';
-      button.className = 'missing-alerts-country-combobox__option' + (index === 0 ? ' is-active' : '');
-      button.innerHTML = item.html;
+      button.className = 'missing-alerts-country-card';
+      button.setAttribute('data-country-card', '');
+      button.setAttribute('data-country-code', country.code);
+      button.setAttribute('data-country-slug', country.slug);
+      button.setAttribute('aria-label', country.name + '. ' + country.status);
+      button.setAttribute('aria-pressed', 'false');
+      button.innerHTML = '<span class="missing-alerts-country-card__flag" aria-hidden="true">' + country.flag + '</span><span class="missing-alerts-country-card__name">' + country.name + '</span><span class="missing-alerts-country-card__status">' + country.status + '</span><span class="missing-alerts-country-card__selected" aria-hidden="true"></span>';
       button.addEventListener('click', function() {
-        applySelection(context, type, item.value);
+        setCountry(country);
       });
-      control.list.appendChild(button);
+      button.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          setCountry(country);
+        }
+      });
+      wheelTrack.appendChild(button);
     });
-
-    control.activeIndex = 0;
-    openList(control);
   }
 
-  function setDisplayedValues(context) {
-    if (context.country && context.country.input) {
-      context.country.input.value = formatCountryLabel(context.state.country);
-    }
-    if (context.language && context.language.input) {
-      context.language.input.value = formatLanguageLabel(context.state.language);
-    }
+  function moveWheel(direction) {
+    if (!wheelViewport) return;
+    wheelViewport.scrollBy({ left: direction * Math.max(150, wheelViewport.clientWidth * 0.42), behavior: 'smooth' });
   }
 
-  function applySelection(context, type, value) {
-    if (type === 'country') {
-      context.state.country = normalizeCountry(value);
-      if (context.mode === 'topbar') {
-        context.state.language = getLanguageForCountry(context.state.country);
-        saveState(context.state.country, context.state.language);
-      } else {
-        context.state.language = getLanguageForCountry(context.state.country);
-      }
+  function bindEvents() {
+    document.querySelectorAll('[data-country-popup-close]').forEach(function(button) {
+      button.addEventListener('click', closePopup);
+    });
+    changeButtons.forEach(function(button) {
+      button.addEventListener('click', openPopup);
+    });
+    if (saveButton) {
+      saveButton.addEventListener('click', function() {
+        var country = getCountryData(selectedCountryCode) || getSelectorCountry('gb');
+        setCountry(country);
+        closePopup();
+      });
+    }
+    if (prevButton) prevButton.addEventListener('click', function() { moveWheel(-1); });
+    if (nextButton) nextButton.addEventListener('click', function() { moveWheel(1); });
+    if (wheelViewport) {
+      wheelViewport.addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          moveWheel(-1);
+        } else if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          moveWheel(1);
+        }
+      });
+      wheelViewport.addEventListener('wheel', function(event) {
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+          wheelViewport.scrollLeft += event.deltaY;
+          event.preventDefault();
+        }
+      }, { passive: false });
+    }
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && popup && !popup.hidden) closePopup();
+    });
+  }
+
+  function init() {
+    buildWheel();
+    bindEvents();
+    var queryCountry = getQueryCountry();
+    var storedCountry = parseStoredCountry();
+    var initialCountry = queryCountry || storedCountry || null;
+
+    if (initialCountry) {
+      setCountry(initialCountry, { noCenter: true });
+      closePopup();
     } else {
-      context.state.language = normalizeLanguage(value);
-      if (context.mode === 'topbar') {
-        saveState(context.state.country, context.state.language);
-      }
+      var starterCountry = getSelectorCountry('gb');
+      selectedCountryCode = starterCountry.code;
+      updateDocumentCountry(starterCountry);
+      updateTopbar(starterCountry);
+      updateWheelSelection(starterCountry, false);
+      openPopup();
     }
-
-    setDisplayedValues(context);
-    renderList(context, type);
-    closeList(context[type]);
-  }
-
-  function handleEnter(context, type) {
-    var control = context[type];
-    if (!control || !control.filteredItems || !control.filteredItems.length) return;
-    applySelection(context, type, control.filteredItems[Math.max(control.activeIndex, 0)].value);
-  }
-
-  function bindCombobox(context, type) {
-    var control = context[type];
-    if (!control || !control.input || !control.list) return;
-
-    control.input.addEventListener('focus', function() {
-      closeAllLists(context, type);
-      renderList(context, type);
-      control.input.select();
-    });
-
-    control.input.addEventListener('input', function() {
-      closeAllLists(context, type);
-      renderList(context, type);
-    });
-
-    control.input.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') {
-        closeList(control);
-        setDisplayedValues(context);
-        return;
-      }
-
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        handleEnter(context, type);
-      }
-    });
-  }
-
-  function createContext(mode, root) {
-    return {
-      mode: mode,
-      root: root,
-      state: {
-        country: getCurrentCountry(),
-        language: getCurrentLanguage()
-      },
-      country: {
-        wrapper: root ? root.querySelector('[data-country-combobox]') : null,
-        input: root ? root.querySelector('[data-country-input]') : null,
-        list: root ? root.querySelector('[data-country-list]') : null,
-        filteredItems: [],
-        activeIndex: -1
-      },
-      language: {
-        wrapper: root ? root.querySelector('[data-language-combobox]') : null,
-        input: root ? root.querySelector('[data-language-input]') : null,
-        list: root ? root.querySelector('[data-language-list]') : null,
-        filteredItems: [],
-        activeIndex: -1
-      }
-    };
-  }
-
-  function syncContextFromCurrent(context) {
-    if (!context) return;
-    context.state.country = getCurrentCountry();
-    context.state.language = getCurrentLanguage();
-    setDisplayedValues(context);
-    closeList(context.country);
-    closeList(context.language);
-  }
-
-  function refresh() {
-    var selectedCountry = getCurrentCountry();
-    syncContextFromCurrent(topbarContext);
-    refreshPopupLabels();
-    updateSelectedCountryLabels();
-    applyCountryScope();
-    applyCountryPrices();
-    applyCountryTestSurfaces();
-    if (body) body.setAttribute('data-country-mode-ready', 'true');
-    window.dispatchEvent(new CustomEvent('missing-alerts:country-change', {
-      detail: {
-        country: selectedCountry,
-        currency: getCurrentCurrency(),
-        language: getCurrentLanguage()
-      }
-    }));
-  }
-
-  var countryOptions = Object.keys(countries).map(function(code) {
-    var country = countries[code];
-    return {
-      value: country.code,
-      search: ((country.flag || '') + ' ' + country.label + ' ' + country.code).toLowerCase(),
-      html: '<span>' + (country.flag ? country.flag + ' ' : '') + country.label + '</span>'
-    };
-  });
-
-  var languageOptions = Object.keys(languages).map(function(code) {
-    var language = languages[code];
-    return {
-      value: language.code,
-      search: (language.label + ' ' + language.code).toLowerCase(),
-      html: '<span>' + language.label + '</span>'
-    };
-  });
-
-  var topbarContext = createContext('topbar', document.getElementById('missing-alerts-country-top-bar'));
-  var popupContext = createContext('popup', popup);
-
-  bindCombobox(topbarContext, 'country');
-  bindCombobox(topbarContext, 'language');
-  bindCombobox(popupContext, 'country');
-  bindCombobox(popupContext, 'language');
-
-  document.querySelectorAll('[data-country-popup-close]').forEach(function(button) {
-    button.addEventListener('click', function() {
-      closePopup();
-      syncContextFromCurrent(popupContext);
-    });
-  });
-
-  if (popupSaveButton) {
-    popupSaveButton.addEventListener('click', function() {
-      saveState(popupContext.state.country, popupContext.state.language);
-      closePopup();
-    });
-  }
-
-  if (popupGlobalButton) {
-    popupGlobalButton.addEventListener('click', function() {
-      saveState('global', getLanguageForCountry('global'));
-      closePopup();
-    });
-  }
-
-  document.addEventListener('click', function(event) {
-    var insideCombobox = event.target.closest('.missing-alerts-country-combobox');
-    if (!insideCombobox) {
-      closeAllLists();
-    }
-  });
-
-  var rawSavedCountry = window.localStorage.getItem(storageKey);
-  var migratedCountry = normalizeCountry(rawSavedCountry);
-  var migratedLanguage = normalizeLanguage(window.localStorage.getItem(languageStorageKey) || getLanguageForCountry(migratedCountry));
-
-  if (rawSavedCountry && rawSavedCountry.toLowerCase() === 'uk') {
-    window.localStorage.setItem(storageKey, 'gb');
-  }
-
-  if (rawSavedCountry) {
-    window.localStorage.setItem(currencyStorageKey, getCurrencyForCountry(migratedCountry));
-    window.localStorage.setItem(languageStorageKey, migratedLanguage);
-    setHtmlAttributes(migratedCountry, getCurrencyForCountry(migratedCountry), migratedLanguage);
-  } else {
-    setHtmlAttributes(defaultCountry, getCurrencyForCountry(defaultCountry), getLanguageForCountry(defaultCountry));
-  }
-
-  refresh();
-
-  if (!rawSavedCountry) {
-    openPopup();
-  } else {
-    closePopup();
   }
 
   window.MissingAlertsCountryMode = {
-    getCountry: getCurrentCountry,
-    getCurrency: getCurrentCurrency,
-    getLanguage: getCurrentLanguage,
+    getCountry: function() {
+      var stored = parseStoredCountry();
+      return selectedCountryCode || (stored && stored.code) || '';
+    },
+    getCurrency: function() {
+      return getCurrencyForCountry(selectedCountryCode || 'gb');
+    },
+    getLanguage: function() {
+      return getLanguageForCountry(selectedCountryCode || 'gb');
+    },
     openSelector: openPopup,
-    refresh: refresh,
+    refresh: function() {
+      var country = getCountryData(selectedCountryCode) || parseStoredCountry() || getSelectorCountry('gb');
+      setCountry(country, { noCenter: true });
+    },
     setCountry: function(countryCode) {
-      saveState(countryCode, getLanguageForCountry(countryCode));
+      var country = getCountryData(countryCode);
+      if (country) setCountry(country);
     },
     setLanguage: function(languageCode) {
-      saveState(getCurrentCountry(), languageCode);
+      try {
+        window.localStorage.setItem(languageStorageKey, languageCode || defaultLanguage);
+      } catch (error) {}
     },
     config: config
   };
+
+  init();
 })();

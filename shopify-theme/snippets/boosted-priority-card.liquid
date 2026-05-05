@@ -20,6 +20,8 @@
   {% assign is_found_safe_case = true %}
 {% endif %}
 {% assign country_scope = 'all' %}
+{% assign country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | default: country_scope | upcase %}
+{% assign country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | default: '' %}
 {% assign placeholder_image = 'missing-person-silhouette.svg' | asset_url %}
 {% assign case_handle_prefix = article.blog.handle | default: 'missing-persons' %}
 {% assign notify_case_handle = case_handle_prefix | append: '/' | append: article.handle %}
@@ -54,6 +56,35 @@
     {% break %}
   {% endif %}
 {% endfor %}
+{% if country_slug == blank %}
+  {% if country_scope == 'gb' %}
+    {% assign country_slug = 'united-kingdom' %}
+    {% assign country_name = 'United Kingdom' %}
+  {% elsif country_scope == 'us' %}
+    {% assign country_slug = 'united-states' %}
+    {% assign country_name = 'United States' %}
+  {% elsif country_scope == 'ca' %}
+    {% assign country_slug = 'canada' %}
+    {% assign country_name = 'Canada' %}
+  {% elsif country_scope == 'au' %}
+    {% assign country_slug = 'australia' %}
+    {% assign country_name = 'Australia' %}
+  {% elsif country_scope == 'nz' %}
+    {% assign country_slug = 'new-zealand' %}
+    {% assign country_name = 'New Zealand' %}
+  {% elsif country_scope == 'ie' %}
+    {% assign country_slug = 'ireland' %}
+    {% assign country_name = 'Ireland' %}
+  {% elsif country_scope == 'sg' %}
+    {% assign country_slug = 'singapore' %}
+    {% assign country_name = 'Singapore' %}
+  {% elsif country_scope == 'za' %}
+    {% assign country_slug = 'south-africa' %}
+    {% assign country_name = 'South Africa' %}
+  {% else %}
+    {% assign country_slug = country_scope %}
+  {% endif %}
+{% endif %}
 
 {% assign boost_live = false %}
 {% if boost_live_new == true or boost_live_old == true %}
@@ -79,7 +110,18 @@
 {% endif %}
 
 {% unless hide_public_case %}
-<div class="bp-card-shell" data-country-scope="{{ country_scope }}">
+<div
+  class="bp-card-shell"
+  data-country-scope="{{ country_scope }}"
+  data-country-code="{{ country_scope | escape }}"
+  data-country-slug="{{ country_slug | escape }}"
+  data-country-name="{{ country_name | escape }}"
+  data-region="{{ article.metafields.custom.region.value | default: article.metafields.custom.region | escape }}"
+  data-status="{% if is_found_safe_case %}resolved{% else %}active{% endif %}"
+  data-boost-active="{% if boost_live %}true{% else %}false{% endif %}"
+  data-boost-score="{{ points }}"
+  data-source-verified="{% if article.tags contains 'scanner-imported' or article.tags contains 'source-verified' or article.tags contains 'official-source' %}true{% else %}false{% endif %}"
+>
   <a href="{{ article.url }}" class="bp-card{% if fallback_mode == true %} bp-card--featured{% endif %}">
     <div class="bp-card__media">
     {% if article.image %}

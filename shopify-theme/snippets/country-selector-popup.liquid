@@ -20,51 +20,33 @@
       ×
     </button>
 
-    <div class="missing-alerts-country-popup__eyebrow">Missing Alerts</div>
+    <div class="missing-alerts-country-popup__eyebrow">Missing Alerts country view</div>
     <h2 id="missing-alerts-country-popup-title" class="missing-alerts-country-popup__title">
       SELECT YOUR COUNTRY
     </h2>
     <p class="missing-alerts-country-popup__copy">
-      Choose the country view you want to use for homepage content, cases, boosts, spotlight, and future translations.
+      We’ll show active appeals, boosted cases and local guidance for your country.
     </p>
 
-    <div class="missing-alerts-country-popup__controls">
-      <label class="missing-alerts-country-popup__field">
-        <span class="missing-alerts-country-popup__label">Country</span>
-        <div class="missing-alerts-country-combobox" data-country-combobox data-context="popup">
-          <input
-            type="text"
-            class="missing-alerts-country-combobox__input"
-            data-country-input
-            autocomplete="off"
-            aria-label="Search country"
-          >
-          <div class="missing-alerts-country-combobox__list" data-country-list hidden></div>
-        </div>
-      </label>
+    <div class="missing-alerts-country-wheel" data-country-wheel>
+      <button type="button" class="missing-alerts-country-wheel__arrow" data-country-wheel-prev aria-label="Previous country">‹</button>
+      <div class="missing-alerts-country-wheel__viewport" data-country-wheel-viewport tabindex="0" aria-label="Choose country">
+        <div class="missing-alerts-country-wheel__track" data-country-wheel-track></div>
+      </div>
+      <button type="button" class="missing-alerts-country-wheel__arrow" data-country-wheel-next aria-label="Next country">›</button>
+    </div>
 
-      <label class="missing-alerts-country-popup__field">
-        <span class="missing-alerts-country-popup__label">Language</span>
-        <div class="missing-alerts-country-combobox" data-language-combobox data-context="popup">
-          <input
-            type="text"
-            class="missing-alerts-country-combobox__input"
-            data-language-input
-            autocomplete="off"
-            aria-label="Search language"
-          >
-          <div class="missing-alerts-country-combobox__list" data-language-list hidden></div>
-        </div>
-      </label>
+    <div class="missing-alerts-country-popup__selected" data-country-wheel-selected>
+      Select a country to personalise the homepage.
     </div>
 
     <div class="missing-alerts-country-popup__actions">
       <button type="button" class="missing-alerts-country-popup__button missing-alerts-country-popup__button--primary" data-country-save>
-        Continue
+        Confirm country
       </button>
-      <button type="button" class="missing-alerts-country-popup__button missing-alerts-country-popup__button--global" data-country-select-global>
-        Stay Global
-      </button>
+      <a class="missing-alerts-country-popup__button missing-alerts-country-popup__button--global" href="/pages/country-intelligence" data-country-intelligence-link>
+        View all country intelligence
+      </a>
     </div>
   </div>
 </div>

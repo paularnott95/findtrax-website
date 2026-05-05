@@ -1,38 +1,21 @@
 {% if mode == 'compact' %}
   <div
     id="missing-alerts-country-top-bar"
-    class="ma-header-country-row"
+    class="missing-alerts-country-top-bar__inner"
     data-country-section
     data-country-scope="all"
   >
-    <div class="ma-header-country-control">
-      <label for="ma-header-country-input">Country:</label>
-      <div class="missing-alerts-country-combobox" data-country-combobox data-context="topbar">
-        <input
-          id="ma-header-country-input"
-          type="text"
-          class="missing-alerts-country-combobox__input"
-          data-country-input
-          autocomplete="off"
-          aria-label="Search country"
-        >
-        <div class="missing-alerts-country-combobox__list" data-country-list hidden></div>
-      </div>
+    <div class="missing-alerts-country-top-bar__status">
+      <span class="missing-alerts-country-top-bar__pulse" aria-hidden="true"></span>
+      <span data-country-topbar-text>Showing Missing Alerts for your selected country</span>
     </div>
-
-    <div class="ma-header-country-control">
-      <label for="ma-header-language-input">Language:</label>
-      <div class="missing-alerts-country-combobox" data-language-combobox data-context="topbar">
-        <input
-          id="ma-header-language-input"
-          type="text"
-          class="missing-alerts-country-combobox__input"
-          data-language-input
-          autocomplete="off"
-          aria-label="Search language"
-        >
-        <div class="missing-alerts-country-combobox__list" data-language-list hidden></div>
-      </div>
+    <div class="missing-alerts-country-top-bar__actions">
+      <button type="button" class="missing-alerts-country-top-bar__button" data-country-change>
+        Change country
+      </button>
+      <a class="missing-alerts-country-top-bar__link" href="/pages/country-intelligence" data-country-topbar-intelligence>
+        View country intelligence
+      </a>
     </div>
   </div>
 {% endif %}
