@@ -474,6 +474,9 @@
 
     {% liquid
       assign ma_is_public_home = false
+      assign ma_tools_product = ''
+      assign ma_route_probe = request.path | default: ''
+      assign ma_route_canonical = canonical_url | default: ''
       if request.page_type == 'index'
         assign ma_is_public_home = true
       endif
@@ -483,9 +486,20 @@
       if request.path == '/'
         assign ma_is_public_home = true
       endif
+      if ma_route_probe == '/tools' or ma_route_probe == '/pages/tools' or ma_route_canonical contains '/tools' or ma_route_canonical contains '/pages/tools'
+        assign ma_tools_product = 'overview'
+      elsif ma_route_probe contains '/tools/findtrax' or ma_route_probe contains '/pages/findtrax' or ma_route_canonical contains '/tools/findtrax' or ma_route_canonical contains '/pages/findtrax'
+        assign ma_tools_product = 'findtrax'
+      elsif ma_route_probe contains '/tools/intelpro' or ma_route_probe contains '/pages/intelpro' or ma_route_canonical contains '/tools/intelpro' or ma_route_canonical contains '/pages/intelpro'
+        assign ma_tools_product = 'intelpro'
+      elsif ma_route_probe contains '/tools/mediareach' or ma_route_probe contains '/pages/mediareach' or ma_route_canonical contains '/tools/mediareach' or ma_route_canonical contains '/pages/mediareach'
+        assign ma_tools_product = 'mediareach'
+      endif
     %}
 	    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
-	      {% if ma_is_public_home %}
+	      {% if ma_tools_product != blank %}
+	        {% render 'ma-tools-page', product: ma_tools_product %}
+	      {% elsif ma_is_public_home %}
 	        {% render 'restored-homepage' %}
 	      {% else %}
 	        {% capture ma_rendered_layout %}{{ content_for_layout }}{% endcapture %}
@@ -615,6 +629,8 @@
     <script src="{{ 'case-notifications.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'professional-profile-view.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'email-capture-modal.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'tools-countdown.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'tools-pages-router.js' | asset_url }}" defer="defer"></script>
     {% render 'case-notification-modal' %}
   </body>
 </html>
