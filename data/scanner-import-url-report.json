@@ -1,5 +1,5 @@
 {
-  "importedAt": "2026-05-05T15:08:02.789Z",
+  "importedAt": "2026-05-05T15:27:44.688Z",
   "sourceUrl": "https://www.scotland.police.uk/what-s-happening/news/2026/april/appeal-to-help-trace-jan-hussain-believed-to-have-travelled-to-glasgow/",
   "countryCode": "GB",
   "case": {
@@ -22,8 +22,8 @@
     "sourceName": "www.scotland.police.uk",
     "sourceUrl": "https://www.scotland.police.uk/what-s-happening/news/2026/april/appeal-to-help-trace-jan-hussain-believed-to-have-travelled-to-glasgow/",
     "sourcePublishedAt": "",
-    "importedAt": "2026-05-05T15:08:02.786Z",
-    "lastCheckedAt": "2026-05-05T15:08:02.786Z",
+    "importedAt": "2026-05-05T15:27:44.685Z",
+    "lastCheckedAt": "2026-05-05T15:27:44.685Z",
     "status": "active",
     "isPublic": true,
     "caseType": "missing-person",
@@ -44,5 +44,16 @@
     "duplicateKey": "jan hussain|gb|"
   },
   "publishable": true,
-  "published": null
+  "published": {
+    "ok": true,
+    "published": [
+      {
+        "sourceUrl": "https://www.scotland.police.uk/what-s-happening/news/2026/april/appeal-to-help-trace-jan-hussain-believed-to-have-travelled-to-glasgow/",
+        "articleId": 565980201120,
+        "handle": "jan-hussain",
+        "action": "updated"
+      }
+    ],
+    "errors": []
+  }
 }

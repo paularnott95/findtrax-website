@@ -16,7 +16,11 @@ The scanner pipeline is source-driven and publishes to the live Shopify case blo
 Do not commit secret values. Configure these in GitHub Actions or the production runtime:
 
 - `SHOPIFY_STORE_DOMAIN`
-- `SHOPIFY_ADMIN_ACCESS_TOKEN`
+- `SHOPIFY_ADMIN_ACCESS_TOKEN` or `SHOPIFY_ADMIN_TOKEN`
+- `SHOPIFY_REFRESH_TOKEN` / `SHOPIFY_OFFLINE_REFRESH_TOKEN` only if using expiring OAuth offline tokens
+- `SHOPIFY_CLIENT_ID` and `SHOPIFY_CLIENT_SECRET` only if using OAuth refresh-token or client-credentials mode
+- `SHOPIFY_ACCESS_TOKEN_EXPIRES_AT` only if the access token expires
+- `SHOPIFY_TOKEN_PERSISTENCE` only when refreshed tokens can be written back to a real secret store
 - `SHOPIFY_API_VERSION`
 - `SHOPIFY_CASE_BLOG_HANDLE` or `SHOPIFY_CASE_BLOG_ID`
 - `SCANNER_ADMIN_SECRET` for protected API-triggered runs
@@ -25,6 +29,21 @@ Do not commit secret values. Configure these in GitHub Actions or the production
 ## Live publishing model
 
 The live Shopify site reads case data from Shopify blog articles. Active missing-person listings use the `missing-persons` blog. Found-safe updates use the `found-safe` blog. The scanner publisher creates safe public article payloads for the configured missing-person blog.
+
+## Token health
+
+`npm run scanner:health` reports token mode and refreshability without printing secret values.
+
+Supported modes:
+
+- `static_admin_token`: uses `SHOPIFY_ADMIN_ACCESS_TOKEN`, `SHOPIFY_ADMIN_TOKEN`, or `SHOPIFY_ACCESS_TOKEN`.
+- `oauth_refresh_token`: uses `SHOPIFY_REFRESH_TOKEN` or `SHOPIFY_OFFLINE_REFRESH_TOKEN` plus `SHOPIFY_CLIENT_ID` and `SHOPIFY_CLIENT_SECRET`.
+- `client_credentials`: uses `SHOPIFY_CLIENT_ID` and `SHOPIFY_CLIENT_SECRET`.
+- `missing`: publishing is blocked.
+
+If Shopify returns a rotated refresh token, automation needs writable secret persistence. Writing the new token only to process env in GitHub Actions will not survive the next run.
+
+For the current local investigation, the adjacent dashboard env provided `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_CLIENT_ID`, `SHOPIFY_CLIENT_SECRET`, and `SHOPIFY_API_VERSION`, which allowed live Shopify publishing through client-credentials mode when explicitly exported into the scanner process.
 
 ## Source configuration
 

@@ -87,7 +87,25 @@ No scanner GitHub Actions workflow existed for production Shopify publishing.
 
 ## Missing env vars/secrets
 
-Local environment inspection found store domain/API version values in older app env files, but no usable `SHOPIFY_ADMIN_ACCESS_TOKEN` value in this repo. `shopify store execute` also failed with missing stored app authentication. Required secrets are documented in `docs/scanner-setup.md`.
+Local environment inspection found no `.env` files in this repo and no Shopify token variables in the current shell environment. Nearby dashboard/boost workspaces contain Shopify variable names including `SHOPIFY_ADMIN_TOKEN`, `SHOPIFY_CLIENT_ID`, `SHOPIFY_CLIENT_SECRET`, `SHOPIFY_STORE`, `SHOPIFY_STORE_DOMAIN`, and `SHOPIFY_API_VERSION`, but after sourcing the adjacent dashboard env only `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_STORE`, `SHOPIFY_CLIENT_ID`, `SHOPIFY_CLIENT_SECRET`, and `SHOPIFY_API_VERSION` were present. `SHOPIFY_ADMIN_TOKEN`, `SHOPIFY_ADMIN_ACCESS_TOKEN`, `SHOPIFY_ACCESS_TOKEN`, `SHOPIFY_REFRESH_TOKEN`, and `SHOPIFY_OFFLINE_REFRESH_TOKEN` were not present. Secret values were not printed.
+
+The Shopify theme workspace did not contain `.env` or `shopify.theme.toml` files with scanner publishing credentials.
+
+The GitHub Actions workflow references Shopify secrets, but the workflow is currently on the `fix-worldwide-scanner-publishing` branch only. It is not on `main`, so scheduled automation is not live until the branch is merged to the default branch.
+
+Required secrets are documented in `docs/scanner-setup.md` and `docs/shopify-token-setup.md`.
+
+## Token model found
+
+The project currently has a usable client-credentials model in the adjacent dashboard env:
+
+- `SHOPIFY_CLIENT_ID` and `SHOPIFY_CLIENT_SECRET` are present in the adjacent dashboard env.
+- `SHOPIFY_STORE_DOMAIN` is present in the adjacent dashboard env.
+- The scanner can request a short-lived Shopify token before publishing when those values are exported.
+- No repo code or env files contained `SHOPIFY_REFRESH_TOKEN`, `SHOPIFY_OFFLINE_REFRESH_TOKEN`, `SHOPIFY_ACCESS_TOKEN_EXPIRES_AT`, or refresh-token persistence configuration.
+- No OAuth callback, token exchange, or refresh persistence code existed before this fix.
+
+The scanner now supports static Admin API token, OAuth refresh-token, and client-credentials detection. For this project today, client credentials are the confirmed working token path when the adjacent env values are exported or configured as GitHub Actions secrets. A static Admin API token would also work if provided.
 
 ## Why import count was 0
 
@@ -105,6 +123,7 @@ The scanner wrote local JSON/status only and had no Shopify publisher. The live 
 - No country/location assignment beyond country code.
 - No direct official URL importer.
 - No Shopify blog publisher.
+- No Shopify token manager.
 - No scheduled scanner workflow.
 - No publish/report split.
 - No healthcheck exposing missing credentials.
@@ -116,3 +135,11 @@ The scanner wrote local JSON/status only and had no Shopify publisher. The live 
 3. Run `npm run scanner:run-and-publish`.
 4. Enable GitHub Actions secrets for the scheduled workflow.
 5. Add country-specific parser refinements for each enabled official source.
+
+## Live publish verification
+
+Using the adjacent dashboard env values without printing secrets, the direct official URL importer published the Police Scotland Jan Hussain record to the live Shopify `missing-persons` blog as article ID `565980201120` with handle `jan-hussain`. The live URL returned HTTP 200:
+
+- `https://missingalerts.com/blogs/missing-persons/jan-hussain`
+
+This proves Shopify publishing is possible today when token credentials are supplied to the scanner runtime. It does not make scheduled automation live until the workflow is present on the default branch and the required GitHub secrets are configured.

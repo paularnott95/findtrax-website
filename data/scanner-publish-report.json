@@ -1,5 +1,5 @@
 {
-  "at": "2026-05-05T15:07:29.708Z",
+  "at": "2026-05-05T15:27:28.709Z",
   "ok": false,
   "published": [],
   "errors": [
@@ -9,6 +9,10 @@
         "ready": false,
         "storeConfigured": false,
         "tokenConfigured": false,
+        "tokenMode": "missing",
+        "tokenRefreshable": false,
+        "tokenExpiredOrExpiring": false,
+        "tokenBlockedReason": "missing-shopify-store-domain",
         "blogTargetConfigured": true,
         "apiVersion": "2026-04",
         "target": "blog-handle"

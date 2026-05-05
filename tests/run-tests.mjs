@@ -13,6 +13,7 @@ import { normaliseCase } from '../lib/scanner/normalise-case.mjs'
 import { parseHtmlCase } from '../lib/scanner/parse-source.mjs'
 import { toPublicScannerCase } from '../lib/scanner/public-case-mapper.mjs'
 import { articlePayload, shopifyHealth } from '../lib/scanner/shopify-publisher.mjs'
+import { getShopifyAuthStatus } from '../lib/scanner/shopify-token-manager.mjs'
 import toolAlertSignupHandler from '../api/tool-alert-signups.js'
 
 const cases = JSON.parse(await readFile('data/missing-alerts-public-cases.json', 'utf8'))
@@ -79,9 +80,36 @@ assert.equal(payload.handle, publicScannerCase.slug)
 assert(payload.tags.includes('scanner-imported'))
 assert(!JSON.stringify(payload).includes('secret'))
 assert.equal(typeof shopifyHealth().ready, 'boolean')
+const originalTokenEnv = {
+  SHOPIFY_ADMIN_ACCESS_TOKEN: process.env.SHOPIFY_ADMIN_ACCESS_TOKEN,
+  SHOPIFY_ADMIN_TOKEN: process.env.SHOPIFY_ADMIN_TOKEN,
+  SHOPIFY_ACCESS_TOKEN: process.env.SHOPIFY_ACCESS_TOKEN,
+  SHOPIFY_REFRESH_TOKEN: process.env.SHOPIFY_REFRESH_TOKEN,
+  SHOPIFY_CLIENT_ID: process.env.SHOPIFY_CLIENT_ID,
+  SHOPIFY_CLIENT_SECRET: process.env.SHOPIFY_CLIENT_SECRET,
+}
+delete process.env.SHOPIFY_ADMIN_ACCESS_TOKEN
+delete process.env.SHOPIFY_ADMIN_TOKEN
+delete process.env.SHOPIFY_ACCESS_TOKEN
+delete process.env.SHOPIFY_REFRESH_TOKEN
+delete process.env.SHOPIFY_CLIENT_ID
+delete process.env.SHOPIFY_CLIENT_SECRET
+assert.equal(getShopifyAuthStatus().tokenMode, 'missing')
+process.env.SHOPIFY_ADMIN_ACCESS_TOKEN = 'test-static-token'
+assert.equal(getShopifyAuthStatus().tokenMode, 'static_admin_token')
+delete process.env.SHOPIFY_ADMIN_ACCESS_TOKEN
+process.env.SHOPIFY_REFRESH_TOKEN = 'test-refresh-token'
+process.env.SHOPIFY_CLIENT_ID = 'test-client-id'
+process.env.SHOPIFY_CLIENT_SECRET = 'test-client-secret'
+assert.equal(getShopifyAuthStatus().tokenMode, 'oauth_refresh_token')
+for (const [key, value] of Object.entries(originalTokenEnv)) {
+  if (value === undefined) delete process.env[key]
+  else process.env[key] = value
+}
 const health = await scannerHealthcheck()
 assert.equal(health.sources.total >= 6, true)
-assert.equal(typeof health.shopify.tokenConfigured, 'boolean')
+assert.equal(typeof health.shopify.tokenMode, 'string')
+assert(!JSON.stringify(health).includes('test-static-token'))
 
 const workflow = await readFile('.github/workflows/missing-alerts-scanner.yml', 'utf8')
 assert(workflow.includes('scanner:run-and-publish'))
