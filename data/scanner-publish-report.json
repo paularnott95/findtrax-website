@@ -1,0 +1,18 @@
+{
+  "at": "2026-05-05T15:07:29.708Z",
+  "ok": false,
+  "published": [],
+  "errors": [
+    {
+      "reason": "missing-shopify-credentials-or-blog-target",
+      "health": {
+        "ready": false,
+        "storeConfigured": false,
+        "tokenConfigured": false,
+        "blogTargetConfigured": true,
+        "apiVersion": "2026-04",
+        "target": "blog-handle"
+      }
+    }
+  ]
+}

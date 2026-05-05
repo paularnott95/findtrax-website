@@ -6,6 +6,12 @@
   "scripts": {
     "build": "node src/build.mjs",
     "scan": "node scripts/scan-missing-cases.mjs",
+    "scanner:health": "node scripts/scanner-healthcheck.mjs",
+    "scanner:dry-run": "node scripts/scan-missing-cases.mjs --dry-run",
+    "scanner:run": "node scripts/scan-missing-cases.mjs",
+    "scanner:publish": "node scripts/publish-scanned-cases-to-shopify.mjs",
+    "scanner:run-and-publish": "node scripts/scanner-run-and-publish.mjs",
+    "scanner:import-url": "node scripts/import-official-url.mjs",
     "validate-content": "node scripts/validate-content.mjs",
     "route-check": "node scripts/route-check.mjs",
     "lint": "node scripts/validate-content.mjs",

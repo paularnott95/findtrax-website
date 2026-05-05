@@ -1,12 +1,13 @@
 {
-  "lastScanAt": "2026-05-05T09:54:39.697Z",
+  "lastScanAt": "2026-05-05T15:07:29.702Z",
   "importedCount": 0,
-  "skippedCount": 0,
+  "publishableCount": 0,
+  "reviewCount": 0,
+  "skippedCount": 7,
+  "duplicateCount": 0,
   "errorCount": 0,
-  "skipped": [],
-  "errors": [],
+  "enabledSourceCount": 0,
   "notes": [
-    "No live trusted scanner source is enabled. Configure approved public source feeds before production auto-import."
-  ],
-  "publishedPreview": []
+    "No live trusted scanner source is enabled. Direct official URL import is available; scheduled live source publishing needs approved source URLs and Shopify Admin credentials."
+  ]
 }

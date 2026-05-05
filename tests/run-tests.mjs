@@ -5,7 +5,14 @@ import { getBoostedCases } from '../lib/missing-alerts-boosts.mjs'
 import { countrySlugFromCode } from '../lib/missing-alerts-country-map.mjs'
 import { getPublicCaseImage } from '../lib/missing-alerts-photo-policy.mjs'
 import { canListAsActive, toPublicCase } from '../lib/missing-alerts-public-case-mapper.mjs'
-import { scanFixtureCases } from '../lib/missing-alerts-scanner.mjs'
+import { scanFixtureCases, scannerHealthcheck } from '../lib/missing-alerts-scanner.mjs'
+import { assignLocation } from '../lib/scanner/assign-location.mjs'
+import { classifyStatus } from '../lib/scanner/classify-status.mjs'
+import { dedupeCases } from '../lib/scanner/dedupe-cases.mjs'
+import { normaliseCase } from '../lib/scanner/normalise-case.mjs'
+import { parseHtmlCase } from '../lib/scanner/parse-source.mjs'
+import { toPublicScannerCase } from '../lib/scanner/public-case-mapper.mjs'
+import { articlePayload, shopifyHealth } from '../lib/scanner/shopify-publisher.mjs'
 import toolAlertSignupHandler from '../api/tool-alert-signups.js'
 
 const cases = JSON.parse(await readFile('data/missing-alerts-public-cases.json', 'utf8'))
@@ -42,6 +49,42 @@ assert.equal(scan.imported.length, 1)
 assert.equal(scan.imported[0].countrySlug, 'united-kingdom')
 assert(scan.skipped.some((item) => item.reason === 'duplicate'))
 assert(scan.skipped.some((item) => item.reason.includes('found-safe')))
+
+const sources = JSON.parse(await readFile('data/scanner-sources.json', 'utf8'))
+for (const countryCode of ['GB', 'IE', 'AU', 'NZ', 'US', 'CA']) {
+  assert(sources.some((source) => source.countryCode === countryCode), `source configured for ${countryCode}`)
+}
+assert(sources.every((source) => source.enabled === false), 'live sources remain disabled until approved')
+
+const htmlParsed = parseHtmlCase('<html><head><title>Missing Person Appeal - Test Person</title><meta name="description" content="Police are appealing for help to trace Test Person, last seen in Test City."></head><body></body></html>', {
+  sourceUrl: 'https://police.example.test/case-1',
+  sourceName: 'Official Police',
+  countryCode: 'GB',
+})
+const normalised = normaliseCase(htmlParsed)
+assert.equal(normalised.countrySlug, 'united-kingdom')
+assert.equal(normalised.status, 'active')
+assert.equal(assignLocation({ countryCode: 'GB', city: 'Nottingham', region: 'Nottinghamshire' }).locationSlug, 'nottingham-nottinghamshire-gb')
+assert.equal(classifyStatus({ title: 'Missing appeal', bodyText: 'The person has been safely located.' }), 'found-safe')
+
+const duplicateScan = dedupeCases([normalised, { ...normalised, id: 'copy' }], [])
+assert.equal(duplicateScan.accepted.length, 1)
+assert.equal(duplicateScan.duplicates[0].reason, 'duplicate-source-url')
+
+const publicScannerCase = toPublicScannerCase({ ...normalised, internalNotes: 'secret', privatePhone: 'secret' })
+assert(!('internalNotes' in publicScannerCase))
+assert(!('privatePhone' in publicScannerCase))
+const payload = articlePayload(publicScannerCase)
+assert.equal(payload.handle, publicScannerCase.slug)
+assert(payload.tags.includes('scanner-imported'))
+assert(!JSON.stringify(payload).includes('secret'))
+assert.equal(typeof shopifyHealth().ready, 'boolean')
+const health = await scannerHealthcheck()
+assert.equal(health.sources.total >= 6, true)
+assert.equal(typeof health.shopify.tokenConfigured, 'boolean')
+
+const workflow = await readFile('.github/workflows/missing-alerts-scanner.yml', 'utf8')
+assert(workflow.includes('scanner:run-and-publish'))
 
 function mockResponse() {
   return {

@@ -1,0 +1,56 @@
+{
+  "status": {
+    "lastScanAt": "2026-05-05T15:07:29.702Z",
+    "importedCount": 0,
+    "publishableCount": 0,
+    "reviewCount": 0,
+    "skippedCount": 7,
+    "duplicateCount": 0,
+    "errorCount": 0,
+    "enabledSourceCount": 0,
+    "notes": [
+      "No live trusted scanner source is enabled. Direct official URL import is available; scheduled live source publishing needs approved source URLs and Shopify Admin credentials."
+    ]
+  },
+  "fetched": [],
+  "publishable": [],
+  "review": [],
+  "skipped": [
+    {
+      "sourceName": "Missing People UK public appeals",
+      "countryCode": "GB",
+      "reason": "source-disabled"
+    },
+    {
+      "sourceName": "Garda missing-person appeals",
+      "countryCode": "IE",
+      "reason": "source-disabled"
+    },
+    {
+      "sourceName": "Australian National Missing Persons register",
+      "countryCode": "AU",
+      "reason": "source-disabled"
+    },
+    {
+      "sourceName": "New Zealand Police missing-person releases",
+      "countryCode": "NZ",
+      "reason": "source-disabled"
+    },
+    {
+      "sourceName": "NamUs public cases",
+      "countryCode": "US",
+      "reason": "source-disabled"
+    },
+    {
+      "sourceName": "RCMP missing-person notices",
+      "countryCode": "CA",
+      "reason": "source-disabled"
+    },
+    {
+      "sourceName": "INTERPOL Yellow Notices",
+      "countryCode": "GLOBAL",
+      "reason": "source-disabled"
+    }
+  ],
+  "errors": []
+}
