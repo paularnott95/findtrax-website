@@ -555,6 +555,7 @@
 	      {% if ma_tools_product != blank %}
 	        {% render 'ma-tools-page', product: ma_tools_product %}
 	      {% elsif ma_is_public_home %}
+	        <!-- Missing Alerts active case visibility cache marker: 2026-05-06-country-homepage -->
 	        {% render 'restored-homepage' %}
 	      {% else %}
 	        {% capture ma_rendered_layout %}{{ content_for_layout }}{% endcapture %}

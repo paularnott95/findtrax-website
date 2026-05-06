@@ -1403,6 +1403,108 @@
       applyLocationSearch();
     });
   </script>
+{% elsif request_page_handle == 'missing-people-england' or request_page_handle == 'missing-people-united-kingdom' or request_page_handle == 'missing-people-ireland' or request_page_handle == 'missing-people-australia' or request_page_handle == 'missing-people-new-zealand' or request_page_handle == 'missing-people-united-states' or request_page_handle == 'missing-people-canada' %}
+  {% liquid
+    assign country_page_code = ''
+    assign country_page_name = page.title | default: 'this country'
+    if request_page_handle == 'missing-people-england' or request_page_handle == 'missing-people-united-kingdom'
+      assign country_page_code = 'gb'
+      assign country_page_name = 'United Kingdom'
+    elsif request_page_handle == 'missing-people-ireland'
+      assign country_page_code = 'ie'
+      assign country_page_name = 'Ireland'
+    elsif request_page_handle == 'missing-people-australia'
+      assign country_page_code = 'au'
+      assign country_page_name = 'Australia'
+    elsif request_page_handle == 'missing-people-new-zealand'
+      assign country_page_code = 'nz'
+      assign country_page_name = 'New Zealand'
+    elsif request_page_handle == 'missing-people-united-states'
+      assign country_page_code = 'us'
+      assign country_page_name = 'United States'
+    elsif request_page_handle == 'missing-people-canada'
+      assign country_page_code = 'ca'
+      assign country_page_name = 'Canada'
+    endif
+    assign country_page_count = 0
+  %}
+  <div class="page-width page-width--narrow section-{{ section.id }}-padding">
+    <h1 class="main-page-title page-title h0{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {{ page.title | escape }}
+    </h1>
+    <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      {{ page.content }}
+    </div>
+  </div>
+  <section class="page-width section-{{ section.id }}-padding" data-country-case-section="{{ country_page_code | escape }}">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
+      <div>
+        <p style="margin:0 0 6px;color:#d90429;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:12px;">Active public cases</p>
+        <h2 style="margin:0;color:#fff;font-size:clamp(28px,3vw,42px);line-height:1.05;">Current Missing Alerts in {{ country_page_name }}</h2>
+      </div>
+      <a href="/pages/country-intelligence#{{ country_page_name | handleize }}" style="color:#fff;text-decoration:none;font-weight:800;border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:10px 14px;">Country Intelligence</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;" data-country-page-cases>
+      {% paginate blogs['missing-persons'].articles by 50 %}
+      {% for country_article in blogs['missing-persons'].articles %}
+        {% liquid
+          assign country_article_tags = country_article.tags | join: ',' | downcase
+          assign country_article_status = country_article.metafields.custom.case_status.value | default: country_article.metafields.custom.case_status | default: country_article.metafields.custom.status.value | default: country_article.metafields.custom.status | downcase
+          assign country_article_hidden = false
+          if country_article_tags contains 'found-safe' or country_article_tags contains 'closed' or country_article_tags contains 'located' or country_article_tags contains 'private' or country_article_tags contains 'draft' or country_article_status contains 'found' or country_article_status contains 'closed' or country_article_status contains 'located' or country_article_status contains 'resolved'
+            assign country_article_hidden = true
+          endif
+          assign country_article_code = country_article.metafields.custom.country_code.value | default: country_article.metafields.custom.country_code | downcase | strip
+          assign country_article_slug = country_article.metafields.custom.country_slug.value | default: country_article.metafields.custom.country_slug | downcase | strip
+          assign country_article_name = country_article.metafields.custom.country_name.value | default: country_article.metafields.custom.country_name | default: country_article.metafields.custom.country.value | default: country_article.metafields.custom.country | downcase | strip
+          if country_article_code == blank or country_article_code == 'all'
+            for country_tag in country_article.tags
+              assign country_tag_downcase = country_tag | downcase | strip
+              if country_tag_downcase contains 'country:'
+                assign country_article_code = country_tag_downcase | split: ':' | last | strip
+                break
+              endif
+            endfor
+          endif
+          if country_article_code == 'uk' or country_article_code == 'england' or country_article_code == 'scotland' or country_article_code == 'wales' or country_article_code == 'northern-ireland' or country_article_code == 'united kingdom' or country_article_code == 'united-kingdom'
+            assign country_article_code = 'gb'
+          endif
+          assign country_article_matches = false
+          if country_article_code == country_page_code
+            assign country_article_matches = true
+          elsif country_page_code == 'gb' and country_article_slug contains 'united-kingdom'
+            assign country_article_matches = true
+          elsif country_page_code == 'gb' and country_article_name contains 'united kingdom'
+            assign country_article_matches = true
+          elsif country_page_code == 'us' and country_article_slug contains 'united-states'
+            assign country_article_matches = true
+          elsif country_page_code == 'us' and country_article_name contains 'united states'
+            assign country_article_matches = true
+          elsif country_page_code == 'ca' and country_article_slug contains 'canada'
+            assign country_article_matches = true
+          elsif country_page_code == 'au' and country_article_slug contains 'australia'
+            assign country_article_matches = true
+          elsif country_page_code == 'nz' and country_article_slug contains 'new-zealand'
+            assign country_article_matches = true
+          elsif country_page_code == 'ie' and country_article_slug contains 'ireland'
+            assign country_article_matches = true
+          endif
+        %}
+        {% if country_article_matches and country_article_hidden == false %}
+          {% assign country_page_count = country_page_count | plus: 1 %}
+          {% render 'case-grid-card', article: country_article, listing_type: 'missing' %}
+        {% endif %}
+      {% endfor %}
+      {% endpaginate %}
+    </div>
+    {% if country_page_count == 0 %}
+      <div style="padding:22px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:#101214;color:rgba(255,255,255,.78);">
+        No active public Missing Alerts cases are currently listed for {{ country_page_name }}. Use Country Intelligence for reporting links and safe sharing guidance.
+      </div>
+    {% else %}
+      <p style="margin:16px 0 0;color:rgba(255,255,255,.72);font-weight:700;">Showing {{ country_page_count }} active public case{% if country_page_count != 1 %}s{% endif %} connected to {{ country_page_name }}.</p>
+    {% endif %}
+  </section>
 {% elsif request_page_handle == 'top-missing-locations' %}
   <script>
     try {

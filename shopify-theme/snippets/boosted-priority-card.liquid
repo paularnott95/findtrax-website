@@ -19,7 +19,10 @@
 {% if blog_handle == 'found-safe' or case_status == 'found' or case_status == 'resolved' or owner_status == 'resolved' %}
   {% assign is_found_safe_case = true %}
 {% endif %}
-{% assign country_scope = 'all' %}
+{% assign country_scope = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | default: 'all' | downcase | strip %}
+{% if country_scope == 'uk' %}
+  {% assign country_scope = 'gb' %}
+{% endif %}
 {% assign country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | default: country_scope | upcase %}
 {% assign country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | default: '' %}
 {% assign placeholder_image = 'missing-person-silhouette.svg' | asset_url %}
@@ -49,12 +52,14 @@
   {% if tag_downcase == 'test' or tag_downcase == 'demo' or tag_downcase == 'debug' or tag_downcase == 'fake' or tag_downcase == 'dummy' or tag_downcase == 'fallback' or tag_downcase == 'placeholder' or tag_downcase contains 'test:' or tag_downcase contains 'demo:' or tag_downcase contains 'debug:' %}
     {% assign hide_public_case = true %}
   {% endif %}
-  {% if tag_downcase contains 'country:' %}
+  {% if country_scope == blank or country_scope == 'all' %}
+    {% if tag_downcase contains 'country:' %}
     {% assign country_scope = tag_downcase | split: ':' | last | strip %}
     {% if country_scope == 'uk' %}
       {% assign country_scope = 'gb' %}
     {% endif %}
     {% break %}
+    {% endif %}
   {% endif %}
 {% endfor %}
 {% if country_slug == blank %}

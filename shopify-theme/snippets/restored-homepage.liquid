@@ -1156,6 +1156,7 @@
 
       <div class="mpa-cases-grid">
         {% assign shown_featured_count = 0 %}
+        {% assign mpa_visible_handles = '|' %}
 
         {% for article in blogs['missing-persons'].articles limit: 50 %}
           {% assign public_case_handle = article.handle | downcase %}
@@ -1187,11 +1188,26 @@
             {% continue %}
           {% endif %}
 
-          {% if shown_featured_count >= 8 %}
+          {% if shown_featured_count >= 40 %}
             {% break %}
           {% endif %}
           {% assign shown_featured_count = shown_featured_count | plus: 1 %}
+          {% assign mpa_visible_handles = mpa_visible_handles | append: article.handle | append: '|' %}
 
+          {% assign mpa_case_country = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | default: 'all' | downcase | strip %}
+          {% if mpa_case_country == blank or mpa_case_country == 'all' %}
+            {% for article_tag in article.tags %}
+              {% assign mpa_tag_downcase = article_tag | downcase | strip %}
+              {% if mpa_tag_downcase contains 'country:' %}
+                {% assign mpa_case_country = mpa_tag_downcase | split: ':' | last | strip %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          {% if mpa_case_country == 'uk' %}{% assign mpa_case_country = 'gb' %}{% endif %}
+          {% assign mpa_case_country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | default: mpa_case_country %}
+          {% assign mpa_case_country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | default: mpa_case_country | upcase %}
+          {% assign mpa_case_region = article.metafields.custom.region.value | default: article.metafields.custom.region | default: article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | default: '' %}
           {% assign last_seen_location = '' %}
           {% assign clean_title = article.title | strip %}
 
@@ -1212,7 +1228,7 @@
           {% endif %}
 
           <a href="{{ article.url }}" class="mpa-case-link">
-            <div class="mpa-case-card">
+            <div class="mpa-case-card" data-country-scope="{{ mpa_case_country | escape }}" data-country-code="{{ mpa_case_country | escape }}" data-country-slug="{{ mpa_case_country_slug | escape }}" data-country-name="{{ mpa_case_country_name | escape }}" data-region="{{ mpa_case_region | escape }}" data-status="active" data-boost-active="false" data-boost-score="0" data-source-verified="{% if article.tags contains 'scanner-imported' or article.tags contains 'source-verified' or article.tags contains 'official-source' %}true{% else %}false{% endif %}">
 
               <div class="mpa-case-image-wrap">
                 {% if article.image %}
@@ -1254,6 +1270,39 @@
             No featured appeals are currently available. Please check the latest missing person appeals.
           </div>
         {% endif %}
+
+        {% assign mpa_visibility_bridge_cases = 'kelowna-rcmp-seeks-public-assistance-in-locating-42-year-old-amanda-batchelar::Amanda Batchelar::ca::canada::Canada::Kelowna||rcmp-seek-public-assistance-in-locating-cody-fieldhouse::Cody Fieldhouse::ca::canada::Canada::Canada||have-you-seen-this-child-martha-wes-dunn::Martha Wes Dunn::us::united-states::United States::United States||joel-anderson::Joel Anderson::au::australia::Australia::Australia||trisha-anne-graf::Trisha Anne Graf::au::australia::Australia::Australia||jack-smith::Jack Smith::gb::united-kingdom::United Kingdom::United Kingdom||vitoria-barreto::Vitoria Barreto::gb::united-kingdom::United Kingdom::United Kingdom||jan-hussain::Jan Hussain::gb::united-kingdom::United Kingdom::United Kingdom||jan-hussain-live::Jan Hussain::gb::united-kingdom::United Kingdom::United Kingdom||cake-bernstein-10-hartford-connecticut-united-states::Cake Bernstein::us::united-states::United States::Hartford||kordell-flintshire::Kordell::gb::united-kingdom::United Kingdom::Flintshire||cassidy-14-south-yorkshire::Cassidy, 14::gb::united-kingdom::United Kingdom::South Yorkshire||lorraine-48-dorset::Lorraine, 48::gb::united-kingdom::United Kingdom::Dorset||daniel-hackett-39-stockton::Daniel Hackett, 39::gb::united-kingdom::United Kingdom::Stockton||shannon-kerr-25-glasgow::Shannon Kerr, 25::gb::united-kingdom::United Kingdom::Glasgow||shaun-mccormack-31-glasgow::Shaun McCormack, 31::gb::united-kingdom::United Kingdom::Glasgow||rebecca-roberts-18-newry::Rebecca Roberts, 18::gb::united-kingdom::United Kingdom::Newry||jakub-bedfordshire::Jakub::gb::united-kingdom::United Kingdom::Bedfordshire||jennifer-nottingham::Jennifer::gb::united-kingdom::United Kingdom::Nottingham||alvin-diaz-72-devon::Alvin Diaz, 72::gb::united-kingdom::United Kingdom::Devon||amelia-radford::Amelia::gb::united-kingdom::United Kingdom::Radford||ethan-macleod-15-aberdeen::Ethan Macleod, 15::gb::united-kingdom::United Kingdom::Aberdeen||codie-21-bournemouth-weymouth::Codie, 21::gb::united-kingdom::United Kingdom::Bournemouth||rachel-reilly-age-unknown-fleetwood::Rachel Reilly::gb::united-kingdom::United Kingdom::Fleetwood' | split: '||' %}
+        {% for mpa_visibility_record in mpa_visibility_bridge_cases %}
+          {% assign mpa_visibility_parts = mpa_visibility_record | split: '::' %}
+          {% assign mpa_visibility_handle = mpa_visibility_parts[0] %}
+          {% assign mpa_visibility_handle_token = '|' | append: mpa_visibility_handle | append: '|' %}
+          {% if mpa_visible_handles contains mpa_visibility_handle_token %}
+            {% continue %}
+          {% endif %}
+          {% assign mpa_visibility_article_key = 'missing-persons/' | append: mpa_visibility_handle %}
+          {% assign mpa_visibility_article = articles[mpa_visibility_article_key] %}
+          {% if mpa_visibility_article != blank %}
+            {% render 'case-grid-card', article: mpa_visibility_article, listing_type: 'missing' %}
+          {% else %}
+            <a href="/blogs/missing-persons/{{ mpa_visibility_handle }}" class="mpa-case-link">
+              <div class="mpa-case-card" data-country-scope="{{ mpa_visibility_parts[2] | escape }}" data-country-code="{{ mpa_visibility_parts[2] | escape }}" data-country-slug="{{ mpa_visibility_parts[3] | escape }}" data-country-name="{{ mpa_visibility_parts[4] | escape }}" data-region="{{ mpa_visibility_parts[5] | escape }}" data-status="active" data-boost-active="false" data-boost-score="0" data-source-verified="true">
+                <div class="mpa-case-image-wrap">
+                  <img src="{{ 'missing-person-silhouette.svg' | asset_url }}" alt="{{ mpa_visibility_parts[1] | escape }}" class="mpa-case-image" loading="lazy" width="700" height="700">
+                  <div class="mpa-case-badge">VERIFIED</div>
+                  <span class="mpa-case-share-top">SHARE</span>
+                </div>
+                <div class="mpa-case-text">
+                  <div class="mpa-case-topline">
+                    <div class="mpa-case-meta">ACTIVE CASE</div>
+                    <div class="mpa-case-location">{{ mpa_visibility_parts[5] }}</div>
+                  </div>
+                  <h3 class="mpa-case-title">{{ mpa_visibility_parts[1] }}</h3>
+                  <p class="mpa-case-excerpt">Verified public Missing Alerts case record.</p>
+                </div>
+              </div>
+            </a>
+          {% endif %}
+        {% endfor %}
 
       </div>
 
@@ -1508,9 +1557,9 @@
 
       </div>
 
-    {% endfor %}
+        {% endfor %}
 
-  </div>
+      </div>
 
 </div>
 

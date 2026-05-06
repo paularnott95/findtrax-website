@@ -1,6 +1,57 @@
 {{ 'seo-advice-blog.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'country-profiles.js' | asset_url }}" defer="defer"></script>
 
+{% liquid
+  assign ci_gb_count = 0
+  assign ci_us_count = 0
+  assign ci_ca_count = 0
+  assign ci_au_count = 0
+  assign ci_nz_count = 0
+  assign ci_ie_count = 0
+  assign ci_sg_count = 0
+  assign ci_source_blog = blogs['missing-persons']
+  if ci_source_blog != blank
+    for ci_article in ci_source_blog.articles
+      assign ci_tags = ci_article.tags | join: ',' | downcase
+      assign ci_status = ci_article.metafields.custom.case_status.value | default: ci_article.metafields.custom.case_status | default: ci_article.metafields.custom.status.value | default: ci_article.metafields.custom.status | downcase
+      assign ci_hidden = false
+      if ci_tags contains 'found-safe' or ci_tags contains 'closed' or ci_tags contains 'located' or ci_tags contains 'private' or ci_tags contains 'draft' or ci_status contains 'found' or ci_status contains 'closed' or ci_status contains 'located' or ci_status contains 'resolved'
+        assign ci_hidden = true
+      endif
+      unless ci_hidden
+        assign ci_country = ci_article.metafields.custom.country_code.value | default: ci_article.metafields.custom.country_code | downcase | strip
+        if ci_country == blank or ci_country == 'all'
+          for ci_tag in ci_article.tags
+            assign ci_tag_downcase = ci_tag | downcase | strip
+            if ci_tag_downcase contains 'country:'
+              assign ci_country = ci_tag_downcase | split: ':' | last | strip
+              break
+            endif
+          endfor
+        endif
+        if ci_country == 'uk' or ci_country == 'england' or ci_country == 'scotland' or ci_country == 'wales' or ci_country == 'northern-ireland'
+          assign ci_country = 'gb'
+        endif
+        if ci_country == 'gb'
+          assign ci_gb_count = ci_gb_count | plus: 1
+        elsif ci_country == 'us'
+          assign ci_us_count = ci_us_count | plus: 1
+        elsif ci_country == 'ca'
+          assign ci_ca_count = ci_ca_count | plus: 1
+        elsif ci_country == 'au'
+          assign ci_au_count = ci_au_count | plus: 1
+        elsif ci_country == 'nz'
+          assign ci_nz_count = ci_nz_count | plus: 1
+        elsif ci_country == 'ie'
+          assign ci_ie_count = ci_ie_count | plus: 1
+        elsif ci_country == 'sg'
+          assign ci_sg_count = ci_sg_count | plus: 1
+        endif
+      endunless
+    endfor
+  endif
+%}
+
 <section class="seo-advice-hub country-search-page page-width">
   <div class="seo-advice-hub__hero country-search-page__hero">
     <div class="seo-advice-hub__eyebrow">Missing Alerts country intelligence</div>
@@ -87,6 +138,7 @@
       </div>
       <h2>England</h2>
       <p>Emergency 999 or 112. Non-emergency police route 101 where appropriate. England case coverage links local police appeals, Missing People UK appeals, and Missing Alerts country guidance.</p>
+      <p><strong>{{ ci_gb_count }}</strong> active United Kingdom public cases are currently connected to Missing Alerts country visibility.</p>
       <ul>
         <li>Official reporting: GOV.UK missing-person guidance</li>
         <li>Country page: England cases, safe sharing, official links</li>
@@ -104,6 +156,7 @@
       </div>
       <h2>United Kingdom</h2>
       <p>Emergency 999 or 112. Non-emergency police route 101 where appropriate. GOV.UK, UK Missing Persons Unit, and Missing People links are connected.</p>
+      <p><strong>{{ ci_gb_count }}</strong> active public cases are currently connected to this country profile.</p>
       <ul>
         <li>Official reporting: GOV.UK missing-person guidance</li>
         <li>Country page: active cases, safe sharing, official links</li>
@@ -121,6 +174,7 @@
       </div>
       <h2>Ireland</h2>
       <p>Emergency 999 or 112. Garda missing-person listings and official contact routes are connected for country-specific guidance.</p>
+      <p><strong>{{ ci_ie_count }}</strong> active public cases are currently connected to this country profile.</p>
       <ul>
         <li>Official reporting: An Garda Siochana</li>
         <li>Country page: active cases, safe sharing, official links</li>
@@ -138,6 +192,7 @@
       </div>
       <h2>Australia</h2>
       <p>Emergency 000. State and territory police handle reports; the National Missing Persons Coordination Centre supports national public information.</p>
+      <p><strong>{{ ci_au_count }}</strong> active public cases are currently connected to this country profile.</p>
       <ul>
         <li>Official reporting: local police or police assistance line</li>
         <li>Country page: active cases, safe sharing, national links</li>
@@ -155,6 +210,7 @@
       </div>
       <h2>New Zealand</h2>
       <p>Emergency 111. New Zealand Police provides missing-person reporting guidance and public case information where display permission exists.</p>
+      <p><strong>{{ ci_nz_count }}</strong> active public cases are currently connected to this country profile.</p>
       <ul>
         <li>Official reporting: New Zealand Police</li>
         <li>Country page: active cases, safe sharing, police links</li>
@@ -172,6 +228,7 @@
       </div>
       <h2>United States</h2>
       <p>Emergency 911. Local law enforcement is the usual reporting route; NamUs and NCMEC are key national resources.</p>
+      <p><strong>{{ ci_us_count }}</strong> active public cases are currently connected to this country profile.</p>
       <ul>
         <li>Official reporting: local law enforcement, NamUs, NCMEC</li>
         <li>Country page: active cases, safe sharing, national links</li>
@@ -189,6 +246,7 @@
       </div>
       <h2>Canada</h2>
       <p>Emergency 911. Missing-person reports should go to local police or the RCMP detachment serving the area.</p>
+      <p><strong>{{ ci_ca_count }}</strong> active public cases are currently connected to this country profile.</p>
       <ul>
         <li>Official reporting: local police or RCMP</li>
         <li>Country page: active cases, safe sharing, RCMP links</li>

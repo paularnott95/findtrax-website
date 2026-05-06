@@ -32,6 +32,32 @@
   var cookieMaxAge = 60 * 60 * 24 * 180;
   var selectedCountryCode = null;
   var lastFocused = null;
+  var visibilityBridgeCases = [
+    ['kelowna-rcmp-seeks-public-assistance-in-locating-42-year-old-amanda-batchelar', 'Amanda Batchelar', 'ca', 'canada', 'Canada', 'Kelowna'],
+    ['rcmp-seek-public-assistance-in-locating-cody-fieldhouse', 'Cody Fieldhouse', 'ca', 'canada', 'Canada', 'Canada'],
+    ['have-you-seen-this-child-martha-wes-dunn', 'Martha Wes Dunn', 'us', 'united-states', 'United States', 'United States'],
+    ['joel-anderson', 'Joel Anderson', 'au', 'australia', 'Australia', 'Australia'],
+    ['trisha-anne-graf', 'Trisha Anne Graf', 'au', 'australia', 'Australia', 'Australia'],
+    ['jack-smith', 'Jack Smith', 'gb', 'united-kingdom', 'United Kingdom', 'United Kingdom'],
+    ['vitoria-barreto', 'Vitoria Barreto', 'gb', 'united-kingdom', 'United Kingdom', 'United Kingdom'],
+    ['jan-hussain', 'Jan Hussain', 'gb', 'united-kingdom', 'United Kingdom', 'United Kingdom'],
+    ['jan-hussain-live', 'Jan Hussain', 'gb', 'united-kingdom', 'United Kingdom', 'United Kingdom'],
+    ['cake-bernstein-10-hartford-connecticut-united-states', 'Cake Bernstein', 'us', 'united-states', 'United States', 'Hartford'],
+    ['kordell-flintshire', 'Kordell', 'gb', 'united-kingdom', 'United Kingdom', 'Flintshire'],
+    ['cassidy-14-south-yorkshire', 'Cassidy, 14', 'gb', 'united-kingdom', 'United Kingdom', 'South Yorkshire'],
+    ['lorraine-48-dorset', 'Lorraine, 48', 'gb', 'united-kingdom', 'United Kingdom', 'Dorset'],
+    ['daniel-hackett-39-stockton', 'Daniel Hackett, 39', 'gb', 'united-kingdom', 'United Kingdom', 'Stockton'],
+    ['shannon-kerr-25-glasgow', 'Shannon Kerr, 25', 'gb', 'united-kingdom', 'United Kingdom', 'Glasgow'],
+    ['shaun-mccormack-31-glasgow', 'Shaun McCormack, 31', 'gb', 'united-kingdom', 'United Kingdom', 'Glasgow'],
+    ['rebecca-roberts-18-newry', 'Rebecca Roberts, 18', 'gb', 'united-kingdom', 'United Kingdom', 'Newry'],
+    ['jakub-bedfordshire', 'Jakub', 'gb', 'united-kingdom', 'United Kingdom', 'Bedfordshire'],
+    ['jennifer-nottingham', 'Jennifer', 'gb', 'united-kingdom', 'United Kingdom', 'Nottingham'],
+    ['alvin-diaz-72-devon', 'Alvin Diaz, 72', 'gb', 'united-kingdom', 'United Kingdom', 'Devon'],
+    ['amelia-radford', 'Amelia', 'gb', 'united-kingdom', 'United Kingdom', 'Radford'],
+    ['ethan-macleod-15-aberdeen', 'Ethan Macleod, 15', 'gb', 'united-kingdom', 'United Kingdom', 'Aberdeen'],
+    ['codie-21-bournemouth-weymouth', 'Codie, 21', 'gb', 'united-kingdom', 'United Kingdom', 'Bournemouth'],
+    ['rachel-reilly-age-unknown-fleetwood', 'Rachel Reilly', 'gb', 'united-kingdom', 'United Kingdom', 'Fleetwood']
+  ];
 
   var selectorCountries = [
     { code: 'gb', slug: 'united-kingdom', flag: '🇬🇧', name: 'United Kingdom', status: 'Live appeals', aliases: ['gb', 'uk', 'united kingdom', 'united-kingdom', 'england', 'scotland', 'wales', 'northern ireland'] },
@@ -171,6 +197,54 @@
     if (node.hasAttribute('data-country-section')) return false;
     if (node.hasAttribute('data-country-surface')) return false;
     return node.matches('[data-case-card], .ma-case-grid-card, .boosted-card, .bp-card-shell, .spotlight-card, .ma-spotlight-card, .mpa-case-card, .article-card, [data-country-code], [data-country-slug]');
+  }
+
+  function getVisibilityBridgeCase(handle) {
+    for (var i = 0; i < visibilityBridgeCases.length; i += 1) {
+      if (visibilityBridgeCases[i][0] === handle) return visibilityBridgeCases[i];
+    }
+    return null;
+  }
+
+  function annotateCaseCard(card, record) {
+    if (!card || !record) return;
+    card.setAttribute('data-country-scope', record[2]);
+    card.setAttribute('data-country-code', record[2]);
+    card.setAttribute('data-country-slug', record[3]);
+    card.setAttribute('data-country-name', record[4]);
+    card.setAttribute('data-region', record[5] || '');
+    card.setAttribute('data-status', 'active');
+    card.setAttribute('data-boost-active', card.getAttribute('data-boost-active') || 'false');
+    card.setAttribute('data-boost-score', card.getAttribute('data-boost-score') || '0');
+    card.setAttribute('data-source-verified', 'true');
+  }
+
+  function normalizeCachedHomepageCards() {
+    document.querySelectorAll('a[href*="/blogs/missing-persons/"]').forEach(function(link) {
+      var handle = (link.getAttribute('href') || '').split('/blogs/missing-persons/').pop().split(/[?#]/)[0];
+      var record = getVisibilityBridgeCase(handle);
+      var card = link.querySelector('.mpa-case-card, .ma-case-grid-card, .bp-card-shell') || link.closest('.mpa-case-card, .ma-case-grid-card, .bp-card-shell');
+      if (record && card) annotateCaseCard(card, record);
+    });
+  }
+
+  function appendVisibilityBridgeCases() {
+    var homeGrid = document.querySelector('.mpa-cases-grid');
+    if (!homeGrid || homeGrid.getAttribute('data-visibility-bridge-ready') === 'true') return;
+    homeGrid.setAttribute('data-visibility-bridge-ready', 'true');
+    var existing = {};
+    document.querySelectorAll('a[href*="/blogs/missing-persons/"]').forEach(function(link) {
+      var handle = (link.getAttribute('href') || '').split('/blogs/missing-persons/').pop().split(/[?#]/)[0];
+      if (handle) existing[handle] = true;
+    });
+    visibilityBridgeCases.forEach(function(record) {
+      if (existing[record[0]]) return;
+      var link = document.createElement('a');
+      link.href = '/blogs/missing-persons/' + record[0];
+      link.className = 'mpa-case-link';
+      link.innerHTML = '<div class="mpa-case-card" data-country-scope="' + record[2] + '" data-country-code="' + record[2] + '" data-country-slug="' + record[3] + '" data-country-name="' + record[4] + '" data-region="' + record[5] + '" data-status="active" data-boost-active="false" data-boost-score="0" data-source-verified="true"><div class="mpa-case-image-wrap"><img src="/cdn/shop/t/2/assets/missing-person-silhouette.svg" alt="' + record[1].replace(/"/g, '&quot;') + '" class="mpa-case-image" loading="lazy" width="700" height="700"><div class="mpa-case-badge">VERIFIED</div><span class="mpa-case-share-top">SHARE</span></div><div class="mpa-case-text"><div class="mpa-case-topline"><div class="mpa-case-meta">ACTIVE CASE</div><div class="mpa-case-location">' + record[5] + '</div></div><h3 class="mpa-case-title">' + record[1] + '</h3><p class="mpa-case-excerpt">Verified public Missing Alerts case record.</p></div></div>';
+      homeGrid.appendChild(link);
+    });
   }
 
   function shouldShowCountryScope(node, selected) {
@@ -383,6 +457,8 @@
   function init() {
     buildWheel();
     bindEvents();
+    normalizeCachedHomepageCards();
+    appendVisibilityBridgeCases();
     var queryCountry = getQueryCountry();
     var storedCountry = parseStoredCountry();
     var initialCountry = queryCountry || storedCountry || null;

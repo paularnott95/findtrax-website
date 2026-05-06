@@ -51,7 +51,15 @@
       {% for case_article in source_blog.articles %}
         {% liquid
           assign tag_blob = case_article.tags | join: ',' | downcase
+          assign case_country_code = case_article.metafields.custom.country_code.value | default: case_article.metafields.custom.country_code | downcase | strip
+          assign case_country_slug = case_article.metafields.custom.country_slug.value | default: case_article.metafields.custom.country_slug | downcase | strip
           assign case_country = case_article.metafields.custom.country.value | default: case_article.metafields.custom.country | default: case_article.metafields.custom.country_name.value | default: case_article.metafields.custom.country_name | downcase | strip
+          if case_country_code != blank
+            assign case_country = case_country | append: ' ' | append: case_country_code
+          endif
+          if case_country_slug != blank
+            assign case_country = case_country | append: ' ' | append: case_country_slug
+          endif
           if case_country == blank
             for case_tag in case_article.tags
               assign tag_downcase = case_tag | downcase | strip
@@ -82,7 +90,7 @@
           </a>
         {% endif %}
       {% endfor %}
-      {% if shown_count == 0 %}
+      {% if shown_count == 0 and context_match == blank or shown_count == 0 and context_match == 'global' %}
         {% for case_article in source_blog.articles limit: 4 %}
           {% assign tag_blob = case_article.tags | join: ',' | downcase %}
           {% unless tag_blob contains 'found-safe' or tag_blob contains 'closed' or tag_blob contains 'located' %}
@@ -92,6 +100,14 @@
             </a>
           {% endunless %}
         {% endfor %}
+      {% elsif shown_count == 0 %}
+        <div class="ma-spotlight-card ma-spotlight-card--fallback" aria-live="polite">
+          <span class="ma-spotlight-card__body">
+            <span class="ma-spotlight-card__tag">No local spotlight</span>
+            <strong class="ma-spotlight-card__title">No active priority spotlight is currently listed for {{ context_label | escape }}.</strong>
+            <span class="ma-spotlight-card__meta">Use Country Intelligence for local guidance.</span>
+          </span>
+        </div>
       {% endif %}
     {% endif %}
   </div>

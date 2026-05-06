@@ -1,8 +1,8 @@
 {% assign source_blog = blogs['missing-persons'] %}
 {% assign rendered_count = 0 %}
 {% assign max_items = section.settings.max_items | default: 8 | plus: 0 %}
-{% if max_items <= 0 %}
-  {% assign max_items = 8 %}
+{% if max_items < 40 %}
+  {% assign max_items = 40 %}
 {% endif %}
 
 {% comment %}
@@ -20,7 +20,7 @@
       </a>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;" data-country-surface="home-verified">
       {% if source_blog != blank and source_blog.articles_count > 0 %}
         {% for article in source_blog.articles limit: max_items %}
           {% capture card_markup %}
