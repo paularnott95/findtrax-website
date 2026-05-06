@@ -9,6 +9,16 @@
  */
 {
   "sections": {
+    "ma_cache_bust_marker_20260506": {
+      "type": "custom-liquid",
+      "name": "Missing Alerts cache marker",
+      "settings": {
+        "custom_liquid": "<div style=\"display:none\" data-ma-cache-marker=\"2026-05-06-template-cache-bust\">Missing Alerts template cache marker</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
     "custom_liquid_6aYYkG": {
       "type": "custom-liquid",
       "custom_css": [
@@ -243,6 +253,7 @@
     }
   },
   "order": [
+    "ma_cache_bust_marker_20260506",
     "custom_liquid_6aYYkG",
     "custom_liquid_VjWcwq",
     "ma_country_spotlight_bar",
