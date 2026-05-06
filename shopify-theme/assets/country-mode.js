@@ -131,6 +131,13 @@
     return getCountryData(raw);
   }
 
+  function readCountryCookie() {
+    return (document.cookie || '').split(';').reduce(function(value, part) {
+      var trimmed = part.trim();
+      return value || (trimmed.indexOf('missing_alerts_country=') === 0 ? decodeURIComponent(trimmed.slice('missing_alerts_country='.length)) : '');
+    }, '');
+  }
+
   function getQueryCountry() {
     var params = new URLSearchParams(window.location.search || '');
     var value = params.get('country');
@@ -165,6 +172,10 @@
   function persistCountry(country) {
     try {
       window.localStorage.setItem(storageKey, JSON.stringify(countryStoragePayload(country)));
+      window.localStorage.setItem('selectedCountryCode', country.code.toUpperCase());
+      window.localStorage.setItem('missingAlertsSelectedCountryCode', country.code.toUpperCase());
+      window.localStorage.setItem('selectedCountry', country.name);
+      window.localStorage.setItem('missingAlertsSelectedCountry', country.name);
       window.localStorage.setItem(currencyStorageKey, getCurrencyForCountry(country.code));
       window.localStorage.setItem(languageStorageKey, getLanguageForCountry(country.code));
     } catch (error) {
@@ -338,6 +349,139 @@
     });
   }
 
+  function getHomepageRuntimeCountry() {
+    var queryCountry = getQueryCountry();
+    if (queryCountry) return queryCountry;
+    var storedCountry = parseStoredCountry();
+    if (storedCountry) return storedCountry;
+    var cookieCountry = getCountryData(readCountryCookie());
+    if (cookieCountry) return cookieCountry;
+    var documentCountry = getCountryData(
+      html.getAttribute('data-country-code') ||
+      html.getAttribute('data-country') ||
+      (body && (body.getAttribute('data-selected-country') || body.getAttribute('data-country-code'))) ||
+      ''
+    );
+    return documentCountry || null;
+  }
+
+  function getHomepageGrid() {
+    return document.querySelector('.mpa-latest-layout .mpa-cases-grid') ||
+      document.querySelector('.mpa-cases-wrap .mpa-cases-grid') ||
+      document.querySelector('.mpa-cases-grid');
+  }
+
+  function getHomepageCard(item) {
+    if (!item) return null;
+    if (item.matches && item.matches('.mpa-case-card, .ma-case-grid-card, [data-case-card]')) return item;
+    return item.querySelector('.mpa-case-card, .ma-case-grid-card, [data-case-card]');
+  }
+
+  function getCardTextCountry(item, card) {
+    var text = [
+      item && item.getAttribute('href'),
+      item && item.getAttribute('data-country-code'),
+      item && item.getAttribute('data-country-slug'),
+      item && item.getAttribute('data-country-name'),
+      card && card.getAttribute('data-country-code'),
+      card && card.getAttribute('data-country-slug'),
+      card && card.getAttribute('data-country-name'),
+      card && card.getAttribute('data-region'),
+      card && card.textContent
+    ].filter(Boolean).join(' ').toLowerCase();
+    if (!text) return '';
+    if (/(united-states|united states|\busa\b|\bus\b|texas|california|connecticut|hartford)/.test(text)) return 'us';
+    if (/(canada|\bca\b|british columbia|kelowna|rcmp)/.test(text)) return 'ca';
+    if (/(australia|\bau\b|victoria|queensland|new south wales|joel-anderson|trisha-anne-graf)/.test(text)) return 'au';
+    if (/(new-zealand|new zealand|\bnz\b|otago)/.test(text)) return 'nz';
+    if (/(ireland|\bie\b|dublin|cork|galway)/.test(text)) return 'ie';
+    if (/(singapore|\bsg\b)/.test(text)) return 'sg';
+    if (/(south-africa|south africa|\bza\b)/.test(text)) return 'za';
+    if (/(united-kingdom|united kingdom|\buk\b|\bgb\b|england|scotland|wales|northern ireland|glasgow|dorset|bedfordshire|nottingham|devon|bournemouth|fleetwood|flintshire|south yorkshire|newry|aberdeen|stockton)/.test(text)) return 'gb';
+    return '';
+  }
+
+  function homepageCardCountry(item, card) {
+    return canonicalizeCountry(
+      (item && (item.getAttribute('data-country-code') || item.getAttribute('data-country-slug') || item.getAttribute('data-country-name') || item.getAttribute('data-country-scope'))) ||
+      (card && (card.getAttribute('data-country-code') || card.getAttribute('data-country-slug') || card.getAttribute('data-country-name') || card.getAttribute('data-country-scope'))) ||
+      getCardTextCountry(item, card)
+    );
+  }
+
+  function homepageCardIsActive(item, card) {
+    var status = normalize(
+      (item && (item.getAttribute('data-status') || item.getAttribute('data-case-status'))) ||
+      (card && (card.getAttribute('data-status') || card.getAttribute('data-case-status'))) ||
+      ''
+    );
+    return status.indexOf('found') === -1 &&
+      status.indexOf('safe') === -1 &&
+      status.indexOf('resolved') === -1 &&
+      status.indexOf('located') === -1 &&
+      status.indexOf('returned') === -1 &&
+      status.indexOf('closed') === -1 &&
+      status.indexOf('private') === -1 &&
+      status.indexOf('review') === -1;
+  }
+
+  function setHomepageCardVisible(item, visible) {
+    item.hidden = !visible;
+    item.classList.toggle('country-mode-hidden', !visible);
+    item.setAttribute('data-ma-runtime-hidden', visible ? 'false' : 'true');
+    if (visible) {
+      item.style.removeProperty('display');
+    } else {
+      item.style.setProperty('display', 'none', 'important');
+    }
+  }
+
+  function ensureHomepageEmptyState(grid, country) {
+    var wrap = grid.closest('.mpa-cases-wrap') || grid.parentElement;
+    if (!wrap) return null;
+    var empty = wrap.querySelector('.ma-country-runtime-empty');
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.className = 'ma-country-runtime-empty';
+      empty.style.cssText = 'display:none;margin:8px 0;padding:14px 16px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(15,23,42,.72);color:#fff;font-weight:700;';
+      wrap.appendChild(empty);
+    }
+    empty.textContent = country ? 'No active missing person appeals are currently available for ' + country.name + '.' : '';
+    return empty;
+  }
+
+  function applyStaleHomepageCountryRuntime() {
+    window.MA_COUNTRY_FILTER_RUNTIME_VERSION = '20260506-final-runtime';
+    var grid = getHomepageGrid();
+    var selected = getHomepageRuntimeCountry();
+    if (!grid || !selected) return;
+    grid.setAttribute('data-ma-country-filter-runtime-version', '20260506-final-runtime');
+    var visibleCount = 0;
+    Array.prototype.slice.call(grid.children).forEach(function(item) {
+      var card = getHomepageCard(item);
+      if (!card) return;
+      var country = homepageCardCountry(item, card);
+      if (country && !item.getAttribute('data-country-code')) item.setAttribute('data-country-code', country);
+      if (country && !card.getAttribute('data-country-code')) card.setAttribute('data-country-code', country);
+      item.setAttribute('data-active-case', 'true');
+      card.setAttribute('data-active-case', 'true');
+      var show = homepageCardIsActive(item, card) && country === selected.code && visibleCount < homepageGridLimit;
+      if (show) visibleCount += 1;
+      setHomepageCardVisible(item, show);
+    });
+    var empty = ensureHomepageEmptyState(grid, selected);
+    if (empty) empty.style.display = visibleCount === 0 ? 'block' : 'none';
+    var heading = (grid.closest('.mpa-cases-wrap') || document).querySelector('.mpa-cases-head h2, [data-country-heading]');
+    if (heading) heading.textContent = 'LATEST MISSING CASES - ' + selected.name.toUpperCase();
+  }
+
+  function scheduleStaleHomepageCountryRuntime() {
+    applyStaleHomepageCountryRuntime();
+    [50, 150, 500, 1300, 3500, 6500].forEach(function(delay) {
+      window.setTimeout(applyStaleHomepageCountryRuntime, delay);
+    });
+  }
+
   function updateDocumentCountry(country) {
     html.setAttribute('data-country', country.code);
     html.setAttribute('data-country-code', country.code.toUpperCase());
@@ -376,15 +520,18 @@
     updateTopbar(country);
     updateWheelSelection(country, !(options && options.noCenter));
     filterHomepage(country);
+    window.setTimeout(applyStaleHomepageCountryRuntime, 0);
+    window.setTimeout(applyStaleHomepageCountryRuntime, 500);
     var detail = {
-        country: country.code,
-        countryCode: country.code.toUpperCase(),
-        countrySlug: country.slug,
-        countryName: country.name,
-        currency: getCurrencyForCountry(country.code),
-        language: getLanguageForCountry(country.code)
-      };
+      country: country.code,
+      countryCode: country.code.toUpperCase(),
+      countrySlug: country.slug,
+      countryName: country.name,
+      currency: getCurrencyForCountry(country.code),
+      language: getLanguageForCountry(country.code)
+    };
     window.dispatchEvent(new CustomEvent('missing-alerts:country-change', { detail: detail }));
+    window.dispatchEvent(new CustomEvent('missingAlertsCountryChanged', { detail: detail }));
     document.dispatchEvent(new CustomEvent('country-mode:change', { detail: detail }));
   }
 
@@ -479,6 +626,11 @@
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape' && popup && !popup.hidden) closePopup();
     });
+    window.addEventListener('pageshow', scheduleStaleHomepageCountryRuntime);
+    window.addEventListener('storage', scheduleStaleHomepageCountryRuntime);
+    window.addEventListener('missingAlertsCountryChanged', scheduleStaleHomepageCountryRuntime);
+    window.addEventListener('missing-alerts:country-change', scheduleStaleHomepageCountryRuntime);
+    document.addEventListener('country-mode:change', scheduleStaleHomepageCountryRuntime);
   }
 
   function init() {
@@ -501,6 +653,7 @@
       updateWheelSelection(starterCountry, false);
       openPopup();
     }
+    scheduleStaleHomepageCountryRuntime();
   }
 
   window.MissingAlertsCountryMode = {
