@@ -1481,87 +1481,10 @@
 }
 </style>
 
-<div class="mpa-cases-wrap">
-
-  <div class="mpa-cases-head">
-    <h2 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">
-      LATEST MISSING CASES
-    </h2>
-    <a href="/blogs/missing-persons" style="color:#ffffff;text-decoration:none;font-weight:600;">
-      View all
-    </a>
-  </div>
-
-  <div class="mpa-cases-grid">
-
-    {% for article in blogs['missing-persons'].articles limit:6 %}
-
-      {% assign last_seen_location = '' %}
-      {% assign clean_title = article.title | strip %}
-
-      {% if clean_title contains 'Last Seen in ' %}
-        {% assign last_seen_location = clean_title | split: 'Last Seen in ' | last | strip %}
-      {% elsif clean_title contains ' – ' %}
-        {% assign last_seen_location = clean_title | split: ' – ' | last | strip %}
-      {% elsif clean_title contains ' — ' %}
-        {% assign last_seen_location = clean_title | split: ' — ' | last | strip %}
-      {% elsif clean_title contains ' - ' %}
-        {% assign last_seen_location = clean_title | split: ' - ' | last | strip %}
-      {% elsif clean_title contains '–' %}
-        {% assign last_seen_location = clean_title | split: '–' | last | strip %}
-      {% elsif clean_title contains '—' %}
-        {% assign last_seen_location = clean_title | split: '—' | last | strip %}
-      {% elsif clean_title contains '-' %}
-        {% assign last_seen_location = clean_title | split: '-' | last | strip %}
-      {% endif %}
-
-      <div class="mpa-case-card">
-
-        <div class="mpa-case-image-wrap">
-          <a href="{{ article.url }}" class="mpa-case-link">
-            {% if article.image %}
-              <img
-                src="{{ article.image | image_url: width: 700 }}"
-                alt="{{ article.title | escape }}"
-                class="mpa-case-image"
-                width="700"
-                height="700"
-              >
-            {% endif %}
-          </a>
-
-          <div class="mpa-case-badge">⚠️ URGENT</div>
-
-          <a href="{{ article.url }}" class="mpa-case-share-top">
-            🔁 SHARE
-          </a>
-        </div>
-
-        <div class="mpa-case-text">
-          <div class="mpa-case-topline">
-            <div class="mpa-case-meta">RECENT CASE</div>
-
-            {% if last_seen_location != '' %}
-              <div class="mpa-case-location">📍 LAST SEEN: {{ last_seen_location }}</div>
-            {% endif %}
-          </div>
-
-          <a href="{{ article.url }}" class="mpa-case-link">
-            <h3 class="mpa-case-title">{{ article.title }}</h3>
-          </a>
-
-          <p class="mpa-case-excerpt">
-            {{ article.excerpt | strip_html | truncate: 95 }}
-          </p>
-        </div>
-
-      </div>
-
-        {% endfor %}
-
-      </div>
-
-</div>
+{% comment %}
+  Duplicate legacy latest-case block removed. The active homepage case pool is rendered above
+  with country metadata and the audited active-case visibility bridge.
+{% endcomment %}
 
 {% comment %} Restored homepage section: custom_liquid_Grnzaj (custom-liquid) {% endcomment %}
 <style>
