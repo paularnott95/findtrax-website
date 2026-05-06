@@ -16,6 +16,7 @@
   var languageStorageKey = config.languageStorageKey || 'missingAlertsLanguage';
   var defaultCurrency = config.defaultCurrency || 'GBP';
   var defaultLanguage = config.defaultLanguage || 'en';
+  var homepageGridLimit = 6;
   var html = document.documentElement;
   var body = document.body;
   var popup = document.getElementById('missing-alerts-country-popup');
@@ -174,12 +175,27 @@
 
   function countryMatches(selected, node) {
     if (!selected) return true;
-    var values = [
+    var exactValues = [
       node.getAttribute('data-country-code'),
       node.getAttribute('data-country-slug'),
       node.getAttribute('data-country-name'),
       node.getAttribute('data-country'),
-      node.getAttribute('data-country-scope'),
+      node.getAttribute('data-country-scope')
+    ].filter(Boolean).map(function(value) {
+      return normalize(value);
+    });
+    var selectedCodes = selected.aliases.map(function(alias) {
+      return normalize(alias);
+    });
+
+    if (selectedCodes.some(function(alias) { return exactValues.indexOf(alias) !== -1; })) {
+      return true;
+    }
+    if (exactValues.length) {
+      return false;
+    }
+
+    var values = [
       node.getAttribute('data-region'),
       node.getAttribute('data-admin1'),
       node.getAttribute('data-location'),
@@ -187,8 +203,15 @@
     ].filter(Boolean).join(' ').toLowerCase();
 
     if (!values) return false;
+
     return selected.aliases.some(function(alias) {
-      return values.indexOf(normalize(alias).replace(/-/g, ' ')) !== -1 || values.indexOf(normalize(alias)) !== -1;
+      var normalizedAlias = normalize(alias);
+      if (!normalizedAlias) return false;
+      if (normalizedAlias.length <= 2) {
+        return false;
+      }
+      var spacedAlias = normalizedAlias.replace(/-/g, ' ');
+      return values.indexOf(spacedAlias) !== -1 || values.indexOf(normalizedAlias) !== -1;
     });
   }
 
@@ -238,7 +261,10 @@
       var handle = (link.getAttribute('href') || '').split('/blogs/missing-persons/').pop().split(/[?#]/)[0];
       if (handle) existing[handle] = true;
     });
+    var existingCards = homeGrid.querySelectorAll('.mpa-case-link, .ma-case-grid-card').length;
+    if (existingCards >= homepageGridLimit) return;
     visibilityBridgeCases.forEach(function(record) {
+      if (homeGrid.querySelectorAll('.mpa-case-link, .ma-case-grid-card').length >= homepageGridLimit) return;
       if (existing[record[0]]) return;
       var link = document.createElement('a');
       link.href = '/blogs/missing-persons/' + record[0];

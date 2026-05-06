@@ -1,0 +1,231 @@
+<div id="ma-home-country-supplemental-pool" hidden style="display:none !important;">
+  {% for article in blogs['missing-persons'].articles limit: 50 %}
+    {% assign ma_pool_handle = article.handle | downcase %}
+    {% assign ma_pool_title = article.title | downcase %}
+    {% assign ma_pool_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | default: '' | downcase %}
+    {% assign ma_pool_owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | default: '' | downcase %}
+    {% assign ma_pool_tags = article.tags | join: '|' | downcase %}
+    {% assign ma_pool_hide = false %}
+    {% if ma_pool_handle contains 'debug' or ma_pool_handle contains 'demo' or ma_pool_handle contains 'test-' or ma_pool_handle contains '-test' or ma_pool_handle contains 'pablo' or ma_pool_handle contains 'esobar' or ma_pool_handle contains 'escobar' or ma_pool_handle contains 'miss-123' or ma_pool_handle contains 'automatic-fallback' %}
+      {% assign ma_pool_hide = true %}
+    {% endif %}
+    {% if ma_pool_title contains 'pablo' or ma_pool_title contains 'esobar' or ma_pool_title contains 'escobar' or ma_pool_title contains 'miss, 123' or ma_pool_title contains 'miss 123' or ma_pool_title contains 'automatic fallback' or ma_pool_title contains 'placeholder' or ma_pool_title contains 'dummy' or ma_pool_title contains 'fake' %}
+      {% assign ma_pool_hide = true %}
+    {% endif %}
+    {% if ma_pool_status contains 'found' or ma_pool_status contains 'safe' or ma_pool_status contains 'resolved' or ma_pool_status contains 'located' or ma_pool_status contains 'closed' or ma_pool_status contains 'archived' or ma_pool_status contains 'draft' or ma_pool_status contains 'review' or ma_pool_status contains 'private' or ma_pool_owner_status contains 'resolved' %}
+      {% assign ma_pool_hide = true %}
+    {% endif %}
+    {% if ma_pool_tags contains 'found safe' or ma_pool_tags contains 'found-safe' or ma_pool_tags contains 'resolved' or ma_pool_tags contains 'located' or ma_pool_tags contains 'closed' or ma_pool_tags contains 'archived' or ma_pool_tags contains 'draft' or ma_pool_tags contains 'review' or ma_pool_tags contains 'private' %}
+      {% assign ma_pool_hide = true %}
+    {% endif %}
+    {% if ma_pool_hide %}
+      {% continue %}
+    {% endif %}
+
+    {% assign ma_pool_country = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | default: 'all' | downcase | strip %}
+    {% if ma_pool_country == blank or ma_pool_country == 'all' %}
+      {% for article_tag in article.tags %}
+        {% assign ma_pool_tag = article_tag | downcase | strip %}
+        {% if ma_pool_tag contains 'country:' %}
+          {% assign ma_pool_country = ma_pool_tag | split: ':' | last | strip %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    {% if ma_pool_country == 'uk' %}{% assign ma_pool_country = 'gb' %}{% endif %}
+    {% assign ma_pool_country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | default: ma_pool_country %}
+    {% assign ma_pool_country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | default: ma_pool_country | upcase %}
+    {% assign ma_pool_region = article.metafields.custom.region.value | default: article.metafields.custom.region | default: article.metafields.custom.state_region.value | default: article.metafields.custom.state_region | default: '' %}
+    {% assign ma_pool_location = article.metafields.custom.last_seen_place.value | default: article.metafields.custom.last_seen_place | default: ma_pool_region %}
+
+    <a
+      href="{{ article.url }}"
+      class="mpa-case-link ma-home-case-card"
+      data-country-scope="{{ ma_pool_country | escape }}"
+      data-country-code="{{ ma_pool_country | escape }}"
+      data-country-slug="{{ ma_pool_country_slug | escape }}"
+      data-country-name="{{ ma_pool_country_name | escape }}"
+      data-region="{{ ma_pool_region | escape }}"
+	      data-status="active"
+	      data-active-case="true"
+	      data-ma-pool-card="true"
+    >
+	      <div class="mpa-case-card ma-home-case-card" data-country-scope="{{ ma_pool_country | escape }}" data-country-code="{{ ma_pool_country | escape }}" data-country-slug="{{ ma_pool_country_slug | escape }}" data-country-name="{{ ma_pool_country_name | escape }}" data-region="{{ ma_pool_region | escape }}" data-status="active" data-active-case="true">
+        <div class="mpa-case-image-wrap">
+          {% if article.image %}
+            <img src="{{ article.image | image_url: width: 700 }}" alt="{{ article.title | escape }}" class="mpa-case-image" loading="lazy" width="700" height="700">
+          {% else %}
+            <img src="{{ 'missing-person-silhouette.svg' | asset_url }}" alt="{{ article.title | escape }}" class="mpa-case-image" loading="lazy" width="700" height="700">
+          {% endif %}
+          <div class="mpa-case-badge">URGENT</div>
+          <span class="mpa-case-share-top">SHARE</span>
+        </div>
+        <div class="mpa-case-text">
+          <div class="mpa-case-topline">
+            <div class="mpa-case-meta">RECENT CASE</div>
+            {% if ma_pool_location != blank %}
+              <div class="mpa-case-location">LAST SEEN: {{ ma_pool_location }}</div>
+            {% endif %}
+          </div>
+          <h3 class="mpa-case-title">{{ article.title }}</h3>
+          <p class="mpa-case-excerpt">{{ article.excerpt | strip_html | truncate: 50 }}</p>
+        </div>
+      </div>
+    </a>
+  {% endfor %}
+</div>
+
+<div class="ma-home-country-empty" hidden style="display:none;margin:4px 0;padding:14px 16px;border:1px solid rgba(255,255,255,0.08);border-radius:14px;background:rgba(0,0,0,0.20);color:rgba(255,255,255,0.82);font-weight:700;">
+  No active missing person appeals are currently available for this country.
+</div>
+
+<!-- MA_INLINE_COUNTRY_FILTER_20260506_FINAL -->
+<script>
+  (function() {
+    var version = '20260506-final';
+    var aliases = {
+      gb: ['gb', 'uk', 'unitedkingdom', 'united-kingdom', 'england', 'scotland', 'wales', 'northernireland', 'northern-ireland'],
+      us: ['us', 'usa', 'unitedstates', 'united-states', 'unitedstatesofamerica', 'united-states-of-america'],
+      ca: ['ca', 'canada'],
+      au: ['au', 'australia'],
+      nz: ['nz', 'newzealand', 'new-zealand'],
+      ie: ['ie', 'ireland'],
+      sg: ['sg', 'singapore'],
+      za: ['za', 'southafrica', 'south-africa']
+    };
+    var names = { gb: 'United Kingdom', us: 'United States', ca: 'Canada', au: 'Australia', nz: 'New Zealand', ie: 'Ireland', sg: 'Singapore', za: 'South Africa' };
+
+    function normalize(value) {
+      var text = value || '';
+      if (typeof text === 'object') text = text.code || text.countryCode || text.slug || text.country || text.name || '';
+      text = String(text).trim().toLowerCase();
+      if (!text) return '';
+      try {
+        if (text.charAt(0) === '{' || text.charAt(0) === '[') return normalize(JSON.parse(text));
+      } catch (error) {}
+      return text.replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+
+    function canonical(value) {
+      var normalized = normalize(value);
+      var compacted = normalized.replace(/-/g, '');
+      if (!normalized || ['all', 'global', 'worldwide', 'international'].indexOf(normalized) !== -1) return '';
+      for (var code in aliases) {
+        if (aliases[code].indexOf(normalized) !== -1 || aliases[code].indexOf(compacted) !== -1) return code;
+      }
+      return normalized;
+    }
+
+    function cookie(name) {
+      return (document.cookie || '').split(';').map(function(part) { return part.trim(); }).reduce(function(value, part) {
+        return value || (part.indexOf(name + '=') === 0 ? decodeURIComponent(part.slice(name.length + 1)) : '');
+      }, '');
+    }
+
+	    function selectedCountry() {
+	      var stored = '';
+	      try { stored = window.localStorage.getItem('missingAlertsCountry') || ''; } catch (error) {}
+	      var queryCountry = '';
+	      try { queryCountry = new URLSearchParams(window.location.search).get('country') || ''; } catch (error) {}
+	      return canonical(queryCountry || stored || cookie('missing_alerts_country') || document.body.dataset.selectedCountry || document.body.dataset.countryCode || document.documentElement.dataset.selectedCountry || document.documentElement.dataset.countryCode || '');
+    }
+
+    function cardCountry(node) {
+      return canonical(node.getAttribute('data-country-code') || node.getAttribute('data-country-slug') || node.getAttribute('data-country-name') || node.getAttribute('data-country-scope') || '');
+    }
+
+    function syncAttrs(item, card) {
+      item.classList.add('ma-home-case-card');
+      if (card) card.classList.add('ma-home-case-card');
+      ['data-country-code', 'data-country-slug', 'data-country-name', 'data-country-scope', 'data-status'].forEach(function(attr) {
+        if (card && !item.getAttribute(attr) && card.getAttribute(attr)) item.setAttribute(attr, card.getAttribute(attr));
+        if (card && !card.getAttribute(attr) && item.getAttribute(attr)) card.setAttribute(attr, item.getAttribute(attr));
+      });
+	      if (!item.getAttribute('data-status')) item.setAttribute('data-status', 'active');
+	      if (card && !card.getAttribute('data-status')) card.setAttribute('data-status', 'active');
+	      item.setAttribute('data-active-case', 'true');
+	      if (card) card.setAttribute('data-active-case', 'true');
+    }
+
+    function cardKey(item) {
+      return item.getAttribute('href') || item.getAttribute('data-url') || item.querySelector('a[href]') && item.querySelector('a[href]').getAttribute('href') || '';
+    }
+
+    function ensureSupplementalCards(grid) {
+      if (grid.getAttribute('data-ma-supplemented') === version) return;
+      var seen = {};
+      Array.prototype.slice.call(grid.children).forEach(function(item) {
+        var key = cardKey(item);
+        if (key) seen[key] = true;
+      });
+      document.querySelectorAll('#ma-home-country-supplemental-pool > .ma-home-case-card').forEach(function(poolCard) {
+        var key = cardKey(poolCard);
+        if (key && seen[key]) return;
+        var clone = poolCard.cloneNode(true);
+        clone.setAttribute('data-ma-supplemental-card', 'true');
+        clone.style.display = 'none';
+        grid.appendChild(clone);
+        if (key) seen[key] = true;
+      });
+      grid.setAttribute('data-ma-supplemented', version);
+    }
+
+    function isActive(item, card) {
+      var status = normalize((card && (card.getAttribute('data-status') || card.getAttribute('data-case-status'))) || item.getAttribute('data-status') || '');
+      return status.indexOf('found') === -1 && status.indexOf('safe') === -1 && status.indexOf('resolved') === -1 && status.indexOf('located') === -1 && status.indexOf('closed') === -1;
+    }
+
+    function setVisible(item, visible) {
+      item.hidden = !visible;
+      item.setAttribute('data-ma-home-filter-hidden', visible ? 'false' : 'true');
+      item.style.setProperty('display', visible ? 'block' : 'none', visible ? '' : 'important');
+    }
+
+    function applyFilter() {
+      var grid = document.querySelector('.mpa-latest-layout .mpa-cases-grid');
+      if (!grid) return;
+      grid.setAttribute('data-ma-country-filter-version', version);
+      ensureSupplementalCards(grid);
+      var selected = selectedCountry();
+      var visible = 0;
+      Array.prototype.slice.call(grid.children).forEach(function(item) {
+        var card = item.matches('.mpa-case-card, .ma-home-case-card') ? item : item.querySelector('.mpa-case-card, .ma-home-case-card');
+        if (!card) return;
+        syncAttrs(item, card);
+        var matches = !selected || cardCountry(item) === selected || cardCountry(card) === selected;
+        var show = isActive(item, card) && matches && visible < 6;
+        if (show) visible += 1;
+        setVisible(item, show);
+      });
+      var wrap = grid.closest('.mpa-cases-wrap');
+      var heading = wrap && wrap.querySelector('.mpa-cases-head h2');
+      var empty = document.querySelector('.ma-home-country-empty');
+      if (heading) heading.textContent = selected && names[selected] ? 'LATEST MISSING CASES - ' + names[selected].toUpperCase() : 'LATEST MISSING CASES';
+      if (empty) {
+        empty.hidden = visible !== 0;
+        empty.style.display = visible === 0 ? 'block' : 'none';
+        if (wrap && empty.parentNode !== wrap) wrap.appendChild(empty);
+      }
+    }
+
+	    window.maInlineCountryFilter20260506Final = applyFilter;
+	    try {
+	      var originalSetItem = window.localStorage && window.localStorage.setItem;
+	      if (originalSetItem && !window.__maInlineCountryFilterStoragePatch) {
+	        window.__maInlineCountryFilterStoragePatch = true;
+	        window.localStorage.setItem = function(key, value) {
+	          originalSetItem.apply(this, arguments);
+	          if (key === 'missingAlertsCountry') setTimeout(applyFilter, 0);
+	        };
+	      }
+	    } catch (error) {}
+	    document.addEventListener('DOMContentLoaded', applyFilter);
+    window.addEventListener('pageshow', applyFilter);
+    window.addEventListener('storage', applyFilter);
+    window.addEventListener('missingAlertsCountryChanged', applyFilter);
+    if (document.readyState !== 'loading') applyFilter();
+    setTimeout(applyFilter, 100);
+    setTimeout(applyFilter, 800);
+    setTimeout(applyFilter, 2000);
+  })();
+</script>

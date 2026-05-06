@@ -5,7 +5,7 @@
 {% assign now_ts = 'now' | date: '%s' | plus: 0 %}
 {% assign paid_count = 0 %}
 {% assign fallback_count = 0 %}
-{% assign minimum_slots = 40 %}
+{% assign minimum_slots = 6 %}
 
 {% comment %}
   DO NOT replace/remove without preserving fallback render.
@@ -121,6 +121,9 @@
             {% assign token = article.handle | append: '|' %}
 
             {% if is_active_paid %}
+              {% if paid_count >= minimum_slots %}
+                {% break %}
+              {% endif %}
               {% unless rendered_handles contains token %}
                 {% assign rendered_handles = rendered_handles | append: token %}
                 {% assign paid_count = paid_count | plus: 1 %}
@@ -541,7 +544,7 @@
 
   if (originalCount === 0) return;
 
-  if (originalCount <= 5) {
+  if (originalCount <= 6) {
     track.classList.add('is-static');
     track.style.width = '100%';
     track.style.transform = 'none';

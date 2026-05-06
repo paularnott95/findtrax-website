@@ -1266,12 +1266,13 @@
             data-country-slug="{{ mpa_case_country_slug | escape }}"
             data-country-name="{{ mpa_case_country_name | escape }}"
             data-region="{{ mpa_case_region | escape }}"
-            data-status="active"
-            data-boost-active="false"
+	            data-status="active"
+	            data-active-case="true"
+	            data-boost-active="false"
             data-boost-score="0"
             data-source-verified="{% if article.tags contains 'scanner-imported' or article.tags contains 'source-verified' or article.tags contains 'official-source' %}true{% else %}false{% endif %}"
           >
-            <div class="mpa-case-card ma-home-case-card" data-country-scope="{{ mpa_case_country | escape }}" data-country-code="{{ mpa_case_country | escape }}" data-country-slug="{{ mpa_case_country_slug | escape }}" data-country-name="{{ mpa_case_country_name | escape }}" data-region="{{ mpa_case_region | escape }}" data-status="active" data-boost-active="false" data-boost-score="0" data-source-verified="{% if article.tags contains 'scanner-imported' or article.tags contains 'source-verified' or article.tags contains 'official-source' %}true{% else %}false{% endif %}">
+	            <div class="mpa-case-card ma-home-case-card" data-country-scope="{{ mpa_case_country | escape }}" data-country-code="{{ mpa_case_country | escape }}" data-country-slug="{{ mpa_case_country_slug | escape }}" data-country-name="{{ mpa_case_country_name | escape }}" data-region="{{ mpa_case_region | escape }}" data-status="active" data-active-case="true" data-boost-active="false" data-boost-score="0" data-source-verified="{% if article.tags contains 'scanner-imported' or article.tags contains 'source-verified' or article.tags contains 'official-source' %}true{% else %}false{% endif %}">
 
               <div class="mpa-case-image-wrap">
                 {% if article.image %}
@@ -1336,12 +1337,13 @@
               data-country-slug="{{ mpa_visibility_parts[3] | escape }}"
               data-country-name="{{ mpa_visibility_parts[4] | escape }}"
               data-region="{{ mpa_visibility_parts[5] | escape }}"
-              data-status="active"
-              data-boost-active="false"
+	              data-status="active"
+	              data-active-case="true"
+	              data-boost-active="false"
               data-boost-score="0"
               data-source-verified="true"
             >
-              <div class="mpa-case-card ma-home-case-card" data-country-scope="{{ mpa_visibility_parts[2] | escape }}" data-country-code="{{ mpa_visibility_parts[2] | escape }}" data-country-slug="{{ mpa_visibility_parts[3] | escape }}" data-country-name="{{ mpa_visibility_parts[4] | escape }}" data-region="{{ mpa_visibility_parts[5] | escape }}" data-status="active" data-boost-active="false" data-boost-score="0" data-source-verified="true">
+	              <div class="mpa-case-card ma-home-case-card" data-country-scope="{{ mpa_visibility_parts[2] | escape }}" data-country-code="{{ mpa_visibility_parts[2] | escape }}" data-country-slug="{{ mpa_visibility_parts[3] | escape }}" data-country-name="{{ mpa_visibility_parts[4] | escape }}" data-region="{{ mpa_visibility_parts[5] | escape }}" data-status="active" data-active-case="true" data-boost-active="false" data-boost-score="0" data-source-verified="true">
                 <div class="mpa-case-image-wrap">
                   {% if mpa_visibility_article.image %}
                     <img src="{{ mpa_visibility_article.image | image_url: width: 700 }}" alt="{{ mpa_visibility_article.title | escape }}" class="mpa-case-image" loading="lazy" width="700" height="700">
@@ -1371,12 +1373,13 @@
               data-country-slug="{{ mpa_visibility_parts[3] | escape }}"
               data-country-name="{{ mpa_visibility_parts[4] | escape }}"
               data-region="{{ mpa_visibility_parts[5] | escape }}"
-              data-status="active"
-              data-boost-active="false"
+	              data-status="active"
+	              data-active-case="true"
+	              data-boost-active="false"
               data-boost-score="0"
               data-source-verified="true"
             >
-              <div class="mpa-case-card ma-home-case-card" data-country-scope="{{ mpa_visibility_parts[2] | escape }}" data-country-code="{{ mpa_visibility_parts[2] | escape }}" data-country-slug="{{ mpa_visibility_parts[3] | escape }}" data-country-name="{{ mpa_visibility_parts[4] | escape }}" data-region="{{ mpa_visibility_parts[5] | escape }}" data-status="active" data-boost-active="false" data-boost-score="0" data-source-verified="true">
+	              <div class="mpa-case-card ma-home-case-card" data-country-scope="{{ mpa_visibility_parts[2] | escape }}" data-country-code="{{ mpa_visibility_parts[2] | escape }}" data-country-slug="{{ mpa_visibility_parts[3] | escape }}" data-country-name="{{ mpa_visibility_parts[4] | escape }}" data-region="{{ mpa_visibility_parts[5] | escape }}" data-status="active" data-active-case="true" data-boost-active="false" data-boost-score="0" data-source-verified="true">
                 <div class="mpa-case-image-wrap">
                   <img src="{{ 'missing-person-silhouette.svg' | asset_url }}" alt="{{ mpa_visibility_parts[1] | escape }}" class="mpa-case-image" loading="lazy" width="700" height="700">
                   <div class="mpa-case-badge">VERIFIED</div>
@@ -1472,17 +1475,26 @@
             return '';
           }
 
-          function readLocalStorage() {
-            try {
-              return window.localStorage.getItem('missingAlertsCountry') || '';
-            } catch (error) {
-              return '';
-            }
-          }
+	          function readLocalStorage() {
+	            try {
+	              return window.localStorage.getItem('missingAlertsCountry') || '';
+	            } catch (error) {
+	              return '';
+	            }
+	          }
+
+	          function readQueryCountry() {
+	            try {
+	              return new URLSearchParams(window.location.search).get('country') || '';
+	            } catch (error) {
+	              return '';
+	            }
+	          }
 
           function selectedCountry() {
-            var selected = readLocalStorage() ||
-              readCookie('missing_alerts_country') ||
+	            var selected = readQueryCountry() ||
+	              readLocalStorage() ||
+	              readCookie('missing_alerts_country') ||
               document.body.getAttribute('data-selected-country') ||
               document.body.getAttribute('data-country-code') ||
               document.documentElement.getAttribute('data-selected-country') ||
@@ -1521,8 +1533,10 @@
                 card.setAttribute(attribute, item.getAttribute(attribute));
               }
             });
-            if (!item.getAttribute('data-status')) item.setAttribute('data-status', 'active');
-            if (!card.getAttribute('data-status')) card.setAttribute('data-status', item.getAttribute('data-status') || 'active');
+	            if (!item.getAttribute('data-status')) item.setAttribute('data-status', 'active');
+	            if (!card.getAttribute('data-status')) card.setAttribute('data-status', item.getAttribute('data-status') || 'active');
+	            item.setAttribute('data-active-case', 'true');
+	            card.setAttribute('data-active-case', 'true');
           }
 
           function isActive(item, card) {
@@ -1569,11 +1583,21 @@
             }
           }
 
-          window.maInlineCountryFilter20260506Final = applyCountryFilter;
-          document.addEventListener('DOMContentLoaded', applyCountryFilter);
-          window.addEventListener('pageshow', applyCountryFilter);
-          window.addEventListener('storage', applyCountryFilter);
-          window.addEventListener('missingAlertsCountryChanged', applyCountryFilter);
+	          window.maInlineCountryFilter20260506Final = applyCountryFilter;
+	          try {
+	            var originalSetItem = window.localStorage && window.localStorage.setItem;
+	            if (originalSetItem && !window.__maInlineCountryFilterStoragePatch) {
+	              window.__maInlineCountryFilterStoragePatch = true;
+	              window.localStorage.setItem = function(key, value) {
+	                originalSetItem.apply(this, arguments);
+	                if (key === 'missingAlertsCountry') setTimeout(applyCountryFilter, 0);
+	              };
+	            }
+	          } catch (error) {}
+	          document.addEventListener('DOMContentLoaded', applyCountryFilter);
+	          window.addEventListener('pageshow', applyCountryFilter);
+	          window.addEventListener('storage', applyCountryFilter);
+	          window.addEventListener('missingAlertsCountryChanged', applyCountryFilter);
           if (document.readyState !== 'loading') applyCountryFilter();
           setTimeout(applyCountryFilter, 100);
           setTimeout(applyCountryFilter, 800);

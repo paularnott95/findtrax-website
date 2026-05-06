@@ -1,9 +1,6 @@
 {% assign source_blog = blogs['missing-persons'] %}
 {% assign rendered_count = 0 %}
-{% assign max_items = section.settings.max_items | default: 8 | plus: 0 %}
-{% if max_items < 40 %}
-  {% assign max_items = 40 %}
-{% endif %}
+{% assign max_items = 6 %}
 
 {% comment %}
   DO NOT replace/remove without preserving fallback render.
@@ -11,7 +8,82 @@
 {% endcomment %}
 <section class="home-verified-case-grid" data-home-verified-cases>
   <div class="page-width">
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px 0;">
+    <style>
+      .home-verified-case-grid {
+        margin: 22px 0 26px;
+      }
+
+      .home-verified-case-grid__header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 0 0 14px;
+      }
+
+      .home-verified-case-grid__cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .home-verified-case-grid .ma-case-grid-card {
+        min-height: 100%;
+      }
+
+      .home-verified-case-grid .ma-case-grid-card__media {
+        aspect-ratio: 4 / 3;
+      }
+
+      .home-verified-case-grid .ma-case-grid-card__body {
+        gap: 8px;
+        padding: 14px 14px 10px;
+      }
+
+      .home-verified-case-grid .ma-case-grid-card__title {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        min-height: calc(1.18em * 2);
+        font-size: 18px;
+      }
+
+      .home-verified-case-grid .ma-case-grid-card__location,
+      .home-verified-case-grid .ma-case-grid-card__excerpt,
+      .home-verified-case-grid .ma-case-grid-card__meta span {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .home-verified-case-grid .ma-case-grid-card__location {
+        -webkit-line-clamp: 1;
+      }
+
+      .home-verified-case-grid .ma-case-grid-card__excerpt {
+        -webkit-line-clamp: 2;
+        min-height: calc(1.45em * 2);
+      }
+
+      .home-verified-case-grid .ma-case-grid-card__footer {
+        padding: 12px 14px 14px;
+      }
+
+      @media (max-width: 989px) {
+        .home-verified-case-grid__cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 749px) {
+        .home-verified-case-grid__cards {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <div class="home-verified-case-grid__header">
       <h2 style="margin:0;color:#ffffff;font-size:26px;line-height:1.1;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;">
         {{ section.settings.title | default: 'Latest verified cases' | escape }}
       </h2>
@@ -20,15 +92,18 @@
       </a>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;" data-country-surface="home-verified">
+    <div class="home-verified-case-grid__cards" data-country-surface="home-verified">
       {% if source_blog != blank and source_blog.articles_count > 0 %}
-        {% for article in source_blog.articles limit: max_items %}
+        {% for article in source_blog.articles limit: 20 %}
           {% capture card_markup %}
             {% render 'case-grid-card', article: article, listing_type: 'missing' %}
           {% endcapture %}
           {% if card_markup != blank %}
             {{ card_markup }}
             {% assign rendered_count = rendered_count | plus: 1 %}
+            {% if rendered_count >= max_items %}
+              {% break %}
+            {% endif %}
           {% endif %}
         {% endfor %}
       {% endif %}
@@ -59,7 +134,7 @@
       "min": 1,
       "max": 24,
       "step": 1,
-      "default": 8
+      "default": 6
     }
   ],
   "presets": [

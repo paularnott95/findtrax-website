@@ -1,0 +1,140 @@
+<script>
+  (function() {
+    if (window.__maHomepageGridRuntimeApplied) return;
+    window.__maHomepageGridRuntimeApplied = true;
+
+	    var selectedCountryKeys = [
+	      'missingAlertsCountry',
+	      'selectedCountryCode',
+	      'missingAlertsSelectedCountryCode',
+	      'selectedCountry',
+	      'missingAlertsSelectedCountry'
+	    ];
+    var countryAliasMap = {
+      gb: ['gb', 'uk', 'united-kingdom', 'england', 'scotland', 'wales', 'northern-ireland'],
+      us: ['us', 'usa', 'united-states', 'united-states-of-america'],
+      ca: ['ca', 'canada'],
+      au: ['au', 'australia'],
+      nz: ['nz', 'new-zealand'],
+      ie: ['ie', 'ireland'],
+      sg: ['sg', 'singapore'],
+      za: ['za', 'south-africa']
+    };
+
+	    function normaliseValue(value) {
+	      var text = value || '';
+	      if (typeof text === 'object') text = text.code || text.countryCode || text.slug || text.country || text.name || '';
+	      text = text.toString().trim().toLowerCase();
+	      try {
+	        if (text.charAt(0) === '{' || text.charAt(0) === '[') return normaliseValue(JSON.parse(text));
+	      } catch (error) {}
+	      return text.replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+	    }
+
+	    function readCookie(name) {
+	      var cookies = document.cookie ? document.cookie.split(';') : [];
+	      for (var i = 0; i < cookies.length; i += 1) {
+	        var part = cookies[i].trim();
+	        if (part.indexOf(name + '=') === 0) return decodeURIComponent(part.slice(name.length + 1));
+	      }
+	      return '';
+	    }
+
+	    function getSelectedCountryTokens() {
+	      var selected = '';
+	      try {
+	        selected = normaliseValue(new URLSearchParams(window.location.search).get('country') || '');
+	      } catch (error) {}
+	      for (var i = 0; i < selectedCountryKeys.length; i += 1) {
+	        if (selected) break;
+	        var nextValue = window.localStorage.getItem(selectedCountryKeys[i]);
+	        if (nextValue) {
+	          selected = normaliseValue(nextValue);
+	          break;
+	        }
+	      }
+	      if (!selected) selected = normaliseValue(readCookie('missing_alerts_country'));
+	      if (!selected) return [];
+      if (countryAliasMap[selected]) return countryAliasMap[selected];
+      var matchedKey = Object.keys(countryAliasMap).find(function(key) {
+        return countryAliasMap[key].indexOf(selected) !== -1;
+      });
+      return matchedKey ? countryAliasMap[matchedKey] : [selected];
+    }
+
+    function getCard(item) {
+      if (!item) return null;
+      if (item.classList && item.classList.contains('mpa-case-card')) return item;
+      return item.querySelector('.mpa-case-card');
+    }
+
+    function isResolved(card) {
+      if (!card) return true;
+      var status = normaliseValue(card.getAttribute('data-status') || card.getAttribute('data-case-status'));
+      return status.indexOf('found') !== -1 ||
+        status.indexOf('resolved') !== -1 ||
+        status.indexOf('located') !== -1 ||
+        status.indexOf('returned') !== -1 ||
+        status.indexOf('closed') !== -1;
+    }
+
+    function matchesSelectedCountry(card, selectedTokens) {
+      if (!card || !selectedTokens.length) return true;
+      var exactTokens = [
+        normaliseValue(card.getAttribute('data-country-code')),
+        normaliseValue(card.getAttribute('data-country-slug')),
+        normaliseValue(card.getAttribute('data-country-scope')),
+        normaliseValue(card.getAttribute('data-country-name'))
+      ].filter(Boolean);
+      if (!exactTokens.length) return true;
+      return exactTokens.some(function(token) {
+        return selectedTokens.indexOf(token) !== -1;
+      });
+    }
+
+    function syncLinkMetadata(item, card) {
+	      if (!item || !card || !item.classList.contains('mpa-case-link')) return;
+	      ['country-scope', 'country-code', 'country-slug', 'country-name', 'region', 'status'].forEach(function(attributeName) {
+	        var value = card.getAttribute('data-' + attributeName);
+	        if (value && !item.getAttribute('data-' + attributeName)) {
+	          item.setAttribute('data-' + attributeName, value);
+	        }
+	      });
+	      item.setAttribute('data-active-case', 'true');
+	      card.setAttribute('data-active-case', 'true');
+	    }
+
+    function applyHomepageGridRuntime() {
+      var selectedTokens = getSelectedCountryTokens();
+      document.querySelectorAll('.mpa-cases-grid').forEach(function(grid) {
+        var isLatestGrid = !!grid.closest('.mpa-latest-layout');
+        var visibleCount = 0;
+        Array.from(grid.children).forEach(function(item) {
+          var card = getCard(item);
+          if (!card) return;
+          syncLinkMetadata(item, card);
+          var shouldShow = !isResolved(card);
+          if (shouldShow && isLatestGrid) {
+            shouldShow = matchesSelectedCountry(card, selectedTokens);
+          }
+          if (shouldShow && visibleCount < 6) {
+            item.style.display = '';
+            item.hidden = false;
+            visibleCount += 1;
+          } else {
+            item.style.display = 'none';
+            item.hidden = true;
+          }
+        });
+      });
+    }
+
+	    document.addEventListener('DOMContentLoaded', applyHomepageGridRuntime);
+	    window.addEventListener('storage', applyHomepageGridRuntime);
+	    window.addEventListener('missingalerts:country-change', applyHomepageGridRuntime);
+	    window.addEventListener('missingAlertsCountryChanged', applyHomepageGridRuntime);
+    setTimeout(applyHomepageGridRuntime, 100);
+    setTimeout(applyHomepageGridRuntime, 1200);
+    setTimeout(applyHomepageGridRuntime, 3200);
+  })();
+</script>

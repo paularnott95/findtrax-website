@@ -552,16 +552,133 @@
       endif
     %}
 	    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
-		      <div style="display:none" data-ma-cache-marker="MA_HOME_SOURCE_VERIFIED_20260506_FINAL">Missing Alerts layout source marker</div>
-	      {% if ma_tools_product != blank %}
+			      <div style="display:none" data-ma-cache-marker="MA_HOME_SOURCE_VERIFIED_20260506_FINAL">Missing Alerts layout source marker</div>
+			      {% if ma_is_public_home %}
+			        <script id="ma-layout-live-proof-source">window.MA_LAYOUT_LIVE_PROOF="20260506_FINAL";</script>
+			        <!-- MA_LAYOUT_LIVE_PROOF_20260506_FINAL -->
+			        {% render 'homepage-inline-country-filter-final' %}
+			      {% endif %}
+		      {% if ma_tools_product != blank %}
 	        {% render 'ma-tools-page', product: ma_tools_product %}
 	      {% elsif ma_is_public_home %}
 	        <!-- Missing Alerts active case visibility cache marker: 2026-05-06-country-homepage -->
-	        {% render 'restored-homepage' %}
+	        {% capture ma_public_home_markup %}{% render 'restored-homepage-grid-compact' %}{% endcapture %}
+	          {% assign ma_public_home_markup = ma_public_home_markup | replace_first: '<div class="mpa-cases-grid">', '<div class="mpa-cases-grid" data-ma-country-filter-version="20260506-final">' %}
+	          {% assign ma_public_home_markup = ma_public_home_markup | replace: 'class="mpa-case-link"', 'class="mpa-case-link ma-home-case-card"' %}
+	          {% assign ma_public_home_markup = ma_public_home_markup | replace: '<div class="mpa-case-card"', '<div class="mpa-case-card ma-home-case-card"' %}
+	          <script id="ma-layout-live-proof-home">window.MA_LAYOUT_LIVE_PROOF="20260506_FINAL";</script>
+	          <!-- MA_LAYOUT_LIVE_PROOF_20260506_FINAL -->
+	          {{ ma_public_home_markup }}
+	          <!-- MA_INLINE_COUNTRY_FILTER_20260506_FINAL -->
+	          <script>
+	            (function() {
+	              var version = '20260506-final';
+	              var aliases = {
+	                gb: ['gb', 'uk', 'united-kingdom', 'unitedkingdom', 'england', 'scotland', 'wales', 'northern-ireland', 'northernireland'],
+	                us: ['us', 'usa', 'united-states', 'unitedstates', 'united-states-of-america', 'unitedstatesofamerica'],
+	                ca: ['ca', 'canada'],
+	                au: ['au', 'australia'],
+	                nz: ['nz', 'new-zealand', 'newzealand'],
+	                ie: ['ie', 'ireland'],
+	                sg: ['sg', 'singapore'],
+	                za: ['za', 'south-africa', 'southafrica']
+	              };
+	              var names = { gb: 'United Kingdom', us: 'United States', ca: 'Canada', au: 'Australia', nz: 'New Zealand', ie: 'Ireland', sg: 'Singapore', za: 'South Africa' };
+	              function normalize(value) {
+	                var text = value || '';
+	                if (typeof text === 'object') text = text.code || text.countryCode || text.slug || text.country || text.name || '';
+	                text = String(text).trim().toLowerCase();
+	                try {
+	                  if (text.charAt(0) === '{' || text.charAt(0) === '[') return normalize(JSON.parse(text));
+	                } catch (error) {}
+	                return text.replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+	              }
+	              function canonical(value) {
+	                var normalized = normalize(value);
+	                var compacted = normalized.replace(/-/g, '');
+	                if (!normalized || ['all', 'global', 'worldwide', 'international'].indexOf(normalized) !== -1) return '';
+	                for (var code in aliases) {
+	                  if (aliases[code].indexOf(normalized) !== -1 || aliases[code].indexOf(compacted) !== -1) return code;
+	                }
+	                return normalized;
+	              }
+	              function cookie(name) {
+	                var parts = document.cookie ? document.cookie.split(';') : [];
+	                for (var i = 0; i < parts.length; i += 1) {
+	                  var part = parts[i].trim();
+	                  if (part.indexOf(name + '=') === 0) return decodeURIComponent(part.slice(name.length + 1));
+	                }
+	                return '';
+	              }
+	              function selectedCountry() {
+	                var queryCountry = '';
+	                var storedCountry = '';
+	                try { queryCountry = new URLSearchParams(window.location.search).get('country') || ''; } catch (error) {}
+	                try { storedCountry = window.localStorage.getItem('missingAlertsCountry') || ''; } catch (error) {}
+	                return canonical(queryCountry || storedCountry || cookie('missing_alerts_country') || document.documentElement.getAttribute('data-country-code') || '');
+	              }
+	              function cardCountry(node) {
+	                return canonical(node.getAttribute('data-country-code') || node.getAttribute('data-country-slug') || node.getAttribute('data-country-name') || node.getAttribute('data-country-scope') || '');
+	              }
+	              function isActive(item, card) {
+	                var status = normalize((card && card.getAttribute('data-status')) || item.getAttribute('data-status') || '');
+	                return status.indexOf('found') === -1 && status.indexOf('safe') === -1 && status.indexOf('resolved') === -1 && status.indexOf('located') === -1 && status.indexOf('closed') === -1;
+	              }
+	              function applyFilter() {
+	                var grid = document.querySelector('.mpa-latest-layout .mpa-cases-grid');
+	                if (!grid) return;
+	                grid.setAttribute('data-ma-country-filter-version', version);
+	                var selected = selectedCountry();
+	                var visible = 0;
+	                Array.prototype.slice.call(grid.children).forEach(function(item) {
+	                  var card = item.matches('.mpa-case-card, .ma-home-case-card') ? item : item.querySelector('.mpa-case-card, .ma-home-case-card');
+	                  if (!card) return;
+	                  item.classList.add('ma-home-case-card');
+	                  card.classList.add('ma-home-case-card');
+	                  ['data-country-code', 'data-country-slug', 'data-country-name', 'data-country-scope', 'data-status'].forEach(function(attr) {
+	                    if (!item.getAttribute(attr) && card.getAttribute(attr)) item.setAttribute(attr, card.getAttribute(attr));
+	                    if (!card.getAttribute(attr) && item.getAttribute(attr)) card.setAttribute(attr, item.getAttribute(attr));
+	                  });
+	                  item.setAttribute('data-active-case', 'true');
+	                  card.setAttribute('data-active-case', 'true');
+	                  var matches = !selected || cardCountry(item) === selected || cardCountry(card) === selected;
+	                  var show = isActive(item, card) && matches && visible < 6;
+	                  if (show) visible += 1;
+	                  item.hidden = !show;
+	                  item.setAttribute('data-ma-home-filter-hidden', show ? 'false' : 'true');
+	                  item.style.setProperty('display', show ? 'block' : 'none', show ? '' : 'important');
+	                });
+	                var wrap = grid.closest('.mpa-cases-wrap');
+	                var empty = wrap && wrap.querySelector('.ma-home-country-empty');
+	                var heading = wrap && wrap.querySelector('.mpa-cases-head h2');
+	                if (heading) heading.textContent = selected && names[selected] ? 'LATEST MISSING CASES - ' + names[selected].toUpperCase() : 'LATEST MISSING CASES';
+	                if (empty) {
+	                  empty.hidden = visible !== 0;
+	                  empty.style.display = visible === 0 ? 'block' : 'none';
+	                }
+	              }
+	              window.maInlineCountryFilter20260506Final = applyFilter;
+	              document.addEventListener('DOMContentLoaded', applyFilter);
+	              window.addEventListener('pageshow', applyFilter);
+	              window.addEventListener('storage', applyFilter);
+	              window.addEventListener('missingAlertsCountryChanged', applyFilter);
+	              if (document.readyState !== 'loading') applyFilter();
+	              setTimeout(applyFilter, 100);
+	              setTimeout(applyFilter, 800);
+	            })();
+	          </script>
+	          {% render 'homepage-inline-country-filter-final' %}
+	          {% render 'homepage-grid-compact-runtime' %}
 	      {% else %}
 	        {% capture ma_rendered_layout %}{{ content_for_layout }}{% endcapture %}
 	      {% if ma_rendered_layout contains 'ma-safe-home' %}
-	        {% render 'restored-homepage' %}
+	        {% capture ma_safe_home_markup %}{% render 'restored-homepage-grid-compact' %}{% endcapture %}
+          {% assign ma_safe_home_markup = ma_safe_home_markup | replace_first: '<div class="mpa-cases-grid">', '<div class="mpa-cases-grid" data-ma-country-filter-version="20260506-final">' %}
+          {% assign ma_safe_home_markup = ma_safe_home_markup | replace: 'class="mpa-case-link"', 'class="mpa-case-link ma-home-case-card"' %}
+          {% assign ma_safe_home_markup = ma_safe_home_markup | replace: '<div class="mpa-case-card"', '<div class="mpa-case-card ma-home-case-card"' %}
+          {{ ma_safe_home_markup }}
+          {% render 'homepage-inline-country-filter-final' %}
+          {% render 'homepage-grid-compact-runtime' %}
 	        <div class="page-width">
 	          {% render 'related-safety-products',
             heading: 'Safety product guides',
@@ -690,5 +807,7 @@
     <script src="{{ 'tools-countdown.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'tools-pages-router.js' | asset_url }}" defer="defer"></script>
     {% render 'case-notification-modal' %}
+    <script id="ma-layout-live-proof">window.MA_LAYOUT_LIVE_PROOF="20260506_FINAL";</script>
+    <!-- MA_LAYOUT_LIVE_PROOF_20260506_FINAL -->
   </body>
 </html>
