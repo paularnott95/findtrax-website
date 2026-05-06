@@ -19,9 +19,20 @@
 {% if blog_handle == 'found-safe' or case_status == 'found' or case_status == 'resolved' or owner_status == 'resolved' %}
   {% assign is_found_safe_case = true %}
 {% endif %}
-{% assign country_scope = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | default: 'all' | downcase | strip %}
-{% if country_scope == 'uk' %}
+{% assign country_scope = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | default: '' | downcase | strip %}
+{% if country_scope == blank or country_scope == 'all' or country_scope == 'unknown' %}
+  {% for article_tag in article.tags %}
+    {% assign tag_downcase = article_tag | downcase | strip %}
+    {% if tag_downcase contains 'country:' %}
+      {% assign country_scope = tag_downcase | split: ':' | last | strip %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% if country_scope == 'uk' or country_scope == 'england' or country_scope == 'scotland' or country_scope == 'wales' or country_scope == 'northern ireland' %}
   {% assign country_scope = 'gb' %}
+{% elsif country_scope == 'usa' or country_scope == 'united-states' or country_scope == 'united states' %}
+  {% assign country_scope = 'us' %}
 {% endif %}
 {% assign country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | default: country_scope | upcase %}
 {% assign country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | default: '' %}
@@ -121,9 +132,11 @@
   data-country-scope="{{ country_scope }}"
   data-country-code="{{ country_scope | escape }}"
   data-country-slug="{{ country_slug | escape }}"
-  data-country-name="{{ country_name | escape }}"
-  data-region="{{ article.metafields.custom.region.value | default: article.metafields.custom.region | escape }}"
-  data-status="{% if is_found_safe_case %}resolved{% else %}active{% endif %}"
+	  data-country-name="{{ country_name | escape }}"
+    data-case-handle="{{ article.handle | escape }}"
+	  data-region="{{ article.metafields.custom.region.value | default: article.metafields.custom.region | escape }}"
+	  data-status="{% if is_found_safe_case %}resolved{% else %}active{% endif %}"
+    data-active-case="{% if is_found_safe_case %}false{% else %}true{% endif %}"
   data-boost-active="{% if boost_live %}true{% else %}false{% endif %}"
   data-boost-score="{{ points }}"
   data-source-verified="{% if article.tags contains 'scanner-imported' or article.tags contains 'source-verified' or article.tags contains 'official-source' %}true{% else %}false{% endif %}"

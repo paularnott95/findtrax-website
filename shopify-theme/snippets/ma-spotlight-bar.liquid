@@ -1,114 +1,164 @@
 {% liquid
   assign source_blog = blogs['missing-persons']
   assign context_country = country | default: ''
-  if context_country == blank and article != blank
-    assign context_country = article.metafields.custom.country.value | default: article.metafields.custom.country | default: article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | strip
-    if context_country == blank
-      for article_tag in article.tags
-        assign tag_downcase = article_tag | downcase | strip
-        if tag_downcase contains 'country:'
-          assign context_country = article_tag | split: ':' | last | strip
-          break
-        endif
-      endfor
-    endif
-  endif
-  assign context_label = context_country | default: 'Global'
-  assign context_match = context_country | downcase | strip
-  if context_match == 'uk'
-    assign context_match = 'united kingdom'
-  endif
-  assign shown_count = 0
+  assign context_label = context_country | default: 'selected country'
+  assign paid_pool_count = 0
+  assign fallback_pool_count = 0
+  assign rendered_handles = '|'
 %}
 
-<section class="ma-spotlight-bar" data-ma-country-context="{{ context_label | escape }}">
+<section class="ma-spotlight-bar ma-home-active-section" data-ma-spotlight-section data-ma-country-context="{{ context_label | escape }}">
   <style>
-    .ma-spotlight-bar{max-width:1220px;margin:18px auto;padding:16px;border-radius:18px;background:radial-gradient(circle at 18% 0,rgba(220,38,38,.18),transparent 30%),linear-gradient(135deg,#101217,#08090b);border:1px solid rgba(255,255,255,.08);box-shadow:0 18px 44px rgba(0,0,0,.28)}
-    .ma-spotlight-bar__head{display:flex;justify-content:space-between;gap:14px;align-items:end;margin-bottom:13px}
-    .ma-spotlight-bar__eyebrow{color:#fca5a5;font-size:11px;font-weight:950;letter-spacing:.14em;text-transform:uppercase}
-    .ma-spotlight-bar h2{margin:4px 0 0;color:#fff;font-size:22px;line-height:1.1}
+    .ma-spotlight-bar{max-width:1220px;margin:14px auto;padding:14px;border-radius:14px;background:linear-gradient(135deg,#101217,#08090b);border:1px solid rgba(255,255,255,.08);box-shadow:0 12px 28px rgba(0,0,0,.24)}
+    .ma-spotlight-bar__head{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:10px}
+    .ma-spotlight-bar__eyebrow{color:#fca5a5;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase}
+    .ma-spotlight-bar h2{margin:3px 0 0;color:#fff;font-size:20px;line-height:1.1}
     .ma-spotlight-bar__note{color:rgba(255,255,255,.62);font-size:12px;font-weight:800;text-align:right}
-    .ma-spotlight-bar__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-    .ma-spotlight-card{min-height:118px;border-radius:14px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;position:relative;background:#15171d;border:1px solid rgba(255,255,255,.08)}
+    .ma-spotlight-bar__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
+    .ma-spotlight-card{min-height:128px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;position:relative;background:#15171d;border:1px solid rgba(255,255,255,.08)}
+    .ma-spotlight-card:nth-child(n+4){display:none}
     .ma-spotlight-card:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.82));z-index:1}
-    .ma-spotlight-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.92);transform:scale(1.01)}
-    .ma-spotlight-card__body{position:relative;z-index:2;padding:12px;min-width:0}
-    .ma-spotlight-card__tag{display:inline-flex;margin-bottom:6px;padding:4px 7px;border-radius:999px;background:rgba(220,38,38,.78);font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+    .ma-spotlight-card img{position:absolute;inset:0;width:100%;height:100%;max-height:180px;object-fit:cover;object-position:center;filter:saturate(.92)}
+    .ma-spotlight-card__body{position:relative;z-index:2;padding:10px;min-width:0}
+    .ma-spotlight-card__tag{display:inline-flex;margin-bottom:5px;padding:4px 7px;border-radius:999px;background:rgba(220,38,38,.78);font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
     .ma-spotlight-card__title{margin:0;font-size:13px;line-height:1.18;font-weight:950;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .ma-spotlight-card__meta{margin:5px 0 0;color:rgba(255,255,255,.72);font-size:11px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ma-spotlight-card--fallback{background:linear-gradient(135deg,#211114,#0d0f14)}
-    @media(max-width:900px){.ma-spotlight-bar__grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.ma-spotlight-card{min-width:230px;scroll-snap-align:start}.ma-spotlight-bar__head{align-items:flex-start;flex-direction:column}.ma-spotlight-bar__note{text-align:left}}
+    .ma-spotlight-empty{display:none;padding:14px;border:1px solid rgba(255,255,255,.10);border-radius:10px;color:rgba(255,255,255,.82);font-weight:800}
+    @media(max-width:900px){.ma-spotlight-bar__grid{grid-template-columns:1fr}.ma-spotlight-card{aspect-ratio:16/9}.ma-spotlight-bar__head{align-items:flex-start;flex-direction:column}.ma-spotlight-bar__note{text-align:left}}
   </style>
   <div class="ma-spotlight-bar__head">
     <div>
       <div class="ma-spotlight-bar__eyebrow">Country spotlight</div>
-      <h2>{% if context_label == 'Global' %}Global priority public appeals{% else %}Priority appeals for {{ context_label | escape }}{% endif %}</h2>
+      <h2 data-country-heading="Priority appeals for {country}">Priority appeals</h2>
     </div>
-    <div class="ma-spotlight-bar__note">Showing active public Missing Alerts cases. Fallback appears only when local cases are unavailable.</div>
+    <div class="ma-spotlight-bar__note">Paid spotlight cases show first. Local fallback is capped at three.</div>
   </div>
-  <div class="ma-spotlight-bar__grid">
+  <div class="ma-spotlight-bar__grid ma-spotlight-grid" data-country-surface="spotlight" data-ma-limit="3">
     {% if source_blog != blank %}
-      {% for case_article in source_blog.articles %}
+      {% for case_article in source_blog.articles limit: 80 %}
         {% liquid
           assign tag_blob = case_article.tags | join: ',' | downcase
+          assign case_status = case_article.metafields.custom.case_status.value | default: case_article.metafields.custom.case_status | downcase
+          assign owner_status = case_article.metafields.custom.case_owner_status.value | default: case_article.metafields.custom.case_owner_status | downcase
+          assign spotlight_live = case_article.metafields.custom.spotlight_live.value | default: case_article.metafields.custom.spotlight_live
+          assign is_paid_spotlight = false
+          if spotlight_live == true or spotlight_live == 'true' or spotlight_live == 'True' or spotlight_live == '1'
+            assign is_paid_spotlight = true
+          endif
+          assign exclude_case = false
+          if tag_blob contains 'found-safe' or tag_blob contains 'closed' or tag_blob contains 'located' or tag_blob contains 'private' or tag_blob contains 'draft' or tag_blob contains 'review' or case_status contains 'found' or case_status contains 'safe' or case_status contains 'closed' or case_status contains 'located' or case_status contains 'review' or owner_status contains 'resolved'
+            assign exclude_case = true
+          endif
           assign case_country_code = case_article.metafields.custom.country_code.value | default: case_article.metafields.custom.country_code | downcase | strip
           assign case_country_slug = case_article.metafields.custom.country_slug.value | default: case_article.metafields.custom.country_slug | downcase | strip
-          assign case_country = case_article.metafields.custom.country.value | default: case_article.metafields.custom.country | default: case_article.metafields.custom.country_name.value | default: case_article.metafields.custom.country_name | downcase | strip
-          if case_country_code != blank
-            assign case_country = case_country | append: ' ' | append: case_country_code
-          endif
-          if case_country_slug != blank
-            assign case_country = case_country | append: ' ' | append: case_country_slug
-          endif
-          if case_country == blank
+          assign case_country_name = case_article.metafields.custom.country_name.value | default: case_article.metafields.custom.country_name | default: case_article.metafields.custom.country.value | default: case_article.metafields.custom.country | strip
+          if case_country_code == blank or case_country_code == 'all'
             for case_tag in case_article.tags
               assign tag_downcase = case_tag | downcase | strip
               if tag_downcase contains 'country:'
-                assign case_country = case_tag | split: ':' | last | downcase | strip
+                assign case_country_code = tag_downcase | split: ':' | last | strip
                 break
               endif
             endfor
           endif
-          assign case_status = case_article.metafields.custom.case_status.value | default: case_article.metafields.custom.case_status | downcase
-          assign exclude_case = false
-          if tag_blob contains 'found-safe' or tag_blob contains 'closed' or tag_blob contains 'located' or tag_blob contains 'private' or tag_blob contains 'draft' or case_status contains 'found' or case_status contains 'closed' or case_status contains 'located'
-            assign exclude_case = true
+          if case_country_code == 'uk' or case_country_code == 'england' or case_country_code == 'scotland' or case_country_code == 'wales' or case_country_code == 'northern ireland'
+            assign case_country_code = 'gb'
+          elsif case_country_code == 'usa' or case_country_code == 'united-states' or case_country_code == 'united states'
+            assign case_country_code = 'us'
           endif
-          assign matches_context = true
-          if context_match != blank and context_match != 'global'
-            assign matches_context = false
-            if case_country contains context_match or tag_blob contains context_match
-              assign matches_context = true
-            endif
+          if case_country_slug == blank
+            case case_country_code
+              when 'gb'
+                assign case_country_slug = 'united-kingdom'
+                assign case_country_name = case_country_name | default: 'United Kingdom'
+              when 'us'
+                assign case_country_slug = 'united-states'
+                assign case_country_name = case_country_name | default: 'United States'
+              when 'ca'
+                assign case_country_slug = 'canada'
+                assign case_country_name = case_country_name | default: 'Canada'
+              when 'au'
+                assign case_country_slug = 'australia'
+                assign case_country_name = case_country_name | default: 'Australia'
+              when 'nz'
+                assign case_country_slug = 'new-zealand'
+                assign case_country_name = case_country_name | default: 'New Zealand'
+              when 'ie'
+                assign case_country_slug = 'ireland'
+                assign case_country_name = case_country_name | default: 'Ireland'
+            endcase
           endif
         %}
-        {% if shown_count < 4 and exclude_case == false and matches_context %}
-          {% assign shown_count = shown_count | plus: 1 %}
-          <a class="ma-spotlight-card" href="{{ case_article.url }}">
-            {% if case_article.image %}<img src="{{ case_article.image | image_url: width: 500, height: 340, crop: 'center' }}" width="500" height="340" alt="{{ case_article.title | escape }}">{% endif %}
-            <span class="ma-spotlight-card__body"><span class="ma-spotlight-card__tag">{% if tag_blob contains 'urgent' %}Urgent{% else %}Verified{% endif %}</span><strong class="ma-spotlight-card__title">{{ case_article.title | escape }}</strong><span class="ma-spotlight-card__meta">{{ case_country | default: context_label }}</span></span>
+        {% if exclude_case == false and is_paid_spotlight and paid_pool_count < 12 and case_country_code != blank and case_country_code != 'all' %}
+          {% assign paid_pool_count = paid_pool_count | plus: 1 %}
+          {% assign rendered_handles = rendered_handles | append: case_article.handle | append: '|' %}
+          <a class="ma-spotlight-card ma-home-case-card" href="{{ case_article.url }}" data-card-type="paid" data-country-code="{{ case_country_code | escape }}" data-country-slug="{{ case_country_slug | escape }}" data-country-name="{{ case_country_name | escape }}" data-status="active" data-case-handle="{{ case_article.handle | escape }}" data-source-verified="{% if tag_blob contains 'source-verified' or tag_blob contains 'scanner-imported' or tag_blob contains 'official-source' %}true{% else %}false{% endif %}" data-active-case="true">
+            {% if case_article.image %}<img src="{{ case_article.image | image_url: width: 520, height: 300, crop: 'center' }}" width="520" height="300" alt="{{ case_article.title | escape }}">{% endif %}
+            <span class="ma-spotlight-card__body"><span class="ma-spotlight-card__tag">Paid spotlight</span><strong class="ma-spotlight-card__title">{{ case_article.title | escape }}</strong><span class="ma-spotlight-card__meta">{{ case_country_name | escape }}</span></span>
           </a>
         {% endif %}
       {% endfor %}
-      {% if shown_count == 0 and context_match == blank or shown_count == 0 and context_match == 'global' %}
-        {% for case_article in source_blog.articles limit: 4 %}
-          {% assign tag_blob = case_article.tags | join: ',' | downcase %}
-          {% unless tag_blob contains 'found-safe' or tag_blob contains 'closed' or tag_blob contains 'located' %}
-            <a class="ma-spotlight-card ma-spotlight-card--fallback" href="{{ case_article.url }}">
-              {% if case_article.image %}<img src="{{ case_article.image | image_url: width: 500, height: 340, crop: 'center' }}" width="500" height="340" alt="{{ case_article.title | escape }}">{% endif %}
-              <span class="ma-spotlight-card__body"><span class="ma-spotlight-card__tag">Global fallback</span><strong class="ma-spotlight-card__title">{{ case_article.title | escape }}</strong><span class="ma-spotlight-card__meta">No local spotlight available yet</span></span>
-            </a>
-          {% endunless %}
-        {% endfor %}
-      {% elsif shown_count == 0 %}
-        <div class="ma-spotlight-card ma-spotlight-card--fallback" aria-live="polite">
-          <span class="ma-spotlight-card__body">
-            <span class="ma-spotlight-card__tag">No local spotlight</span>
-            <strong class="ma-spotlight-card__title">No active priority spotlight is currently listed for {{ context_label | escape }}.</strong>
-            <span class="ma-spotlight-card__meta">Use Country Intelligence for local guidance.</span>
-          </span>
-        </div>
-      {% endif %}
+
+      {% for case_article in source_blog.articles limit: 80 %}
+        {% liquid
+          assign token = '|' | append: case_article.handle | append: '|'
+          assign tag_blob = case_article.tags | join: ',' | downcase
+          assign case_status = case_article.metafields.custom.case_status.value | default: case_article.metafields.custom.case_status | downcase
+          assign owner_status = case_article.metafields.custom.case_owner_status.value | default: case_article.metafields.custom.case_owner_status | downcase
+          assign exclude_case = false
+          if rendered_handles contains token or tag_blob contains 'found-safe' or tag_blob contains 'closed' or tag_blob contains 'located' or tag_blob contains 'private' or tag_blob contains 'draft' or tag_blob contains 'review' or case_status contains 'found' or case_status contains 'safe' or case_status contains 'closed' or case_status contains 'located' or case_status contains 'review' or owner_status contains 'resolved'
+            assign exclude_case = true
+          endif
+          assign case_country_code = case_article.metafields.custom.country_code.value | default: case_article.metafields.custom.country_code | downcase | strip
+          assign case_country_slug = case_article.metafields.custom.country_slug.value | default: case_article.metafields.custom.country_slug | downcase | strip
+          assign case_country_name = case_article.metafields.custom.country_name.value | default: case_article.metafields.custom.country_name | default: case_article.metafields.custom.country.value | default: case_article.metafields.custom.country | strip
+          if case_country_code == blank or case_country_code == 'all'
+            for case_tag in case_article.tags
+              assign tag_downcase = case_tag | downcase | strip
+              if tag_downcase contains 'country:'
+                assign case_country_code = tag_downcase | split: ':' | last | strip
+                break
+              endif
+            endfor
+          endif
+          if case_country_code == 'uk' or case_country_code == 'england' or case_country_code == 'scotland' or case_country_code == 'wales' or case_country_code == 'northern ireland'
+            assign case_country_code = 'gb'
+          elsif case_country_code == 'usa' or case_country_code == 'united-states' or case_country_code == 'united states'
+            assign case_country_code = 'us'
+          endif
+          if case_country_slug == blank
+            case case_country_code
+              when 'gb'
+                assign case_country_slug = 'united-kingdom'
+                assign case_country_name = case_country_name | default: 'United Kingdom'
+              when 'us'
+                assign case_country_slug = 'united-states'
+                assign case_country_name = case_country_name | default: 'United States'
+              when 'ca'
+                assign case_country_slug = 'canada'
+                assign case_country_name = case_country_name | default: 'Canada'
+              when 'au'
+                assign case_country_slug = 'australia'
+                assign case_country_name = case_country_name | default: 'Australia'
+              when 'nz'
+                assign case_country_slug = 'new-zealand'
+                assign case_country_name = case_country_name | default: 'New Zealand'
+              when 'ie'
+                assign case_country_slug = 'ireland'
+                assign case_country_name = case_country_name | default: 'Ireland'
+            endcase
+          endif
+        %}
+        {% if exclude_case == false and fallback_pool_count < 36 and case_country_code != blank and case_country_code != 'all' %}
+          {% assign fallback_pool_count = fallback_pool_count | plus: 1 %}
+          <a class="ma-spotlight-card ma-spotlight-card--fallback ma-home-case-card" href="{{ case_article.url }}" data-card-type="fallback" data-priority="{% if tag_blob contains 'urgent' %}1{% elsif tag_blob contains 'source-verified' or tag_blob contains 'scanner-imported' or tag_blob contains 'official-source' %}2{% else %}3{% endif %}" data-country-code="{{ case_country_code | escape }}" data-country-slug="{{ case_country_slug | escape }}" data-country-name="{{ case_country_name | escape }}" data-status="active" data-case-handle="{{ case_article.handle | escape }}" data-source-verified="{% if tag_blob contains 'source-verified' or tag_blob contains 'scanner-imported' or tag_blob contains 'official-source' %}true{% else %}false{% endif %}" data-active-case="true">
+            {% if case_article.image %}<img src="{{ case_article.image | image_url: width: 520, height: 300, crop: 'center' }}" width="520" height="300" alt="{{ case_article.title | escape }}">{% endif %}
+            <span class="ma-spotlight-card__body"><span class="ma-spotlight-card__tag">{% if tag_blob contains 'urgent' %}Urgent{% elsif tag_blob contains 'source-verified' or tag_blob contains 'scanner-imported' or tag_blob contains 'official-source' %}Source verified{% else %}Local fallback{% endif %}</span><strong class="ma-spotlight-card__title">{{ case_article.title | escape }}</strong><span class="ma-spotlight-card__meta">{{ case_country_name | escape }}</span></span>
+          </a>
+        {% endif %}
+      {% endfor %}
     {% endif %}
   </div>
+  <div class="ma-spotlight-empty" data-country-empty>No active priority spotlight cases are currently listed for this country.</div>
 </section>

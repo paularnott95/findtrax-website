@@ -6,12 +6,12 @@
   DO NOT replace/remove without preserving fallback render.
   The homepage must still show its static shell when the dynamic case blog is empty or unavailable.
 {% endcomment %}
-<section class="home-verified-case-grid" data-home-verified-cases>
+<section class="home-verified-case-grid ma-home-active-section" data-home-verified-cases>
   <div class="page-width">
     <style>
-      .home-verified-case-grid {
-        margin: 22px 0 26px;
-      }
+	      .home-verified-case-grid {
+	        margin: 14px 0 18px;
+	      }
 
       .home-verified-case-grid__header {
         display: flex;
@@ -22,24 +22,26 @@
         margin: 0 0 14px;
       }
 
-      .home-verified-case-grid__cards {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-      }
+	      .home-verified-case-grid__cards {
+	        display: grid;
+	        grid-template-columns: repeat(3, minmax(0, 1fr));
+	        gap: 12px;
+          align-items: stretch;
+	      }
 
       .home-verified-case-grid .ma-case-grid-card {
         min-height: 100%;
       }
 
-      .home-verified-case-grid .ma-case-grid-card__media {
-        aspect-ratio: 4 / 3;
-      }
+	      .home-verified-case-grid .ma-case-grid-card__media {
+	        aspect-ratio: 16 / 9;
+          max-height: 170px;
+	      }
 
       .home-verified-case-grid .ma-case-grid-card__body {
-        gap: 8px;
-        padding: 14px 14px 10px;
-      }
+	        gap: 8px;
+	        padding: 12px 12px 8px;
+	      }
 
       .home-verified-case-grid .ma-case-grid-card__title {
         display: -webkit-box;
@@ -47,8 +49,8 @@
         -webkit-line-clamp: 2;
         overflow: hidden;
         min-height: calc(1.18em * 2);
-        font-size: 18px;
-      }
+	        font-size: 16px;
+	      }
 
       .home-verified-case-grid .ma-case-grid-card__location,
       .home-verified-case-grid .ma-case-grid-card__excerpt,
@@ -92,13 +94,14 @@
       </a>
     </div>
 
-    <div class="home-verified-case-grid__cards" data-country-surface="home-verified">
+    <div class="home-verified-case-grid__cards ma-home-active-grid" data-country-surface="home-verified" data-ma-limit="6">
       {% if source_blog != blank and source_blog.articles_count > 0 %}
         {% for article in source_blog.articles limit: 20 %}
           {% capture card_markup %}
             {% render 'case-grid-card', article: article, listing_type: 'missing' %}
           {% endcapture %}
-          {% if card_markup != blank %}
+	          {% assign card_markup_clean = card_markup | strip %}
+	          {% if card_markup_clean != blank %}
             {{ card_markup }}
             {% assign rendered_count = rendered_count | plus: 1 %}
             {% if rendered_count >= max_items %}

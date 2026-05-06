@@ -4921,3 +4921,99 @@ body:not(.template-cart):not(.template-password):not(.customer-area) .main-page-
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+body.template-index #shopify-section-featured-collection {
+  display: none !important;
+}
+
+body.template-index .ma-home-active-section,
+body.template-index .home-verified-case-grid,
+body.template-index .boosted-bar {
+  margin-top: 14px;
+  margin-bottom: 18px;
+}
+
+body.template-index .ma-home-active-grid,
+body.template-index .home-verified-case-grid__cards,
+body.template-index .mpa-cases-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+body.template-index .ma-home-case-card,
+body.template-index .ma-case-grid-card,
+body.template-index .mpa-case-card {
+  height: 100%;
+  min-height: 0 !important;
+}
+
+body.template-index .ma-case-grid-card__media,
+body.template-index .mpa-case-image-wrap {
+  aspect-ratio: 16 / 9;
+  max-height: 170px;
+  overflow: hidden;
+}
+
+body.template-index .ma-case-grid-card__media img,
+body.template-index .mpa-case-image,
+body.template-index .bp-card__image,
+body.template-index .spotlight-card-image,
+body.template-index .ma-spotlight-card img {
+  width: 100%;
+  height: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  object-position: center;
+}
+
+body.template-index .ma-case-grid-card__body,
+body.template-index .mpa-case-text,
+body.template-index .bp-card__body {
+  padding: 10px 12px !important;
+}
+
+body.template-index .ma-case-grid-card__title,
+body.template-index .mpa-case-title,
+body.template-index .bp-card__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+body.template-index .ma-case-grid-card__excerpt,
+body.template-index .mpa-case-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+body.template-index .ma-home-sidebar,
+body.template-index .boosted-sidebar-section {
+  max-width: 340px;
+  align-self: start;
+}
+
+@media screen and (max-width: 989px) {
+  body.template-index .ma-home-active-grid,
+  body.template-index .home-verified-case-grid__cards,
+  body.template-index .mpa-cases-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 749px) {
+  body.template-index .ma-home-active-grid,
+  body.template-index .home-verified-case-grid__cards,
+  body.template-index .mpa-cases-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.template-index .ma-home-sidebar,
+  body.template-index .boosted-sidebar-section {
+    max-width: none;
+  }
+}

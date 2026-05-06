@@ -91,6 +91,61 @@
     return normalized;
   }
 
+  function countryFromFreeText(text) {
+    text = String(text || '').toLowerCase();
+    if (!text) return '';
+    if (/(united-states|united states|\busa\b|\bus\b|texas|california|connecticut|hartford)/.test(text)) return 'us';
+    if (/(canada|\bca\b|british columbia|kelowna|rcmp)/.test(text)) return 'ca';
+    if (/(australia|\bau\b|victoria|queensland|new south wales|woolworths george town|joel-anderson|trisha-anne-graf)/.test(text)) return 'au';
+    if (/(new-zealand|new zealand|\bnz\b|otago)/.test(text)) return 'nz';
+    if (/(ireland|\bie\b|dublin|cork|galway)/.test(text)) return 'ie';
+    if (/(singapore|\bsg\b)/.test(text)) return 'sg';
+    if (/(south-africa|south africa|\bza\b)/.test(text)) return 'za';
+    if (/(united-kingdom|united kingdom|\buk\b|\bgb\b|england|scotland|wales|northern ireland|glasgow|dorset|bedfordshire|nottingham|devon|bournemouth|fleetwood|flintshire|south yorkshire|newry|aberdeen|stockton)/.test(text)) return 'gb';
+    return '';
+  }
+
+  function isKnownCountry(value) {
+    return ['gb', 'us', 'ca', 'au', 'nz', 'ie', 'sg', 'za'].indexOf(canonicalizeCountry(value)) !== -1;
+  }
+
+  function countryFromNode(node) {
+    if (!node) return '';
+    var attrs = [
+      node.getAttribute('data-country-code'),
+      node.getAttribute('data-country-slug'),
+      node.getAttribute('data-country-name'),
+      node.getAttribute('data-country'),
+      node.getAttribute('data-country-scope')
+    ];
+    for (var i = 0; i < attrs.length; i += 1) {
+      var country = canonicalizeCountry(attrs[i]);
+      if (isKnownCountry(country)) return country;
+    }
+    var values = [
+      node.getAttribute('href'),
+      node.getAttribute('data-region'),
+      node.getAttribute('data-admin1'),
+      node.getAttribute('data-location'),
+      node.getAttribute('data-search-text'),
+      node.getAttribute('data-title'),
+      node.textContent
+    ].filter(Boolean).join(' ');
+    return countryFromFreeText(values);
+  }
+
+  function caseIsActive(node) {
+    var status = normalize((node && (node.getAttribute('data-status') || node.getAttribute('data-case-status'))) || '');
+    return status.indexOf('found') === -1 &&
+      status.indexOf('safe') === -1 &&
+      status.indexOf('resolved') === -1 &&
+      status.indexOf('located') === -1 &&
+      status.indexOf('returned') === -1 &&
+      status.indexOf('closed') === -1 &&
+      status.indexOf('private') === -1 &&
+      status.indexOf('review') === -1;
+  }
+
   function getSelectorCountry(code) {
     var canonical = canonicalizeCountry(code);
     return selectorCountries.find(function(country) {
@@ -186,44 +241,9 @@
 
   function countryMatches(selected, node) {
     if (!selected) return true;
-    var exactValues = [
-      node.getAttribute('data-country-code'),
-      node.getAttribute('data-country-slug'),
-      node.getAttribute('data-country-name'),
-      node.getAttribute('data-country'),
-      node.getAttribute('data-country-scope')
-    ].filter(Boolean).map(function(value) {
-      return normalize(value);
-    });
-    var selectedCodes = selected.aliases.map(function(alias) {
-      return normalize(alias);
-    });
-
-    if (selectedCodes.some(function(alias) { return exactValues.indexOf(alias) !== -1; })) {
-      return true;
-    }
-    if (exactValues.length) {
-      return false;
-    }
-
-    var values = [
-      node.getAttribute('data-region'),
-      node.getAttribute('data-admin1'),
-      node.getAttribute('data-location'),
-      node.getAttribute('data-search-text')
-    ].filter(Boolean).join(' ').toLowerCase();
-
-    if (!values) return false;
-
-    return selected.aliases.some(function(alias) {
-      var normalizedAlias = normalize(alias);
-      if (!normalizedAlias) return false;
-      if (normalizedAlias.length <= 2) {
-        return false;
-      }
-      var spacedAlias = normalizedAlias.replace(/-/g, ' ');
-      return values.indexOf(spacedAlias) !== -1 || values.indexOf(normalizedAlias) !== -1;
-    });
+    var country = countryFromNode(node);
+    if (!country) return false;
+    return country === selected.code;
   }
 
   function isCaseLike(node) {
@@ -314,6 +334,88 @@
     var empty = ensureEmptyState(container, selected);
     empty.innerHTML = 'No active public appeals are currently listed for ' + selected.name + '. <a href="/pages/country-intelligence#' + selected.slug + '">View ' + selected.name + ' intelligence</a>.';
     empty.hidden = visible.length !== 0;
+	  }
+
+  function surfaceLimit(container) {
+    if (!container) return homepageGridLimit;
+    var declared = parseInt(container.getAttribute('data-ma-limit') || '', 10);
+    if (declared > 0) return declared;
+    if (container.classList.contains('ma-spotlight-grid') || container.classList.contains('ma-spotlight-bar__grid') || container.classList.contains('spotlight-stage')) return 3;
+    if (container.classList.contains('ma-boost-grid') || container.classList.contains('boosted-track')) return 4;
+    return homepageGridLimit;
+  }
+
+  function cardSelectorForSurface(container) {
+    if (container.classList.contains('boosted-track')) return '.boosted-card';
+    if (container.classList.contains('ma-spotlight-bar__grid')) return '.ma-spotlight-card';
+    if (container.classList.contains('spotlight-stage')) return '.spotlight-card';
+    return '.ma-case-grid-card, .mpa-case-link, .mpa-case-card, [data-case-card]';
+  }
+
+  function surfaceCards(container) {
+    var selector = cardSelectorForSurface(container);
+    var direct = Array.prototype.slice.call(container.children).filter(function(child) {
+      return child.matches && child.matches(selector);
+    });
+    if (direct.length) return direct;
+    return Array.prototype.slice.call(container.querySelectorAll(selector));
+  }
+
+  function chooseSpotlightCards(cards, selected, limit) {
+    var matching = cards.filter(function(card) {
+      return caseIsActive(card) && countryMatches(selected, card);
+    });
+    var paid = matching.filter(function(card) {
+      return (card.getAttribute('data-card-type') || '').toLowerCase() === 'paid';
+    });
+    if (paid.length) return paid.slice(0, limit);
+    return matching.sort(function(a, b) {
+      var aPriority = parseInt(a.getAttribute('data-priority') || '3', 10);
+      var bPriority = parseInt(b.getAttribute('data-priority') || '3', 10);
+      return aPriority - bPriority;
+    }).slice(0, limit);
+  }
+
+  function chooseSurfaceCards(container, cards, selected) {
+    var limit = surfaceLimit(container);
+    if (container.classList.contains('ma-spotlight-bar__grid')) {
+      return chooseSpotlightCards(cards, selected, limit);
+    }
+    var matching = cards.filter(function(card) {
+      return caseIsActive(card) && countryMatches(selected, card);
+    });
+    if (container.classList.contains('boosted-track')) {
+      var paid = matching.filter(function(card) {
+        return (card.getAttribute('data-card-type') || '').toLowerCase() === 'paid';
+      });
+      if (paid.length) return paid.slice(0, limit);
+    }
+    return matching.slice(0, limit);
+  }
+
+  function applySurfaceFiltering(selected) {
+    document.querySelectorAll('[data-country-surface], .mpa-cases-grid, .boosted-track, .spotlight-stage, .ma-spotlight-bar__grid, .home-verified-case-grid__cards').forEach(function(container) {
+      var cards = surfaceCards(container);
+      if (!cards.length) return;
+      var chosen = chooseSurfaceCards(container, cards, selected);
+      cards.forEach(function(card) {
+        var show = chosen.indexOf(card) !== -1;
+        card.hidden = !show;
+        card.classList.toggle('country-mode-hidden', !show);
+        card.setAttribute('data-ma-runtime-hidden', show ? 'false' : 'true');
+        if (show) {
+          card.style.removeProperty('display');
+        } else {
+          card.style.setProperty('display', 'none', 'important');
+        }
+        var country = countryFromNode(card);
+        if (country && !card.getAttribute('data-country-code')) card.setAttribute('data-country-code', country);
+        if (!card.getAttribute('data-active-case')) card.setAttribute('data-active-case', caseIsActive(card) ? 'true' : 'false');
+      });
+      updateEmptyState(container, selected);
+      var localEmpty = container.parentElement && container.parentElement.querySelector('[data-country-empty]');
+      if (localEmpty) localEmpty.style.display = chosen.length ? 'none' : 'block';
+    });
   }
 
   function filterHomepage(selected) {
@@ -324,9 +426,10 @@
       node.classList.toggle('country-mode-hidden', !show);
     });
 
-    document.querySelectorAll('[data-country-surface], .mpa-cases-grid, .boosted-track, .spotlight-stage, .ma-spotlight-bar__grid, .blog-articles').forEach(function(container) {
-      updateEmptyState(container, selected);
-    });
+	    document.querySelectorAll('[data-country-surface], .mpa-cases-grid, .boosted-track, .spotlight-stage, .ma-spotlight-bar__grid, .blog-articles').forEach(function(container) {
+	      updateEmptyState(container, selected);
+	    });
+    applySurfaceFiltering(selected);
 
     document.querySelectorAll('[data-country-heading]').forEach(function(heading) {
       var template = heading.getAttribute('data-country-heading') || 'Latest Missing Alerts in {country}';
@@ -477,8 +580,14 @@
 
   function scheduleStaleHomepageCountryRuntime() {
     applyStaleHomepageCountryRuntime();
+    var selected = getHomepageRuntimeCountry() || getCountryData(selectedCountryCode);
+    if (selected) applySurfaceFiltering(selected);
     [50, 150, 500, 1300, 3500, 6500].forEach(function(delay) {
-      window.setTimeout(applyStaleHomepageCountryRuntime, delay);
+      window.setTimeout(function() {
+        applyStaleHomepageCountryRuntime();
+        var current = getHomepageRuntimeCountry() || getCountryData(selectedCountryCode);
+        if (current) applySurfaceFiltering(current);
+      }, delay);
     });
   }
 
@@ -651,6 +760,7 @@
       updateDocumentCountry(starterCountry);
       updateTopbar(starterCountry);
       updateWheelSelection(starterCountry, false);
+      filterHomepage(starterCountry);
       openPopup();
     }
     scheduleStaleHomepageCountryRuntime();

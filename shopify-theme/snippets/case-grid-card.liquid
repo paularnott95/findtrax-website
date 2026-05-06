@@ -45,9 +45,53 @@
   assign case_excerpt = article.excerpt | strip_html | default: article.content | strip_html | truncatewords: 22
   assign case_url = article.url | default: '#'
   assign placeholder_image = 'missing-person-silhouette.svg' | asset_url
-  assign case_country = country_code | default: article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | default: 'all' | downcase | strip
-  if case_country == 'uk'
+  assign case_country = country_code | default: article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | default: '' | downcase | strip
+  assign case_tag_blob = article.tags | join: '|' | downcase
+  if case_country == blank or case_country == 'all' or case_country == 'unknown'
+    for country_tag in article.tags
+      assign country_tag_downcase = country_tag | downcase | strip
+      if country_tag_downcase contains 'country:'
+        assign case_country = country_tag_downcase | split: ':' | last | strip
+        break
+      endif
+    endfor
+  endif
+  if case_country == blank or case_country == 'all' or case_country == 'unknown'
+    assign country_text_clue = case_title | append: ' ' | append: article.excerpt | strip_html | append: ' ' | append: article.content | strip_html | downcase
+    if country_text_clue contains 'united states' or country_text_clue contains 'usa' or country_text_clue contains 'hartford' or country_text_clue contains 'connecticut'
+      assign case_country = 'us'
+    elsif country_text_clue contains 'canada' or country_text_clue contains 'rcmp' or country_text_clue contains 'kelowna' or country_text_clue contains 'british columbia'
+      assign case_country = 'ca'
+    elsif country_text_clue contains 'australia' or country_text_clue contains 'woolworths george town' or country_text_clue contains 'victoria' or country_text_clue contains 'queensland'
+      assign case_country = 'au'
+    elsif country_text_clue contains 'new zealand' or country_text_clue contains 'otago'
+      assign case_country = 'nz'
+    elsif country_text_clue contains 'ireland' or country_text_clue contains 'dublin' or country_text_clue contains 'cork' or country_text_clue contains 'galway'
+      assign case_country = 'ie'
+    elsif country_text_clue contains 'singapore'
+      assign case_country = 'sg'
+    elsif country_text_clue contains 'south africa'
+      assign case_country = 'za'
+    elsif country_text_clue contains 'united kingdom' or country_text_clue contains 'england' or country_text_clue contains 'scotland' or country_text_clue contains 'wales' or country_text_clue contains 'northern ireland'
+      assign case_country = 'gb'
+    endif
+  endif
+  if case_country == 'uk' or case_country == 'england' or case_country == 'scotland' or case_country == 'wales' or case_country == 'northern-ireland' or case_country == 'northern ireland'
     assign case_country = 'gb'
+  elsif case_country == 'usa' or case_country == 'united-states' or case_country == 'united states' or case_country == 'united states of america'
+    assign case_country = 'us'
+  elsif case_country == 'canada'
+    assign case_country = 'ca'
+  elsif case_country == 'australia'
+    assign case_country = 'au'
+  elsif case_country == 'new-zealand' or case_country == 'new zealand'
+    assign case_country = 'nz'
+  elsif case_country == 'ireland'
+    assign case_country = 'ie'
+  elsif case_country == 'singapore'
+    assign case_country = 'sg'
+  elsif case_country == 'south-africa' or case_country == 'south africa'
+    assign case_country = 'za'
   endif
   assign case_country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | default: ''
   if case_country_slug == blank
@@ -71,7 +115,28 @@
       assign case_country_slug = case_country
     endif
   endif
-  assign case_country_label = country_label | default: article.metafields.custom.country.value | default: article.metafields.custom.country_name.value | default: article.metafields.custom.country | default: article.metafields.custom.country_name | default: case_country | upcase
+  assign case_country_label = country_label | default: article.metafields.custom.country.value | default: article.metafields.custom.country_name.value | default: article.metafields.custom.country | default: article.metafields.custom.country_name | default: ''
+  if case_country_label == blank
+    if case_country == 'gb'
+      assign case_country_label = 'United Kingdom'
+    elsif case_country == 'us'
+      assign case_country_label = 'United States'
+    elsif case_country == 'ca'
+      assign case_country_label = 'Canada'
+    elsif case_country == 'au'
+      assign case_country_label = 'Australia'
+    elsif case_country == 'nz'
+      assign case_country_label = 'New Zealand'
+    elsif case_country == 'ie'
+      assign case_country_label = 'Ireland'
+    elsif case_country == 'sg'
+      assign case_country_label = 'Singapore'
+    elsif case_country == 'za'
+      assign case_country_label = 'South Africa'
+    else
+      assign case_country_label = 'Country pending'
+    endif
+  endif
   assign case_location = location | default: ''
   assign case_location_slug_path = location_slug_path | default: article.metafields.custom.location_slug_path.value | default: article.metafields.custom.location_slug_path | default: ''
   if case_location == blank or case_location == 'Location pending' or case_location == 'location pending' or case_location == 'Unknown' or case_location == 'unknown'
@@ -164,6 +229,8 @@
   data-country-code="{{ case_country | escape }}"
   data-country-slug="{{ case_country_slug | escape }}"
   data-country-name="{{ case_country_label | escape }}"
+  data-case-handle="{{ article.handle | escape }}"
+  data-active-case="{% if card_is_found_status %}false{% else %}true{% endif %}"
   data-region="{{ case_region | escape }}"
   data-admin1="{{ case_admin1 | escape }}"
   data-admin2="{{ case_admin2 | escape }}"
