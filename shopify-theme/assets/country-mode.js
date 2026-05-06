@@ -1,3 +1,4 @@
+/* MA_COUNTRY_MODE_VERIFIED_20260506_FINAL */
 (function() {
   var configNode = document.getElementById('missing-alerts-country-mode-config');
   if (!configNode) return;
