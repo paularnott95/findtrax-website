@@ -1,0 +1,44 @@
+[
+  {
+    "queuedAt": "2026-05-06T08:07:46.126Z",
+    "name": "Vitoria Barreto",
+    "sourceUrl": "https://www.missingpeople.org.uk/help-us-find/vitoria-barreto-26-002106",
+    "reason": "no image candidates found",
+    "rejected": []
+  },
+  {
+    "queuedAt": "2026-05-06T08:07:50.477Z",
+    "name": "Jack Smith",
+    "sourceUrl": "https://www.missingpeople.org.uk/help-us-find/jack-smith-25-005166",
+    "reason": "no image candidates found",
+    "rejected": []
+  },
+  {
+    "queuedAt": "2026-05-06T08:07:56.757Z",
+    "name": "Kian Gillespie",
+    "sourceUrl": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/missing-person-appeal-kian-gillespie-22-years-ballinode-sligo-22nd-april-2026.html",
+    "reason": "no accepted image candidate after validation",
+    "rejected": [
+      {
+        "url": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/&#39;&#39;",
+        "method": "css:background-image",
+        "score": 44,
+        "reason": "not-image-content-type"
+      }
+    ]
+  },
+  {
+    "queuedAt": "2026-05-06T08:08:00.604Z",
+    "name": "John Morgan",
+    "sourceUrl": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/missing-person-appeal-john-morgan-65-years-rathfarnham-dublin-16-26th-april-2026.html",
+    "reason": "no accepted image candidate after validation",
+    "rejected": [
+      {
+        "url": "https://www.garda.ie/en/victim-services/garda-victim-service/support-services-missing-persons/2026%20press%20releases%20missing%20persons/april/&#39;&#39;",
+        "method": "css:background-image",
+        "score": 44,
+        "reason": "not-image-content-type"
+      }
+    ]
+  }
+]

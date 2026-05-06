@@ -18,6 +18,7 @@ import toolAlertSignupHandler from '../api/tool-alert-signups.js'
 
 const cases = JSON.parse(await readFile('data/missing-alerts-public-cases.json', 'utf8'))
 const countryProfiles = JSON.parse(await readFile('data/country-profiles.json', 'utf8'))
+const simpleImportQueue = JSON.parse(await readFile('data/simple-case-import-queue.json', 'utf8'))
 
 assert.equal(countrySlugFromCode('GB'), 'united-kingdom')
 assert.equal(countrySlugFromCode('UK'), 'united-kingdom')
@@ -129,6 +130,9 @@ const sourceReport = await scannerSourceReport()
 assert.equal(sourceReport.enabled, 1)
 assert(sourceReport.sources.some((source) => source.countryCode === 'GLOBAL'))
 assert(sourceReport.scale.checkpoints, true)
+assert.equal(simpleImportQueue.length, 20, 'simple importer proof queue attempts exactly 20 official URLs')
+assert(simpleImportQueue.every((item) => item.sourceUrl && item.countryCode && item.sourceName && item.activeOnly === true), 'simple import queue entries are source-backed and active-only')
+assert(simpleImportQueue.every((item) => /^https:\/\//.test(item.sourceUrl)), 'simple import queue uses HTTPS official/public source URLs')
 
 const workflow = await readFile('.github/workflows/missing-alerts-scanner.yml', 'utf8')
 assert(workflow.includes('scanner:run-and-publish'))
