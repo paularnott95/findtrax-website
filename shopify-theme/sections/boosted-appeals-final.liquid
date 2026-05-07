@@ -1,738 +1,395 @@
+{% liquid
+  assign source_blog = blogs['missing-persons']
+  assign now_ts = 'now' | date: '%s' | plus: 0
+  assign placeholder_image = 'missing-person-silhouette.svg' | asset_url
+  assign boost_product = all_products['boost-appeal-24-hours']
+  assign boost_cta_url = '/products/boost-appeal-24-hours'
+  if boost_product != blank
+    assign boost_cta_url = boost_product.url
+  endif
+%}
 
-
-{% assign source_blog = blogs['missing-persons'] %}
-{% assign rendered_handles = '|' %}
-{% assign now_ts = 'now' | date: '%s' | plus: 0 %}
-{% assign paid_count = 0 %}
-{% assign fallback_count = 0 %}
-{% assign minimum_slots = 4 %}
-
-{% comment %}
-  DO NOT replace/remove without preserving fallback render.
-  Boosted appeals are dynamic; if the source blog or boosted data is unavailable, the homepage must still render a clean empty panel.
-{% endcomment %}
-<section class="boosted-bar" data-country-section data-country-scope="all">
-  <div class="boosted-bar-inner">
-
-    <div class="boosted-bar-glow"></div>
-
-<div class="boosted-header">
-  <div class="boosted-header-inline">
-    <div class="boosted-kicker-wrap">
-      <span class="boosted-kicker">LIVE PRIORITY VISIBILITY</span>
-    </div>
-
-    <h2 class="boosted-title">{{ section.settings.title }}</h2>
-
-    <div class="boosted-subtitle">
-      Paid boosted cases appear first. Higher point totals rank above lower point totals while boosts are live.
-    </div>
-  </div>
-</div>
-
-    <div class="boosted-viewport" id="boosted-viewport-{{ section.id }}">
-      <div class="boosted-track" id="boosted-track-{{ section.id }}" data-country-surface="boosted">
-
-        {% if source_blog != blank and source_blog.articles_count > 0 %}
-
-          {%- comment -%} ACTIVE PAID BOOSTS ONLY {%- endcomment -%}
-	        {% for article in source_blog.articles %}
-	  {% assign public_case_handle = article.handle | downcase %}
-	  {% assign public_case_title = article.title | downcase %}
-	  {% assign hide_public_case = false %}
-	  {% if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test' %}
-	    {% assign hide_public_case = true %}
-	  {% endif %}
-	  {% if public_case_handle contains 'pablo' or public_case_handle contains 'esobar' or public_case_handle contains 'escobar' or public_case_handle contains 'miss-123' or public_case_handle contains 'automatic-fallback' %}
-	    {% assign hide_public_case = true %}
-	  {% endif %}
-	  {% if public_case_title contains 'pablo' or public_case_title contains 'esobar' or public_case_title contains 'escobar' or public_case_title contains 'miss, 123' or public_case_title contains 'miss 123' or public_case_title contains 'automatic fallback' %}
-	    {% assign hide_public_case = true %}
-	  {% endif %}
-	  {% for article_tag in article.tags %}
-	    {% assign public_tag_downcase = article_tag | downcase | strip %}
-	    {% if public_tag_downcase == 'test' or public_tag_downcase == 'demo' or public_tag_downcase == 'debug' or public_tag_downcase contains 'test:' or public_tag_downcase contains 'demo:' or public_tag_downcase contains 'debug:' %}
-	      {% assign hide_public_case = true %}
-	    {% endif %}
-	  {% endfor %}
-	  {% if hide_public_case %}
-	    {% continue %}
-	  {% endif %}
-
-  {% assign spotlight_live = article.metafields.custom.spotlight_live.value %}
-
-  {% if spotlight_live == true or spotlight_live == 'true' %}
-    {% continue %}
-  {% endif %}
-
-  {% if article.handle == 'erik-netherfield' %}
-    {% continue %}
-  {% endif %}
-
-            {% assign boost_live_new = article.metafields.custom.boost_live.value %}
-            {% assign boost_live_old = article.metafields.custom.boost_active.value %}
-
-            {% assign points = article.metafields.custom.boost_points.value | default: 0 | plus: 0 %}
-
-            {% assign total_boosts_new = article.metafields.custom.total_boosts.value | default: 0 | plus: 0 %}
-            {% assign total_boosts_old = article.metafields.custom.support_count.value | default: 0 | plus: 0 %}
-            {% assign total_boosts = total_boosts_new %}
-            {% if total_boosts == 0 and total_boosts_old > 0 %}
-              {% assign total_boosts = total_boosts_old %}
-            {% endif %}
-
-            {% assign boost_end_raw = article.metafields.custom.boost_ends.value %}
-            {% if boost_end_raw == blank %}
-              {% assign boost_end_raw = article.metafields.custom.boost_end_date.value %}
-            {% endif %}
-
-            {% assign boost_started_raw = article.metafields.custom.boost_started.value %}
-            {% if boost_started_raw == blank %}
-              {% assign boost_started_raw = article.metafields.custom.boost_start_date.value %}
-            {% endif %}
-
-            {% assign boost_end_ts = 0 %}
-{% assign boost_started_ts = 0 %}
-
-{% if boost_end_raw != blank %}
-  {% assign boost_end_ts = boost_end_raw | date: '%s' | plus: 0 %}
-{% endif %}
-
-{% if points > 0 and boost_end_ts > 0 and boost_end_ts <= now_ts %}
-  {% continue %}
-{% endif %}
-
-{% if boost_started_raw != blank %}
-  {% assign boost_started_ts = boost_started_raw | date: '%s' | plus: 0 %}
-{% endif %}
-
-{% assign boost_live = false %}
-{% if boost_live_new == true or boost_live_old == true or boost_live_new == 'true' or boost_live_old == 'true' %}
-  {% assign boost_live = true %}
-{% endif %}
-
-{% assign is_active_paid = false %}
-
-{% if boost_live == true and points > 0 and boost_end_ts > now_ts %}
-  {% assign is_active_paid = true %}
-{% endif %}
-
-
-            {% assign token = article.handle | append: '|' %}
-
-            {% if is_active_paid %}
-              {% if paid_count >= minimum_slots %}
-                {% break %}
-              {% endif %}
-              {% unless rendered_handles contains token %}
-                {% assign rendered_handles = rendered_handles | append: token %}
-                {% assign paid_count = paid_count | plus: 1 %}
-
-                  {% liquid
-                    assign case_country_scope = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | downcase | strip
-                    assign case_country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | downcase | strip
-                    assign case_country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | strip
-                    if case_country_scope == blank or case_country_scope == 'all'
-                      for article_tag in article.tags
-                        assign tag_downcase = article_tag | downcase | strip
-                        if tag_downcase contains 'country:'
-                          assign case_country_scope = tag_downcase | split: ':' | last | strip
-                          break
-                        endif
-                      endfor
-                    endif
-                    if case_country_scope == 'uk' or case_country_scope == 'england' or case_country_scope == 'scotland' or case_country_scope == 'wales' or case_country_scope == 'northern ireland'
-                      assign case_country_scope = 'gb'
-                    elsif case_country_scope == 'usa' or case_country_scope == 'united-states' or case_country_scope == 'united states'
-                      assign case_country_scope = 'us'
-                    endif
-                    if case_country_slug == blank
-                      if case_country_scope == 'gb'
-                        assign case_country_slug = 'united-kingdom'
-                        assign case_country_name = case_country_name | default: 'United Kingdom'
-                      elsif case_country_scope == 'us'
-                        assign case_country_slug = 'united-states'
-                        assign case_country_name = case_country_name | default: 'United States'
-                      elsif case_country_scope == 'ca'
-                        assign case_country_slug = 'canada'
-                        assign case_country_name = case_country_name | default: 'Canada'
-                      elsif case_country_scope == 'au'
-                        assign case_country_slug = 'australia'
-                        assign case_country_name = case_country_name | default: 'Australia'
-                      elsif case_country_scope == 'nz'
-                        assign case_country_slug = 'new-zealand'
-                        assign case_country_name = case_country_name | default: 'New Zealand'
-                      elsif case_country_scope == 'ie'
-                        assign case_country_slug = 'ireland'
-                        assign case_country_name = case_country_name | default: 'Ireland'
-                      endif
-                    endif
-                  %}
-                  {% if case_country_scope == blank or case_country_scope == 'all' %}
-                    {% continue %}
-                  {% endif %}
-	                <div
-	                  class="boosted-card boosted-card--paid"
-	                  data-country-scope="{{ case_country_scope | escape }}"
-                    data-country-code="{{ case_country_scope | escape }}"
-                    data-country-slug="{{ case_country_slug | escape }}"
-                    data-country-name="{{ case_country_name | escape }}"
-                    data-status="active"
-                    data-case-handle="{{ article.handle | escape }}"
-                    data-source-verified="{% if article.tags contains 'scanner-imported' or article.tags contains 'source-verified' or article.tags contains 'official-source' %}true{% else %}false{% endif %}"
-                    data-active-case="true"
-	                  data-card-type="paid"
-                  data-points="{{ points }}"
-                  data-total-boosts="{{ total_boosts }}"
-                  data-started="{{ boost_started_ts }}"
-                  data-handle="{{ article.handle }}"
-                >
-                  {% render 'boosted-priority-card', article: article, fallback_mode: false %}
-                </div>
-              {% endunless %}
-            {% endif %}
-          {% endfor %}
-
-          {% if paid_count == 0 %}
-            {% for article in source_blog.articles %}
-              {% assign public_case_handle = article.handle | downcase %}
-              {% assign public_case_title = article.title | downcase %}
-              {% assign hide_public_case = false %}
-              {% if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test' %}
-                {% assign hide_public_case = true %}
-              {% endif %}
-              {% if public_case_handle contains 'pablo' or public_case_handle contains 'esobar' or public_case_handle contains 'escobar' or public_case_handle contains 'miss-123' or public_case_handle contains 'automatic-fallback' %}
-                {% assign hide_public_case = true %}
-              {% endif %}
-              {% if public_case_title contains 'pablo' or public_case_title contains 'esobar' or public_case_title contains 'escobar' or public_case_title contains 'miss, 123' or public_case_title contains 'miss 123' or public_case_title contains 'automatic fallback' %}
-                {% assign hide_public_case = true %}
-              {% endif %}
-
-              {% assign public_tag_blob = article.tags | join: '|' | downcase %}
-              {% assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | default: '' | downcase %}
-              {% if case_status contains 'found' or case_status contains 'safe' or case_status contains 'located' or case_status contains 'closed' or case_status contains 'archived' or case_status contains 'draft' or case_status contains 'review' or case_status contains 'private' %}
-                {% assign hide_public_case = true %}
-              {% endif %}
-              {% if public_tag_blob contains 'found safe' or public_tag_blob contains 'found-safe' or public_tag_blob contains 'located' or public_tag_blob contains 'closed' or public_tag_blob contains 'private' or public_tag_blob contains 'draft' or public_tag_blob contains 'review' %}
-                {% assign hide_public_case = true %}
-              {% endif %}
-              {% for article_tag in article.tags %}
-                {% assign public_tag_downcase = article_tag | downcase | strip %}
-                {% if public_tag_downcase == 'test' or public_tag_downcase == 'demo' or public_tag_downcase == 'debug' or public_tag_downcase contains 'test:' or public_tag_downcase contains 'demo:' or public_tag_downcase contains 'debug:' %}
-                  {% assign hide_public_case = true %}
-                {% endif %}
-              {% endfor %}
-
-              {% assign token = article.handle | append: '|' %}
-              {% if hide_public_case == false and fallback_count < minimum_slots %}
-                {% unless rendered_handles contains token %}
-                  {% assign rendered_handles = rendered_handles | append: token %}
-                  {% assign fallback_count = fallback_count | plus: 1 %}
-                    {% liquid
-                      assign case_country_scope = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | downcase | strip
-                      assign case_country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | downcase | strip
-                      assign case_country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | strip
-                      if case_country_scope == blank or case_country_scope == 'all'
-                        for article_tag in article.tags
-                          assign tag_downcase = article_tag | downcase | strip
-                          if tag_downcase contains 'country:'
-                            assign case_country_scope = tag_downcase | split: ':' | last | strip
-                            break
-                          endif
-                        endfor
-                      endif
-                      if case_country_scope == 'uk' or case_country_scope == 'england' or case_country_scope == 'scotland' or case_country_scope == 'wales' or case_country_scope == 'northern ireland'
-                        assign case_country_scope = 'gb'
-                      elsif case_country_scope == 'usa' or case_country_scope == 'united-states' or case_country_scope == 'united states'
-                        assign case_country_scope = 'us'
-                      endif
-                      if case_country_slug == blank
-                        if case_country_scope == 'gb'
-                          assign case_country_slug = 'united-kingdom'
-                          assign case_country_name = case_country_name | default: 'United Kingdom'
-                        elsif case_country_scope == 'us'
-                          assign case_country_slug = 'united-states'
-                          assign case_country_name = case_country_name | default: 'United States'
-                        elsif case_country_scope == 'ca'
-                          assign case_country_slug = 'canada'
-                          assign case_country_name = case_country_name | default: 'Canada'
-                        elsif case_country_scope == 'au'
-                          assign case_country_slug = 'australia'
-                          assign case_country_name = case_country_name | default: 'Australia'
-                        elsif case_country_scope == 'nz'
-                          assign case_country_slug = 'new-zealand'
-                          assign case_country_name = case_country_name | default: 'New Zealand'
-                        elsif case_country_scope == 'ie'
-                          assign case_country_slug = 'ireland'
-                          assign case_country_name = case_country_name | default: 'Ireland'
-                        endif
-                      endif
-                    %}
-                    {% if case_country_scope == blank or case_country_scope == 'all' %}
-                      {% continue %}
-                    {% endif %}
-	                  <div
-	                    class="boosted-card boosted-card--fallback"
-	                    data-country-scope="{{ case_country_scope | escape }}"
-                      data-country-code="{{ case_country_scope | escape }}"
-                      data-country-slug="{{ case_country_slug | escape }}"
-                      data-country-name="{{ case_country_name | escape }}"
-                      data-status="active"
-                      data-case-handle="{{ article.handle | escape }}"
-                      data-source-verified="{% if article.tags contains 'scanner-imported' or article.tags contains 'source-verified' or article.tags contains 'official-source' %}true{% else %}false{% endif %}"
-                      data-active-case="true"
-	                    data-card-type="fallback"
-                    data-handle="{{ article.handle }}"
-                  >
-                    {% render 'boosted-priority-card', article: article, fallback_mode: true %}
-                  </div>
-                {% endunless %}
-              {% endif %}
-            {% endfor %}
-
-            {% if fallback_count == 0 %}
-              <div class="boosted-card boosted-card--empty" data-card-type="empty">
-                <div style="padding:14px 16px;color:rgba(255,255,255,0.82);font-size:14px;line-height:1.4;">
-                  No featured appeals are currently available. Please check the latest missing person appeals.
-                </div>
-              </div>
-            {% endif %}
-          {% endif %}
-
-        {% else %}
-          <div class="boosted-card boosted-card--empty" data-card-type="empty">
-            <div style="padding:14px 16px;color:rgba(255,255,255,0.82);font-size:14px;line-height:1.4;">
-              No featured appeals are currently available. Please check the latest missing person appeals.
-            </div>
-          </div>
-        {% endif %}
-
+<section class="ma-boosted-appeals" data-ma-boosted-appeals data-country-section data-country-scope="all">
+  <div class="ma-boosted-appeals__shell">
+    <header class="ma-boosted-appeals__header">
+      <div>
+        <p class="ma-boosted-appeals__eyebrow">Live priority visibility</p>
+        <h2>{{ section.settings.title | default: 'BOOSTED APPEALS' }}</h2>
+        <p>Boosted cases receive extra visibility while their boost is live.</p>
       </div>
+      <a class="ma-boosted-appeals__cta" href="{{ boost_cta_url }}">Boost a Case</a>
+    </header>
+
+    <div class="ma-boosted-appeals__layout">
+      <div>
+        <div class="ma-boosted-appeals__notice" data-ma-boost-mode>Loading selected-country boosted appeals.</div>
+        <div class="ma-boosted-appeals__grid" data-ma-boost-grid></div>
+        <div class="ma-boosted-appeals__empty" data-ma-boost-empty hidden>
+          <strong>No active boosted or fallback appeals are currently available for this country.</strong>
+          <a href="/pages/country-intelligence">View country intelligence</a>
+        </div>
+      </div>
+
+      <aside class="ma-boosted-sidebar" data-ma-boost-sidebar>
+        <div class="ma-boosted-sidebar__head">
+          <span>Priority sidebar</span>
+          <strong>Boosted Appeals</strong>
+        </div>
+        <div class="ma-boosted-sidebar__list" data-ma-boost-sidebar-list></div>
+      </aside>
     </div>
 
+    <div class="ma-boosted-appeals__pool" data-ma-boost-pool hidden>
+      {% if source_blog != blank %}
+        {% for article in source_blog.articles limit: 120 %}
+          {% liquid
+            assign tag_blob = article.tags | join: '|' | downcase
+            assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase
+            assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase
+            assign blog_handle = article.blog.handle | default: '' | downcase
+            assign public_handle = article.handle | downcase
+            assign public_title = article.title | downcase
+            assign excluded = false
+            if blog_handle == 'found-safe' or case_status contains 'found' or case_status contains 'safe' or case_status contains 'resolved' or case_status contains 'located' or case_status contains 'closed' or case_status contains 'private' or case_status contains 'review' or case_status contains 'draft' or owner_status contains 'resolved'
+              assign excluded = true
+            endif
+            if tag_blob contains 'found-safe' or tag_blob contains 'found safe' or tag_blob contains 'located' or tag_blob contains 'closed' or tag_blob contains 'private' or tag_blob contains 'review' or tag_blob contains 'draft' or tag_blob contains 'debug' or tag_blob contains 'demo' or tag_blob contains 'placeholder'
+              assign excluded = true
+            endif
+            if public_handle contains 'debug' or public_handle contains 'demo' or public_handle contains 'test-' or public_handle contains '-test' or public_handle contains 'pablo' or public_handle contains 'esobar' or public_handle contains 'escobar' or public_handle contains 'miss-123' or public_handle contains 'automatic-fallback'
+              assign excluded = true
+            endif
+            if public_title contains 'pablo' or public_title contains 'esobar' or public_title contains 'escobar' or public_title contains 'miss, 123' or public_title contains 'miss 123' or public_title contains 'automatic fallback'
+              assign excluded = true
+            endif
+
+            assign country_code = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | downcase | strip
+            assign country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | downcase | strip
+            assign country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+            if country_code == blank or country_code == 'all' or country_code == 'unknown'
+              for article_tag in article.tags
+                assign tag_downcase = article_tag | downcase | strip
+                if tag_downcase contains 'country:'
+                  assign country_code = tag_downcase | split: ':' | last | strip
+                  break
+                endif
+              endfor
+            endif
+            if country_code == 'uk' or country_code == 'england' or country_code == 'scotland' or country_code == 'wales' or country_code == 'northern ireland'
+              assign country_code = 'gb'
+            elsif country_code == 'usa' or country_code == 'united-states' or country_code == 'united states'
+              assign country_code = 'us'
+            endif
+            if country_slug == blank
+              case country_code
+                when 'gb'
+                  assign country_slug = 'united-kingdom'
+                  assign country_name = country_name | default: 'United Kingdom'
+                when 'us'
+                  assign country_slug = 'united-states'
+                  assign country_name = country_name | default: 'United States'
+                when 'ca'
+                  assign country_slug = 'canada'
+                  assign country_name = country_name | default: 'Canada'
+                when 'au'
+                  assign country_slug = 'australia'
+                  assign country_name = country_name | default: 'Australia'
+                when 'nz'
+                  assign country_slug = 'new-zealand'
+                  assign country_name = country_name | default: 'New Zealand'
+                when 'ie'
+                  assign country_slug = 'ireland'
+                  assign country_name = country_name | default: 'Ireland'
+                when 'sg'
+                  assign country_slug = 'singapore'
+                  assign country_name = country_name | default: 'Singapore'
+              endcase
+            endif
+            if country_name == blank
+              assign country_name = country_code | upcase
+            endif
+
+            assign boost_live_new = article.metafields.custom.boost_live.value | default: article.metafields.custom.boost_live
+            assign boost_live_old = article.metafields.custom.boost_active.value | default: article.metafields.custom.boost_active
+            assign boost_points = article.metafields.custom.boost_points.value | default: article.metafields.custom.boost_points | default: 0 | plus: 0
+            assign priority_score = article.metafields.custom.priority_score.value | default: article.metafields.custom.priority_score | default: 0 | plus: 0
+            if boost_points == 0 and priority_score > 0
+              assign boost_points = priority_score
+            endif
+            assign total_boosts = article.metafields.custom.total_boosts.value | default: article.metafields.custom.total_boosts | default: 0 | plus: 0
+            assign support_count = article.metafields.custom.support_count.value | default: article.metafields.custom.support_count | default: 0 | plus: 0
+            if total_boosts == 0 and support_count > 0
+              assign total_boosts = support_count
+            endif
+            assign boost_started = article.metafields.custom.boost_started.value | default: article.metafields.custom.boost_started | default: article.metafields.custom.boost_start_date.value | default: article.metafields.custom.boost_start_date
+            assign boost_ends = article.metafields.custom.boost_ends.value | default: article.metafields.custom.boost_ends | default: article.metafields.custom.boost_end_date.value | default: article.metafields.custom.boost_end_date
+            assign boost_plan = article.metafields.custom.boost_plan.value | default: article.metafields.custom.boost_plan | default: ''
+            assign boost_level = article.metafields.custom.boost_level.value | default: article.metafields.custom.boost_level | default: ''
+            assign boost_started_ts = 0
+            assign boost_end_ts = 0
+            if boost_started != blank
+              assign boost_started_ts = boost_started | date: '%s' | plus: 0
+            endif
+            if boost_ends != blank
+              assign boost_end_ts = boost_ends | date: '%s' | plus: 0
+            endif
+            assign boost_live = false
+            if boost_live_new == true or boost_live_old == true or boost_live_new == 'true' or boost_live_old == 'true' or boost_live_new == '1' or boost_live_old == '1'
+              assign boost_live = true
+            endif
+            assign paid_boost = false
+            if boost_live
+              if boost_end_ts == 0 or boost_end_ts > now_ts
+                if boost_points > 0 or boost_plan != blank or boost_level != blank
+                  assign paid_boost = true
+                endif
+              endif
+            endif
+            assign source_verified = false
+            if tag_blob contains 'source-verified' or tag_blob contains 'scanner-imported' or tag_blob contains 'official-source'
+              assign source_verified = true
+            endif
+            assign urgent_case = false
+            if tag_blob contains 'urgent' or case_status contains 'urgent'
+              assign urgent_case = true
+            endif
+            assign has_image = false
+            if article.image
+              assign has_image = true
+            endif
+          %}
+          {% if excluded == false and country_code != blank %}
+            <article
+              class="ma-boost-card"
+              data-ma-boost-card
+              data-country-code="{{ country_code | escape }}"
+              data-country-slug="{{ country_slug | escape }}"
+              data-country-name="{{ country_name | escape }}"
+              data-status="active"
+              data-case-handle="{{ article.handle | escape }}"
+              data-source-verified="{{ source_verified }}"
+              data-has-image="{{ has_image }}"
+              data-paid-boost="{{ paid_boost }}"
+              data-boost-points="{{ boost_points }}"
+              data-total-boosts="{{ total_boosts }}"
+              data-boost-started="{{ boost_started_ts }}"
+              data-boost-plan="{{ boost_plan | escape }}"
+              data-boost-level="{{ boost_level | escape }}"
+              data-fallback-priority="{% if urgent_case %}1{% elsif source_verified %}2{% elsif has_image %}3{% else %}4{% endif %}"
+            >
+              <a class="ma-boost-card__link" href="{{ article.url }}">
+                <div class="ma-boost-card__media">
+                  {% if article.image %}
+                    <img src="{{ article.image | image_url: width: 520, height: 360, crop: 'center' }}" alt="{{ article.title | escape }}" loading="lazy" width="520" height="360">
+                  {% else %}
+                    <img src="{{ placeholder_image }}" alt="Missing person appeal image" loading="lazy" width="520" height="360">
+                  {% endif %}
+                  <span class="ma-boost-card__badge" data-ma-boost-label>{% if paid_boost %}{% if boost_points > 0 %}{{ boost_points }} BP{% else %}Boosted{% endif %}{% elsif urgent_case %}Urgent{% elsif source_verified %}Source verified{% else %}Priority appeal{% endif %}</span>
+                </div>
+                <div class="ma-boost-card__body">
+                  <p class="ma-boost-card__meta">{{ country_name | escape }}{% if total_boosts > 0 %} / {{ total_boosts }} boosts{% endif %}</p>
+                  <h3>{{ article.title | escape }}</h3>
+                  <p class="ma-boost-card__summary">{{ article.excerpt_or_content | strip_html | truncate: 105 }}</p>
+                </div>
+              </a>
+            </article>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
   </div>
 </section>
 
-<style>
-  .boosted-bar {
-    width: 100%;
-    margin: 22px 0 30px;
-  }
-
- .boosted-bar-inner {
-  position: relative;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(255, 62, 62, 0.14), transparent 26%),
-    radial-gradient(circle at 80% 70%, rgba(255, 90, 90, 0.10), transparent 26%),
-    linear-gradient(135deg, #120d0d 0%, #1a1111 35%, #220b0d 100%);
-  border: 1px solid rgba(255, 70, 70, 0.24);
-  border-radius: 20px;
-  padding: 12px 14px 12px;
-  box-shadow:
-    0 18px 40px rgba(0,0,0,0.28),
-    0 0 0 1px rgba(255,255,255,0.02) inset,
-    0 0 28px rgba(140,14,14,0.18);
-  overflow: hidden;
-}
-
-  .boosted-bar-glow {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 59, 59, 0.08) 50%, transparent 100%);
-    transform: translateX(-100%);
-    animation: boostedGlowSweep 7s linear infinite;
-    pointer-events: none;
-  }
-
-  .boosted-bar-inner:before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ff3131 0%, #ff7b7b 50%, #ff3131 100%);
-    opacity: 0.95;
-  }
-
-.boosted-header {
-  position: relative;
-  z-index: 2;
-  margin-bottom: 8px;
-  padding-top: 0;
-}
-
-.boosted-header-inline {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.boosted-kicker-wrap {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 7px 12px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255,45,45,0.34) 0%, rgba(120,10,10,0.24) 100%);
-  border: 1px solid rgba(255, 90, 90, 0.38);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.03) inset,
-    0 0 10px rgba(255,40,40,0.30),
-    0 0 22px rgba(255,20,20,0.22);
-  animation: boostedKickerFlash 0.9s ease-in-out infinite;
-}
-
-.boosted-kicker {
-  color: #ffd2d2;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-}
-
-.boosted-title {
-  margin: 0;
-  color: #fff;
-  font-size: 28px;
-  line-height: 1;
-  font-weight: 900;
-  text-transform: uppercase;
-  flex: 0 0 auto;
-}
-
-.boosted-subtitle {
-  color: rgba(255,255,255,0.72);
-  font-size: 12px;
-  line-height: 1.35;
-  margin: 0;
-  flex: 1 1 340px;
-}
-
-	  .boosted-viewport {
-	    position: relative;
-	    z-index: 2;
-	    overflow: hidden;
-	    width: 100%;
-	  }
-
-  .boosted-viewport.is-dragging {
-    cursor: grabbing;
-  }
-
-	  .boosted-track {
-	  display: grid;
-	  grid-template-columns: repeat(4, minmax(0, 1fr));
-	  gap: 12px;
-	  width: 100% !important;
-	  align-items: stretch;
-	  padding: 4px 2px 6px;
-    transform: none !important;
-	}
-
-.boosted-card {
-	  min-width: 0;
-	  max-width: none;
-	  display: flex;
-	  align-items: stretch;
-	  align-self: stretch;
-  transition: transform 0.28s ease, filter 0.28s ease, box-shadow 0.28s ease;
-}
-
-.boosted-card .bp-card {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-}
-
-.boosted-card .bp-card__media {
-  flex: 0 0 auto;
-}
-
-	.boosted-card .bp-card__image {
-	  width: 100%;
-	  height: 150px !important;
-	  object-fit: cover;
-	  object-position: center 32%;
-	  display: block;
-}
-
-.boosted-card .bp-card__body {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  min-height: 0 !important;
-  padding: 10px 10px 10px !important;
-}
-
-.boosted-card .bp-card__title {
-  min-height: 0 !important;
-  margin: 0 0 8px !important;
-  line-height: 1.16 !important;
-}
-
-.boosted-card .bp-card__stats {
-  margin-top: 8px !important;
-}
-
-  .boosted-card--paid {
-    filter: saturate(1.08);
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,0.03) inset,
-      0 10px 24px rgba(0,0,0,0.25),
-      0 0 18px rgba(255, 50, 50, 0.16);
-  }
-
-	  .boosted-card:hover {
-	    transform: translateY(-4px);
-    filter: brightness(1.1);
-    box-shadow:
-      0 22px 40px rgba(0,0,0,0.4),
-      0 0 40px rgba(255, 30, 30, 0.45),
-      0 0 80px rgba(255, 30, 30, 0.25);
-  }
-
-	  .boosted-card--paid:hover {
-	    transform: translateY(-4px);
-    box-shadow:
-      0 26px 50px rgba(0,0,0,0.45),
-      0 0 50px rgba(255, 20, 20, 0.6),
-      0 0 100px rgba(255, 20, 20, 0.3);
-    border: 1px solid rgba(255, 80, 80, 0.25);
-  }
-
-  .boosted-card--empty {
-    opacity: 0.86;
-  }
-
-  .boosted-empty {
-    color: #fff;
-    font-size: 14px;
-  }
-
-  @keyframes boostedPulse {
-    0%, 100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.25);
-      opacity: 0.7;
-    }
-  }
-
-  @keyframes boostedGlowSweep {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-
-  @keyframes boostedKickerFlash {
-  0%, 100% {
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,0.03) inset,
-      0 0 8px rgba(255,40,40,0.22),
-      0 0 18px rgba(255,20,20,0.14);
-    filter: brightness(1);
-  }
-  50% {
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,0.05) inset,
-      0 0 14px rgba(255,40,40,0.40),
-      0 0 30px rgba(255,20,20,0.28);
-    filter: brightness(1.08);
-  }
-}
-
-	  @media screen and (max-width: 1200px) {
-	  .boosted-track { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-
-	  .boosted-card .bp-card__image {
-	    height: 145px !important;
-	  }
-	}
-
-	@media screen and (max-width: 989px) {
-	  .boosted-track { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-  .boosted-title {
-    font-size: 26px;
-  }
-
-	  .boosted-card .bp-card__image {
-	    height: 140px !important;
-	  }
-	}
-
-	@media screen and (max-width: 749px) {
-	  .boosted-track { grid-template-columns: 1fr; }
-
-  .boosted-title {
-    font-size: 22px;
-  }
-
-  .boosted-header-inline {
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .boosted-subtitle {
-    flex-basis: 100%;
-  }
-
-	  .boosted-card .bp-card__image {
-	    height: 150px !important;
-	  }
-	}
-</style>
-
 <script>
 (function() {
-  var viewport = document.getElementById('boosted-viewport-{{ section.id }}');
-  var track = document.getElementById('boosted-track-{{ section.id }}');
+  var section = document.querySelector('[data-ma-boosted-appeals]');
+  if (!section) return;
+  var pool = section.querySelector('[data-ma-boost-pool]');
+  var grid = section.querySelector('[data-ma-boost-grid]');
+  var sidebar = section.querySelector('[data-ma-boost-sidebar-list]');
+  var notice = section.querySelector('[data-ma-boost-mode]');
+  var empty = section.querySelector('[data-ma-boost-empty]');
+  var countries = {
+    gb: { code: 'gb', name: 'United Kingdom', aliases: ['gb', 'uk', 'united-kingdom', 'united kingdom', 'england', 'scotland', 'wales', 'northern ireland'] },
+    us: { code: 'us', name: 'United States', aliases: ['us', 'usa', 'united-states', 'united states', 'united states of america'] },
+    ca: { code: 'ca', name: 'Canada', aliases: ['ca', 'canada'] },
+    au: { code: 'au', name: 'Australia', aliases: ['au', 'australia'] },
+    nz: { code: 'nz', name: 'New Zealand', aliases: ['nz', 'new-zealand', 'new zealand'] },
+    ie: { code: 'ie', name: 'Ireland', aliases: ['ie', 'ireland'] },
+    sg: { code: 'sg', name: 'Singapore', aliases: ['sg', 'singapore'] }
+  };
 
-  if (!viewport || !track) return;
-
-  function sortCards() {
-    var cards = Array.from(track.querySelectorAll('.boosted-card'));
-
-    cards.sort(function(a, b) {
-      var typeA = a.dataset.cardType || 'empty';
-      var typeB = b.dataset.cardType || 'empty';
-
-      if (typeA !== typeB) {
-        return typeA === 'paid' ? -1 : 1;
-      }
-
-      var pointsA = parseInt(a.dataset.points || '0', 10);
-      var pointsB = parseInt(b.dataset.points || '0', 10);
-      if (pointsA !== pointsB) return pointsB - pointsA;
-
-      var boostsA = parseInt(a.dataset.totalBoosts || '0', 10);
-      var boostsB = parseInt(b.dataset.totalBoosts || '0', 10);
-      if (boostsA !== boostsB) return boostsB - boostsA;
-
-      var startedA = parseInt(a.dataset.started || '0', 10);
-      var startedB = parseInt(b.dataset.started || '0', 10);
-      return startedB - startedA;
-    });
-
-    cards.forEach(function(card) {
-      track.appendChild(card);
-    });
+  function normalize(value) {
+    return String(value || '').toLowerCase().trim().replace(/_/g, '-');
   }
 
-  sortCards();
-
-  var originalCards = Array.from(track.querySelectorAll('.boosted-card'));
-  var originalCount = originalCards.length;
-
-  if (originalCount === 0) return;
-
-  if (originalCount <= 6) {
-    track.classList.add('is-static');
-    track.style.width = '100%';
-    track.style.transform = 'none';
-    return;
-  }
-
-  var scrollAmount = 0;
-  var speed = 0.35;
-  var isHovering = false;
-  var isDragging = false;
-  var startX = 0;
-  var startScroll = 0;
-
-  originalCards.forEach(function(card) {
-    var clone = card.cloneNode(true);
-    clone.setAttribute('aria-hidden', 'true');
-    track.appendChild(clone);
-  });
-
-  function animate() {
-    if (!isHovering && !isDragging) {
-      scrollAmount += speed;
-
-      var halfWidth = track.scrollWidth / 2;
-      if (scrollAmount >= halfWidth) {
-        scrollAmount = 0;
-      }
-
-      track.style.transform = 'translateX(-' + scrollAmount + 'px)';
+  function canonical(value) {
+    var normalized = normalize(value);
+    if (!normalized) return 'gb';
+    var parsed = null;
+    if (normalized.charAt(0) === '{') {
+      try { parsed = JSON.parse(value); } catch (error) {}
+      if (parsed) normalized = normalize(parsed.code || parsed.slug || parsed.name || '');
     }
-
-    requestAnimationFrame(animate);
+    var compact = normalized.replace(/\s+/g, '-');
+    for (var key in countries) {
+      if (countries[key].aliases.indexOf(normalized) !== -1 || countries[key].aliases.indexOf(compact) !== -1) return key;
+    }
+    return countries[compact] ? compact : 'gb';
   }
 
-  function onWheel(e) {
-    e.preventDefault();
-
-    scrollAmount += e.deltaY * 0.8 + e.deltaX * 0.8;
-
-    var halfWidth = track.scrollWidth / 2;
-    if (scrollAmount < 0) scrollAmount = halfWidth + scrollAmount;
-    if (scrollAmount >= halfWidth) scrollAmount = scrollAmount - halfWidth;
-
-    track.style.transform = 'translateX(-' + scrollAmount + 'px)';
+  function cookie(name) {
+    return (document.cookie || '').split(';').reduce(function(found, part) {
+      var trimmed = part.trim();
+      return found || (trimmed.indexOf(name + '=') === 0 ? decodeURIComponent(trimmed.slice(name.length + 1)) : '');
+    }, '');
   }
 
-  function onDragStart(e) {
-    isDragging = true;
-    isHovering = true;
-    startX = e.touches ? e.touches[0].clientX : e.clientX;
-    startScroll = scrollAmount;
-    viewport.classList.add('is-dragging');
+  function selectedCountry() {
+    var params = new URLSearchParams(window.location.search || '');
+    var query = params.get('country');
+    var stored = '';
+    try { stored = window.localStorage.getItem('missingAlertsCountry') || ''; } catch (error) {}
+    var code = canonical(query || stored || cookie('missing_alerts_country') || document.documentElement.getAttribute('data-country-code') || 'gb');
+    return countries[code] || countries.gb;
   }
 
-  function onDragMove(e) {
-    if (!isDragging) return;
-
-    var currentX = e.touches ? e.touches[0].clientX : e.clientX;
-    var diff = currentX - startX;
-    var halfWidth = track.scrollWidth / 2;
-
-    scrollAmount = startScroll - diff;
-
-    if (scrollAmount < 0) scrollAmount = halfWidth + scrollAmount;
-    if (scrollAmount >= halfWidth) scrollAmount = scrollAmount - halfWidth;
-
-    track.style.transform = 'translateX(-' + scrollAmount + 'px)';
+  function seedFor(countryCode) {
+    var today = new Date().toISOString().slice(0, 10);
+    var seed = 0;
+    (today + ':boost:' + countryCode + ':' + window.location.pathname).split('').forEach(function(ch) {
+      seed = ((seed << 5) - seed + ch.charCodeAt(0)) | 0;
+    });
+    return Math.abs(seed) || 1;
   }
 
-  function onDragEnd() {
-    isDragging = false;
-    isHovering = false;
-    viewport.classList.remove('is-dragging');
+  function seededShuffle(items, seed) {
+    var copy = items.slice();
+    function next() {
+      seed = (seed * 1103515245 + 12345) % 2147483648;
+      return seed / 2147483648;
+    }
+    for (var i = copy.length - 1; i > 0; i -= 1) {
+      var j = Math.floor(next() * (i + 1));
+      var tmp = copy[i];
+      copy[i] = copy[j];
+      copy[j] = tmp;
+    }
+    return copy;
   }
 
-  animate();
+  function paidRank(card) {
+    var points = parseInt(card.getAttribute('data-boost-points') || '0', 10);
+    var total = parseInt(card.getAttribute('data-total-boosts') || '0', 10);
+    var started = parseInt(card.getAttribute('data-boost-started') || '0', 10);
+    return (points * -100000000000) + (total * -100000000) - started;
+  }
 
-  viewport.addEventListener('mouseenter', function() {
-    isHovering = true;
+  function fallbackRank(card) {
+    return parseInt(card.getAttribute('data-fallback-priority') || '9', 10);
+  }
+
+  function cloneCard(card, compact) {
+    var clone = card.cloneNode(true);
+    clone.hidden = false;
+    clone.removeAttribute('hidden');
+    clone.style.removeProperty('display');
+    clone.classList.add('is-visible');
+    if (compact) clone.classList.add('ma-boost-card--compact');
+    var label = clone.querySelector('[data-ma-boost-label]');
+    if (label && card.getAttribute('data-paid-boost') !== 'true') label.textContent = 'Priority fallback';
+    return clone;
+  }
+
+  function renderBoosts() {
+    var country = selectedCountry();
+    var templates = Array.prototype.slice.call(pool.querySelectorAll('[data-ma-boost-card]')).filter(function(card) {
+      return canonical(card.getAttribute('data-country-code') || card.getAttribute('data-country-slug') || card.getAttribute('data-country-name')) === country.code;
+    });
+    var paid = templates.filter(function(card) {
+      return card.getAttribute('data-paid-boost') === 'true';
+    }).sort(function(a, b) {
+      return paidRank(a) - paidRank(b);
+    });
+    var selected = paid.slice(0, 4);
+    var spotlightHandles = Array.isArray(window.MA_SPOTLIGHT_SELECTED_HANDLES) ? window.MA_SPOTLIGHT_SELECTED_HANDLES : [];
+    if (!selected.length) {
+      var fallbackSource = templates.slice().sort(function(a, b) {
+        return fallbackRank(a) - fallbackRank(b);
+      });
+      var withoutSpotlight = fallbackSource.filter(function(card) {
+        return spotlightHandles.indexOf(card.getAttribute('data-case-handle') || '') === -1;
+      });
+      if (withoutSpotlight.length >= 4 || fallbackSource.length > 4) fallbackSource = withoutSpotlight;
+      selected = seededShuffle(fallbackSource, seedFor(country.code)).slice(0, 4);
+    }
+    grid.innerHTML = '';
+    sidebar.innerHTML = '';
+    selected.forEach(function(card) {
+      grid.appendChild(cloneCard(card, false));
+      sidebar.appendChild(cloneCard(card, true));
+    });
+    if (notice) {
+      notice.textContent = paid.length ?
+        'Paid boosted appeals live for ' + country.name + '.' :
+        (selected.length ? 'No paid boosts live - showing priority appeals from ' + country.name + '.' : 'No selected-country boosted appeals are available.');
+    }
+    if (empty) empty.hidden = selected.length > 0;
+    section.setAttribute('data-selected-country', country.code);
+    section.setAttribute('data-paid-count', String(paid.length));
+    section.setAttribute('data-visible-count', String(selected.length));
+  }
+
+  window.MissingAlertsBoostedAppeals = { refresh: renderBoosts };
+  window.addEventListener('ma:spotlight-rendered', renderBoosts);
+  ['DOMContentLoaded', 'pageshow', 'missingAlertsCountryChanged', 'country-mode:change', 'storage'].forEach(function(eventName) {
+    window.addEventListener(eventName, renderBoosts);
+    document.addEventListener(eventName, renderBoosts);
   });
-
-  viewport.addEventListener('mouseleave', function() {
-    isHovering = false;
-    isDragging = false;
-    viewport.classList.remove('is-dragging');
-  });
-
-  viewport.addEventListener('wheel', onWheel, { passive: false });
-
-  viewport.addEventListener('mousedown', onDragStart);
-  window.addEventListener('mousemove', onDragMove);
-  window.addEventListener('mouseup', onDragEnd);
-
-  viewport.addEventListener('touchstart', onDragStart, { passive: true });
-  viewport.addEventListener('touchmove', onDragMove, { passive: true });
-  viewport.addEventListener('touchend', onDragEnd);
+  renderBoosts();
+  window.setTimeout(renderBoosts, 350);
+  window.setTimeout(renderBoosts, 1300);
 })();
 </script>
+
+<style>
+.ma-boosted-appeals{max-width:1260px;margin:12px auto 22px;padding:0 14px;color:#fff}
+.ma-boosted-appeals__shell{position:relative;overflow:hidden;border-radius:22px;padding:16px;background:radial-gradient(circle at 12% 12%,rgba(255,55,55,.16),transparent 28%),linear-gradient(135deg,#110d0d,#19080b 58%,#07080c);border:1px solid rgba(255,70,70,.20);box-shadow:0 18px 54px rgba(0,0,0,.36)}
+.ma-boosted-appeals__header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:13px}
+.ma-boosted-appeals__eyebrow{margin:0 0 5px;color:#ffb4b4;font-size:10px;font-weight:950;letter-spacing:.16em;text-transform:uppercase}
+.ma-boosted-appeals h2{margin:0;color:#fff;font-size:clamp(24px,3vw,34px);line-height:1;font-weight:950;letter-spacing:.03em}
+.ma-boosted-appeals__header p:not(.ma-boosted-appeals__eyebrow){margin:7px 0 0;color:rgba(255,255,255,.7);font-size:13px;line-height:1.4;font-weight:750}
+.ma-boosted-appeals__cta{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 15px;border-radius:999px;background:linear-gradient(180deg,#ff4b4b,#a80f1d);border:1px solid rgba(255,255,255,.14);color:#fff!important;text-decoration:none;font-size:12px;font-weight:950;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.ma-boosted-appeals__layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+.ma-boosted-appeals__notice{display:inline-flex;margin:0 0 10px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);color:rgba(255,235,235,.88);font-size:11px;font-weight:900}
+.ma-boosted-appeals__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.ma-boost-card{min-width:0}
+.ma-boost-card__link{height:100%;display:flex;flex-direction:column;overflow:hidden;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.10);color:#fff!important;text-decoration:none;box-shadow:0 12px 28px rgba(0,0,0,.26);transition:transform .2s ease,border-color .2s ease}
+.ma-boost-card__link:hover{transform:translateY(-2px);border-color:rgba(255,120,120,.30)}
+.ma-boost-card__media{position:relative;aspect-ratio:16/10;overflow:hidden;background:#12070a}
+.ma-boost-card__media img{width:100%;height:100%;display:block;object-fit:cover;object-position:center}
+.ma-boost-card__media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.52))}
+.ma-boost-card__badge{position:absolute;left:8px;bottom:8px;z-index:2;display:inline-flex;padding:5px 8px;border-radius:999px;background:rgba(211,24,38,.90);color:#fff;font-size:10px;font-weight:950;letter-spacing:.06em;text-transform:uppercase}
+.ma-boost-card__body{display:flex;flex:1;flex-direction:column;padding:11px;min-width:0}
+.ma-boost-card__meta{margin:0 0 6px;color:#ffb4b4;font-size:10px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ma-boost-card h3{margin:0;color:#fff;font-size:15px;line-height:1.16;font-weight:950;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ma-boost-card__summary{margin:7px 0 0;color:rgba(255,255,255,.72);font-size:11px;line-height:1.35;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ma-boosted-sidebar{border-radius:16px;padding:12px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.ma-boosted-sidebar__head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.ma-boosted-sidebar__head span{color:#ffb4b4;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase}
+.ma-boosted-sidebar__head strong{color:#fff;font-size:13px;text-transform:uppercase;text-align:right}
+.ma-boosted-sidebar__list{display:grid;gap:9px}
+.ma-boost-card--compact .ma-boost-card__link{display:grid;grid-template-columns:74px minmax(0,1fr);min-height:82px;border-radius:12px}
+.ma-boost-card--compact .ma-boost-card__media{aspect-ratio:auto;height:100%}
+.ma-boost-card--compact .ma-boost-card__body{padding:9px}
+.ma-boost-card--compact .ma-boost-card__summary{display:none}
+.ma-boost-card--compact h3{font-size:12px}
+.ma-boost-card--compact .ma-boost-card__badge{font-size:9px;padding:4px 6px}
+.ma-boosted-appeals__empty{margin-top:10px;padding:12px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.84);font-size:13px;font-weight:800}
+.ma-boosted-appeals__empty a{margin-left:8px;color:#ffb4b4!important}
+@media(max-width:1100px){.ma-boosted-appeals__layout{grid-template-columns:1fr}.ma-boosted-sidebar{max-width:none}.ma-boosted-appeals__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.ma-boosted-appeals{padding:0 10px}.ma-boosted-appeals__shell{border-radius:18px;padding:13px}.ma-boosted-appeals__header{align-items:flex-start;flex-direction:column}.ma-boosted-appeals__cta{width:100%}.ma-boosted-appeals__grid{grid-template-columns:1fr}}
+</style>
 
 {% schema %}
 {

@@ -623,9 +623,6 @@
 {% comment %} Restored homepage section: spotlight_system_g6nycR (spotlight-system) {% endcomment %}
 {% section 'spotlight-system' %}
 
-{% comment %} Missing Alerts country-specific premium spotlight bar {% endcomment %}
-{% render 'ma-spotlight-bar' %}
-
 {% comment %} Restored homepage section: boosted_appeals_final_RptqUp (boosted-appeals-final) {% endcomment %}
 {% section 'boosted-appeals-final' %}
 
@@ -778,14 +775,11 @@
 {% comment %} Restored homepage section: custom_liquid_KCYKgp (custom-liquid) {% endcomment %}
 
 
-{% comment %} Restored homepage section: boosted_sidebar_dx9yDk (BOOSTED-SIDEBAR) {% endcomment %}
-{% section 'BOOSTED-SIDEBAR' %}
-
 {% comment %} Restored homepage section: custom_liquid_jGmxQ4 (custom-liquid) {% endcomment %}
 <style>
 .mpa-latest-layout{
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(300px,340px);
+  grid-template-columns:minmax(0,1fr);
   gap:16px;
   align-items:stretch;
   max-width:1360px;
@@ -1498,10 +1492,6 @@
       </script>
 
     </div>
-  </div>
-
-  <div class="mpa-latest-sidebar">
-    {% render 'boosted-sidebar', fill_mode: true, fill_limit: 3 %}
   </div>
 
 </div>

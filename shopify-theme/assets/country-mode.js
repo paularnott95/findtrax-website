@@ -780,9 +780,229 @@
     cleanHomepageHeroOverlay();
   }
 
+  function ensurePremiumPlacementStyles() {
+    if (document.getElementById('ma-premium-placement-runtime-style')) return;
+    var style = document.createElement('style');
+    style.id = 'ma-premium-placement-runtime-style';
+    style.textContent = [
+      '.ma-spotlight-bar.ma-premium-spotlight-runtime,.boosted-bar.ma-boosted-runtime{max-width:1280px!important;margin:18px auto!important;padding:18px!important;border-radius:22px!important;background:radial-gradient(circle at 15% 15%,rgba(255,44,44,.20),transparent 34%),linear-gradient(180deg,#13090b 0%,#090a0d 100%)!important;border:1px solid rgba(255,82,82,.24)!important;box-shadow:0 22px 58px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.06)!important;overflow:hidden!important;}',
+      '.ma-premium-placement-head{display:flex!important;align-items:end!important;justify-content:space-between!important;gap:16px!important;margin:0 0 14px!important;}',
+      '.ma-premium-placement-kicker{color:#ffb4a8!important;font-size:11px!important;font-weight:950!important;letter-spacing:.16em!important;text-transform:uppercase!important;}',
+      '.ma-premium-placement-head h2{margin:4px 0 0!important;color:#fff!important;font-size:28px!important;line-height:1!important;font-weight:950!important;letter-spacing:.02em!important;text-transform:uppercase!important;}',
+      '.ma-premium-placement-head p{margin:0!important;max-width:430px!important;color:rgba(255,232,220,.72)!important;font-size:13px!important;line-height:1.45!important;font-weight:750!important;text-align:right!important;}',
+      '.ma-premium-placement-cta{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:34px!important;padding:8px 12px!important;border-radius:999px!important;background:linear-gradient(180deg,#ff4f4f,#b11119)!important;color:#fff!important;text-decoration:none!important;font-size:11px!important;font-weight:950!important;letter-spacing:.08em!important;text-transform:uppercase!important;border:1px solid rgba(255,255,255,.12)!important;white-space:nowrap!important;}',
+      '.ma-spotlight-bar.ma-premium-spotlight-runtime .ma-spotlight-bar__head{display:none!important;}',
+      '.ma-spotlight-bar.ma-premium-spotlight-runtime .ma-spotlight-bar__grid{display:grid!important;grid-template-columns:1.2fr .9fr .9fr!important;gap:14px!important;align-items:stretch!important;}',
+      '.ma-premium-placement-card{position:relative!important;display:flex!important;min-height:220px!important;aspect-ratio:16/10!important;border-radius:18px!important;overflow:hidden!important;text-decoration:none!important;color:#fff!important;background:#15171d!important;border:1px solid rgba(255,255,255,.10)!important;box-shadow:0 14px 36px rgba(0,0,0,.32)!important;}',
+      '.ma-premium-placement-card:first-child{min-height:292px!important;grid-row:span 2!important;}',
+      '.ma-premium-placement-card:before{content:""!important;position:absolute!important;inset:0!important;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.88))!important;z-index:1!important;}',
+      '.ma-premium-placement-card img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;filter:saturate(.94) contrast(1.02)!important;}',
+      '.ma-premium-placement-card__body{position:relative!important;z-index:2!important;align-self:flex-end!important;padding:14px!important;min-width:0!important;}',
+      '.ma-premium-placement-card__tag{display:inline-flex!important;margin:0 0 8px!important;padding:5px 8px!important;border-radius:999px!important;background:rgba(220,38,38,.86)!important;color:#fff!important;font-size:10px!important;font-weight:950!important;letter-spacing:.08em!important;text-transform:uppercase!important;}',
+      '.ma-premium-placement-card__title{display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important;margin:0!important;color:#fff!important;font-size:17px!important;line-height:1.12!important;font-weight:950!important;}',
+      '.ma-premium-placement-card:first-child .ma-premium-placement-card__title{font-size:24px!important;}',
+      '.ma-premium-placement-card__meta{margin:7px 0 0!important;color:rgba(255,236,226,.76)!important;font-size:12px!important;font-weight:800!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}',
+      '.ma-boosted-runtime .boosted-bar-inner{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(280px,320px)!important;gap:14px!important;position:relative!important;}',
+      '.ma-boosted-runtime .boosted-header,.ma-boosted-runtime .boosted-viewport{display:none!important;}',
+      '.ma-boosted-runtime-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;}',
+      '.ma-boosted-runtime-sidebar{display:grid!important;gap:9px!important;padding:12px!important;border-radius:16px!important;background:rgba(255,255,255,.045)!important;border:1px solid rgba(255,255,255,.10)!important;}',
+      '.ma-boosted-runtime-sidebar .ma-premium-placement-card{min-height:86px!important;aspect-ratio:auto!important;}',
+      '.ma-boosted-runtime-sidebar .ma-premium-placement-card__body{padding:10px!important;}',
+      '.ma-boosted-runtime-sidebar .ma-premium-placement-card__title{font-size:12px!important;}',
+      '.ma-boosted-runtime-sidebar img{width:76px!important;height:100%!important;right:auto!important;}',
+      '.boosted-sidebar-section.ma-runtime-hidden-old-boost,.boosted-bar.ma-runtime-hidden-old-boost{display:none!important;}',
+      '.ma-premium-placement-empty{padding:14px 16px!important;border-radius:14px!important;background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.10)!important;color:rgba(255,255,255,.78)!important;font-weight:800!important;}',
+      '@media(max-width:980px){.ma-spotlight-bar.ma-premium-spotlight-runtime .ma-spotlight-bar__grid,.ma-boosted-runtime .boosted-bar-inner{grid-template-columns:1fr!important}.ma-boosted-runtime-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.ma-premium-placement-head{align-items:flex-start!important;flex-direction:column!important}.ma-premium-placement-head p{text-align:left!important}.ma-premium-placement-card:first-child{grid-row:auto!important;min-height:230px!important}}',
+      '@media(max-width:640px){.ma-boosted-runtime-grid{grid-template-columns:1fr!important}.ma-premium-placement-card,.ma-premium-placement-card:first-child{min-height:205px!important}.ma-premium-placement-head h2{font-size:23px!important}}'
+    ].join('\n');
+    document.head.appendChild(style);
+  }
+
+  function stablePlacementScore(seed, value) {
+    var text = String(seed || '') + '|' + String(value || '');
+    var hash = 2166136261;
+    for (var i = 0; i < text.length; i += 1) {
+      hash ^= text.charCodeAt(i);
+      hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+    }
+    return hash >>> 0;
+  }
+
+  function placementSeed(country) {
+    var day = new Date().toISOString().slice(0, 10);
+    return day + '-' + (country && country.code ? country.code : 'gb');
+  }
+
+  function placementImage(node) {
+    var img = node && node.querySelector ? node.querySelector('img') : null;
+    return img && (img.currentSrc || img.src || img.getAttribute('src')) || '/cdn/shop/t/2/assets/missing-person-silhouette.svg';
+  }
+
+  function placementTitle(node) {
+    var title = node && node.querySelector ? node.querySelector('.ma-spotlight-card__title,.mpa-case-title,.bp-card__title,h3,h2,strong') : null;
+    return title && title.textContent ? title.textContent.trim() : 'Missing person appeal';
+  }
+
+  function placementMeta(node, country) {
+    var meta = node && node.querySelector ? node.querySelector('.ma-spotlight-card__meta,.mpa-case-location,.bp-card__meta,.mpa-case-meta') : null;
+    return meta && meta.textContent ? meta.textContent.trim() : (country && country.name ? country.name : 'Active appeal');
+  }
+
+  function placementHref(node) {
+    if (!node) return '/blogs/missing-persons';
+    if (node.matches && node.matches('a[href]')) return node.href || node.getAttribute('href');
+    var link = node.querySelector && node.querySelector('a[href]');
+    return link ? (link.href || link.getAttribute('href')) : '/blogs/missing-persons';
+  }
+
+  function placementHandle(node) {
+    var href = placementHref(node);
+    return (node && (node.getAttribute('data-case-handle') || node.getAttribute('data-handle'))) ||
+      String(href || '').split('/blogs/missing-persons/').pop().split(/[?#]/)[0] ||
+      placementTitle(node);
+  }
+
+  function collectHomepagePlacementCases(country) {
+    var seen = {};
+    var nodes = Array.prototype.slice.call(document.querySelectorAll('.ma-spotlight-card,.boosted-card,.bp-card-shell,.mpa-case-link,.mpa-case-card,.ma-home-case-card'));
+    return nodes.map(function(node) {
+      var card = getHomepageCard(node) || node;
+      var detectedCountry = homepageCardCountry(node, card) || countryFromNode(card);
+      var handle = placementHandle(node);
+      var href = placementHref(node);
+      var key = href || handle;
+      if (!key || seen[key]) return null;
+      seen[key] = true;
+      return {
+        node: node,
+        card: card,
+        handle: handle,
+        href: href,
+        title: placementTitle(node),
+        meta: placementMeta(node, country),
+        image: placementImage(node),
+        country: detectedCountry,
+        active: homepageCardIsActive(node, card),
+        paidSpotlight: normalize((node.getAttribute('data-card-type') || card.getAttribute('data-card-type') || '')).indexOf('paid') !== -1,
+        paidBoost: normalize((node.getAttribute('data-paid-boost') || card.getAttribute('data-paid-boost') || node.getAttribute('data-boost-active') || card.getAttribute('data-boost-active') || '')).indexOf('true') !== -1,
+        boostPoints: parseInt(node.getAttribute('data-boost-points') || card.getAttribute('data-boost-points') || node.getAttribute('data-boost-score') || card.getAttribute('data-boost-score') || '0', 10) || 0,
+        sourceVerified: normalize(node.getAttribute('data-source-verified') || card.getAttribute('data-source-verified') || '').indexOf('true') !== -1
+      };
+    }).filter(function(item) {
+      return item && item.active && item.country === country.code;
+    });
+  }
+
+  function choosePlacementCases(cases, country, limit, paidKey, excludeHandles) {
+    var excluded = excludeHandles || {};
+    var eligible = cases.filter(function(item) {
+      return !excluded[item.handle];
+    });
+    var paid = eligible.filter(function(item) {
+      return paidKey === 'paidSpotlight' ? item.paidSpotlight : item.paidBoost || item.boostPoints > 0;
+    });
+    if (paid.length) {
+      paid.sort(function(a, b) {
+        return (b.boostPoints || 0) - (a.boostPoints || 0) || stablePlacementScore(placementSeed(country), a.handle) - stablePlacementScore(placementSeed(country), b.handle);
+      });
+      return paid.slice(0, limit);
+    }
+    eligible.sort(function(a, b) {
+      var sourceDelta = (b.sourceVerified ? 1 : 0) - (a.sourceVerified ? 1 : 0);
+      if (sourceDelta) return sourceDelta;
+      return stablePlacementScore(placementSeed(country), a.handle) - stablePlacementScore(placementSeed(country), b.handle);
+    });
+    return eligible.slice(0, limit);
+  }
+
+  function placementCardHtml(item, label) {
+    return [
+      '<a class="ma-premium-placement-card ma-home-case-card" href="', item.href, '" data-country-code="', item.country, '" data-status="active" data-case-handle="', item.handle.replace(/"/g, '&quot;'), '">',
+        '<img src="', item.image, '" alt="', item.title.replace(/"/g, '&quot;'), '" loading="lazy">',
+        '<span class="ma-premium-placement-card__body">',
+          '<span class="ma-premium-placement-card__tag">', label, '</span>',
+          '<strong class="ma-premium-placement-card__title">', item.title, '</strong>',
+          '<span class="ma-premium-placement-card__meta">', item.meta, '</span>',
+        '</span>',
+      '</a>'
+    ].join('');
+  }
+
+  function renderPremiumSpotlightRuntime(country, cases) {
+    var section = document.querySelector('.ma-spotlight-bar');
+    if (!section || !country) return {};
+    section.classList.add('ma-premium-spotlight-runtime', 'ma-premium-spotlight');
+    section.setAttribute('data-ma-premium-runtime', '20260507');
+    var oldEyebrow = section.querySelector('.ma-spotlight-bar__eyebrow');
+    if (oldEyebrow) oldEyebrow.textContent = 'Premium visibility placement';
+    var grid = section.querySelector('.ma-spotlight-bar__grid') || section.querySelector('.ma-spotlight-grid');
+    if (!grid) return {};
+    var selected = choosePlacementCases(cases, country, 3, 'paidSpotlight');
+    var paidLive = selected.some(function(item) { return item.paidSpotlight; });
+    var selectedHandles = {};
+    selected.forEach(function(item) { selectedHandles[item.handle] = true; });
+    var head = section.querySelector('.ma-premium-placement-head');
+    if (!head) {
+      head = document.createElement('div');
+      head.className = 'ma-premium-placement-head';
+      section.insertBefore(head, grid);
+    }
+    head.innerHTML = [
+      '<div><div class="ma-premium-placement-kicker">Premium visibility placement</div><h2>SPOTLIGHT CASES</h2></div>',
+      '<p>', paidLive ? 'Paid spotlight cases are being shown first for ' + country.name + '.' : 'Fallback spotlight - no paid spotlight is live in ' + country.name + '.', '</p>',
+      '<a class="ma-premium-placement-cta" href="/products/primary-spotlight-24-hours">Get Spotlight Placement</a>'
+    ].join('');
+    grid.innerHTML = selected.length ? selected.map(function(item) {
+      return placementCardHtml(item, item.paidSpotlight ? 'Paid spotlight' : 'Fallback spotlight');
+    }).join('') : '<div class="ma-premium-placement-empty">No active spotlight-eligible appeals are currently available for ' + country.name + '.</div>';
+    return selectedHandles;
+  }
+
+  function renderBoostedRuntime(country, cases, spotlightHandles) {
+    var section = document.querySelector('.boosted-bar');
+    if (!section || !country) return;
+    section.classList.add('ma-boosted-runtime', 'ma-boosted-appeals');
+    section.setAttribute('data-ma-boosted-runtime', '20260507');
+    var selected = choosePlacementCases(cases, country, 4, 'paidBoost', spotlightHandles);
+    if (!selected.length) selected = choosePlacementCases(cases, country, 4, 'paidBoost');
+    var paidLive = selected.some(function(item) { return item.paidBoost || item.boostPoints > 0; });
+    var inner = section.querySelector('.boosted-bar-inner') || section;
+    inner.innerHTML = [
+      '<div>',
+        '<div class="ma-premium-placement-head">',
+          '<div><div class="ma-premium-placement-kicker">Priority visibility</div><h2>BOOSTED APPEALS</h2></div>',
+          '<p>', paidLive ? 'Paid boosted appeals are ranked first for ' + country.name + '.' : 'No paid boosts live - showing priority appeals from ' + country.name + '.', '</p>',
+          '<a class="ma-premium-placement-cta" href="/products/boost-appeal-24-hours">Boost a Case</a>',
+        '</div>',
+        '<div class="ma-boosted-runtime-grid">',
+          selected.length ? selected.map(function(item) { return placementCardHtml(item, item.paidBoost || item.boostPoints > 0 ? 'Boosted' : 'Priority appeal'); }).join('') : '<div class="ma-premium-placement-empty">No active boost-eligible appeals are currently available for ' + country.name + '.</div>',
+        '</div>',
+      '</div>',
+      '<aside class="ma-boosted-runtime-sidebar" aria-label="Boosted appeals sidebar">',
+        selected.length ? selected.map(function(item) { return placementCardHtml(item, item.paidBoost || item.boostPoints > 0 ? 'Boosted' : 'Priority appeal'); }).join('') : '<div class="ma-premium-placement-empty">No active appeals for this country.</div>',
+      '</aside>'
+    ].join('');
+  }
+
+  function applyPremiumPlacementRuntime() {
+    if (!isHomepage()) return;
+    window.MA_PREMIUM_PLACEMENT_RUNTIME_VERSION = '20260507-spotlight-boosted';
+    ensurePremiumPlacementStyles();
+    var country = getHomepageRuntimeCountry() || getCountryData(selectedCountryCode) || getSelectorCountry('gb');
+    if (!country) return;
+    document.querySelectorAll('.boosted-sidebar-section').forEach(function(section) {
+      section.classList.add('ma-runtime-hidden-old-boost');
+      section.hidden = true;
+    });
+    var cases = collectHomepagePlacementCases(country);
+    var spotlightHandles = renderPremiumSpotlightRuntime(country, cases);
+    renderBoostedRuntime(country, cases, spotlightHandles);
+  }
+
   function applyStaleHomepageCountryRuntime() {
     window.MA_COUNTRY_FILTER_RUNTIME_VERSION = '20260506-final-runtime';
     applyHomepageNavRuntime();
+    applyPremiumPlacementRuntime();
     var grid = getHomepageGrid();
     var selected = getHomepageRuntimeCountry();
     if (!grid || !selected) return;
@@ -808,12 +1028,14 @@
 
   function scheduleStaleHomepageCountryRuntime() {
     applyHomepageNavRuntime();
+    applyPremiumPlacementRuntime();
     applyStaleHomepageCountryRuntime();
     var selected = getHomepageRuntimeCountry() || getCountryData(selectedCountryCode);
     if (selected) applySurfaceFiltering(selected);
     [50, 150, 500, 1300, 3500, 6500].forEach(function(delay) {
       window.setTimeout(function() {
         applyHomepageNavRuntime();
+        applyPremiumPlacementRuntime();
         applyStaleHomepageCountryRuntime();
         var current = getHomepageRuntimeCountry() || getCountryData(selectedCountryCode);
         if (current) applySurfaceFiltering(current);

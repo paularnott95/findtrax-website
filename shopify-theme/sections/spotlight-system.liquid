@@ -1,1704 +1,361 @@
-{% assign primary_case = nil %}
-{% assign left_case = nil %}
-{% assign right_case = nil %}
-{% assign first_supporting_case = nil %}
-{% assign second_supporting_case = nil %}
-{% assign fallback_primary_case = nil %}
-{% assign fallback_left_case = nil %}
-{% assign fallback_right_case = nil %}
-{% assign now_ts = 'now' | date: '%s' %}
-{% assign primary_count = 0 %}
-{% assign supporting_count = 0 %}
-{% assign primary_json = '' %}
-{% assign supporting_json = '' %}
-{% assign primary_scope = 'all' %}
-{% assign left_scope = 'all' %}
-{% assign right_scope = 'all' %}
-{% assign primary_is_fallback = false %}
-{% assign left_is_fallback = false %}
-{% assign right_is_fallback = false %}
-{% assign spotlight_placeholder_image = 'missing-person-silhouette.svg' | asset_url %}
-{% assign source_blog = blogs['missing-persons'] %}
+{% liquid
+  assign source_blog = blogs['missing-persons']
+  assign now_ts = 'now' | date: '%s' | plus: 0
+  assign placeholder_image = 'missing-person-silhouette.svg' | asset_url
+  assign spotlight_product = all_products['primary-spotlight-24-hours']
+  assign spotlight_cta_url = '/products/primary-spotlight-24-hours'
+  if spotlight_product != blank
+    assign spotlight_cta_url = spotlight_product.url
+  endif
+%}
 
-{% comment %}
-  DO NOT replace/remove without preserving fallback render.
-  Spotlight data is dynamic; an empty or unavailable case blog must not hide or crash the homepage.
-{% endcomment %}
-{% if source_blog != blank and source_blog.articles_count > 0 %}
-{% for article in source_blog.articles limit: 100 %}
-  {% assign live = article.metafields.custom.spotlight_live.value | default: article.metafields.custom.spotlight_live %}
-  {% assign level = article.metafields.custom.spotlight_level.value | default: article.metafields.custom.spotlight_level | downcase %}
-  {% assign slot = article.metafields.custom.spotlight_slot.value | default: article.metafields.custom.spotlight_slot | downcase %}
-  {% assign ends = article.metafields.custom.spotlight_ends.value | default: article.metafields.custom.spotlight_ends %}
-  {% assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase %}
-  {% assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase %}
-  {% assign article_blog_handle = article.blog.handle | default: '' | downcase %}
-  {% assign public_case_handle = article.handle | downcase %}
-  {% assign public_case_title = article.title | downcase %}
-  {% assign hide_public_case = false %}
-  {% if public_case_handle contains 'debug' or public_case_handle contains 'demo' or public_case_handle contains 'test-' or public_case_handle contains '-test' %}
-    {% assign hide_public_case = true %}
-  {% endif %}
-  {% if public_case_handle contains 'pablo' or public_case_handle contains 'esobar' or public_case_handle contains 'escobar' or public_case_handle contains 'miss-123' or public_case_handle contains 'automatic-fallback' %}
-    {% assign hide_public_case = true %}
-  {% endif %}
-  {% if public_case_title contains 'pablo' or public_case_title contains 'esobar' or public_case_title contains 'escobar' or public_case_title contains 'miss, 123' or public_case_title contains 'miss 123' or public_case_title contains 'automatic fallback' %}
-    {% assign hide_public_case = true %}
-  {% endif %}
-  {% if public_case_title contains 'automatic' and public_case_title contains 'fallback' %}
-    {% assign hide_public_case = true %}
-  {% endif %}
-  {% if public_case_title contains 'miss' and public_case_title contains '123' %}
-    {% assign hide_public_case = true %}
-  {% endif %}
-  {% for article_tag in article.tags %}
-    {% assign public_tag_downcase = article_tag | downcase | strip %}
-    {% if public_tag_downcase == 'test' or public_tag_downcase == 'demo' or public_tag_downcase == 'debug' or public_tag_downcase == 'fake' or public_tag_downcase == 'dummy' or public_tag_downcase == 'fallback' or public_tag_downcase == 'placeholder' or public_tag_downcase contains 'test:' or public_tag_downcase contains 'demo:' or public_tag_downcase contains 'debug:' %}
-      {% assign hide_public_case = true %}
-    {% endif %}
-  {% endfor %}
-  {% if hide_public_case %}
-    {% continue %}
-  {% endif %}
-  {% assign is_found_safe_case = false %}
-  {% if article_blog_handle == 'found-safe' or case_status == 'found' or case_status == 'resolved' or owner_status == 'resolved' %}
-    {% assign is_found_safe_case = true %}
-  {% endif %}
-  {% if ends != blank %}
-    {% assign end_ts = ends | date: '%s' %}
-  {% else %}
-    {% assign end_ts = 0 %}
-  {% endif %}
+<section class="ma-premium-spotlight" data-ma-premium-spotlight data-country-section data-country-scope="all">
+  <div class="ma-premium-spotlight__shell">
+    <div class="ma-premium-spotlight__glow" aria-hidden="true"></div>
+    <header class="ma-premium-spotlight__header">
+      <div>
+        <p class="ma-premium-spotlight__eyebrow">Premium visibility placement</p>
+        <h2>SPOTLIGHT CASES</h2>
+        <p class="ma-premium-spotlight__copy">Spotlight placements give selected appeals maximum visibility across Missing Alerts.</p>
+      </div>
+      <a class="ma-premium-spotlight__cta" href="{{ spotlight_cta_url }}">Get Spotlight Placement</a>
+    </header>
 
-  {% assign spotlight_live_active = false %}
-  {% if live == true or live == 'true' or live == 'True' or live == '1' or live contains 'true' %}
-    {% if end_ts == 0 or end_ts > now_ts %}
-      {% assign spotlight_live_active = true %}
-    {% endif %}
-  {% endif %}
+    <div class="ma-premium-spotlight__notice" data-ma-spotlight-mode>Loading selected-country spotlight cases.</div>
 
-  {% if is_found_safe_case == false %}
-    {% if fallback_primary_case == nil %}
-      {% assign fallback_primary_case = article %}
-    {% elsif fallback_left_case == nil %}
-      {% assign fallback_left_case = article %}
-    {% elsif fallback_right_case == nil and article.id != fallback_left_case.id %}
-      {% assign fallback_right_case = article %}
-    {% endif %}
-  {% endif %}
+    <div class="ma-premium-spotlight__grid" data-ma-spotlight-grid>
+      {% if source_blog != blank %}
+        {% for article in source_blog.articles limit: 120 %}
+          {% liquid
+            assign tag_blob = article.tags | join: '|' | downcase
+            assign case_status = article.metafields.custom.case_status.value | default: article.metafields.custom.case_status | downcase
+            assign owner_status = article.metafields.custom.case_owner_status.value | default: article.metafields.custom.case_owner_status | downcase
+            assign blog_handle = article.blog.handle | default: '' | downcase
+            assign public_handle = article.handle | downcase
+            assign public_title = article.title | downcase
+            assign excluded = false
+            if blog_handle == 'found-safe' or case_status contains 'found' or case_status contains 'safe' or case_status contains 'resolved' or case_status contains 'located' or case_status contains 'closed' or case_status contains 'private' or case_status contains 'review' or case_status contains 'draft' or owner_status contains 'resolved'
+              assign excluded = true
+            endif
+            if tag_blob contains 'found-safe' or tag_blob contains 'found safe' or tag_blob contains 'located' or tag_blob contains 'closed' or tag_blob contains 'private' or tag_blob contains 'review' or tag_blob contains 'draft' or tag_blob contains 'debug' or tag_blob contains 'demo' or tag_blob contains 'placeholder'
+              assign excluded = true
+            endif
+            if public_handle contains 'debug' or public_handle contains 'demo' or public_handle contains 'test-' or public_handle contains '-test' or public_handle contains 'pablo' or public_handle contains 'esobar' or public_handle contains 'escobar' or public_handle contains 'miss-123' or public_handle contains 'automatic-fallback'
+              assign excluded = true
+            endif
+            if public_title contains 'pablo' or public_title contains 'esobar' or public_title contains 'escobar' or public_title contains 'miss, 123' or public_title contains 'miss 123' or public_title contains 'automatic fallback'
+              assign excluded = true
+            endif
 
-  {% if spotlight_live_active %}
-      {% assign matches_primary = false %}
-      {% if slot == 'primary' or level contains 'primary' %}
-        {% assign matches_primary = true %}
-      {% endif %}
+            assign country_code = article.metafields.custom.country_code.value | default: article.metafields.custom.country_code | downcase | strip
+            assign country_slug = article.metafields.custom.country_slug.value | default: article.metafields.custom.country_slug | downcase | strip
+            assign country_name = article.metafields.custom.country_name.value | default: article.metafields.custom.country_name | default: article.metafields.custom.country.value | default: article.metafields.custom.country | strip
+            if country_code == blank or country_code == 'all' or country_code == 'unknown'
+              for article_tag in article.tags
+                assign tag_downcase = article_tag | downcase | strip
+                if tag_downcase contains 'country:'
+                  assign country_code = tag_downcase | split: ':' | last | strip
+                  break
+                endif
+              endfor
+            endif
+            if country_code == 'uk' or country_code == 'england' or country_code == 'scotland' or country_code == 'wales' or country_code == 'northern ireland'
+              assign country_code = 'gb'
+            elsif country_code == 'usa' or country_code == 'united-states' or country_code == 'united states'
+              assign country_code = 'us'
+            endif
+            if country_slug == blank
+              case country_code
+                when 'gb'
+                  assign country_slug = 'united-kingdom'
+                  assign country_name = country_name | default: 'United Kingdom'
+                when 'us'
+                  assign country_slug = 'united-states'
+                  assign country_name = country_name | default: 'United States'
+                when 'ca'
+                  assign country_slug = 'canada'
+                  assign country_name = country_name | default: 'Canada'
+                when 'au'
+                  assign country_slug = 'australia'
+                  assign country_name = country_name | default: 'Australia'
+                when 'nz'
+                  assign country_slug = 'new-zealand'
+                  assign country_name = country_name | default: 'New Zealand'
+                when 'ie'
+                  assign country_slug = 'ireland'
+                  assign country_name = country_name | default: 'Ireland'
+                when 'sg'
+                  assign country_slug = 'singapore'
+                  assign country_name = country_name | default: 'Singapore'
+              endcase
+            endif
+            if country_name == blank
+              assign country_name = country_code | upcase
+            endif
 
-      {% assign matches_supporting = false %}
-      {% if slot == 'supporting' or slot == 'supporting_left' or slot == 'supporting_right' or level contains 'supporting' or level contains 'support' %}
-        {% assign matches_supporting = true %}
-      {% endif %}
-
-      {% if matches_primary %}
-        {% assign primary_count = primary_count | plus: 1 %}
-
-        {% if primary_case == nil %}
-          {% assign primary_case = article %}
-        {% endif %}
-
-        {% capture primary_json %}
-          {{ primary_json }}{% if primary_count > 1 %},{% endif %}
-          {
-            "title": {{ article.title | json }},
-            "url": {{ article.url | json }},
-            "image": {% if article.image %}{{ article.image | image_url: width: 1600 | json }}{% else %}{{ spotlight_placeholder_image | json }}{% endif %},
-            "meta": {{ article.published_at | date: '%d %b %Y' | json }},
-            "text": {{ article.excerpt_or_content | strip_html | truncate: 220 | json }},
-            "badge": "PRIMARY SPOTLIGHT",
-            "kicker": "LIVE SPOTLIGHT",
-            "foundSafe": {{ is_found_safe_case | json }},
-            "countryScope": {% assign spotlight_scope = 'all' %}{% for article_tag in article.tags %}{% assign tag_downcase = article_tag | downcase | strip %}{% if tag_downcase contains 'country:' %}{% assign spotlight_scope = tag_downcase | split: ':' | last | strip %}{% if spotlight_scope == 'uk' %}{% assign spotlight_scope = 'gb' %}{% endif %}{% break %}{% endif %}{% endfor %}{{ spotlight_scope | json }}
-          }
-        {% endcapture %}
-      {% endif %}
-
-      {% if matches_supporting %}
-        {% assign supporting_count = supporting_count | plus: 1 %}
-
-        {% if first_supporting_case == nil %}
-          {% assign first_supporting_case = article %}
-        {% endif %}
-
-        {% if second_supporting_case == nil and first_supporting_case != article %}
-          {% assign second_supporting_case = article %}
-        {% endif %}
-
-        {% if slot == 'supporting_left' and left_case == nil %}
-          {% assign left_case = article %}
-        {% endif %}
-
-        {% if slot == 'supporting_right' and right_case == nil %}
-          {% assign right_case = article %}
-        {% endif %}
-
-        {% capture supporting_json %}
-          {{ supporting_json }}{% if supporting_count > 1 %},{% endif %}
-          {
-            "title": {{ article.title | json }},
-            "url": {{ article.url | json }},
-            "image": {% if article.image %}{{ article.image | image_url: width: 1000 | json }}{% else %}{{ spotlight_placeholder_image | json }}{% endif %},
-            "meta": {{ article.published_at | date: '%d %b %Y' | json }},
-            "text": {{ article.excerpt_or_content | strip_html | truncate: 145 | json }},
-            "slot": {{ slot | json }},
-            "badge": "SUPPORTING SPOTLIGHT",
-            "kicker": "LIVE SPOTLIGHT",
-            "foundSafe": {{ is_found_safe_case | json }},
-            "countryScope": {% assign spotlight_scope = 'all' %}{% for article_tag in article.tags %}{% assign tag_downcase = article_tag | downcase | strip %}{% if tag_downcase contains 'country:' %}{% assign spotlight_scope = tag_downcase | split: ':' | last | strip %}{% if spotlight_scope == 'uk' %}{% assign spotlight_scope = 'gb' %}{% endif %}{% break %}{% endif %}{% endfor %}{{ spotlight_scope | json }}
-          }
-        {% endcapture %}
-      {% endif %}
-
-  {% endif %}
-{% endfor %}
-{% endif %}
-
-{% if left_case == nil and first_supporting_case != nil %}
-  {% assign left_case = first_supporting_case %}
-{% endif %}
-
-{% if right_case == nil and second_supporting_case != nil %}
-  {% assign right_case = second_supporting_case %}
-{% endif %}
-
-{% if primary_case == nil and fallback_primary_case != nil %}
-  {% assign primary_case = fallback_primary_case %}
-  {% assign primary_is_fallback = true %}
-{% endif %}
-
-{% if left_case == nil %}
-  {% if fallback_left_case != nil and primary_case and fallback_left_case.id != primary_case.id %}
-    {% assign left_case = fallback_left_case %}
-    {% assign left_is_fallback = true %}
-  {% elsif fallback_primary_case != nil and primary_case and fallback_primary_case.id != primary_case.id %}
-    {% assign left_case = fallback_primary_case %}
-    {% assign left_is_fallback = true %}
-  {% endif %}
-{% endif %}
-
-{% if right_case == nil %}
-  {% if fallback_right_case != nil and primary_case and fallback_right_case.id != primary_case.id and left_case and fallback_right_case.id != left_case.id %}
-    {% assign right_case = fallback_right_case %}
-    {% assign right_is_fallback = true %}
-  {% elsif fallback_left_case != nil and primary_case and fallback_left_case.id != primary_case.id and left_case and fallback_left_case.id != left_case.id %}
-    {% assign right_case = fallback_left_case %}
-    {% assign right_is_fallback = true %}
-  {% elsif fallback_primary_case != nil and primary_case and fallback_primary_case.id != primary_case.id and left_case and fallback_primary_case.id != left_case.id %}
-    {% assign right_case = fallback_primary_case %}
-    {% assign right_is_fallback = true %}
-  {% endif %}
-{% endif %}
-
-{% if left_case %}
-  {% for left_tag in left_case.tags %}
-    {% assign left_tag_downcase = left_tag | downcase | strip %}
-    {% if left_tag_downcase contains 'country:' %}
-      {% assign left_scope = left_tag_downcase | split: ':' | last | strip %}
-      {% if left_scope == 'uk' %}
-        {% assign left_scope = 'gb' %}
-      {% endif %}
-      {% break %}
-    {% endif %}
-  {% endfor %}
-{% endif %}
-
-{% if primary_case %}
-  {% for primary_tag in primary_case.tags %}
-    {% assign primary_tag_downcase = primary_tag | downcase | strip %}
-    {% if primary_tag_downcase contains 'country:' %}
-      {% assign primary_scope = primary_tag_downcase | split: ':' | last | strip %}
-      {% if primary_scope == 'uk' %}
-        {% assign primary_scope = 'gb' %}
-      {% endif %}
-      {% break %}
-    {% endif %}
-  {% endfor %}
-{% endif %}
-
-{% if right_case %}
-  {% for right_tag in right_case.tags %}
-    {% assign right_tag_downcase = right_tag | downcase | strip %}
-    {% if right_tag_downcase contains 'country:' %}
-      {% assign right_scope = right_tag_downcase | split: ':' | last | strip %}
-      {% if right_scope == 'uk' %}
-        {% assign right_scope = 'gb' %}
-      {% endif %}
-      {% break %}
-    {% endif %}
-  {% endfor %}
-{% endif %}
-
-{% assign left_found_safe = false %}
-{% if left_case %}
-  {% assign left_case_status = left_case.metafields.custom.case_status.value | default: left_case.metafields.custom.case_status | downcase %}
-  {% assign left_owner_status = left_case.metafields.custom.case_owner_status.value | default: left_case.metafields.custom.case_owner_status | downcase %}
-  {% assign left_blog_handle = left_case.blog.handle | default: '' | downcase %}
-  {% if left_blog_handle == 'found-safe' or left_case_status == 'found' or left_case_status == 'resolved' or left_owner_status == 'resolved' %}
-    {% assign left_found_safe = true %}
-  {% endif %}
-{% endif %}
-
-{% assign primary_found_safe = false %}
-{% if primary_case %}
-  {% assign primary_case_status = primary_case.metafields.custom.case_status.value | default: primary_case.metafields.custom.case_status | downcase %}
-  {% assign primary_owner_status = primary_case.metafields.custom.case_owner_status.value | default: primary_case.metafields.custom.case_owner_status | downcase %}
-  {% assign primary_blog_handle = primary_case.blog.handle | default: '' | downcase %}
-  {% if primary_blog_handle == 'found-safe' or primary_case_status == 'found' or primary_case_status == 'resolved' or primary_owner_status == 'resolved' %}
-    {% assign primary_found_safe = true %}
-  {% endif %}
-{% endif %}
-
-{% assign right_found_safe = false %}
-{% if right_case %}
-  {% assign right_case_status = right_case.metafields.custom.case_status.value | default: right_case.metafields.custom.case_status | downcase %}
-  {% assign right_owner_status = right_case.metafields.custom.case_owner_status.value | default: right_case.metafields.custom.case_owner_status | downcase %}
-  {% assign right_blog_handle = right_case.blog.handle | default: '' | downcase %}
-  {% if right_blog_handle == 'found-safe' or right_case_status == 'found' or right_case_status == 'resolved' or right_owner_status == 'resolved' %}
-    {% assign right_found_safe = true %}
-  {% endif %}
-{% endif %}
-
-<script>
-window.primarySpotlightCases = [{{ primary_json | strip }}];
-window.supportingSpotlightCases = [{{ supporting_json | strip }}];
-window.primarySpotlightCount = {{ primary_count }};
-window.supportingSpotlightCount = {{ supporting_count }};
-</script>
-
-<section class="spotlight-system" data-country-section data-country-scope="all">
-  <div class="spotlight-shell">
-    <div class="spotlight-shell-border-light"></div>
-    <div class="spotlight-shell-glow"></div>
-    <div class="spotlight-shell-noise"></div>
-    <div class="spotlight-shell-vignette"></div>
-    <div class="spotlight-shell-sweep"></div>
-    <div class="spotlight-shell-inner-reflection"></div>
-
-    <div class="spotlight-shell-corner spotlight-shell-corner-tl"></div>
-    <div class="spotlight-shell-corner spotlight-shell-corner-tr"></div>
-    <div class="spotlight-shell-corner spotlight-shell-corner-bl"></div>
-    <div class="spotlight-shell-corner spotlight-shell-corner-br"></div>
-
-    <div class="spotlight-shell-wall spotlight-shell-wall-left"></div>
-    <div class="spotlight-shell-wall spotlight-shell-wall-right"></div>
-
-    <div class="spotlight-strobes spotlight-strobes-left" aria-hidden="true">
-      <span></span><span></span><span></span>
-    </div>
-    <div class="spotlight-strobes spotlight-strobes-right" aria-hidden="true">
-      <span></span><span></span><span></span>
-    </div>
-
-    <div class="spotlight-alert-corner">
-      <span class="spotlight-alert-dot"></span>
-      {% if primary_count > 0 or supporting_count > 0 %}LIVE SPOTLIGHT{% else %}FEATURED CASES{% endif %}
-    </div>
-
-    <div class="spotlight-top-strip">
-    <div class="spotlight-top-pill">SPOTLIGHT</div>
-    <div class="spotlight-top-center">FEATURED MISSING PERSON CASES</div>
-    <div class="spotlight-top-status">
-      {% if primary_count > 0 or supporting_count > 0 %}
-        PRIMARY {{ primary_count }} • SUPPORTING {{ supporting_count }}
-      {% else %}
-        FEATURED CASES
-      {% endif %}
-    </div>
-  </div>
-
-    <div class="spotlight-stage-floor"></div>
-    <div class="spotlight-stage-floor-glow"></div>
-
-    <div class="spotlight-stage">
-      {% if primary_case == nil and left_case == nil and right_case == nil %}
-        <div class="spotlight-card spotlight-card-main" style="min-height:220px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:rgba(255,255,255,0.82);font-weight:700;">
-          No verified live cases are currently available in this section.
-        </div>
-      {% else %}
-      <article class="spotlight-card spotlight-card-side spotlight-card-left" id="spotlight-left" data-spotlight-card="left" data-country-scope="{{ left_scope }}">
-        <div class="spotlight-card-ring"></div>
-        <div class="spotlight-card-frame"></div>
-        <div class="spotlight-card-depth-frame"></div>
-        <div class="spotlight-card-corner hotspot-tl"></div>
-        <div class="spotlight-card-corner hotspot-tr"></div>
-        <div class="spotlight-card-corner hotspot-bl"></div>
-        <div class="spotlight-card-corner hotspot-br"></div>
-        <div class="spotlight-card-sheen"></div>
-        <div class="spotlight-card-image-stage"></div>
-
-        <div class="spotlight-card-image-wrap">
-          {% if left_case and left_case.image %}
-            <img src="{{ left_case.image | image_url: width: 1000 }}" alt="{{ left_case.title | escape }}" class="spotlight-card-image{% if left_found_safe %} spotlight-card-image--found-safe{% endif %}" data-spotlight-image width="{{ left_case.image.width }}" height="{{ left_case.image.height }}">
-          {% else %}
-            <img src="{{ spotlight_placeholder_image }}" alt="Missing person appeal image" class="spotlight-card-image" data-spotlight-image width="1200" height="1200">
+            assign spotlight_live = article.metafields.custom.spotlight_live.value | default: article.metafields.custom.spotlight_live | default: article.metafields.custom.spotlight_active.value | default: article.metafields.custom.spotlight_active
+            assign spotlight_level = article.metafields.custom.spotlight_level.value | default: article.metafields.custom.spotlight_level | default: ''
+            assign spotlight_slot = article.metafields.custom.spotlight_slot.value | default: article.metafields.custom.spotlight_slot | default: ''
+            assign spotlight_started = article.metafields.custom.spotlight_started.value | default: article.metafields.custom.spotlight_started
+            assign spotlight_order_id = article.metafields.custom.spotlight_order_id.value | default: article.metafields.custom.spotlight_order_id | default: ''
+            assign spotlight_ends = article.metafields.custom.spotlight_ends.value | default: article.metafields.custom.spotlight_ends
+            assign spotlight_end_ts = 0
+            assign spotlight_started_ts = 0
+            if spotlight_ends != blank
+              assign spotlight_end_ts = spotlight_ends | date: '%s' | plus: 0
+            endif
+            if spotlight_started != blank
+              assign spotlight_started_ts = spotlight_started | date: '%s' | plus: 0
+            endif
+            assign paid_spotlight = false
+            if spotlight_live == true or spotlight_live == 'true' or spotlight_live == 'True' or spotlight_live == '1'
+              if spotlight_end_ts == 0 or spotlight_end_ts > now_ts
+                assign paid_spotlight = true
+              endif
+            endif
+            assign source_verified = false
+            if tag_blob contains 'source-verified' or tag_blob contains 'scanner-imported' or tag_blob contains 'official-source'
+              assign source_verified = true
+            endif
+            assign urgent_case = false
+            if tag_blob contains 'urgent' or case_status contains 'urgent'
+              assign urgent_case = true
+            endif
+            assign has_image = false
+            if article.image
+              assign has_image = true
+            endif
+          %}
+          {% if excluded == false and country_code != blank %}
+            <article
+              class="ma-premium-spotlight-card"
+              data-ma-spotlight-card
+              data-country-code="{{ country_code | escape }}"
+              data-country-slug="{{ country_slug | escape }}"
+              data-country-name="{{ country_name | escape }}"
+              data-status="active"
+              data-case-handle="{{ article.handle | escape }}"
+              data-source-verified="{{ source_verified }}"
+              data-has-image="{{ has_image }}"
+              data-paid-spotlight="{{ paid_spotlight }}"
+              data-spotlight-level="{{ spotlight_level | escape }}"
+              data-spotlight-slot="{{ spotlight_slot | escape }}"
+              data-spotlight-started="{{ spotlight_started_ts }}"
+              data-spotlight-order-id="{{ spotlight_order_id | escape }}"
+              data-fallback-priority="{% if urgent_case %}1{% elsif source_verified %}2{% elsif has_image %}3{% else %}4{% endif %}"
+              hidden
+            >
+              <a class="ma-premium-spotlight-card__link" href="{{ article.url }}">
+                <div class="ma-premium-spotlight-card__media">
+                  {% if article.image %}
+                    <img src="{{ article.image | image_url: width: 900, height: 620, crop: 'center' }}" alt="{{ article.title | escape }}" loading="lazy" width="900" height="620">
+                  {% else %}
+                    <img src="{{ placeholder_image }}" alt="Missing person appeal image" loading="lazy" width="900" height="620">
+                  {% endif %}
+                  <span class="ma-premium-spotlight-card__badge" data-ma-placement-label>{% if paid_spotlight %}Paid spotlight{% elsif urgent_case %}Urgent appeal{% elsif source_verified %}Source verified{% else %}Fallback spotlight{% endif %}</span>
+                </div>
+                <div class="ma-premium-spotlight-card__body">
+                  <p class="ma-premium-spotlight-card__meta">{{ country_name | escape }}{% if source_verified %} / Source verified{% endif %}</p>
+                  <h3>{{ article.title | escape }}</h3>
+                  <p class="ma-premium-spotlight-card__summary">{{ article.excerpt_or_content | strip_html | truncate: 150 }}</p>
+                  <span class="ma-premium-spotlight-card__action">View case</span>
+                </div>
+              </a>
+            </article>
           {% endif %}
-          <div class="spotlight-card-image-overlay{% if left_found_safe %} spotlight-card-image-overlay--found-safe{% endif %}"></div>
-          <div class="spotlight-card-image-rim"></div>
-          <div class="spotlight-card-badge" data-spotlight-badge>{% if left_found_safe %}FOUND SAFE{% elsif left_is_fallback %}FEATURED CASE{% else %}SUPPORTING SPOTLIGHT{% endif %}</div>
-        </div>
-
-        <div class="spotlight-card-body">
-          <div class="spotlight-card-mini-kicker">{% if left_is_fallback %}FEATURED CASE{% else %}SUPPORTING FEATURE{% endif %}</div>
-          <h3 class="spotlight-card-name" data-spotlight-title>
-            {% if left_case %}{{ left_case.title }}{% else %}FEATURED CASE{% endif %}
-          </h3>
-          <div class="spotlight-card-meta" data-spotlight-meta>
-            {% if left_case %}{{ left_case.published_at | date: '%d %b %Y' }}{% else %}LIVE CASE{% endif %}
-          </div>
-          <p class="spotlight-card-text" data-spotlight-text>
-            {% if left_case %}{{ left_case.excerpt_or_content | strip_html | truncate: 145 }}{% else %}Premium supporting placement designed to keep urgent missing person cases visible across the homepage.{% endif %}
-          </p>
-          <div class="spotlight-card-actions spotlight-card-actions-side">
-            <a href="{% if left_case %}{{ left_case.url }}{% else %}#{% endif %}" class="spotlight-btn spotlight-btn-dark" data-spotlight-link>VIEW CASE</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="spotlight-card spotlight-card-main" id="spotlight-primary" data-spotlight-card="main" data-country-scope="{{ primary_scope }}">
-        <div class="spotlight-card-ring spotlight-card-ring-main"></div>
-        <div class="spotlight-card-frame"></div>
-        <div class="spotlight-card-depth-frame spotlight-card-depth-frame-main"></div>
-        <div class="spotlight-card-corner hotspot-tl"></div>
-        <div class="spotlight-card-corner hotspot-tr"></div>
-        <div class="spotlight-card-corner hotspot-bl"></div>
-        <div class="spotlight-card-corner hotspot-br"></div>
-        <div class="spotlight-card-sheen spotlight-card-sheen-main"></div>
-
-        <div class="spotlight-main-halo"></div>
-        <div class="spotlight-main-rear-glow"></div>
-        <div class="spotlight-main-sheen"></div>
-        <div class="spotlight-main-cutout-shadow"></div>
-        <div class="spotlight-main-cutout-edge"></div>
-        <div class="spotlight-main-hover-floor"></div>
-
-        <div class="spotlight-card-image-stage spotlight-card-image-stage-main"></div>
-        <div class="spotlight-card-image-wrap spotlight-card-image-wrap-main">
-          {% if primary_case and primary_case.image %}
-            <img src="{{ primary_case.image | image_url: width: 1600 }}" alt="{{ primary_case.title | escape }}" class="spotlight-card-image spotlight-card-image-main{% if primary_found_safe %} spotlight-card-image--found-safe{% endif %}" data-spotlight-image width="{{ primary_case.image.width }}" height="{{ primary_case.image.height }}">
-          {% else %}
-            <img src="{{ spotlight_placeholder_image }}" alt="Missing person appeal image" class="spotlight-card-image spotlight-card-image-main" data-spotlight-image width="1200" height="1200">
-          {% endif %}
-          <div class="spotlight-card-image-overlay spotlight-card-image-overlay-main{% if primary_found_safe %} spotlight-card-image-overlay--found-safe{% endif %}"></div>
-          <div class="spotlight-card-image-rim spotlight-card-image-rim-main"></div>
-          <div class="spotlight-card-badge spotlight-card-badge-main" data-spotlight-badge>{% if primary_found_safe %}FOUND SAFE{% elsif primary_is_fallback %}FEATURED CASE{% else %}PRIMARY SPOTLIGHT{% endif %}</div>
-          <div class="spotlight-main-image-glow"></div>
-        </div>
-
-        <div class="spotlight-card-body spotlight-card-body-main">
-          <div class="spotlight-main-status-row">
-            <div class="spotlight-main-status">{% if primary_is_fallback %}FEATURED CASE{% else %}PREMIUM HOMEPAGE PLACEMENT{% endif %}</div>
-            <div class="spotlight-main-status">{% if primary_is_fallback %}FEATURED SELECTION{% else %}HIGH VISIBILITY{% endif %}</div>
-          </div>
-
-          <h3 class="spotlight-card-name spotlight-card-name-main" data-spotlight-title>
-            {% if primary_case %}{{ primary_case.title }}{% else %}PRIMARY FEATURED CASE{% endif %}
-          </h3>
-
-          <div class="spotlight-card-meta spotlight-card-meta-main" data-spotlight-meta>
-            {% if primary_case %}{{ primary_case.published_at | date: '%d %b %Y' }}{% else %}LIVE CASE{% endif %}
-          </div>
-
-          <p class="spotlight-card-text spotlight-card-text-main" data-spotlight-text>
-            {% if primary_case %}{{ primary_case.excerpt_or_content | strip_html | truncate: 220 }}{% else %}The primary spotlight placement is designed to lead attention cleanly and keep one urgent case at the centre of the homepage.{% endif %}
-          </p>
-
-          <div class="spotlight-main-data-row">
-            <div class="spotlight-main-data-pill">{% if primary_is_fallback %}FEATURED CASE{% else %}PRIORITY ACTIVE{% endif %}</div>
-            <div class="spotlight-main-data-pill">{% if primary_is_fallback %}IMAGE READY{% else %}FIXED FEATURE POSITION{% endif %}</div>
-            <div class="spotlight-main-data-pill">{% if primary_is_fallback %}AUTO SELECTED{% else %}ROTATION READY{% endif %}</div>
-          </div>
-
-          <div class="spotlight-card-actions">
-            <a href="{% if primary_case %}{{ primary_case.url }}{% else %}#{% endif %}" class="spotlight-btn spotlight-btn-primary" data-spotlight-link>VIEW FULL CASE</a>
-            <a href="{% if primary_case %}{{ primary_case.url }}{% else %}#{% endif %}" class="spotlight-btn spotlight-btn-dark" data-spotlight-link>SHARE THIS CASE</a>
-            <a href="{% if primary_case %}{{ primary_case.url }}{% else %}#{% endif %}" class="spotlight-btn spotlight-btn-ghost" data-spotlight-link>SUPPORT / BOOST</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="spotlight-card spotlight-card-side spotlight-card-right" id="spotlight-right" data-spotlight-card="right" data-country-scope="{{ right_scope }}">
-        <div class="spotlight-card-ring"></div>
-        <div class="spotlight-card-frame"></div>
-        <div class="spotlight-card-depth-frame"></div>
-        <div class="spotlight-card-corner hotspot-tl"></div>
-        <div class="spotlight-card-corner hotspot-tr"></div>
-        <div class="spotlight-card-corner hotspot-bl"></div>
-        <div class="spotlight-card-corner hotspot-br"></div>
-        <div class="spotlight-card-sheen"></div>
-        <div class="spotlight-card-image-stage"></div>
-
-        <div class="spotlight-card-image-wrap">
-          {% if right_case and right_case.image %}
-            <img src="{{ right_case.image | image_url: width: 1000 }}" alt="{{ right_case.title | escape }}" class="spotlight-card-image{% if right_found_safe %} spotlight-card-image--found-safe{% endif %}" data-spotlight-image width="{{ right_case.image.width }}" height="{{ right_case.image.height }}">
-          {% else %}
-            <img src="{{ spotlight_placeholder_image }}" alt="Missing person appeal image" class="spotlight-card-image" data-spotlight-image width="1200" height="1200">
-          {% endif %}
-          <div class="spotlight-card-image-overlay{% if right_found_safe %} spotlight-card-image-overlay--found-safe{% endif %}"></div>
-          <div class="spotlight-card-image-rim"></div>
-          <div class="spotlight-card-badge" data-spotlight-badge>{% if right_found_safe %}FOUND SAFE{% elsif right_is_fallback %}FEATURED CASE{% else %}SUPPORTING SPOTLIGHT{% endif %}</div>
-        </div>
-
-        <div class="spotlight-card-body">
-          <div class="spotlight-card-mini-kicker">{% if right_is_fallback %}FEATURED CASE{% else %}SUPPORTING FEATURE{% endif %}</div>
-          <h3 class="spotlight-card-name" data-spotlight-title>
-            {% if right_case %}{{ right_case.title }}{% else %}FEATURED CASE{% endif %}
-          </h3>
-          <div class="spotlight-card-meta" data-spotlight-meta>
-            {% if right_case %}{{ right_case.published_at | date: '%d %b %Y' }}{% else %}LIVE CASE{% endif %}
-          </div>
-          <p class="spotlight-card-text" data-spotlight-text>
-            {% if right_case %}{{ right_case.excerpt_or_content | strip_html | truncate: 145 }}{% else %}Premium supporting placement designed to reinforce the main spotlight without competing with it.{% endif %}
-          </p>
-          <div class="spotlight-card-actions spotlight-card-actions-side">
-	            <a href="{% if right_case %}{{ right_case.url }}{% else %}#{% endif %}" class="spotlight-btn spotlight-btn-dark" data-spotlight-link>VIEW CASE</a>
-	          </div>
-	        </div>
-	      </article>
+        {% endfor %}
       {% endif %}
-	    </div>
-    <div class="spotlight-country-grid" data-country-surface="spotlight" hidden></div>
+    </div>
+
+    <div class="ma-premium-spotlight__empty" data-ma-spotlight-empty hidden>
+      <strong>No active spotlight cases are currently available for this country.</strong>
+      <a href="/pages/country-intelligence">View country intelligence</a>
+    </div>
   </div>
 </section>
 
 <script>
 (function() {
-  var spotlightStarted = false;
+  var section = document.querySelector('[data-ma-premium-spotlight]');
+  if (!section) return;
+  var grid = section.querySelector('[data-ma-spotlight-grid]');
+  var notice = section.querySelector('[data-ma-spotlight-mode]');
+  var empty = section.querySelector('[data-ma-spotlight-empty]');
+  var countries = {
+    gb: { code: 'gb', name: 'United Kingdom', aliases: ['gb', 'uk', 'united-kingdom', 'united kingdom', 'england', 'scotland', 'wales', 'northern ireland'] },
+    us: { code: 'us', name: 'United States', aliases: ['us', 'usa', 'united-states', 'united states', 'united states of america'] },
+    ca: { code: 'ca', name: 'Canada', aliases: ['ca', 'canada'] },
+    au: { code: 'au', name: 'Australia', aliases: ['au', 'australia'] },
+    nz: { code: 'nz', name: 'New Zealand', aliases: ['nz', 'new-zealand', 'new zealand'] },
+    ie: { code: 'ie', name: 'Ireland', aliases: ['ie', 'ireland'] },
+    sg: { code: 'sg', name: 'Singapore', aliases: ['sg', 'singapore'] }
+  };
 
-  function setText(el, value) {
-    if (el) el.textContent = value || '';
+  function normalize(value) {
+    return String(value || '').toLowerCase().trim().replace(/_/g, '-');
   }
 
-  function setImage(el, src, alt) {
-    if (!el) return;
-    if (src) el.src = src;
-    el.alt = alt || '';
+  function canonical(value) {
+    var normalized = normalize(value);
+    if (!normalized) return 'gb';
+    var parsed = null;
+    if (normalized.charAt(0) === '{') {
+      try { parsed = JSON.parse(value); } catch (error) {}
+      if (parsed) normalized = normalize(parsed.code || parsed.slug || parsed.name || '');
+    }
+    var compact = normalized.replace(/\s+/g, '-');
+    for (var key in countries) {
+      if (countries[key].aliases.indexOf(normalized) !== -1 || countries[key].aliases.indexOf(compact) !== -1) return key;
+    }
+    return countries[compact] ? compact : 'gb';
   }
 
-  function setFoundSafeState(card, item, type) {
-    if (!card) return;
-    var image = card.querySelector('[data-spotlight-image]');
-    var overlay = card.querySelector('.spotlight-card-image-overlay');
-    var badge = card.querySelector('[data-spotlight-badge]');
-    var kicker = card.querySelector('.spotlight-card-mini-kicker');
-    var isFoundSafe = !!(item && item.foundSafe);
-
-    if (image) {
-      image.classList.toggle('spotlight-card-image--found-safe', isFoundSafe);
-    }
-
-    if (overlay) {
-      overlay.classList.toggle('spotlight-card-image-overlay--found-safe', isFoundSafe);
-    }
-
-    if (badge) {
-      badge.textContent = isFoundSafe ? 'FOUND SAFE' : (item && item.badge ? item.badge : (type === 'main' ? 'PRIMARY SPOTLIGHT' : 'SUPPORTING SPOTLIGHT'));
-    }
-
-    if (kicker && item && item.kicker) {
-      kicker.textContent = item.kicker;
-    }
+  function cookie(name) {
+    return (document.cookie || '').split(';').reduce(function(found, part) {
+      var trimmed = part.trim();
+      return found || (trimmed.indexOf(name + '=') === 0 ? decodeURIComponent(trimmed.slice(name.length + 1)) : '');
+    }, '');
   }
 
-  function setLinks(container, url) {
-    if (!container) return;
-    var links = container.querySelectorAll('[data-spotlight-link]');
-    links.forEach(function(link) {
-      link.href = url || '#';
+  function selectedCountry() {
+    var params = new URLSearchParams(window.location.search || '');
+    var query = params.get('country');
+    var stored = '';
+    try { stored = window.localStorage.getItem('missingAlertsCountry') || ''; } catch (error) {}
+    var code = canonical(query || stored || cookie('missing_alerts_country') || document.documentElement.getAttribute('data-country-code') || 'gb');
+    return countries[code] || countries.gb;
+  }
+
+  function seedFor(countryCode) {
+    var today = new Date().toISOString().slice(0, 10);
+    var seed = 0;
+    (today + ':' + countryCode + ':' + window.location.pathname).split('').forEach(function(ch) {
+      seed = ((seed << 5) - seed + ch.charCodeAt(0)) | 0;
     });
+    return Math.abs(seed) || 1;
   }
 
-  function transitionCard(card, updateFn) {
-    if (!card || !updateFn) return;
-    card.classList.add('is-transitioning');
-    window.setTimeout(function() {
-      updateFn();
-      card.classList.remove('is-transitioning');
-    }, 380);
+  function seededShuffle(items, seed) {
+    var copy = items.slice();
+    function next() {
+      seed = (seed * 1664525 + 1013904223) % 4294967296;
+      return seed / 4294967296;
+    }
+    for (var i = copy.length - 1; i > 0; i -= 1) {
+      var j = Math.floor(next() * (i + 1));
+      var tmp = copy[i];
+      copy[i] = copy[j];
+      copy[j] = tmp;
+    }
+    return copy;
   }
 
-  function renderCard(card, item, type) {
-    if (!card || !item) return;
+  function paidRank(card) {
+    var level = normalize(card.getAttribute('data-spotlight-level'));
+    var slot = normalize(card.getAttribute('data-spotlight-slot'));
+    var rank = 50;
+    if (slot === 'primary' || level.indexOf('primary') !== -1) rank = 1;
+    else if (slot.indexOf('supporting') !== -1 || level.indexOf('support') !== -1) rank = 2;
+    var started = parseInt(card.getAttribute('data-spotlight-started') || '0', 10);
+    return rank * 10000000000 - started;
+  }
 
-    transitionCard(card, function() {
-      card.setAttribute('data-country-scope', item.countryScope || 'all');
-      setImage(card.querySelector('[data-spotlight-image]'), item.image, item.title);
-      setText(card.querySelector('[data-spotlight-title]'), item.title);
-      setText(card.querySelector('[data-spotlight-meta]'), item.meta);
-      setText(card.querySelector('[data-spotlight-text]'), item.text);
-      setLinks(card, item.url);
-      setFoundSafeState(card, item, type);
-      if (window.MissingAlertsCountryMode && typeof window.MissingAlertsCountryMode.refresh === 'function') {
-        window.MissingAlertsCountryMode.refresh();
-      }
+  function fallbackRank(card) {
+    var priority = parseInt(card.getAttribute('data-fallback-priority') || '9', 10);
+    return priority;
+  }
+
+  function applySpotlight() {
+    var country = selectedCountry();
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('[data-ma-spotlight-card]')).filter(function(card) {
+      return canonical(card.getAttribute('data-country-code') || card.getAttribute('data-country-slug') || card.getAttribute('data-country-name')) === country.code;
     });
-  }
-
-  function initSpotlightRotation() {
-    if (spotlightStarted) return;
-
-    var primaryCases = Array.isArray(window.primarySpotlightCases) ? window.primarySpotlightCases : [];
-    var supportingCases = Array.isArray(window.supportingSpotlightCases) ? window.supportingSpotlightCases : [];
-
-    var leftCard = document.getElementById('spotlight-left');
-    var rightCard = document.getElementById('spotlight-right');
-    var mainCard = document.getElementById('spotlight-primary');
-
-    if (!leftCard || !rightCard || !mainCard) return;
-
-    spotlightStarted = true;
-
-    if (supportingCases.length > 2) {
-      var supportIndex = 0;
-      window.setInterval(function() {
-        supportIndex = (supportIndex + 1) % supportingCases.length;
-        var leftItem = supportingCases[supportIndex];
-        var rightItem = supportingCases[(supportIndex + 1) % supportingCases.length];
-        renderCard(leftCard, leftItem, 'side');
-        renderCard(rightCard, rightItem, 'side');
-      }, 6400);
+    var paid = cards.filter(function(card) {
+      return card.getAttribute('data-paid-spotlight') === 'true';
+    }).sort(function(a, b) {
+      return paidRank(a) - paidRank(b);
+    });
+    var selected = paid.slice(0, 3);
+    if (!selected.length) {
+      selected = seededShuffle(cards.slice().sort(function(a, b) {
+        return fallbackRank(a) - fallbackRank(b);
+      }), seedFor(country.code)).slice(0, 3);
     }
+    var selectedHandles = selected.map(function(card) {
+      return card.getAttribute('data-case-handle') || '';
+    }).filter(Boolean);
+    window.MA_SPOTLIGHT_SELECTED_HANDLES = selectedHandles;
 
-    if (primaryCases.length > 1) {
-      var primaryIndex = 0;
-      window.setInterval(function() {
-        primaryIndex = (primaryIndex + 1) % primaryCases.length;
-        renderCard(mainCard, primaryCases[primaryIndex], 'main');
-      }, 7200);
+    cards.forEach(function(card) {
+      var show = selected.indexOf(card) !== -1;
+      card.hidden = !show;
+      card.classList.toggle('is-visible', show);
+      card.classList.remove('is-primary');
+      if (show) card.style.removeProperty('display');
+      else card.style.display = 'none';
+    });
+    selected.forEach(function(card, index) {
+      grid.appendChild(card);
+      card.classList.toggle('is-primary', index === 0);
+      card.querySelector('[data-ma-placement-label]').textContent = paid.length ? 'Paid spotlight' : 'Fallback spotlight';
+    });
+    if (notice) {
+      notice.textContent = paid.length ?
+        'Paid spotlight placements live for ' + country.name + '.' :
+        (selected.length ? 'Fallback spotlight - no paid spotlight is live in ' + country.name + '.' : 'No selected-country spotlight cases are available.');
     }
+    if (empty) empty.hidden = selected.length > 0;
+    section.setAttribute('data-selected-country', country.code);
+    section.setAttribute('data-paid-count', String(paid.length));
+    section.setAttribute('data-visible-count', String(selected.length));
+    window.dispatchEvent(new CustomEvent('ma:spotlight-rendered', { detail: { country: country.code, handles: selectedHandles } }));
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSpotlightRotation);
-  } else {
-    initSpotlightRotation();
-  }
-
-  document.addEventListener('shopify:section:load', initSpotlightRotation);
+  window.MissingAlertsSpotlight = { refresh: applySpotlight };
+  ['DOMContentLoaded', 'pageshow', 'missingAlertsCountryChanged', 'country-mode:change', 'storage'].forEach(function(eventName) {
+    window.addEventListener(eventName, applySpotlight);
+    document.addEventListener(eventName, applySpotlight);
+  });
+  applySpotlight();
+  window.setTimeout(applySpotlight, 250);
+  window.setTimeout(applySpotlight, 1200);
 })();
 </script>
 
 <style>
-.spotlight-system{
-  max-width:1290px;
-  margin:18px auto;
-  padding:0 10px;
-}
-
-.spotlight-shell{
-  position:relative;
-  overflow:hidden;
-  min-height:738px;
-  border-radius:34px;
-  padding:14px 18px 22px;
-  background:
-    radial-gradient(circle at 50% 10%, rgba(220, 40, 60, 0.28) 0%, transparent 24%),
-    radial-gradient(circle at 10% 50%, rgba(255, 70, 90, 0.16) 0%, transparent 20%),
-    radial-gradient(circle at 90% 50%, rgba(255, 70, 90, 0.16) 0%, transparent 20%),
-    radial-gradient(circle at 50% 100%, rgba(180, 20, 35, 0.18) 0%, transparent 28%),
-    linear-gradient(180deg, #160406 0%, #0a0203 48%, #050102 100%);
-  border:1px solid rgba(255,80,96,0.24);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.03) inset,
-    0 30px 90px rgba(0,0,0,0.50),
-    0 0 90px rgba(180, 22, 40, 0.22),
-    inset 0 0 80px rgba(120, 0, 12, 0.12);
-}
-
-.spotlight-shell-border-light{
-  position:absolute;
-  inset:0;
-  padding:2px;
-  border-radius:34px;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255,255,255,0.02),
-      rgba(255,70,90,0.95),
-      rgba(255,255,255,0.03),
-      rgba(255,70,90,0.55),
-      rgba(255,255,255,0.02)
-    );
-  background-size:280% 100%;
-  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-  pointer-events:none;
-  opacity:1;
-  animation:spotlightBorderRun 7s linear infinite;
-  filter:drop-shadow(0 0 18px rgba(255,70,90,0.35));
-}
-
-.spotlight-shell-glow{
-  position:absolute;
-  inset:-24%;
-  background:
-    radial-gradient(circle at 50% 18%, rgba(196, 54, 70, 0.26) 0%, transparent 18%),
-    radial-gradient(circle at 18% 48%, rgba(176, 33, 48, 0.13) 0%, transparent 20%),
-    radial-gradient(circle at 82% 46%, rgba(176, 33, 48, 0.16) 0%, transparent 22%),
-    radial-gradient(circle at 50% 84%, rgba(122, 0, 15, 0.16) 0%, transparent 25%);
-  filter:blur(58px);
-  opacity:.95;
-  pointer-events:none;
-}
-
-.spotlight-shell-noise{
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(rgba(255,255,255,0.012), rgba(255,255,255,0.012)),
-    repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.008) 3px);
-  mix-blend-mode:screen;
-  opacity:.16;
-  pointer-events:none;
-}
-
-.spotlight-shell-vignette{
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at 50% 45%, transparent 37%, rgba(0,0,0,0.36) 100%);
-  pointer-events:none;
-}
-
-.spotlight-shell-sweep{
-  position:absolute;
-  top:-20%;
-  left:-35%;
-  width:32%;
-  height:160%;
-  background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
-  transform:skewX(-16deg);
-  animation:spotlightShellSweep 13s linear infinite;
-  pointer-events:none;
-  z-index:1;
-}
-
-.spotlight-shell-inner-reflection{
-  position:absolute;
-  inset:8px;
-  border-radius:28px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -60px 80px rgba(0,0,0,0.18);
-  pointer-events:none;
-  z-index:1;
-}
-
-.spotlight-shell-corner{
-  position:absolute;
-  width:90px;
-  height:90px;
-  border-radius:999px;
-  pointer-events:none;
-  z-index:2;
-  opacity:.42;
-  filter:blur(18px);
-  background:radial-gradient(circle, rgba(238, 88, 104, 0.58) 0%, rgba(238, 88, 104, 0.14) 38%, transparent 72%);
-  animation:spotlightCornerPulse 8.5s ease-in-out infinite;
-}
-.spotlight-shell-corner-tl{ top:-18px; left:-18px; }
-.spotlight-shell-corner-tr{ top:-18px; right:-18px; animation-delay:1.4s; }
-.spotlight-shell-corner-bl{ bottom:-18px; left:-18px; animation-delay:2.6s; }
-.spotlight-shell-corner-br{ bottom:-18px; right:-18px; animation-delay:4s; }
-
-.spotlight-shell-wall{
-  position:absolute;
-  top:78px;
-  bottom:22px;
-  width:100px;
-  pointer-events:none;
-  z-index:1;
-  opacity:.9;
-  filter:blur(18px);
-}
-.spotlight-shell-wall-left{
-  left:-30px;
-  background:linear-gradient(90deg, rgba(255,90,110,0.50), rgba(255,50,70,0.18), transparent);
-}
-.spotlight-shell-wall-right{
-  right:-30px;
-  background:linear-gradient(270deg, rgba(255,90,110,0.50), rgba(255,50,70,0.18), transparent);
-}
-
-.spotlight-strobes{
-  position:absolute;
-  top:70px;
-  bottom:20px;
-  width:320px;
-  pointer-events:none;
-  z-index:1;
-  opacity:1;
-}
-
-.spotlight-strobes span{
-  position:absolute;
-  top:-10%;
-  bottom:-10%;
-  width:170px;
-  filter:blur(18px);
-  transform-origin:top center;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.28) 0%,
-      rgba(255,170,180,0.30) 14%,
-      rgba(255,80,100,0.26) 34%,
-      rgba(220,35,55,0.18) 56%,
-      transparent 84%
-    );
-  mix-blend-mode:screen;
-}
-.spotlight-strobes-left{ left:-54px; }
-.spotlight-strobes-right{ right:-54px; }
-
-.spotlight-strobes-left span:nth-child(1){ left:0; transform:rotate(19deg); animation:spotlightBeamLeftA 6.4s ease-in-out infinite; }
-.spotlight-strobes-left span:nth-child(2){ left:52px; transform:rotate(9deg); animation:spotlightBeamLeftB 8.2s ease-in-out infinite; }
-.spotlight-strobes-left span:nth-child(3){ left:108px; transform:rotate(-2deg); animation:spotlightBeamLeftC 10.6s ease-in-out infinite; }
-
-.spotlight-strobes-right span:nth-child(1){ right:0; transform:rotate(-19deg); animation:spotlightBeamRightA 6.7s ease-in-out infinite; }
-.spotlight-strobes-right span:nth-child(2){ right:52px; transform:rotate(-9deg); animation:spotlightBeamRightB 8.6s ease-in-out infinite; }
-.spotlight-strobes-right span:nth-child(3){ right:108px; transform:rotate(2deg); animation:spotlightBeamRightC 10.9s ease-in-out infinite; }
-
-.spotlight-alert-corner{
-  position:absolute;
-  top:14px;
-  right:18px;
-  z-index:5;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  min-height:34px;
-  padding:0 13px;
-  border-radius:999px;
-  background:linear-gradient(180deg, rgba(77, 13, 18, 0.80), rgba(38, 7, 10, 0.90));
-  border:1px solid rgba(197, 75, 87, 0.22);
-  color:#fff4f5;
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  box-shadow:0 0 18px rgba(121, 17, 28, 0.12), inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-.spotlight-alert-dot{
-  width:8px;
-  height:8px;
-  border-radius:999px;
-  background:#ef6a76;
-  box-shadow:0 0 12px rgba(239, 106, 118, 0.68);
-  animation:spotlightDotPulse 4.2s ease-in-out infinite;
-}
-
-.spotlight-top-strip{
-  position:relative;
-  z-index:3;
-  display:grid;
-  grid-template-columns:auto 1fr auto;
-  align-items:center;
-  gap:14px;
-  width:min(860px, calc(100% - 110px));
-  margin:0 auto 16px;
-  padding:10px 14px;
-  border-radius:999px;
-  background:linear-gradient(180deg, rgba(24, 9, 11, 0.84), rgba(10, 4, 5, 0.94));
-  border:1px solid rgba(255,255,255,0.05);
-  box-shadow:0 12px 26px rgba(0,0,0,0.24), 0 0 26px rgba(176, 33, 48, 0.09);
-  backdrop-filter:blur(8px);
-}
-
-.spotlight-top-pill{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:32px;
-  padding:0 14px;
-  border-radius:999px;
-  background:linear-gradient(180deg, #ca2f40 0%, #7b111c 100%);
-  color:#fff;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  box-shadow:0 0 20px rgba(202, 47, 64, 0.14);
-}
-
-.spotlight-top-center{
-  color:#fff;
-  font-size:20px;
-  font-weight:900;
-  letter-spacing:.05em;
-  text-transform:uppercase;
-  text-align:center;
-}
-
-.spotlight-top-status{
-  color:rgba(255,255,255,0.70);
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  white-space:nowrap;
-}
-
-.spotlight-stage-floor{
-  position:absolute;
-  left:6%;
-  right:6%;
-  bottom:14px;
-  height:130px;
-  border-radius:999px;
-  background:radial-gradient(circle, rgba(130, 16, 28, 0.34) 0%, rgba(130, 16, 28, 0.16) 34%, transparent 74%);
-  filter:blur(26px);
-  pointer-events:none;
-  z-index:1;
-}
-
-.spotlight-stage-floor-glow{
-  position:absolute;
-  left:18%;
-  right:18%;
-  bottom:8px;
-  height:72px;
-  border-radius:999px;
-  background:radial-gradient(circle, rgba(255,70,90,0.28) 0%, rgba(255,70,90,0.14) 34%, transparent 74%);
-  filter:blur(18px);
-  pointer-events:none;
-  z-index:2;
-}
-
-.spotlight-stage{
-  position:relative;
-  z-index:3;
-  display:grid;
-  grid-template-columns:minmax(260px, .9fr) minmax(430px, 1.48fr) minmax(260px, .9fr);
-  gap:18px;
-  align-items:end;
-}
-
-/* MAX VISIBLE CARD EFFECTS */
-.spotlight-card{
-  position:relative;
-  overflow:hidden;
-  border-radius:28px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.012)),
-    linear-gradient(180deg, #19080b 0%, #0a0203 100%);
-  border:1px solid rgba(255,255,255,0.05);
-  box-shadow:
-    0 20px 44px rgba(0,0,0,0.42),
-    0 0 0 1px rgba(255,255,255,0.02) inset;
-  display:flex;
-  flex-direction:column;
-  height:100%;
-  transition:
-    transform .45s cubic-bezier(.22,.61,.36,1),
-    box-shadow .45s ease,
-    filter .45s ease,
-    opacity .45s ease;
-  will-change:transform, box-shadow, filter;
-}
-
-.spotlight-card::before{
-  content:"";
-  position:absolute;
-  inset:-2px;
-  border-radius:30px;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255,255,255,0.02) 0%,
-      rgba(255,80,100,0.18) 18%,
-      rgba(255,255,255,0.02) 36%,
-      rgba(255,80,100,0.12) 54%,
-      rgba(255,255,255,0.02) 72%,
-      rgba(255,80,100,0.16) 100%
-    );
-  opacity:.9;
-  pointer-events:none;
-  filter:blur(.2px);
-}
-
-.spotlight-card::after{
-  content:"";
-  position:absolute;
-  left:8%;
-  right:8%;
-  bottom:-8px;
-  height:22%;
-  border-radius:999px;
-  background:radial-gradient(circle, rgba(170,25,40,0.24) 0%, rgba(170,25,40,0.10) 38%, transparent 76%);
-  filter:blur(18px);
-  pointer-events:none;
-}
-
-.spotlight-card.is-transitioning{
-  opacity:.34;
-  transform:translateY(8px) scale(.992);
-  filter:saturate(.90) brightness(.95);
-}
-
-.spotlight-card-ring,
-.spotlight-card-frame,
-.spotlight-card-depth-frame{
-  position:absolute;
-  inset:0;
-  border-radius:28px;
-  pointer-events:none;
-}
-
-.spotlight-card-ring{
-  inset:-3px;
-  border-radius:32px;
-  opacity:1;
-  transition:
-    opacity .4s ease,
-    box-shadow .4s ease,
-    transform .4s ease,
-    filter .4s ease;
-  box-shadow:
-    0 0 0 1px rgba(255,90,110,0.18),
-    0 0 26px rgba(210,40,60,0.18),
-    0 0 56px rgba(140,20,32,0.12),
-    inset 0 0 18px rgba(255,80,100,0.04);
-}
-
-.spotlight-card-ring-main{
-  box-shadow:
-    0 0 0 1px rgba(255,120,136,0.24),
-    0 0 40px rgba(230,58,76,0.24),
-    0 0 90px rgba(150,22,36,0.16),
-    inset 0 0 24px rgba(255,90,110,0.06);
-}
-
-.spotlight-card-frame{
-  padding:1px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.03), rgba(225,60,78,0.22));
-  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-}
-
-.spotlight-card-depth-frame{
-  inset:10px;
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,0.05);
-  box-shadow:
-    inset 0 0 0 1px rgba(225,60,78,0.08),
-    inset 0 -22px 44px rgba(0,0,0,0.18),
-    inset 0 12px 18px rgba(255,255,255,0.015);
-}
-
-.spotlight-card-corner{
-  position:absolute;
-  width:52px;
-  height:52px;
-  border-radius:999px;
-  background:radial-gradient(circle, rgba(255,105,120,0.95) 0%, rgba(255,105,120,0.22) 38%, transparent 76%);
-  filter:blur(12px);
-  opacity:.42;
-  pointer-events:none;
-  transition:opacity .35s ease, transform .35s ease, filter .35s ease;
-}
-.hotspot-tl{ top:-4px; left:-4px; transform:translate(-22%, -22%); }
-.hotspot-tr{ top:-4px; right:-4px; transform:translate(22%, -22%); }
-.hotspot-bl{ bottom:-4px; left:-4px; transform:translate(-22%, 22%); }
-.hotspot-br{ bottom:-4px; right:-4px; transform:translate(22%, 22%); }
-
-.spotlight-card-sheen{
-  position:absolute;
-  top:-30%;
-  left:-52%;
-  width:34%;
-  height:180%;
-  background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.10) 50%, transparent 100%);
-  transform:skewX(-18deg);
-  opacity:.75;
-  pointer-events:none;
-  animation:spotlightCardAmbientSheen 7.5s linear infinite;
-}
-
-.spotlight-card-sheen-main{
-  opacity:.95;
-  animation:spotlightCardAmbientSheenMain 5.8s linear infinite;
-}
-
-.spotlight-card-side{
-  height:590px;
-  transform:scale(.965) translateY(10px);
-  opacity:.97;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
-    linear-gradient(180deg, #140709 0%, #0a0304 100%);
-}
-
-.spotlight-card-main{
-  height:662px;
-  border:1px solid rgba(202, 58, 73, 0.24);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.04) inset,
-    0 30px 78px rgba(0,0,0,0.44),
-    0 0 64px rgba(123, 22, 31, 0.18);
-  animation:spotlightMainPulse 6.8s ease-in-out infinite;
-}
-
-.spotlight-card-main .spotlight-card-frame{
-  padding:1.5px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.24), rgba(202,58,73,0.08), rgba(255,255,255,0.14));
-}
-
-.spotlight-card-depth-frame-main{
-  inset:12px;
-  border:1px solid rgba(255,255,255,0.06);
-  box-shadow:inset 0 0 0 1px rgba(202,58,73,0.10), inset 0 -22px 48px rgba(0,0,0,0.18);
-}
-
-.spotlight-main-halo{
-  position:absolute;
-  inset:auto 10% 22% 10%;
-  height:140px;
-  border-radius:999px;
-  background:radial-gradient(circle, rgba(186, 42, 58, 0.30) 0%, rgba(186, 42, 58, 0.10) 42%, transparent 72%);
-  filter:blur(28px);
-  pointer-events:none;
-}
-
-.spotlight-main-rear-glow{
-  position:absolute;
-  left:10%;
-  right:10%;
-  top:70px;
-  height:300px;
-  border-radius:42px;
-  background:radial-gradient(circle at 50% 26%, rgba(255,86,104,0.34) 0%, rgba(255,86,104,0.14) 30%, transparent 72%);
-  filter:blur(42px);
-  pointer-events:none;
-}
-
-.spotlight-main-sheen{
-  position:absolute;
-  top:-18%;
-  left:-36%;
-  width:32%;
-  height:150%;
-  background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.10) 50%, transparent 100%);
-  transform:skewX(-18deg);
-  animation:spotlightMainSheen 9s linear infinite;
-  pointer-events:none;
-  z-index:3;
-}
-
-.spotlight-main-cutout-shadow{
-  position:absolute;
-  left:20%;
-  right:20%;
-  top:310px;
-  height:44px;
-  border-radius:999px;
-  background:radial-gradient(circle, rgba(0,0,0,0.44) 0%, rgba(0,0,0,0.16) 44%, transparent 74%);
-  filter:blur(16px);
-  pointer-events:none;
-  z-index:2;
-}
-
-.spotlight-main-cutout-edge{
-  position:absolute;
-  left:16%;
-  right:16%;
-  top:60px;
-  height:304px;
-  border-radius:30px;
-  box-shadow:0 0 44px rgba(226, 74, 90, 0.10);
-  pointer-events:none;
-}
-
-.spotlight-main-hover-floor{
-  position:absolute;
-  left:18%;
-  right:18%;
-  bottom:10px;
-  height:38px;
-  border-radius:999px;
-  background:radial-gradient(circle, rgba(214,61,78,0.18) 0%, rgba(214,61,78,0.08) 34%, transparent 74%);
-  filter:blur(14px);
-  opacity:.8;
-  transition:opacity .35s ease, transform .35s ease;
-  pointer-events:none;
-}
-
-.spotlight-card-image-stage{
-  position:absolute;
-  top:18px;
-  left:18px;
-  right:18px;
-  height:302px;
-  border-radius:24px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.005));
-  border:1px solid rgba(255,255,255,0.03);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
-  pointer-events:none;
-}
-
-.spotlight-card-image-stage-main{
-  top:18px;
-  left:20px;
-  right:20px;
-  height:334px;
-  border-radius:26px;
-}
-
-.spotlight-card-image-wrap{
-  position:relative;
-  overflow:hidden;
-  flex:0 0 auto;
-  margin:20px 20px 0;
-  border-radius:22px;
-  box-shadow:
-    0 20px 36px rgba(0,0,0,0.34),
-    0 0 0 1px rgba(255,255,255,0.03) inset,
-    0 0 20px rgba(200,38,55,0.08);
-  transition:transform .4s ease, box-shadow .4s ease;
-}
-
-.spotlight-card-image-wrap-main{
-  margin:20px 22px 0;
-  border-radius:24px;
-  transform:translateY(-8px);
-  box-shadow:
-    0 28px 50px rgba(0,0,0,0.38),
-    0 0 32px rgba(220,52,70,0.16),
-    0 0 0 1px rgba(255,255,255,0.04) inset;
-}
-
-.spotlight-card-side .spotlight-card-image-wrap{
-  height:278px;
-}
-
-.spotlight-card-main .spotlight-card-image-wrap{
-  height:304px;
-}
-
-.spotlight-card-image{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center 24%;
-  display:block;
-  transform:scale(1.03);
-  transition:transform .7s ease, filter .45s ease, opacity .45s ease;
-}
-
-.spotlight-card-image-main{
-  transform:scale(1.06);
-}
-
-.spotlight-card-image--found-safe{
-  filter:blur(22px) saturate(0.88) brightness(0.78) contrast(0.9);
-  transform:scale(1.12);
-  transform-origin:center center;
-  opacity:.78;
-}
-
-.spotlight-card-image-overlay{
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.18) 34%, rgba(0,0,0,0.64) 100%);
-}
-
-.spotlight-card-image-overlay--found-safe{
-  background:
-    linear-gradient(180deg, rgba(5,12,8,0.24) 0%, rgba(5,12,8,0.76) 100%);
-}
-
-.spotlight-card-image-overlay-main{
-  background:
-    radial-gradient(circle at 50% 78%, rgba(220,52,70,0.28) 0%, transparent 28%),
-    linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.14) 34%, rgba(0,0,0,0.56) 100%);
-}
-
-.spotlight-card-image-rim{
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.06),
-    inset 0 -44px 56px rgba(0,0,0,0.18),
-    0 0 16px rgba(255,60,80,0.08);
-  pointer-events:none;
-}
-
-.spotlight-card-image-rim-main{
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.09),
-    inset 0 -46px 62px rgba(0,0,0,0.20),
-    0 0 28px rgba(255,72,92,0.16);
-}
-
-.spotlight-card-badge{
-  position:absolute;
-  top:14px;
-  left:14px;
-  z-index:4;
-  display:inline-flex;
-  align-items:center;
-  min-height:32px;
-  padding:0 12px;
-  border-radius:999px;
-  background:linear-gradient(180deg, rgba(73, 17, 22, 0.94), rgba(44, 10, 13, 0.96));
-  border:1px solid rgba(255,255,255,0.07);
-  color:#fff;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.10em;
-  text-transform:uppercase;
-  box-shadow:0 10px 20px rgba(0,0,0,0.22);
-}
-
-.spotlight-card-badge-main{
-  left:50%;
-  transform:translateX(-50%);
-  padding:0 14px;
-  background:linear-gradient(180deg, #d23446 0%, #88131e 100%);
-  box-shadow:0 0 22px rgba(210, 52, 70, 0.16), 0 10px 20px rgba(0,0,0,0.22);
-}
-
-.spotlight-main-image-glow{
-  position:absolute;
-  left:50%;
-  bottom:8px;
-  transform:translateX(-50%);
-  width:76%;
-  height:58px;
-  border-radius:999px;
-  background:radial-gradient(circle, rgba(255,72,92,0.56) 0%, rgba(255,72,92,0.20) 44%, transparent 74%);
-  filter:blur(18px);
-  pointer-events:none;
-}
-
-.spotlight-card-body,
-.spotlight-card-body-main{
-  position:relative;
-  z-index:4;
-  display:flex;
-  flex-direction:column;
-  flex:1 1 auto;
-  min-height:0;
-}
-
-.spotlight-card-body{
-  padding:18px 20px 22px;
-}
-
-.spotlight-card-body-main{
-  padding:20px 24px 24px;
-}
-
-.spotlight-card-mini-kicker{
-  margin-bottom:8px;
-  color:#e6b1b7;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-}
-
-.spotlight-main-status-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:10px;
-}
-
-.spotlight-main-status,
-.spotlight-main-data-pill{
-  display:inline-flex;
-  align-items:center;
-  min-height:30px;
-  padding:0 12px;
-  border-radius:999px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-  border:1px solid rgba(255,255,255,0.06);
-  color:#f4d6d9;
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-}
-
-.spotlight-card-name{
-  margin:0 0 8px;
-  color:#fff;
-  font-size:22px;
-  line-height:1.05;
-  font-weight:900;
-  text-transform:uppercase;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-  min-height:46px;
-  transition:color .3s ease, text-shadow .3s ease;
-}
-
-.spotlight-card-name-main{
-  font-size:37px;
-  min-height:78px;
-  text-shadow:0 0 30px rgba(169, 36, 49, 0.12);
-}
-
-.spotlight-card-meta{
-  color:#e6c8cb;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  min-height:18px;
-}
-
-.spotlight-card-meta-main{
-  font-size:13px;
-}
-
-.spotlight-card-text,
-.spotlight-card-text-main{
-  margin-top:12px;
-  color:rgba(255,255,255,0.82);
-  line-height:1.6;
-  overflow:hidden;
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-}
-
-.spotlight-card-text{
-  font-size:12px;
-  -webkit-line-clamp:5;
-  min-height:96px;
-}
-
-.spotlight-card-text-main{
-  font-size:13px;
-  -webkit-line-clamp:4;
-  min-height:86px;
-}
-
-.spotlight-main-data-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:14px;
-}
-
-.spotlight-card-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:auto;
-  padding-top:18px;
-}
-
-.spotlight-card-actions-side{
-  padding-top:16px;
-}
-
-.spotlight-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:42px;
-  padding:0 16px;
-  border-radius:999px;
-  text-decoration:none;
-  color:#fff;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:0 10px 22px rgba(0,0,0,0.18);
-  transition:transform .28s cubic-bezier(.22,.61,.36,1), box-shadow .28s ease, border-color .28s ease, background .28s ease, filter .28s ease;
-}
-
-.spotlight-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 14px 28px rgba(0,0,0,0.22);
-}
-
-.spotlight-btn-primary{
-  background:linear-gradient(180deg, #df4053 0%, #8f1421 100%);
-  border-color:rgba(255,255,255,0.10);
-  box-shadow:
-    0 14px 28px rgba(124,19,29,0.30),
-    0 0 28px rgba(223,64,83,0.18);
-}
-
-.spotlight-btn-dark{
-  background:linear-gradient(180deg, #2a2527 0%, #161113 100%);
-}
-
-.spotlight-btn-ghost{
-  background:linear-gradient(180deg, rgba(192, 44, 60, 0.14), rgba(192, 44, 60, 0.06));
-  border-color:rgba(192, 44, 60, 0.20);
-  color:#ffe4e7;
-}
-
-.spotlight-card:hover{
-  transform:translateY(-12px);
-  box-shadow:
-    0 32px 64px rgba(0,0,0,0.48),
-    0 0 44px rgba(210,44,60,0.16);
-}
-
-.spotlight-card:hover .spotlight-card-ring{
-  box-shadow:
-    0 0 0 1px rgba(255,120,135,0.24),
-    0 0 72px rgba(225,62,80,0.22),
-    0 0 140px rgba(160,22,36,0.14);
-}
-
-.spotlight-card:hover .spotlight-card-corner{
-  opacity:.70;
-  filter:blur(14px);
-}
-
-.spotlight-card:hover .spotlight-card-image{
-  transform:scale(1.06);
-}
-
-.spotlight-card:hover .spotlight-card-image-wrap{
-  box-shadow:
-    0 28px 50px rgba(0,0,0,0.38),
-    0 0 24px rgba(220,52,70,0.16);
-}
-
-.spotlight-card:hover .spotlight-card-name{
-  color:#fff8f8;
-  text-shadow:0 0 18px rgba(214,61,78,0.12);
-}
-
-.spotlight-card-main:hover{
-  transform:translateY(-18px);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.04) inset,
-    0 44px 104px rgba(0,0,0,0.56),
-    0 0 110px rgba(180,30,44,0.28);
-}
-
-.spotlight-card-main:hover .spotlight-main-image-glow{
-  background:radial-gradient(circle, rgba(255,72,92,0.68) 0%, rgba(255,72,92,0.26) 44%, transparent 74%);
-  filter:blur(22px);
-}
-
-.spotlight-card-main:hover .spotlight-main-hover-floor{
-  opacity:1;
-  transform:scale(1.08);
-}
-
-.spotlight-card-main:hover .spotlight-btn-primary{
-  filter:brightness(1.08);
-}
-
-@keyframes spotlightBorderRun{
-  0%{ background-position:0% 50%; }
-  100%{ background-position:280% 50%; }
-}
-
-@keyframes spotlightShellSweep{
-  0%{ left:-35%; }
-  100%{ left:120%; }
-}
-
-@keyframes spotlightCornerPulse{
-  0%,100%{ opacity:.30; transform:scale(1); }
-  50%{ opacity:.55; transform:scale(1.08); }
-}
-
-@keyframes spotlightMainSheen{
-  0%{ left:-36%; }
-  100%{ left:118%; }
-}
-
-@keyframes spotlightMainPulse{
-  0%,100%{
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,0.04) inset,
-      0 30px 78px rgba(0,0,0,0.44),
-      0 0 48px rgba(123, 22, 31, 0.12);
-  }
-  50%{
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,0.04) inset,
-      0 32px 84px rgba(0,0,0,0.46),
-      0 0 70px rgba(123, 22, 31, 0.20);
-  }
-}
-
-@keyframes spotlightDotPulse{
-  0%,100%{ transform:scale(1); opacity:.9; }
-  50%{ transform:scale(1.14); opacity:1; }
-}
-
-@keyframes spotlightBeamLeftA{
-  0%,100%{ opacity:.24; transform:rotate(17deg) translateX(0); }
-  50%{ opacity:.68; transform:rotate(26deg) translateX(18px); }
-}
-@keyframes spotlightBeamLeftB{
-  0%,100%{ opacity:.18; transform:rotate(9deg) translateX(0); }
-  50%{ opacity:.46; transform:rotate(15deg) translateX(12px); }
-}
-@keyframes spotlightBeamLeftC{
-  0%,100%{ opacity:.12; transform:rotate(-2deg) translateX(0); }
-  50%{ opacity:.32; transform:rotate(5deg) translateX(9px); }
-}
-@keyframes spotlightBeamRightA{
-  0%,100%{ opacity:.24; transform:rotate(-17deg) translateX(0); }
-  50%{ opacity:.68; transform:rotate(-26deg) translateX(-18px); }
-}
-@keyframes spotlightBeamRightB{
-  0%,100%{ opacity:.18; transform:rotate(-9deg) translateX(0); }
-  50%{ opacity:.46; transform:rotate(-15deg) translateX(-12px); }
-}
-@keyframes spotlightBeamRightC{
-  0%,100%{ opacity:.12; transform:rotate(2deg) translateX(0); }
-  50%{ opacity:.32; transform:rotate(-5deg) translateX(-9px); }
-}
-
-@keyframes spotlightCardAmbientSheen{
-  0%{ left:-52%; }
-  100%{ left:124%; }
-}
-
-@keyframes spotlightCardAmbientSheenMain{
-  0%{ left:-52%; }
-  100%{ left:124%; }
-}
-
-@media (max-width: 1200px){
-  .spotlight-stage{
-    grid-template-columns:1fr;
-    align-items:stretch;
-  }
-
-  .spotlight-card-side,
-  .spotlight-card-main{
-    height:auto;
-    min-height:unset;
-    transform:none;
-    opacity:1;
-    animation:none;
-  }
-
-  .spotlight-card-side .spotlight-card-image-wrap,
-  .spotlight-card-main .spotlight-card-image-wrap{
-    height:320px;
-  }
-
-  .spotlight-card-image-stage,
-  .spotlight-card-image-stage-main{
-    height:346px;
-  }
-
-  .spotlight-alert-corner{
-    position:relative;
-    top:auto;
-    right:auto;
-    margin:0 auto 10px;
-    width:fit-content;
-  }
-
-  .spotlight-top-strip{
-    width:100%;
-    max-width:none;
-  }
-
-  .spotlight-strobes,
-  .spotlight-shell-wall{
-    display:none;
-  }
-}
-
-@media (max-width: 900px){
-  .spotlight-top-strip{
-    grid-template-columns:1fr;
-    width:100%;
-    text-align:center;
-    gap:8px;
-  }
-
-  .spotlight-top-pill,
-  .spotlight-top-status{
-    justify-self:center;
-  }
-
-  .spotlight-top-center{
-    font-size:18px;
-  }
-
-  .spotlight-card-name-main{
-    font-size:31px;
-    min-height:66px;
-  }
-}
-
-@media (max-width: 700px){
-  .spotlight-system{
-    padding:0 8px;
-  }
-
-  .spotlight-shell{
-    border-radius:24px;
-    padding:14px;
-    min-height:auto;
-  }
-
-  .spotlight-shell-border-light{
-    border-radius:24px;
-  }
-
-  .spotlight-card,
-  .spotlight-card-ring,
-  .spotlight-card-frame,
-  .spotlight-card-depth-frame{
-    border-radius:20px;
-  }
-
-  .spotlight-card-image-wrap,
-  .spotlight-card-image-wrap-main{
-    margin:16px 16px 0;
-    border-radius:18px;
-  }
-
-  .spotlight-card-side .spotlight-card-image-wrap,
-  .spotlight-card-main .spotlight-card-image-wrap{
-    height:270px;
-  }
-
-  .spotlight-card-image-stage,
-  .spotlight-card-image-stage-main{
-    left:16px;
-    right:16px;
-    top:16px;
-    height:294px;
-    border-radius:18px;
-  }
-
-  .spotlight-card-actions{
-    flex-direction:column;
-  }
-
-  .spotlight-btn{
-    width:100%;
-  }
-
-  .spotlight-card-name-main{
-    font-size:28px;
-  }
-}
+.ma-premium-spotlight{max-width:1260px;margin:18px auto 12px;padding:0 14px;color:#fff}
+.ma-premium-spotlight__shell{position:relative;overflow:hidden;border-radius:24px;padding:18px;background:radial-gradient(circle at 50% 0,rgba(255,49,70,.24),transparent 32%),linear-gradient(135deg,#150508,#08090d 58%,#120407);border:1px solid rgba(255,92,92,.22);box-shadow:0 24px 80px rgba(0,0,0,.45),0 0 42px rgba(185,20,32,.14)}
+.ma-premium-spotlight__glow{position:absolute;inset:0;background:linear-gradient(110deg,transparent 0%,rgba(255,255,255,.08) 45%,transparent 62%);transform:translateX(-120%);animation:maSpotlightSweep 9s linear infinite;pointer-events:none}
+.ma-premium-spotlight__header{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:14px}
+.ma-premium-spotlight__eyebrow{margin:0 0 6px;color:#ffb4b4;font-size:11px;font-weight:950;letter-spacing:.16em;text-transform:uppercase}
+.ma-premium-spotlight h2{margin:0;color:#fff;font-size:clamp(28px,4vw,46px);line-height:.95;font-weight:950;letter-spacing:.02em}
+.ma-premium-spotlight__copy{max-width:650px;margin:9px 0 0;color:rgba(255,255,255,.72);font-size:14px;line-height:1.45;font-weight:750}
+.ma-premium-spotlight__cta{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border-radius:999px;background:linear-gradient(180deg,#ff4b4b,#a80f1d);border:1px solid rgba(255,255,255,.14);color:#fff!important;text-decoration:none;font-size:12px;font-weight:950;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;box-shadow:0 12px 26px rgba(168,15,29,.34)}
+.ma-premium-spotlight__notice{position:relative;z-index:1;display:inline-flex;margin:0 0 12px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);color:rgba(255,235,235,.9);font-size:11px;font-weight:900;letter-spacing:.04em}
+.ma-premium-spotlight__grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr) minmax(0,.85fr);gap:14px;align-items:stretch}
+.ma-premium-spotlight-card{min-width:0;display:block}
+.ma-premium-spotlight-card[hidden]{display:none!important}
+.ma-premium-spotlight-card.is-primary{grid-column:2;grid-row:1;transform:translateY(-3px)}
+.ma-premium-spotlight-card.is-primary:first-child{grid-column:auto}
+.ma-premium-spotlight-card__link{height:100%;min-height:320px;display:flex;flex-direction:column;overflow:hidden;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.10);color:#fff!important;text-decoration:none;box-shadow:0 16px 42px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.ma-premium-spotlight-card.is-primary .ma-premium-spotlight-card__link{min-height:390px;border-color:rgba(255,92,92,.36);box-shadow:0 22px 56px rgba(0,0,0,.44),0 0 34px rgba(255,42,42,.18)}
+.ma-premium-spotlight-card__link:hover{transform:translateY(-3px);border-color:rgba(255,120,120,.34)}
+.ma-premium-spotlight-card__media{position:relative;aspect-ratio:16/10;background:#12070a;overflow:hidden}
+.ma-premium-spotlight-card.is-primary .ma-premium-spotlight-card__media{aspect-ratio:16/11}
+.ma-premium-spotlight-card__media img{width:100%;height:100%;display:block;object-fit:cover;object-position:center;filter:saturate(.96) contrast(1.03)}
+.ma-premium-spotlight-card__media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.52))}
+.ma-premium-spotlight-card__badge{position:absolute;left:10px;bottom:10px;z-index:2;display:inline-flex;padding:6px 9px;border-radius:999px;background:rgba(211,24,38,.88);color:#fff;font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.ma-premium-spotlight-card__body{display:flex;flex:1;flex-direction:column;padding:13px;min-width:0}
+.ma-premium-spotlight-card__meta{margin:0 0 7px;color:#ffb4b4;font-size:11px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ma-premium-spotlight-card h3{margin:0;color:#fff;font-size:18px;line-height:1.12;font-weight:950;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ma-premium-spotlight-card.is-primary h3{font-size:23px}
+.ma-premium-spotlight-card__summary{margin:8px 0 12px;color:rgba(255,255,255,.74);font-size:12px;line-height:1.38;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ma-premium-spotlight-card__action{margin-top:auto;color:#fff;font-size:11px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.ma-premium-spotlight__empty{position:relative;z-index:1;margin-top:10px;padding:13px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.84);font-size:13px;font-weight:800}
+.ma-premium-spotlight__empty a{margin-left:8px;color:#ffb4b4!important}
+@keyframes maSpotlightSweep{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
+@media(max-width:980px){.ma-premium-spotlight__header{align-items:flex-start;flex-direction:column}.ma-premium-spotlight__grid{grid-template-columns:1fr}.ma-premium-spotlight-card.is-primary{grid-column:auto;grid-row:auto}.ma-premium-spotlight-card__link,.ma-premium-spotlight-card.is-primary .ma-premium-spotlight-card__link{min-height:0}.ma-premium-spotlight-card.is-primary h3{font-size:20px}}
+@media(max-width:620px){.ma-premium-spotlight{padding:0 10px}.ma-premium-spotlight__shell{border-radius:18px;padding:14px}.ma-premium-spotlight__cta{width:100%}}
 </style>
 
 {% schema %}

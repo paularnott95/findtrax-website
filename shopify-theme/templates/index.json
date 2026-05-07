@@ -163,22 +163,11 @@
         "padding_top": 40,
         "padding_bottom": 52
       }
-    },
-    "ma_country_spotlight_bar": {
-      "type": "custom-liquid",
-      "name": "Missing Alerts country spotlight bar",
-      "settings": {
-        "custom_liquid": "{% render 'ma-spotlight-bar' %}",
-        "color_scheme": "",
-        "padding_top": 0,
-        "padding_bottom": 0
-      }
     }
   },
   "order": [
     "custom_liquid_6aYYkG",
     "custom_liquid_VjWcwq",
-    "ma_country_spotlight_bar",
     "spotlight_system_g6nycR",
     "boosted_appeals_final_RptqUp",
     "home_verified_case_grid_nUu7jX",
