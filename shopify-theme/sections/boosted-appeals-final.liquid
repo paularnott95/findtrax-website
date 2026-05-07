@@ -20,23 +20,15 @@
       <a class="ma-boosted-appeals__cta" href="{{ boost_cta_url }}">Boost a Case</a>
     </header>
 
-    <div class="ma-boosted-appeals__layout">
-      <div>
+    <div class="ma-boosted-appeals__layout ma-boost-horizontal">
+      <div class="ma-boost-horizontal__body">
         <div class="ma-boosted-appeals__notice" data-ma-boost-mode>Loading selected-country boosted appeals.</div>
-        <div class="ma-boosted-appeals__grid" data-ma-boost-grid></div>
+        <div class="ma-boosted-appeals__grid ma-boost-horizontal-grid" data-ma-boost-grid></div>
         <div class="ma-boosted-appeals__empty" data-ma-boost-empty hidden>
           <strong>No active boosted or fallback appeals are currently available for this country.</strong>
           <a href="/pages/country-intelligence">View country intelligence</a>
         </div>
       </div>
-
-      <aside class="ma-boosted-sidebar" data-ma-boost-sidebar>
-        <div class="ma-boosted-sidebar__head">
-          <span>Priority sidebar</span>
-          <strong>Boosted Appeals</strong>
-        </div>
-        <div class="ma-boosted-sidebar__list" data-ma-boost-sidebar-list></div>
-      </aside>
     </div>
 
     <div class="ma-boosted-appeals__pool" data-ma-boost-pool hidden>
@@ -206,7 +198,6 @@
   if (!section) return;
   var pool = section.querySelector('[data-ma-boost-pool]');
   var grid = section.querySelector('[data-ma-boost-grid]');
-  var sidebar = section.querySelector('[data-ma-boost-sidebar-list]');
   var notice = section.querySelector('[data-ma-boost-mode]');
   var empty = section.querySelector('[data-ma-boost-empty]');
   var countries = {
@@ -324,10 +315,19 @@
       selected = seededShuffle(fallbackSource, seedFor(country.code)).slice(0, 4);
     }
     grid.innerHTML = '';
-    sidebar.innerHTML = '';
     selected.forEach(function(card) {
       grid.appendChild(cloneCard(card, false));
-      sidebar.appendChild(cloneCard(card, true));
+    });
+    document.querySelectorAll('[data-ma-home-boost-sidebar-list]').forEach(function(sidebar) {
+      sidebar.innerHTML = '';
+      selected.forEach(function(card) {
+        sidebar.appendChild(cloneCard(card, true));
+      });
+      var shell = sidebar.closest('[data-ma-home-boost-sidebar]');
+      if (shell) {
+        shell.setAttribute('data-selected-country', country.code);
+        shell.setAttribute('data-visible-count', String(selected.length));
+      }
     });
     if (notice) {
       notice.textContent = paid.length ?
@@ -360,7 +360,8 @@
 .ma-boosted-appeals h2{margin:0;color:#fff;font-size:clamp(24px,3vw,34px);line-height:1;font-weight:950;letter-spacing:.03em}
 .ma-boosted-appeals__header p:not(.ma-boosted-appeals__eyebrow){margin:7px 0 0;color:rgba(255,255,255,.7);font-size:13px;line-height:1.4;font-weight:750}
 .ma-boosted-appeals__cta{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 15px;border-radius:999px;background:linear-gradient(180deg,#ff4b4b,#a80f1d);border:1px solid rgba(255,255,255,.14);color:#fff!important;text-decoration:none;font-size:12px;font-weight:950;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-.ma-boosted-appeals__layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+.ma-boosted-appeals__layout{display:block}
+.ma-boost-horizontal__body{min-width:0}
 .ma-boosted-appeals__notice{display:inline-flex;margin:0 0 10px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);color:rgba(255,235,235,.88);font-size:11px;font-weight:900}
 .ma-boosted-appeals__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .ma-boost-card{min-width:0}
@@ -374,11 +375,6 @@
 .ma-boost-card__meta{margin:0 0 6px;color:#ffb4b4;font-size:10px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ma-boost-card h3{margin:0;color:#fff;font-size:15px;line-height:1.16;font-weight:950;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ma-boost-card__summary{margin:7px 0 0;color:rgba(255,255,255,.72);font-size:11px;line-height:1.35;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ma-boosted-sidebar{border-radius:16px;padding:12px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
-.ma-boosted-sidebar__head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
-.ma-boosted-sidebar__head span{color:#ffb4b4;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase}
-.ma-boosted-sidebar__head strong{color:#fff;font-size:13px;text-transform:uppercase;text-align:right}
-.ma-boosted-sidebar__list{display:grid;gap:9px}
 .ma-boost-card--compact .ma-boost-card__link{display:grid;grid-template-columns:74px minmax(0,1fr);min-height:82px;border-radius:12px}
 .ma-boost-card--compact .ma-boost-card__media{aspect-ratio:auto;height:100%}
 .ma-boost-card--compact .ma-boost-card__body{padding:9px}
@@ -387,7 +383,7 @@
 .ma-boost-card--compact .ma-boost-card__badge{font-size:9px;padding:4px 6px}
 .ma-boosted-appeals__empty{margin-top:10px;padding:12px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.84);font-size:13px;font-weight:800}
 .ma-boosted-appeals__empty a{margin-left:8px;color:#ffb4b4!important}
-@media(max-width:1100px){.ma-boosted-appeals__layout{grid-template-columns:1fr}.ma-boosted-sidebar{max-width:none}.ma-boosted-appeals__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1100px){.ma-boosted-appeals__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.ma-boosted-appeals{padding:0 10px}.ma-boosted-appeals__shell{border-radius:18px;padding:13px}.ma-boosted-appeals__header{align-items:flex-start;flex-direction:column}.ma-boosted-appeals__cta{width:100%}.ma-boosted-appeals__grid{grid-template-columns:1fr}}
 </style>
 

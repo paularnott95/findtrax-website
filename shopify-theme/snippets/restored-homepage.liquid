@@ -779,16 +779,147 @@
 <style>
 .mpa-latest-layout{
   display:grid;
-  grid-template-columns:minmax(0,1fr);
+  grid-template-columns:minmax(260px,290px) minmax(0,1fr) minmax(300px,330px);
   gap:16px;
-  align-items:stretch;
+  align-items:start;
   max-width:1360px;
   margin:28px auto 18px auto;
   padding:0 12px;
   box-sizing:border-box;
 }
 
+.ma-home-help-sidebar,
+.ma-home-boost-sidebar{
+  min-width:0;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg,rgba(18,20,24,.98),rgba(10,11,14,.98));
+  box-shadow:0 14px 34px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.04);
+  padding:14px;
+  color:#fff;
+}
 
+.ma-home-help-sidebar h3,
+.ma-home-boost-sidebar h3{
+  margin:0;
+  color:#fff;
+  font-size:15px;
+  line-height:1.1;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.ma-home-help-sidebar p,
+.ma-home-boost-sidebar p{
+  margin:8px 0 0;
+  color:rgba(255,255,255,.68);
+  font-size:12px;
+  line-height:1.4;
+  font-weight:750;
+}
+
+.ma-home-help-list{
+  display:grid;
+  gap:8px;
+  margin:13px 0;
+  padding:0;
+  list-style:none;
+}
+
+.ma-home-help-list li{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  color:rgba(255,255,255,.84);
+  font-size:12px;
+  line-height:1.3;
+  font-weight:800;
+}
+
+.ma-home-help-list li:before{
+  content:"";
+  width:7px;
+  height:7px;
+  flex:0 0 auto;
+  margin-top:4px;
+  border-radius:999px;
+  background:#ff4b4b;
+  box-shadow:0 0 10px rgba(255,75,75,.75);
+}
+
+.ma-home-help-actions{
+  display:grid;
+  gap:8px;
+}
+
+.ma-home-help-actions a,
+.ma-home-boost-sidebar__cta{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:34px;
+  padding:0 11px;
+  border-radius:999px;
+  text-decoration:none;
+  color:#fff!important;
+  background:linear-gradient(180deg,#d73737,#8f111c);
+  border:1px solid rgba(255,255,255,.12);
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+.ma-home-help-actions a:nth-child(2),
+.ma-home-help-actions a:nth-child(3){
+  background:rgba(255,255,255,.06);
+}
+
+.ma-home-boost-sidebar{
+  background:radial-gradient(circle at 12% 0,rgba(255,53,53,.16),transparent 30%),linear-gradient(180deg,rgba(18,8,10,.98),rgba(8,9,12,.98));
+}
+
+.ma-home-boost-sidebar__head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:11px;
+}
+
+.ma-home-boost-sidebar__eyebrow{
+  color:#ffb4b4;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+.ma-home-boost-sidebar__list{
+  display:grid;
+  gap:9px;
+  min-height:82px;
+}
+
+.ma-home-boost-sidebar__empty{
+  padding:11px;
+  border-radius:12px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.76);
+  font-size:12px;
+  line-height:1.35;
+  font-weight:800;
+}
+
+.ma-home-boost-sidebar[data-visible-count="0"] .ma-home-boost-sidebar__empty{
+  display:block;
+}
+
+.ma-home-boost-sidebar:not([data-visible-count="0"]) .ma-home-boost-sidebar__empty{
+  display:none;
+}
 
 .mpa-latest-main{
   min-width:0;
@@ -999,7 +1130,7 @@
 
 @media (max-width:1100px){
   .mpa-latest-layout{
-    grid-template-columns:minmax(0,1fr) 320px;
+    grid-template-columns:240px minmax(0,1fr) 280px;
     gap:14px;
   }
 
@@ -1030,8 +1161,16 @@
     grid-template-columns:1fr;
   }
 
-  .mpa-latest-sidebar{
+  .mpa-latest-main{
+    order:1;
+  }
+
+  .ma-home-help-sidebar{
     order:2;
+  }
+
+  .ma-home-boost-sidebar{
+    order:3;
   }
 
   .mpa-cases-grid{
@@ -1047,6 +1186,23 @@
 </style>
 
 <div class="mpa-latest-layout">
+  <aside class="ma-home-help-sidebar" aria-label="How Missing Alerts can help">
+    <h3>HOW WE CAN HELP</h3>
+    <p>Practical visibility tools for public missing-person appeals.</p>
+    <ul class="ma-home-help-list">
+      <li>Free public case pages</li>
+      <li>Free alerts to supporters</li>
+      <li>Share-ready appeals</li>
+      <li>Country-specific visibility</li>
+      <li>Safe source attribution</li>
+      <li>Updates and found-safe handling</li>
+    </ul>
+    <div class="ma-home-help-actions">
+      <a href="/pages/report-a-missing-person">Submit a Case</a>
+      <a href="/pages/alerts">Get Alerts</a>
+      <a href="/pages/country-intelligence">Country Intelligence</a>
+    </div>
+  </aside>
 
   <div class="mpa-latest-main">
     <div class="mpa-cases-wrap">
@@ -1468,6 +1624,18 @@
 
     </div>
   </div>
+
+  <aside class="ma-home-boost-sidebar" data-ma-home-boost-sidebar data-visible-count="0" aria-label="Boosted Appeals">
+    <div class="ma-home-boost-sidebar__head">
+      <div>
+        <div class="ma-home-boost-sidebar__eyebrow">Priority visibility</div>
+        <h3>BOOSTED APPEALS</h3>
+      </div>
+    </div>
+    <div class="ma-home-boost-sidebar__list" data-ma-home-boost-sidebar-list></div>
+    <div class="ma-home-boost-sidebar__empty">Loading selected-country boosted appeals.</div>
+    <a class="ma-home-boost-sidebar__cta" href="/products/boost-appeal-24-hours">Boost a Case</a>
+  </aside>
 
 </div>
 
