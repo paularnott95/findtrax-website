@@ -1,6 +1,6 @@
 # Shopify Homepage Cache Blocker
 
-Timestamp: 2026-05-07T07:53:03Z
+Timestamp: 2026-05-07T10:11:31Z
 
 ## Summary
 
@@ -16,11 +16,17 @@ However, the normal storefront homepage at `https://missingalerts.com/` still re
 //missingalerts.com/cdn/shop/t/19/assets/country-mode.js?v=145899350803046321911778133989
 ```
 
-The storefront page cache for the homepage/index route has not rebuilt after Shopify CLI theme pushes and publishes.
+The storefront page cache for the homepage/index route has not rebuilt after Shopify CLI theme pushes, publishes, a fresh unpublished theme upload, publishing that fresh theme, and a final targeted layout/index CLI touch.
 
 ## Theme IDs
 
-Live theme ID:
+Current live theme ID:
+
+```text
+196375314592
+```
+
+Previous live theme ID:
 
 ```text
 196361224352
@@ -32,11 +38,19 @@ Previously stale referenced theme ID:
 196357619872
 ```
 
-Latest raw homepage body observed:
+Latest raw homepage body observed after publishing `196375314592`:
 
 ```text
 Shopify.theme.id = 196361224352
 ```
+
+Latest raw homepage server timing observed:
+
+```text
+theme;desc="196375314592", pageType;desc="index"
+```
+
+This proves Shopify is using the new live theme for routing, but the rendered homepage body is still an older cached index render.
 
 ## Asset Evidence
 
@@ -64,24 +78,32 @@ Live theme source intentionally renders:
 {{ 'country-mode-v20260506-final.js' | asset_url | script_tag }}
 ```
 
+The rebuilt sections can render directly through Shopify's section endpoint:
+
+```text
+GET https://missingalerts.com/?section_id=spotlight-system
+```
+
+That endpoint returns `ma-premium-spotlight` and `SPOTLIGHT CASES`, while the normal homepage still returns the old `Country spotlight` block.
+
 ## Raw Homepage Response Evidence
 
 Request:
 
 ```text
-GET https://missingalerts.com/
+GET https://missingalerts.com/?country=GB&ma_verify=20260507touch2
 ```
 
 Response:
 
 ```text
 HTTP/2 200
-date: Thu, 07 May 2026 07:53:03 GMT
-etag: W/"page_cache:103695024288:IndexController:df478129245be11eb0048f36f149a3a8"
+date: Thu, 07 May 2026 10:11:31 GMT
+etag: W/"page_cache:103695024288:IndexController:76dbc0523362a1bbe7831735ca5ce79e"
 powered-by: Shopify
-server-timing: processing;dur=204;desc="gc:50", db;dur=30, db_async;dur=3.867, render;dur=84, asn;desc="8075", edge;desc="SGN", country;desc="VN", theme;desc="196361224352", pageType;desc="index", servedBy;desc="nzlt", requestID;desc="d91bc9c6-789c-4225-9318-eaf9676462e5-1778140383-1778140383"
+server-timing: processing;dur=68;desc="gc:2", db;dur=33, asn;desc="18403", edge;desc="HKG", country;desc="VN", theme;desc="196375314592", pageType;desc="index", servedBy;desc="64j4", requestID;desc="15099288-8e22-4a98-a510-89caed58c798-1778148691"
 cf-cache-status: DYNAMIC
-x-request-id: d91bc9c6-789c-4225-9318-eaf9676462e5-1778140383
+x-request-id: 15099288-8e22-4a98-a510-89caed58c798-1778148691
 ```
 
 Raw body still contains:
@@ -94,6 +116,14 @@ Raw body does not contain:
 
 ```text
 country-mode-v20260506-final.js
+ma-premium-spotlight
+```
+
+Raw body still contains:
+
+```text
+Country spotlight
+Shopify.theme = {"name":"Missing Alerts Country Filter Live 2026-05-06","id":196361224352,...}
 ```
 
 ## Admin Asset API Attempt
@@ -147,15 +177,35 @@ Intended JavaScript touch comment:
 
 No Admin Asset API changes were applied because Shopify rejected the asset requests before reading or writing.
 
+## Fresh Theme Attempt
+
+A fresh unpublished theme was created from the corrected local theme source and then published:
+
+```text
+Missing Alerts Spotlight Boosted Live 2026-05-07
+Theme ID: 196375314592
+```
+
+The new theme source contains:
+
+```text
+templates/index.json -> spotlight-system, boosted-appeals-final
+snippets/restored-homepage-grid-compact.liquid -> no ma-spotlight-bar render
+layout/theme.liquid -> country-mode-v20260506-final.js
+sections/spotlight-system.liquid -> ma-premium-spotlight
+sections/boosted-appeals-final.liquid -> ma-boosted-appeals
+```
+
+After publishing the fresh theme, raw `https://missingalerts.com/` still rendered the old cached body and old asset URL. A final CLI touch pushed `layout/theme.liquid` and `templates/index.json` to `196375314592`, then republished it. The raw homepage still remained stale.
+
 ## Conclusion
 
-Shopify storefront page cache for the homepage/index route did not invalidate after CLI theme push/publish. The code source is updated, but raw `https://missingalerts.com/` continues to serve cached homepage HTML with the old country-mode asset URL. The Admin Asset API cache-touch workaround cannot be completed from this environment until the Shopify app has merchant-approved theme access, at minimum `read_themes` and likely write theme asset access.
+Shopify storefront page cache for the homepage/index route did not invalidate after CLI theme push/publish, fresh theme upload/publish, or targeted CLI touches. The code source is updated, and section rendering proves the rebuilt Spotlight section is available, but raw `https://missingalerts.com/` continues to serve cached homepage HTML with the old country-mode asset URL and old Country Spotlight body. The Admin Asset API cache-touch workaround cannot be completed from this environment until the Shopify app has merchant-approved theme access, at minimum `read_themes` and likely write theme asset access.
 
 ## Shopify Support Message
 
 Please send this to Shopify Support:
 
 ```text
-Our live theme is 196361224352. We updated layout/theme.liquid and assets via Shopify CLI and attempted a Theme Asset API / theme code equivalent touch, including assets/country-mode.js and a new assets/country-mode-v20260506-final.js. Raw https://missingalerts.com/ still serves a cached homepage body that references /cdn/shop/t/19/assets/country-mode.js?v=145899350803046321911778133989 instead of the updated theme source. The response has etag W/"page_cache:103695024288:IndexController:df478129245be11eb0048f36f149a3a8" and server-timing theme;desc="196361224352", pageType;desc="index". Please rebuild/invalidate the storefront page_cache for the homepage/index route.
+Our live theme is 196375314592. We updated layout/theme.liquid, templates/index.json, Spotlight/Boosted sections, snippets, and assets via Shopify CLI. We also created and published a fresh theme from the corrected source, then performed a targeted CLI touch of layout/theme.liquid and templates/index.json. Raw https://missingalerts.com/ still serves a cached homepage body embedding Shopify.theme.id=196361224352, the old Country Spotlight block, and /cdn/shop/t/19/assets/country-mode.js?v=145899350803046321911778133989. The response has etag W/"page_cache:103695024288:IndexController:76dbc0523362a1bbe7831735ca5ce79e" and server-timing theme;desc="196375314592", pageType;desc="index". Shopify's section endpoint for ?section_id=spotlight-system returns the corrected ma-premium-spotlight section, proving the new theme source is present. Please rebuild/invalidate the storefront page_cache for the homepage/index route.
 ```
-
