@@ -4926,6 +4926,11 @@ body.template-index #shopify-section-featured-collection {
   display: none !important;
 }
 
+body.template-index [id*="featured-collection"],
+body.template-index [class*="featured-collection"] {
+  display: none !important;
+}
+
 body.template-index .ma-home-active-section,
 body.template-index .home-verified-case-grid,
 body.template-index .boosted-bar {
@@ -4995,6 +5000,15 @@ body.template-index .ma-home-sidebar,
 body.template-index .boosted-sidebar-section {
   max-width: 340px;
   align-self: start;
+}
+
+body.template-index .mpa-latest-layout {
+  align-items: start !important;
+}
+
+body.template-index .mpa-latest-main,
+body.template-index .mpa-latest-sidebar {
+  align-self: start !important;
 }
 
 @media screen and (max-width: 989px) {

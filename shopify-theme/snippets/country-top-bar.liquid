@@ -10,6 +10,25 @@
       <span data-country-topbar-text>Showing Missing Alerts for your selected country</span>
     </div>
     <div class="missing-alerts-country-top-bar__actions">
+      <div class="missing-alerts-language-control" data-language-control>
+        <button
+          type="button"
+          class="missing-alerts-country-top-bar__button missing-alerts-language-control__button"
+          data-language-toggle
+          aria-expanded="false"
+          aria-controls="missing-alerts-language-menu"
+        >
+          Language: <span data-language-current>English</span>
+        </button>
+        <div id="missing-alerts-language-menu" class="missing-alerts-language-control__menu" data-language-menu hidden>
+          <button type="button" data-language-option="en">English</button>
+          <button type="button" data-language-option="fr">Français</button>
+          <button type="button" data-language-option="de">Deutsch</button>
+          <button type="button" data-language-option="es">Español</button>
+          <button type="button" data-language-option="it">Italiano</button>
+          <button type="button" data-language-option="nl">Nederlands</button>
+        </div>
+      </div>
       <button type="button" class="missing-alerts-country-top-bar__button" data-country-change>
         Change country
       </button>

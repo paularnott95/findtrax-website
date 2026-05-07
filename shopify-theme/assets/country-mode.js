@@ -31,6 +31,9 @@
   var topbarText = document.querySelector('[data-country-topbar-text]');
   var topbarIntelligence = document.querySelector('[data-country-topbar-intelligence]');
   var countryIntelligenceLinks = document.querySelectorAll('[data-country-intelligence-link]');
+  var languageToggle = document.querySelector('[data-language-toggle]');
+  var languageMenu = document.querySelector('[data-language-menu]');
+  var languageCurrent = document.querySelector('[data-language-current]');
   var cookieMaxAge = 60 * 60 * 24 * 180;
   var selectedCountryCode = null;
   var lastFocused = null;
@@ -74,6 +77,50 @@
 
   function normalize(value) {
     return String(value || '').toLowerCase().trim().replace(/_/g, '-');
+  }
+
+  function languageLabel(languageCode) {
+    var labels = {
+      en: 'English',
+      fr: 'Français',
+      de: 'Deutsch',
+      es: 'Español',
+      it: 'Italiano',
+      nl: 'Nederlands'
+    };
+    return labels[normalize(languageCode)] || 'English';
+  }
+
+  function getStoredLanguage() {
+    var value = '';
+    try {
+      value = window.localStorage.getItem(languageStorageKey) || '';
+    } catch (error) {}
+    return normalize(value || defaultLanguage || 'en') || 'en';
+  }
+
+  function updateLanguageControl(languageCode) {
+    var nextLanguage = normalize(languageCode || getStoredLanguage()) || 'en';
+    if (languageCurrent) languageCurrent.textContent = languageLabel(nextLanguage);
+    if (languageMenu) {
+      languageMenu.querySelectorAll('[data-language-option]').forEach(function(option) {
+        var selected = normalize(option.getAttribute('data-language-option')) === nextLanguage;
+        option.classList.toggle('is-selected', selected);
+        option.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      });
+    }
+    html.setAttribute('data-language', nextLanguage);
+  }
+
+  function setLanguage(languageCode) {
+    var nextLanguage = normalize(languageCode || defaultLanguage || 'en') || 'en';
+    try {
+      window.localStorage.setItem(languageStorageKey, nextLanguage);
+    } catch (error) {}
+    updateLanguageControl(nextLanguage);
+    window.dispatchEvent(new CustomEvent('missingAlertsLanguageChanged', {
+      detail: { language: nextLanguage }
+    }));
   }
 
   function canonicalizeCountry(value) {
@@ -300,7 +347,7 @@
       var link = document.createElement('a');
       link.href = '/blogs/missing-persons/' + record[0];
       link.className = 'mpa-case-link';
-      link.innerHTML = '<div class="mpa-case-card" data-country-scope="' + record[2] + '" data-country-code="' + record[2] + '" data-country-slug="' + record[3] + '" data-country-name="' + record[4] + '" data-region="' + record[5] + '" data-status="active" data-boost-active="false" data-boost-score="0" data-source-verified="true"><div class="mpa-case-image-wrap"><img src="/cdn/shop/t/2/assets/missing-person-silhouette.svg" alt="' + record[1].replace(/"/g, '&quot;') + '" class="mpa-case-image" loading="lazy" width="700" height="700"><div class="mpa-case-badge">VERIFIED</div><span class="mpa-case-share-top">SHARE</span></div><div class="mpa-case-text"><div class="mpa-case-topline"><div class="mpa-case-meta">ACTIVE CASE</div><div class="mpa-case-location">' + record[5] + '</div></div><h3 class="mpa-case-title">' + record[1] + '</h3><p class="mpa-case-excerpt">Verified public Missing Alerts case record.</p></div></div>';
+      link.innerHTML = '<div class="mpa-case-card" data-country-scope="' + record[2] + '" data-country-code="' + record[2] + '" data-country-slug="' + record[3] + '" data-country-name="' + record[4] + '" data-region="' + record[5] + '" data-status="active" data-case-handle="' + record[0] + '" data-boost-active="false" data-boost-score="0" data-source-verified="true"><div class="mpa-case-image-wrap"><img src="/cdn/shop/t/2/assets/missing-person-silhouette.svg" alt="' + record[1].replace(/"/g, '&quot;') + '" class="mpa-case-image" loading="lazy" width="700" height="700"><div class="mpa-case-badge">VERIFIED</div><span class="mpa-case-share-top">SHARE</span></div><div class="mpa-case-text"><div class="mpa-case-topline"><div class="mpa-case-meta">ACTIVE CASE</div><div class="mpa-case-location">' + record[5] + '</div></div><h3 class="mpa-case-title">' + record[1] + '</h3><p class="mpa-case-excerpt">Verified public Missing Alerts case record.</p></div></div>';
       homeGrid.appendChild(link);
     });
   }
@@ -404,7 +451,7 @@
         card.classList.toggle('country-mode-hidden', !show);
         card.setAttribute('data-ma-runtime-hidden', show ? 'false' : 'true');
         if (show) {
-          card.style.removeProperty('display');
+          card.style.setProperty('display', 'block', 'important');
         } else {
           card.style.setProperty('display', 'none', 'important');
         }
@@ -533,7 +580,7 @@
     item.classList.toggle('country-mode-hidden', !visible);
     item.setAttribute('data-ma-runtime-hidden', visible ? 'false' : 'true');
     if (visible) {
-      item.style.removeProperty('display');
+      item.style.setProperty('display', 'block', 'important');
     } else {
       item.style.setProperty('display', 'none', 'important');
     }
@@ -596,7 +643,7 @@
     html.setAttribute('data-country-code', country.code.toUpperCase());
     html.setAttribute('data-country-slug', country.slug);
     html.setAttribute('data-currency', getCurrencyForCountry(country.code));
-    html.setAttribute('data-language', getLanguageForCountry(country.code));
+    updateLanguageControl(getStoredLanguage() || getLanguageForCountry(country.code));
     if (body) {
       body.setAttribute('data-country-mode-ready', 'true');
       body.setAttribute('data-selected-country', country.code);
@@ -788,11 +835,32 @@
     },
     setLanguage: function(languageCode) {
       try {
-        window.localStorage.setItem(languageStorageKey, languageCode || defaultLanguage);
+        setLanguage(languageCode || defaultLanguage);
       } catch (error) {}
     },
     config: config
   };
 
   init();
+  updateLanguageControl(getStoredLanguage());
+  if (languageToggle && languageMenu) {
+    languageToggle.addEventListener('click', function() {
+      var isOpen = !languageMenu.hidden;
+      languageMenu.hidden = isOpen;
+      languageToggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+    });
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('[data-language-control]')) {
+        languageMenu.hidden = true;
+        languageToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+  document.querySelectorAll('[data-language-option]').forEach(function(option) {
+    option.addEventListener('click', function() {
+      setLanguage(option.getAttribute('data-language-option') || 'en');
+      if (languageMenu) languageMenu.hidden = true;
+      if (languageToggle) languageToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
 })();

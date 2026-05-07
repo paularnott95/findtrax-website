@@ -1,3 +1,4 @@
+{% unless request.page_type == 'index' or template.name == 'index' %}
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 
@@ -213,6 +214,8 @@
     {%- endif -%}
   </div>
 </div>
+
+{% endunless %}
 
 {% schema %}
 {
