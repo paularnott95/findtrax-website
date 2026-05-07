@@ -486,7 +486,7 @@
   }
 
   function updateTopbar(country) {
-    if (topbar) topbar.hidden = false;
+    if (topbar) topbar.hidden = isHomepage();
     if (topbarText) topbarText.textContent = 'Showing Missing Alerts for ' + country.name;
     if (topbarIntelligence) {
       topbarIntelligence.textContent = 'View ' + country.name + ' intelligence';
@@ -497,6 +497,69 @@
     });
     countryIntelligenceLinks.forEach(function(link) {
       link.href = '/pages/country-intelligence#' + country.slug;
+    });
+    updateCompactCountrySelector(country);
+  }
+
+  function compactCountrySelectorHtml() {
+    return [
+      '<details class="ma-compact-country-selector" data-country-compact-selector>',
+        '<summary aria-label="Change country">',
+          '<span class="ma-compact-country-selector__flag" data-country-compact-flag aria-hidden="true">🇬🇧</span>',
+          '<span class="visually-hidden" data-country-compact-label>United Kingdom</span>',
+        '</summary>',
+        '<div class="ma-compact-country-selector__menu">',
+          '<button type="button" data-country-compact-option="gb"><span aria-hidden="true">🇬🇧</span> United Kingdom</button>',
+          '<button type="button" data-country-compact-option="us"><span aria-hidden="true">🇺🇸</span> United States</button>',
+          '<button type="button" data-country-compact-option="ca"><span aria-hidden="true">🇨🇦</span> Canada</button>',
+          '<button type="button" data-country-compact-option="au"><span aria-hidden="true">🇦🇺</span> Australia</button>',
+          '<button type="button" data-country-compact-option="nz"><span aria-hidden="true">🇳🇿</span> New Zealand</button>',
+          '<button type="button" data-country-compact-option="ie"><span aria-hidden="true">🇮🇪</span> Ireland</button>',
+          '<button type="button" data-country-compact-option="sg"><span aria-hidden="true">🇸🇬</span> Singapore</button>',
+          '<a class="ma-compact-country-selector__intelligence" href="/pages/country-intelligence" data-country-intelligence-link>Country intelligence</a>',
+        '</div>',
+      '</details>'
+    ].join('');
+  }
+
+  function updateCompactCountrySelector(country) {
+    var selected = country || getCountryData(selectedCountryCode) || getSelectorCountry('gb');
+    document.querySelectorAll('[data-country-compact-selector]').forEach(function(selector) {
+      var flag = selector.querySelector('[data-country-compact-flag]');
+      var label = selector.querySelector('[data-country-compact-label]');
+      var summary = selector.querySelector('summary');
+      if (flag) flag.textContent = selected.flag || '🌍';
+      if (label) label.textContent = selected.name;
+      if (summary) summary.setAttribute('aria-label', 'Change country. Current country: ' + selected.name);
+      selector.querySelectorAll('[data-country-compact-option]').forEach(function(option) {
+        var isSelected = canonicalizeCountry(option.getAttribute('data-country-compact-option')) === selected.code;
+        option.classList.toggle('is-selected', isSelected);
+        option.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+      });
+    });
+  }
+
+  function bindCompactCountrySelector() {
+    if (document.documentElement.getAttribute('data-ma-compact-country-bound') === 'true') return;
+    document.documentElement.setAttribute('data-ma-compact-country-bound', 'true');
+    document.addEventListener('click', function(event) {
+      var option = event.target.closest('[data-country-compact-option]');
+      if (option) {
+        var country = getCountryData(option.getAttribute('data-country-compact-option'));
+        if (country) setCountry(country);
+        var selector = option.closest('[data-country-compact-selector]');
+        if (selector) selector.removeAttribute('open');
+        return;
+      }
+      document.querySelectorAll('[data-country-compact-selector][open]').forEach(function(selector) {
+        if (!selector.contains(event.target)) selector.removeAttribute('open');
+      });
+    });
+    document.addEventListener('keydown', function(event) {
+      if (event.key !== 'Escape') return;
+      document.querySelectorAll('[data-country-compact-selector][open]').forEach(function(selector) {
+        selector.removeAttribute('open');
+      });
     });
   }
 
@@ -611,12 +674,22 @@
     var style = document.createElement('style');
     style.id = 'ma-simplified-home-nav-runtime-style';
     style.textContent = [
-      '.mpa-main-header-inner{grid-template-columns:auto minmax(220px,auto) 1fr!important;gap:16px!important;}',
-      '.mpa-menu{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:nowrap!important;min-width:0!important;}',
+      '.mpa-main-header-inner{grid-template-columns:auto minmax(190px,auto) 1fr!important;gap:14px!important;}',
+      '.ma-header-controls-stack,.ma-selected-country-label,#missing-alerts-country-top-bar{display:none!important;visibility:hidden!important;}',
+      '.mpa-brand-block{gap:0!important;}',
+      '.mpa-menu{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;flex-wrap:nowrap!important;min-width:0!important;}',
       '.mpa-menu>a,.mpa-tools-menu>summary{padding:8px 12px!important;font-size:12px!important;white-space:nowrap!important;}',
       '.mpa-menu .mpa-buy-coffee-link{padding:8px 13px!important;background:linear-gradient(180deg,#f5c76b 0%,#b97712 100%)!important;color:#1b1006!important;border-color:rgba(255,255,255,.14)!important;font-weight:850!important;}',
       '.mpa-menu .mpa-buy-coffee-link:hover{color:#120b04!important;}',
-      '.missing-alerts-language-control{display:inline-flex!important;visibility:visible!important;}',
+      '.ma-compact-country-selector{position:relative!important;flex:0 0 auto!important;}',
+      '.ma-compact-country-selector summary{width:38px!important;height:36px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0!important;border-radius:999px!important;border:1px solid rgba(255,255,255,.14)!important;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.02)),#121418!important;color:#fff!important;cursor:pointer!important;list-style:none!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 18px rgba(0,0,0,.22)!important;}',
+      '.ma-compact-country-selector summary::-webkit-details-marker{display:none!important;}',
+      '.ma-compact-country-selector[open] summary,.ma-compact-country-selector summary:hover{transform:translateY(-1px)!important;border-color:rgba(255,72,72,.45)!important;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.03)),#181b21!important;}',
+      '.ma-compact-country-selector__flag{font-size:18px!important;line-height:1!important;}',
+      '.ma-compact-country-selector__menu{position:absolute!important;top:calc(100% + 10px)!important;right:0!important;z-index:10020!important;width:236px!important;padding:8px!important;border-radius:16px!important;border:1px solid rgba(255,255,255,.12)!important;background:radial-gradient(circle at top left,rgba(217,31,38,.22),transparent 40%),linear-gradient(180deg,rgba(20,22,28,.98),rgba(7,8,11,.98))!important;box-shadow:0 22px 52px rgba(0,0,0,.42)!important;}',
+      '.ma-compact-country-selector__menu button,.ma-compact-country-selector__intelligence{width:100%!important;min-height:36px!important;display:flex!important;align-items:center!important;gap:9px!important;padding:8px 10px!important;border:0!important;border-radius:10px!important;background:transparent!important;color:rgba(255,255,255,.9)!important;font:inherit!important;font-size:12px!important;font-weight:800!important;text-align:left!important;text-decoration:none!important;cursor:pointer!important;}',
+      '.ma-compact-country-selector__menu button:hover,.ma-compact-country-selector__menu button:focus-visible,.ma-compact-country-selector__menu button.is-selected,.ma-compact-country-selector__intelligence:hover,.ma-compact-country-selector__intelligence:focus-visible{background:rgba(255,255,255,.10)!important;color:#fff!important;outline:none!important;}',
+      '.ma-compact-country-selector__intelligence{margin-top:6px!important;border-top:1px solid rgba(255,255,255,.08)!important;color:rgba(255,210,210,.92)!important;}',
       '@media(max-width:980px){.mpa-main-header-inner{grid-template-columns:auto 1fr!important}.mpa-menu{grid-column:1/-1!important;justify-content:flex-start!important;flex-wrap:wrap!important;}}'
     ].join('\n');
     document.head.appendChild(style);
@@ -626,8 +699,8 @@
     if (!isHomepage()) return;
     ensureSimplifiedHeaderStyles();
     var nav = document.querySelector('nav.mpa-menu');
-    if (nav && nav.getAttribute('data-ma-simplified-nav') !== '20260507') {
-      nav.setAttribute('data-ma-simplified-nav', '20260507');
+    if (nav && nav.getAttribute('data-ma-simplified-nav') !== '20260507-flag') {
+      nav.setAttribute('data-ma-simplified-nav', '20260507-flag');
       nav.innerHTML = [
         '<a href="/">Home</a>',
         '<a href="/blogs/missing-persons">Missing</a>',
@@ -644,7 +717,8 @@
             '<a href="/pages/professional-membership">Become a Professional</a>',
           '</div>',
         '</details>',
-        '<a href="https://buymeacoffee.com/missingalerts" class="mpa-buy-coffee-link" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a>'
+        '<a href="https://buymeacoffee.com/missingalerts" class="mpa-buy-coffee-link" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a>',
+        compactCountrySelectorHtml()
       ].join('');
     }
 
@@ -673,11 +747,21 @@
 
     var languageControl = document.querySelector('[data-language-control]');
     if (languageControl) {
-      languageControl.hidden = false;
-      languageControl.style.removeProperty('display');
-      languageControl.style.visibility = 'visible';
+      languageControl.hidden = true;
+      languageControl.style.setProperty('display', 'none', 'important');
+      languageControl.style.visibility = 'hidden';
       updateLanguageControl(getStoredLanguage());
     }
+    if (topbar) {
+      topbar.hidden = true;
+      topbar.style.setProperty('display', 'none', 'important');
+    }
+    document.querySelectorAll('[data-selected-country-label]').forEach(function(label) {
+      label.hidden = true;
+      label.style.setProperty('display', 'none', 'important');
+    });
+    bindCompactCountrySelector();
+    updateCompactCountrySelector(getHomepageRuntimeCountry() || getCountryData(selectedCountryCode) || getSelectorCountry('gb'));
   }
 
   function cleanHomepageHeroOverlay() {
@@ -691,7 +775,7 @@
   }
 
   function applyHomepageNavRuntime() {
-    window.MA_SIMPLIFIED_HOME_NAV_RUNTIME_VERSION = '20260507-buy-me-a-coffee';
+    window.MA_SIMPLIFIED_HOME_NAV_RUNTIME_VERSION = '20260507-compact-flag';
     simplifyHeaderNavigation();
     cleanHomepageHeroOverlay();
   }
@@ -849,6 +933,7 @@
     document.querySelectorAll('[data-country-popup-close]').forEach(function(button) {
       button.addEventListener('click', closePopup);
     });
+    bindCompactCountrySelector();
     changeButtons.forEach(function(button) {
       button.addEventListener('click', openPopup);
     });
@@ -908,7 +993,7 @@
       updateTopbar(starterCountry);
       updateWheelSelection(starterCountry, false);
       filterHomepage(starterCountry);
-      openPopup();
+      closePopup();
     }
     scheduleStaleHomepageCountryRuntime();
   }
