@@ -64,9 +64,9 @@
     max-width: 1280px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: auto auto 1fr auto;
+    grid-template-columns: auto minmax(220px, auto) 1fr;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
   }
 
   .mpa-menu-trigger {
@@ -160,17 +160,18 @@
 
   .mpa-menu {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
     justify-content: flex-end;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    min-width: 0;
   }
 
   .mpa-menu a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 8px 14px;
+    padding: 8px 12px;
     border-radius: 999px;
     background:
       linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
@@ -296,23 +297,22 @@
     margin-top: 8px;
   }
 
-  .mpa-menu .mpa-support-link,
-  .mpa-menu .mpa-member-link,
+  .mpa-menu .mpa-buy-coffee-link,
   .mpa-menu .mpa-network-link {
-    padding: 8px 15px;
+    padding: 8px 13px;
     background:
       linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 22%),
-      linear-gradient(180deg, #d91f26 0%, #8f1116 100%);
+      linear-gradient(180deg, #f5c76b 0%, #b97712 100%);
     border: 1px solid rgba(255,255,255,0.12);
-    color: #ffffff;
+    color: #1b1006 !important;
     font-weight: 800;
     box-shadow:
       0 8px 20px rgba(0,0,0,0.24),
       inset 0 1px 0 rgba(255,255,255,0.08);
   }
 
-  .mpa-menu .mpa-support-link {
-    animation: mpaSupportPulse 1.8s ease-in-out infinite;
+  .mpa-menu .mpa-buy-coffee-link:hover {
+    color: #120b04 !important;
   }
 
   .mpa-menu .mpa-network-link {
@@ -481,21 +481,6 @@
     visibility: visible;
   }
 
-  @keyframes mpaSupportPulse {
-    0% {
-      transform: scale(1);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.24), 0 0 0 0 rgba(217,31,38,0.30), inset 0 1px 0 rgba(255,255,255,0.08);
-    }
-    50% {
-      transform: scale(1.04);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.30), 0 0 0 8px rgba(217,31,38,0.08), inset 0 1px 0 rgba(255,255,255,0.10);
-    }
-    100% {
-      transform: scale(1);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.24), 0 0 0 0 rgba(217,31,38,0), inset 0 1px 0 rgba(255,255,255,0.08);
-    }
-  }
-
   @media (max-width: 980px) {
     .mpa-main-header-inner {
       grid-template-columns: auto 1fr;
@@ -506,6 +491,7 @@
       grid-column: 1 / -1;
       width: 100%;
       justify-content: flex-start;
+      flex-wrap: wrap;
     }
   }
 
@@ -661,25 +647,21 @@
           <nav class="mpa-menu" aria-label="Primary">
             <a href="/">Home</a>
             <a href="/blogs/missing-persons">Missing</a>
-            <a href="/blogs/found-safe">Found Safe</a>
-            <a href="/pages/missing-person-advice">ADVICE HUB</a>
+            <a href="/pages/missing-person-advice">Advice Hub</a>
             <details class="mpa-tools-menu">
-              <summary>TOOLS</summary>
+              <summary>Tools</summary>
               <div class="mpa-tools-menu__panel">
                 <a href="/pages/tools">Tools overview</a>
                 <a href="/pages/country-intelligence">Country Intelligence</a>
+                <a href="/blogs/found-safe">Found Safe</a>
                 <a href="/pages/findtrax">FindTrax</a>
                 <a href="/pages/intelpro">IntelPro</a>
                 <a href="/pages/mediareach">MediaReach</a>
+                <a href="/pages/professional-membership">Become a Professional</a>
               </div>
             </details>
-            {%- unless customer -%}
-              <a href="/account/login?return_url=/pages/member-area" class="mpa-member-link" rel="nofollow">Member Login</a>
-            {%- endunless -%}
-            <a href="/pages/professional-membership" class="mpa-professional-link">Become a Professional</a>
-            <a href="/pages/donate" class="mpa-support-link">Support</a>
+            <a href="https://buymeacoffee.com/missingalerts" class="mpa-buy-coffee-link" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a>
             {%- if shop.customer_accounts_enabled and customer -%}
-              <a href="/pages/member-area" class="mpa-member-link" rel="nofollow">Member Area</a>
               <div class="mpa-account-stack">
                 <a href="{{ routes.account_logout_url }}" rel="nofollow">Log Out</a>
                 {%- if header_show_pro_area -%}
@@ -709,20 +691,20 @@
         <div class="mpa-side-title">MENU</div>
         <div class="mpa-side-links">
           <a href="/blogs/missing-persons">⚠️ View Missing Cases</a>
-          <a href="/blogs/found-safe">✅ Found Safe Updates</a>
           <div class="mpa-side-tools">
             <p class="mpa-side-tools__title">Tools</p>
             <a href="/pages/tools">Tools overview</a>
             <a href="/pages/country-intelligence">Country Intelligence</a>
+            <a href="/blogs/found-safe">Found Safe Updates</a>
             <a href="/pages/findtrax">FindTrax</a>
             <a href="/pages/intelpro">IntelPro</a>
             <a href="/pages/mediareach">MediaReach</a>
+            <a href="/pages/professional-membership">Become a Professional</a>
           </div>
           {%- unless customer -%}
             <a href="/account/login?return_url=/pages/member-area" rel="nofollow">🔐 Member Login</a>
           {%- endunless -%}
-          <a href="/pages/professional-membership">🧩 Become a Professional</a>
-          <a href="/pages/donate">Support</a>
+          <a href="https://buymeacoffee.com/missingalerts" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a>
           <a href="/pages/missing-person-advice">MISSING PERSON ADVICE</a>
           <a href="/collections/affiliate-products">🛒 Recommended Products</a>
           <a href="/pages/contact">✉️ Contact</a>

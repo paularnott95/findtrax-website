@@ -24,91 +24,6 @@
       margin:0;
     }
 
-    .mpa-wrap{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      justify-content:center;
-      margin-top:-18px;
-      position:relative;
-      z-index:5;
-    }
-
-    .mpa-inline-btn{
-      display:inline-block;
-      min-width:190px;
-      padding:14px 22px;
-      border-radius:999px;
-      color:#fff !important;
-      text-decoration:none !important;
-      font-weight:700;
-      font-size:15px;
-      text-align:center;
-      border:1px solid rgba(255,255,255,0.14);
-      box-shadow:0 10px 24px rgba(0,0,0,0.32);
-      position:relative;
-      overflow:hidden;
-      transition:all .2s ease;
-    }
-
-    .mpa-inline-btn:hover{
-      transform:translateY(-3px) scale(1.04);
-      box-shadow:0 14px 30px rgba(0,0,0,.34);
-      filter:brightness(1.05);
-    }
-
-    .mpa-inline-btn:active{
-      transform:translateY(0) scale(.98);
-    }
-
-    .mpa-inline-btn span{
-      position:relative;
-      z-index:2;
-    }
-
-    .mpa-inline-btn::before{
-      content:"";
-      position:absolute;
-      top:-20%;
-      bottom:-20%;
-      left:-60px;
-      width:24px;
-      background:linear-gradient(
-        180deg,
-        rgba(255,255,255,0) 0%,
-        rgba(255,255,255,0.15) 20%,
-        rgba(255,255,255,1) 50%,
-        rgba(255,255,255,0.15) 80%,
-        rgba(255,255,255,0) 100%
-      );
-      transform:skewX(-18deg);
-      animation:mpaSilverLine 3s linear infinite;
-      pointer-events:none;
-      z-index:1;
-    }
-
-    .mpa-inline-btn:hover::before{
-      animation-duration:1s;
-    }
-
-    .mpa-inline-missing,
-    .mpa-inline-donate{
-      background:linear-gradient(180deg,#2e3136 0%,#0f1114 100%);
-    }
-
-    .mpa-inline-report{
-      background:linear-gradient(180deg,#c21c1c 0%,#6e0f0f 100%);
-    }
-
-    .mpa-inline-report::before{
-      animation-direction: reverse;
-    }
-
-    @keyframes mpaSilverLine{
-      0%{ left:-60px; }
-      100%{ left:calc(100% + 60px); }
-    }
-
     .mpa-hero-shell::before,
     .mpa-hero-shell::after{
       content:"";
@@ -160,19 +75,6 @@
     height="600"
   >
 
-  <div class="mpa-wrap">
-    <a href="/blogs/missing-persons" class="mpa-inline-btn mpa-inline-missing">
-      <span>🔍 View Missing</span>
-    </a>
-
-    <a href="/pages/report-update" class="mpa-inline-btn mpa-inline-report">
-      <span>⚠️ Report Sighting</span>
-    </a>
-
-    <a href="/pages/donate" class="mpa-inline-btn mpa-inline-donate">
-      <span>❤️ Support & Donate</span>
-    </a>
-  </div>
 </div>
 
 {% comment %} Restored homepage section: custom_liquid_VjWcwq (custom-liquid) {% endcomment %}
@@ -649,13 +551,6 @@
 
 <div class="mp-banner-deck">
   <div class="mp-banner-deck__inner">
-    <div class="mp-banner-deck__top">
-      <div class="mp-banner-deck__badge">
-        <span class="mp-banner-deck__badge-dot"></span>
-        TRUSTED GLOBAL MISSING PERSON PLATFORM
-      </div>
-    </div>
-
     <div class="mp-banner-deck__grid">
       <div class="mp-banner-card mp-banner-card--one">
         <div class="mp-banner-card__art"></div>

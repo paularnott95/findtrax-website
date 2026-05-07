@@ -600,8 +600,104 @@
     return empty;
   }
 
+  function isHomepage() {
+    var path = normalize(window.location.pathname).replace(/\/+$/, '');
+    return path === '' || path === '/' || path === 'index';
+  }
+
+  function ensureSimplifiedHeaderStyles() {
+    if (document.getElementById('ma-simplified-home-nav-runtime-style')) return;
+    var style = document.createElement('style');
+    style.id = 'ma-simplified-home-nav-runtime-style';
+    style.textContent = [
+      '.mpa-main-header-inner{grid-template-columns:auto minmax(220px,auto) 1fr!important;gap:16px!important;}',
+      '.mpa-menu{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:nowrap!important;min-width:0!important;}',
+      '.mpa-menu>a,.mpa-tools-menu>summary{padding:8px 12px!important;font-size:12px!important;white-space:nowrap!important;}',
+      '.mpa-menu .mpa-buy-coffee-link{padding:8px 13px!important;background:linear-gradient(180deg,#f5c76b 0%,#b97712 100%)!important;color:#1b1006!important;border-color:rgba(255,255,255,.14)!important;font-weight:850!important;}',
+      '.mpa-menu .mpa-buy-coffee-link:hover{color:#120b04!important;}',
+      '.missing-alerts-language-control{display:inline-flex!important;visibility:visible!important;}',
+      '@media(max-width:980px){.mpa-main-header-inner{grid-template-columns:auto 1fr!important}.mpa-menu{grid-column:1/-1!important;justify-content:flex-start!important;flex-wrap:wrap!important;}}'
+    ].join('\n');
+    document.head.appendChild(style);
+  }
+
+  function simplifyHeaderNavigation() {
+    if (!isHomepage()) return;
+    ensureSimplifiedHeaderStyles();
+    var nav = document.querySelector('nav.mpa-menu');
+    if (nav && nav.getAttribute('data-ma-simplified-nav') !== '20260507') {
+      nav.setAttribute('data-ma-simplified-nav', '20260507');
+      nav.innerHTML = [
+        '<a href="/">Home</a>',
+        '<a href="/blogs/missing-persons">Missing</a>',
+        '<a href="/pages/missing-person-advice">Advice Hub</a>',
+        '<details class="mpa-tools-menu">',
+          '<summary>Tools</summary>',
+          '<div class="mpa-tools-menu__panel">',
+            '<a href="/pages/tools">Tools overview</a>',
+            '<a href="/pages/country-intelligence">Country Intelligence</a>',
+            '<a href="/blogs/found-safe">Found Safe</a>',
+            '<a href="/pages/findtrax">FindTrax</a>',
+            '<a href="/pages/intelpro">IntelPro</a>',
+            '<a href="/pages/mediareach">MediaReach</a>',
+            '<a href="/pages/professional-membership">Become a Professional</a>',
+          '</div>',
+        '</details>',
+        '<a href="https://buymeacoffee.com/missingalerts" class="mpa-buy-coffee-link" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a>'
+      ].join('');
+    }
+
+    var sideLinks = document.querySelector('#mpaSideMenu .mpa-side-links');
+    if (sideLinks && sideLinks.getAttribute('data-ma-simplified-side-nav') !== '20260507') {
+      sideLinks.setAttribute('data-ma-simplified-side-nav', '20260507');
+      sideLinks.innerHTML = [
+        '<a href="/blogs/missing-persons">View Missing Cases</a>',
+        '<div class="mpa-side-tools">',
+          '<p class="mpa-side-tools__title">Tools</p>',
+          '<a href="/pages/tools">Tools overview</a>',
+          '<a href="/pages/country-intelligence">Country Intelligence</a>',
+          '<a href="/blogs/found-safe">Found Safe Updates</a>',
+          '<a href="/pages/findtrax">FindTrax</a>',
+          '<a href="/pages/intelpro">IntelPro</a>',
+          '<a href="/pages/mediareach">MediaReach</a>',
+          '<a href="/pages/professional-membership">Become a Professional</a>',
+        '</div>',
+        '<a href="/account/login?return_url=/pages/member-area" rel="nofollow">Member Login</a>',
+        '<a href="https://buymeacoffee.com/missingalerts" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a>',
+        '<a href="/pages/missing-person-advice">Advice Hub</a>',
+        '<a href="/collections/affiliate-products">Recommended Products</a>',
+        '<a href="/pages/contact">Contact</a>'
+      ].join('');
+    }
+
+    var languageControl = document.querySelector('[data-language-control]');
+    if (languageControl) {
+      languageControl.hidden = false;
+      languageControl.style.removeProperty('display');
+      languageControl.style.visibility = 'visible';
+      updateLanguageControl(getStoredLanguage());
+    }
+  }
+
+  function cleanHomepageHeroOverlay() {
+    if (!isHomepage()) return;
+    document.querySelectorAll('.mpa-wrap, .mpa-inline-btn').forEach(function(node) {
+      node.remove();
+    });
+    document.querySelectorAll('.mp-banner-deck__top').forEach(function(node) {
+      if (/trusted global missing person platform/i.test(node.textContent || '')) node.remove();
+    });
+  }
+
+  function applyHomepageNavRuntime() {
+    window.MA_SIMPLIFIED_HOME_NAV_RUNTIME_VERSION = '20260507-buy-me-a-coffee';
+    simplifyHeaderNavigation();
+    cleanHomepageHeroOverlay();
+  }
+
   function applyStaleHomepageCountryRuntime() {
     window.MA_COUNTRY_FILTER_RUNTIME_VERSION = '20260506-final-runtime';
+    applyHomepageNavRuntime();
     var grid = getHomepageGrid();
     var selected = getHomepageRuntimeCountry();
     if (!grid || !selected) return;
@@ -626,11 +722,13 @@
   }
 
   function scheduleStaleHomepageCountryRuntime() {
+    applyHomepageNavRuntime();
     applyStaleHomepageCountryRuntime();
     var selected = getHomepageRuntimeCountry() || getCountryData(selectedCountryCode);
     if (selected) applySurfaceFiltering(selected);
     [50, 150, 500, 1300, 3500, 6500].forEach(function(delay) {
       window.setTimeout(function() {
+        applyHomepageNavRuntime();
         applyStaleHomepageCountryRuntime();
         var current = getHomepageRuntimeCountry() || getCountryData(selectedCountryCode);
         if (current) applySurfaceFiltering(current);
@@ -787,6 +885,7 @@
     window.addEventListener('missingAlertsCountryChanged', scheduleStaleHomepageCountryRuntime);
     window.addEventListener('missing-alerts:country-change', scheduleStaleHomepageCountryRuntime);
     document.addEventListener('country-mode:change', scheduleStaleHomepageCountryRuntime);
+    document.addEventListener('DOMContentLoaded', scheduleStaleHomepageCountryRuntime);
   }
 
   function init() {
